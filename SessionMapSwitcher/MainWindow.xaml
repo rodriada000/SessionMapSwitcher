@@ -1,0 +1,148 @@
+﻿<Window x:Class="SessionMapSwitcher.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SessionMapSwitcher"
+        mc:Ignorable="d"
+        Title="Session Map Switcher"
+        Icon="Resources/sessionmapswitchericon.png"
+        Height="450" Width="745"
+        Background="LightGray"
+        Loaded="Window_Loaded">
+
+    <Window.Resources>
+        <Style x:Key="MapListItem" TargetType="ListBoxItem">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="border" IsEnabled="{Binding IsEnabled}">
+                            <TextBlock x:Name="mapText" Text="{Binding DisplayName, FallbackValue='Test Map Name'}"
+                                       Margin="5,0,0,0"
+                                       Padding="0,2,0,2"/>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#008080"/>
+                                <Setter TargetName="mapText" Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#008080"/>
+                                <Setter TargetName="mapText" Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger SourceName="border" Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Background" Value="Gray"/>
+                                <Setter TargetName="mapText" Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+
+        <Label Content="Path To Session:"
+               FontWeight="SemiBold"
+               VerticalAlignment="Top" HorizontalAlignment="Left" Margin="5,10,0,0"/>
+
+        <TextBox VerticalAlignment="Top" HorizontalAlignment="Stretch"
+                 Text="{Binding SessionPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 Height="27"
+                 Margin="100,10,50,0"/>
+
+        <Button Name="btnBrowseSessionPath" 
+                Content="..." 
+                VerticalAlignment="Top" HorizontalAlignment="Right" 
+                Margin="0,10,18,0" 
+                Height="27" Width="27"
+                Click="BtnBrowseSessionPath_Click"/>
+
+        <Label Content="Path To Maps:"
+               FontWeight="SemiBold"
+               VerticalAlignment="Top" HorizontalAlignment="Left" Margin="15,42,0,0" Grid.RowSpan="2"/>
+
+        <TextBox VerticalAlignment="Top" HorizontalAlignment="Stretch"
+                 Margin="100,42,50,0"
+                 Text="{Binding MapPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 Height="27"/>
+
+        <Button Name="btnBrowseMapPath"
+                Content="..." 
+                VerticalAlignment="Top" HorizontalAlignment="Right" 
+                Margin="0,42,18,0" 
+                Height="27" Width="27"
+                Click="BtnBrowseMapPath_Click"/>
+
+        <Label Grid.Row="1"
+               Content="Available Maps:"
+               FontWeight="SemiBold"
+               HorizontalAlignment="Left"
+               VerticalAlignment="Top"
+               Margin="8,8,0,0"/>
+
+        <ListBox x:Name="lstMaps" 
+                 Grid.Row="1"
+                 HorizontalAlignment="Left"
+                 VerticalAlignment="Stretch"
+                 MinWidth="400"
+                 Margin="10,30,0,15"
+                 ItemContainerStyle="{StaticResource MapListItem}"
+                 ItemsSource="{Binding AvailableMaps}">
+        </ListBox>
+
+        <WrapPanel Grid.Row="1"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Bottom"
+                   Margin="410,0,0,15">
+            <Label Content="Currently Loaded Map:"
+                   FontSize="12"
+                   FontWeight="SemiBold"/>
+
+            <Label x:Name="txtLoadedMap"
+                   FontSize="12"
+                   Padding="3,5,0,0"
+                   Content="{Binding CurrentlyLoadedMapName, FallbackValue='GrindCity_Yeah'}"/>
+        </WrapPanel>
+        
+
+        <TextBlock x:Name="lblUserMessage"
+                   Grid.Row="2"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Top"
+                   Text="{Binding UserMessage, FallbackValue='Map Loaded!'}"
+                   Margin="10,0,0,0"
+                   TextWrapping="Wrap"
+                   MaxWidth="450"
+                   FontSize="16"/>
+
+        <Button x:Name="btnLoadMap"
+                Grid.Row="2"
+                Content="Load Map"
+                IsEnabled="{Binding ButtonsEnabled}"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                FontSize="16"
+                Margin="0,0,125,10"
+                Padding="5"
+                Click="BtnLoadMap_Click"/>
+
+        <Button x:Name="btnStartGame"
+                Grid.Row="2"
+                Content="Start Session"
+                IsEnabled="{Binding ButtonsEnabled}"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                FontSize="16"
+                Margin="0,0,10,10"
+                Padding="5"
+                Click="BtnStartGame_Click"/>
+    </Grid>
+</Window>
