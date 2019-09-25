@@ -66,10 +66,6 @@ namespace SessionMapSwitcher
             }
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-        }
-
         private void BackupMapFilesInBackground()
         {
             ViewModel.UserMessage = "Backing Up Original Session Map ...";
@@ -106,36 +102,59 @@ namespace SessionMapSwitcher
                 return;
             }
 
-            System.Diagnostics.Process.Start(ViewModel.PathToSessionExe);
+            LoadMapInBackgroundAndContinueWith((antecedent) =>
+            {
+                ViewModel.ButtonsEnabled = true;
+                System.Diagnostics.Process.Start(ViewModel.PathToSessionExe);
+            });
         }
 
         private void BtnLoadMap_Click(object sender, RoutedEventArgs e)
         {
+            LoadMapInBackgroundAndContinueWith((antecedent) =>
+            {
+                ViewModel.ButtonsEnabled = true;
+            });
+        }
+
+        private void LoadMapInBackgroundAndContinueWith(Action<Task> continuationTask)
+        {
             if (lstMaps.SelectedItem == null)
             {
-                System.Windows.MessageBox.Show("Select a map to load first!");
+                System.Windows.MessageBox.Show("Select a map to load first!",
+                                                "Notice!",
+                                                MessageBoxButton.OK,
+                                                MessageBoxImage.Information);
                 return;
             }
 
             if (ViewModel.IsOriginalMapFilesBackedUp() == false)
             {
-                System.Windows.MessageBox.Show("The original Session game map files have not been backed up yet. Click OK to backup the files then click 'Load Map' again");
+                System.Windows.MessageBox.Show("The original Session game map files have not been backed up yet. Click OK to backup the files then click 'Load Map' again",
+                                                "Notice!",
+                                                MessageBoxButton.OK,
+                                                MessageBoxImage.Information);
                 BackupMapFilesInBackground();
                 return;
             }
 
             MapListItem selectedItem = lstMaps.SelectedItem as MapListItem;
 
+            if (selectedItem.IsValid == false)
+            {
+                System.Windows.MessageBox.Show("This map is missing the required Game Mode Override 'PBP_InGameSessionGameMode'.\n\nAdd a Game Mode to your map in UE4: '/Content/Data/PBP_InGameSessionGameMode.uasset'.\nThen reload the list of available maps.", 
+                                                "Error!", 
+                                                MessageBoxButton.OK,
+                                                MessageBoxImage.Error);
+                return;
+            }
+
             ViewModel.UserMessage = $"Loading {selectedItem.DisplayName} ...";
             ViewModel.ButtonsEnabled = false;
 
             Task t = Task.Run(() => ViewModel.LoadMap(selectedItem));
 
-            t.ContinueWith((antecedent) =>
-            {
-                ViewModel.SetCurrentlyLoadedMap();
-                ViewModel.ButtonsEnabled = true;
-            });
+            t.ContinueWith(continuationTask);
         }
     }
 }

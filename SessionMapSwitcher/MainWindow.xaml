@@ -8,8 +8,7 @@
         Title="Session Map Switcher"
         Icon="Resources/sessionmapswitchericon.png"
         Height="450" Width="745"
-        Background="LightGray"
-        Loaded="Window_Loaded">
+        Background="LightGray">
 
     <Window.Resources>
         <Style x:Key="MapListItem" TargetType="ListBoxItem">
@@ -17,28 +16,60 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="ListBoxItem">
                         <Border x:Name="border" IsEnabled="{Binding IsEnabled}">
-                            <TextBlock x:Name="mapText" Text="{Binding DisplayName, FallbackValue='Test Map Name'}"
-                                       Margin="5,0,0,0"
-                                       Padding="0,2,0,2"/>
+                            <WrapPanel>
+                                <TextBlock x:Name="mapText" Text="{Binding DisplayName, FallbackValue='Test Map Name'}"
+                                           Margin="5,0,0,0"
+                                           Padding="0,2,0,2"/>
+                                <TextBlock x:Name="validationText" 
+                                           Foreground="Maroon"
+                                           Text="{Binding ValidationHint, FallbackValue='(missing game mode)'}"
+                                           Visibility="Hidden"
+                                           FontSize="11"
+                                           Margin="10,2,0,0"/>
+                            </WrapPanel>
                         </Border>
 
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsSelected" Value="True">
                                 <Setter TargetName="border" Property="Background" Value="#008080"/>
                                 <Setter TargetName="mapText" Property="Foreground" Value="White"/>
+                                <Setter TargetName="validationText" Property="Foreground" Value="White"/>
                             </Trigger>
+
+                            <DataTrigger Binding="{Binding IsValid}" Value="False">
+                                <Setter TargetName="mapText" Property="Foreground" Value="Maroon"/>
+                                <Setter TargetName="validationText" Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                            
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="border" Property="Background" Value="#008080"/>
                                 <Setter TargetName="mapText" Property="Foreground" Value="White"/>
+                                <Setter TargetName="validationText" Property="Foreground" Value="White"/>
                             </Trigger>
+                            
                             <Trigger SourceName="border" Property="IsEnabled" Value="False">
                                 <Setter TargetName="border" Property="Background" Value="Gray"/>
                                 <Setter TargetName="mapText" Property="Foreground" Value="White"/>
                             </Trigger>
+
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsValid}" Value="False"/>
+                                    <Condition Binding="{Binding IsSelected}" Value="True"/>
+                                </MultiDataTrigger.Conditions>
+                                <MultiDataTrigger.Setters>
+                                    <Setter TargetName="border" Property="Background" Value="#E29090"/>
+                                    <Setter TargetName="mapText" Property="Foreground" Value="White"/>
+                                </MultiDataTrigger.Setters>
+                            </MultiDataTrigger>
                         </ControlTemplate.Triggers>
+                        
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+
+            <Setter Property="IsEnabled" Value="{Binding IsEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         </Style>
     </Window.Resources>
 
@@ -94,8 +125,8 @@
                  VerticalAlignment="Stretch"
                  MinWidth="400"
                  Margin="10,30,0,15"
-                 ItemContainerStyle="{StaticResource MapListItem}"
-                 ItemsSource="{Binding AvailableMaps}">
+                 ItemsSource="{Binding AvailableMaps}"
+                 ItemContainerStyle="{StaticResource MapListItem}">
         </ListBox>
 
         <WrapPanel Grid.Row="1"
