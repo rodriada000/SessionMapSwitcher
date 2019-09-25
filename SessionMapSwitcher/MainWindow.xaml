@@ -10,13 +10,23 @@
         Icon="Resources/sessionmapswitchericon.png"
         Height="450" Width="745"
         Background="LightGray">
-
     <Window.Resources>
+
+        <Style x:Key="mainGridStyle" TargetType="Grid">
+            <Setter Property="Background" Value="{Binding ElementName=mainWindow, Path=Background}"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding InputControlsEnabled}" Value="False">
+                    <Setter Property="Cursor" Value="Wait"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        
         <Style x:Key="MapListItem" TargetType="ListBoxItem">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ListBoxItem">
-                        <Border x:Name="border" IsEnabled="{Binding IsEnabled}">
+                        <Border x:Name="border" IsEnabled="{Binding IsEnabled}" 
+                                ToolTipService.ShowOnDisabled="True" ToolTip="{Binding Tooltip}">
                             <WrapPanel>
                                 <TextBlock x:Name="mapText" Text="{Binding DisplayName, FallbackValue='Test Map Name'}"
                                            Margin="5,0,0,0"
@@ -69,12 +79,19 @@
                 </Setter.Value>
             </Setter>
 
+            <EventSetter Event="MouseDoubleClick" Handler="ListBoxItem_MouseDoubleClick"/>
             <Setter Property="IsEnabled" Value="{Binding IsEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         </Style>
+
+        <ContextMenu x:Key="mainContextMenu">
+            <MenuItem x:Name="menuOpenSessionFolder" Header="Open Session Folder ..."  Click="MenuOpenSessionFolder_Click"/>
+            <MenuItem x:Name="menuOpenMapsFolder" Header="Open Maps Folder ..." Click="MenuOpenMapsFolder_Click"/>
+            <MenuItem x:Name="menuOpenSelectedMapFolder" Header="Open Selected Map Folder ..." Click="MenuOpenSelectedMapFolder_Click"/>
+        </ContextMenu>
     </Window.Resources>
 
-    <Grid>
+    <Grid Style="{StaticResource mainGridStyle}">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
@@ -85,15 +102,20 @@
                FontWeight="SemiBold"
                VerticalAlignment="Top" HorizontalAlignment="Left" Margin="5,10,0,0"/>
 
-        <TextBox VerticalAlignment="Top" HorizontalAlignment="Stretch"
+        <TextBox x:Name="txtSessionPath" 
+                 VerticalAlignment="Top" HorizontalAlignment="Stretch"
                  Text="{Binding SessionPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 IsEnabled="{Binding InputControlsEnabled}"
+                 KeyUp="TxtSessionPath_KeyUp"
                  Height="27"
-                 Margin="100,10,50,0"/>
+                 Margin="100,10,50,0"
+                 ContextMenu="{StaticResource mainContextMenu}"/>
+
 
         <Button Name="btnBrowseSessionPath" 
                 Content="..." 
                 ToolTip="Browse for path to Session"
-                IsEnabled="{Binding ButtonsEnabled}"
+                IsEnabled="{Binding InputControlsEnabled}"
                 VerticalAlignment="Top" HorizontalAlignment="Right" 
                 Margin="0,10,18,0" 
                 Height="27" Width="27"
@@ -104,15 +126,19 @@
                FontWeight="SemiBold"
                VerticalAlignment="Top" HorizontalAlignment="Left" Margin="15,42,0,0" Grid.RowSpan="2"/>
 
-        <TextBox VerticalAlignment="Top" HorizontalAlignment="Stretch"
+        <TextBox x:Name="txtMapPath"
+                 VerticalAlignment="Top" HorizontalAlignment="Stretch"
                  Margin="100,42,50,0"
                  Text="{Binding MapPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 IsEnabled="{Binding InputControlsEnabled}"
+                 ContextMenu="{StaticResource mainContextMenu}"
+                 KeyUp="TxtMapPath_KeyUp"
                  Height="27"/>
 
         <Button Name="btnBrowseMapPath"
                 Content="..."
                 ToolTip="Browse for custom maps folder"
-                IsEnabled="{Binding ButtonsEnabled}"
+                IsEnabled="{Binding InputControlsEnabled}"
                 VerticalAlignment="Top" HorizontalAlignment="Right" 
                 Margin="0,42,18,0" 
                 Height="27" Width="27"
@@ -129,7 +155,7 @@
             
             <Button x:Name="btnReloadMaps"
                     Click="BtnReloadMaps_Click"
-                    IsEnabled="{Binding ButtonsEnabled}"
+                    IsEnabled="{Binding InputControlsEnabled}"
                     Content="(Reload Available Maps)"
                     ToolTip="Reload the list of available maps (e.g. when adding new files)"
                     Padding="5,0,5,0"
@@ -156,15 +182,16 @@
                  HorizontalAlignment="Left"
                  VerticalAlignment="Stretch"
                  MinWidth="400"
-                 Margin="10,32,0,15"
+                 Margin="10,32,0,5"
                  ItemsSource="{Binding AvailableMaps}"
-                 ItemContainerStyle="{StaticResource MapListItem}">
+                 ItemContainerStyle="{StaticResource MapListItem}"
+                 ContextMenu="{StaticResource mainContextMenu}">
         </ListBox>
 
         <WrapPanel Grid.Row="1"
                    HorizontalAlignment="Left"
                    VerticalAlignment="Bottom"
-                   Margin="410,0,0,15">
+                   Margin="410,0,0,0">
             <Label Content="Currently Loaded Map:"
                    FontSize="12"
                    FontWeight="SemiBold"/>
@@ -177,20 +204,20 @@
         
 
         <TextBlock x:Name="lblUserMessage"
-                   Grid.Row="2"
+                   Grid.Row="2" 
                    HorizontalAlignment="Left"
-                   VerticalAlignment="Top"
+                   VerticalAlignment="Bottom"
+                   Margin="10,0,0,50"
                    Text="{Binding UserMessage, FallbackValue='Map Loaded!'}"
-                   Margin="10,0,0,5"
                    TextWrapping="Wrap"
-                   MaxWidth="450"
+                   MaxWidth="600"
                    FontSize="14"/>
 
         <Button x:Name="btnLoadMap"
                 Grid.Row="2"
                 Content="Load Map"
                 ToolTip="Load selected map from the list"
-                IsEnabled="{Binding ButtonsEnabled}"
+                IsEnabled="{Binding InputControlsEnabled}"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
                 FontSize="16"
@@ -202,7 +229,7 @@
                 Grid.Row="2"
                 Content="Start Session"
                 ToolTip="Load selected map and start the game"
-                IsEnabled="{Binding ButtonsEnabled}"
+                IsEnabled="{Binding InputControlsEnabled}"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
                 FontSize="16"

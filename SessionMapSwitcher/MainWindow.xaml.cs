@@ -1,20 +1,10 @@
 ﻿using SessionMapSwitcher.ViewModels;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Forms;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace SessionMapSwitcher
 {
@@ -30,6 +20,8 @@ namespace SessionMapSwitcher
             InitializeComponent();
 
             ViewModel = new MainWindowViewModel();
+            ReloadAvailableMapsInBackground();
+
             this.DataContext = ViewModel;
         }
 
@@ -41,8 +33,7 @@ namespace SessionMapSwitcher
                 if (result == System.Windows.Forms.DialogResult.OK)
                 {
                     ViewModel.SetMapPath(folderBrowserDialog.SelectedPath);
-                    ViewModel.LoadAvailableMaps();
-                    ViewModel.SetCurrentlyLoadedMap();
+                    ReloadAvailableMapsInBackground();
 
                     BackupMapFilesInBackground();
                 }
@@ -56,13 +47,7 @@ namespace SessionMapSwitcher
                 DialogResult result = folderBrowserDialog.ShowDialog();
                 if (result == System.Windows.Forms.DialogResult.OK)
                 {
-                    ViewModel.SetSessionPath(folderBrowserDialog.SelectedPath);
-                    ViewModel.SetCurrentlyLoadedMap();
-
-                    if (ViewModel.IsSessionPathValid() == false)
-                    {
-                        System.Windows.MessageBox.Show("You may have selected an incorrect path to Session. Make sure the directory you choose has the folders 'Engine' and 'SessionGame'.", "Warning!", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    }
+                    SetAndValidateSessionPath(folderBrowserDialog.SelectedPath);
                 }
             }
         }
@@ -70,7 +55,7 @@ namespace SessionMapSwitcher
         private void BackupMapFilesInBackground()
         {
             ViewModel.UserMessage = "Backing Up Original Session Map ...";
-            ViewModel.ButtonsEnabled = false;
+            ViewModel.InputControlsEnabled = false;
 
             bool didBackup = false;
 
@@ -85,7 +70,7 @@ namespace SessionMapSwitcher
                 {
                     ViewModel.UserMessage = "";
                 }
-                ViewModel.ButtonsEnabled = true;
+                ViewModel.InputControlsEnabled = true;
             });
         }
 
@@ -105,16 +90,22 @@ namespace SessionMapSwitcher
 
             LoadMapInBackgroundAndContinueWith((antecedent) =>
             {
-                ViewModel.ButtonsEnabled = true;
+                ViewModel.InputControlsEnabled = true;
                 System.Diagnostics.Process.Start(ViewModel.PathToSessionExe);
             });
         }
 
         private void BtnLoadMap_Click(object sender, RoutedEventArgs e)
         {
+            // double check the controls are disabled and should not load (e.g. when double clicking map in list)
+            if (ViewModel.InputControlsEnabled == false)
+            {
+                return;
+            }
+
             LoadMapInBackgroundAndContinueWith((antecedent) =>
             {
-                ViewModel.ButtonsEnabled = true;
+                ViewModel.InputControlsEnabled = true;
             });
         }
 
@@ -143,15 +134,15 @@ namespace SessionMapSwitcher
 
             if (selectedItem.IsValid == false)
             {
-                System.Windows.MessageBox.Show("This map is missing the required Game Mode Override 'PBP_InGameSessionGameMode'.\n\nAdd a Game Mode to your map in UE4: '/Content/Data/PBP_InGameSessionGameMode.uasset'.\nThen reload the list of available maps.", 
-                                                "Error!", 
+                System.Windows.MessageBox.Show("This map is missing the required Game Mode Override 'PBP_InGameSessionGameMode'.\n\nAdd a Game Mode to your map in UE4: '/Content/Data/PBP_InGameSessionGameMode.uasset'.\nThen reload the list of available maps.",
+                                                "Error!",
                                                 MessageBoxButton.OK,
                                                 MessageBoxImage.Error);
                 return;
             }
 
             ViewModel.UserMessage = $"Loading {selectedItem.DisplayName} ...";
-            ViewModel.ButtonsEnabled = false;
+            ViewModel.InputControlsEnabled = false;
 
             Task t = Task.Run(() => ViewModel.LoadMap(selectedItem));
 
@@ -160,15 +151,98 @@ namespace SessionMapSwitcher
 
         private void BtnReloadMaps_Click(object sender, RoutedEventArgs e)
         {
+            ReloadAvailableMapsInBackground();
+        }
+
+        private void ReloadAvailableMapsInBackground()
+        {
             ViewModel.UserMessage = $"Reloading Available Maps ...";
-            ViewModel.ButtonsEnabled = false;
+            ViewModel.InputControlsEnabled = false;
 
             Task t = Task.Factory.StartNew(() => ViewModel.LoadAvailableMaps(), CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.FromCurrentSynchronizationContext());
 
             t.ContinueWith((antecedent) =>
             {
-                ViewModel.ButtonsEnabled = true;
+                ViewModel.InputControlsEnabled = true;
             });
+        }
+
+        /// <summary>
+        /// Load map when an available map is double clicked
+        /// </summary>
+        private void ListBoxItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            BtnLoadMap_Click(sender, e);
+        }
+
+        private void TxtSessionPath_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                SetAndValidateSessionPath(ViewModel.SessionPath); // the viewmodel is 2-way binded so the new path value is already set when enter is pressed so we pass the same value to store in app setttings and validate it
+                ViewModel.UserMessage = "Session Path updated!";
+            }
+        }
+
+        private void SetAndValidateSessionPath(string path)
+        {
+            ViewModel.SetSessionPath(path); // this will save it to app settings
+            ViewModel.SetCurrentlyLoadedMap();
+
+            if (ViewModel.IsSessionPathValid() == false)
+            {
+                System.Windows.MessageBox.Show("You may have selected an incorrect path to Session. Make sure the directory you choose has the folders 'Engine' and 'SessionGame'.", "Warning!", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void TxtMapPath_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                ViewModel.SetMapPath(ViewModel.MapPath);
+
+                ViewModel.UserMessage = $"Reloading Available Maps ...";
+                ViewModel.InputControlsEnabled = false;
+
+                bool didReload = false;
+
+                Task t = Task.Factory.StartNew(() =>
+                {
+                    didReload = ViewModel.LoadAvailableMaps();
+                }, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.FromCurrentSynchronizationContext());
+
+                t.ContinueWith((antecedent) =>
+                {
+                    ViewModel.InputControlsEnabled = true;
+                    if (didReload)
+                    {
+                        ViewModel.UserMessage = "Map Path updated! The original game files may have to be backed up to this path before starting the game.";
+                    }
+                });
+
+            }
+        }
+
+        private void MenuOpenSessionFolder_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.OpenFolderToSession();
+        }
+
+        private void MenuOpenMapsFolder_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.OpenFolderToAvailableMaps();
+        }
+
+        private void MenuOpenSelectedMapFolder_Click(object sender, RoutedEventArgs e)
+        {
+            if (lstMaps.SelectedItem == null)
+            {
+                ViewModel.UserMessage = "Cannot open folder: No map selected.";
+                return;
+            }
+
+            MapListItem selectedMap = lstMaps.SelectedItem as MapListItem;
+            ViewModel.OpenFolderToSelectedMap(selectedMap);
         }
     }
 }

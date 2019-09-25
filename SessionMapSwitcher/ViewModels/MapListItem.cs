@@ -1,6 +1,4 @@
-﻿using SessionMapSwitcher.ViewModels;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
 
 class MapListItem : ViewModelBase
@@ -8,9 +6,11 @@ class MapListItem : ViewModelBase
     private string _displayName;
     private string _fullPath;
     private string _validationHint;
+    private string _tooltip;
     private bool _isEnabled = true;
     private bool _isSelected = true;
     private bool _isValid = true;
+
 
     public string DisplayName
     {
@@ -22,7 +22,32 @@ class MapListItem : ViewModelBase
         }
     }
 
+    /// <summary>
+    /// Absolute path to the .umap file
+    /// </summary>
     public string FullPath { get => _fullPath; set => _fullPath = value; }
+
+    /// <summary>
+    /// Path to directory where all files related to this map are located.
+    /// </summary>
+    public string DirectoryPath
+    {
+        get
+        {
+            if (String.IsNullOrEmpty(FullPath))
+            {
+                return "";
+            }
+
+            int lastIndex = FullPath.LastIndexOf("\\");
+            if (lastIndex < 0)
+            {
+                return "";
+            }
+
+            return FullPath.Substring(0, lastIndex);
+        }
+    }
 
     public string ValidationHint
     {
@@ -33,6 +58,17 @@ class MapListItem : ViewModelBase
             NotifyPropertyChanged();
         }
     }
+
+    public string Tooltip
+    {
+        get { return _tooltip; }
+        set
+        {
+            _tooltip = value;
+            NotifyPropertyChanged();
+        }
+    }
+
 
     public bool IsEnabled
     {
@@ -74,12 +110,19 @@ class MapListItem : ViewModelBase
             ValidationHint = "(file missing)";
         }
 
-        string umapContents = File.ReadAllText(FullPath);
+        try
+        {
+            string umapContents = File.ReadAllText(FullPath);
 
-        if (umapContents.Contains("/Game/Data/PBP_InGameSessionGameMode") == false)
+            if (umapContents.Contains("/Game/Data/PBP_InGameSessionGameMode") == false)
+            {
+                IsValid = false;
+                ValidationHint = "(missing gamemode)";
+            }
+        }
+        catch (Exception e)
         {
             IsValid = false;
-            ValidationHint = "(missing gamemode)";
         }
     }
 }
