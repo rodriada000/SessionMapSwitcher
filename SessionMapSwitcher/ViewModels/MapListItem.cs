@@ -1,6 +1,4 @@
-﻿using SessionMapSwitcher.ViewModels;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
 
 class MapListItem : ViewModelBase
@@ -8,9 +6,11 @@ class MapListItem : ViewModelBase
     private string _displayName;
     private string _fullPath;
     private string _validationHint;
+    private string _tooltip;
     private bool _isEnabled = true;
     private bool _isSelected = true;
     private bool _isValid = true;
+
 
     public string DisplayName
     {
@@ -58,6 +58,17 @@ class MapListItem : ViewModelBase
             NotifyPropertyChanged();
         }
     }
+
+    public string Tooltip
+    {
+        get { return _tooltip; }
+        set
+        {
+            _tooltip = value;
+            NotifyPropertyChanged();
+        }
+    }
+
 
     public bool IsEnabled
     {

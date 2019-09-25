@@ -4,20 +4,17 @@ using SessionMapSwitcher.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace SessionMapSwitcher.ViewModels
 {
     class MainWindowViewModel : ViewModelBase
     {
+        #region Data Members And Properties
+
         private string _sessionPath;
         private string _mapPath;
         private string _userMessage;
@@ -25,7 +22,9 @@ namespace SessionMapSwitcher.ViewModels
         private ObservableCollection<MapListItem> _availableMaps;
         private MapListItem _firstLoadedMap;
         private MapListItem _defaultSessionMap;
-        private bool _buttonsEnabled;
+        private bool _inputControlsEnabled;
+
+        private const string _backupFolderName = "Original_Session_Map";
 
         public string SessionPath
         {
@@ -98,72 +97,77 @@ namespace SessionMapSwitcher.ViewModels
                 NotifyPropertyChanged();
             }
         }
+
         internal string PathToConfigFolder
         {
             get
             {
-                return SessionPath + "\\SessionGame\\Config";
+                return $"{SessionPath}\\SessionGame\\Config";
             }
         }
-
-        internal string DefaultEngineConfigFilePath
+        internal string DefaultEngineIniFilePath
         {
             get
             {
-                return PathToConfigFolder + "\\DefaultEngine.ini";
+                return $"{PathToConfigFolder}\\DefaultEngine.ini";
             }
         }
 
+        /// <summary>
+        /// Returns absolute path to the NYC folder in Session game directory. Requires <see cref="SessionPath"/>.
+        /// </summary>
         internal string PathToNYCFolder
         {
             get
             {
-                return SessionPath + "\\SessionGame\\Content\\Art\\Env\\NYC";
+                return $"{SessionPath}\\SessionGame\\Content\\Art\\Env\\NYC";
             }
         }
-
         internal string PathToBrooklynFolder
         {
             get
             {
-                return SessionPath + "\\SessionGame\\Content\\Art\\Env\\NYC\\Brooklyn";
+                return $"{PathToNYCFolder}\\Brooklyn";
             }
         }
-
         internal string PathToOriginalSessionMapFiles
         {
             get
             {
-                return MapPath + "\\Original_Session_Map";
+                return $"{MapPath}\\{_backupFolderName}";
             }
         }
-
         internal string PathToSessionExe
         {
             get
             {
-                return SessionPath + "\\SessionGame\\Binaries\\Win64\\SessionGame-Win64-Shipping.exe";
+                return $"{SessionPath}\\SessionGame\\Binaries\\Win64\\SessionGame-Win64-Shipping.exe";
             }
         }
 
-        public bool ButtonsEnabled
+        /// <summary>
+        /// Determine if all controls (buttons, textboxes) should be enabled or disabled in main window.
+        /// </summary>
+        public bool InputControlsEnabled
         {
-            get => _buttonsEnabled;
+            get => _inputControlsEnabled;
             set
             {
-                _buttonsEnabled = value;
+                _inputControlsEnabled = value;
                 NotifyPropertyChanged();
             }
         }
 
         internal MapListItem FirstLoadedMap { get => _firstLoadedMap; set => _firstLoadedMap = value; }
 
+        #endregion
+
         public MainWindowViewModel()
         {
             SessionPath = AppSettingsUtil.GetAppSetting("PathToSession");
             MapPath = AppSettingsUtil.GetAppSetting("PathToMaps");
             UserMessage = "";
-            ButtonsEnabled = true;
+            InputControlsEnabled = true;
 
             _defaultSessionMap = new MapListItem()
             {
@@ -171,10 +175,12 @@ namespace SessionMapSwitcher.ViewModels
                 DisplayName = "Session Default Map - Brooklyn Banks"
             };
 
-            LoadAvailableMaps();
             SetCurrentlyLoadedMap();
         }
 
+        /// <summary>
+        /// Sets <see cref="SessionPath"/> and saves the value to appSettings in the applications .config file
+        /// </summary>
         public void SetSessionPath(string pathToSession)
         {
             SessionPath = pathToSession;
@@ -202,31 +208,41 @@ namespace SessionMapSwitcher.ViewModels
             AppSettingsUtil.AddOrUpdateAppSettings("PathToMaps", pathToMaps);
         }
 
-        public void LoadAvailableMaps()
+        public bool LoadAvailableMaps()
         {
+            AvailableMaps.Clear();
+
             if (String.IsNullOrEmpty(MapPath))
             {
                 UserMessage = $"Cannot load available maps: 'Path To Maps' is missing.";
-                return;
+                return false;
             }
 
             if (Directory.Exists(MapPath) == false)
             {
                 UserMessage = $"Cannot load available maps: {MapPath} does not exist.";
-                return;
+                return false;
             }
-
-            AvailableMaps.Clear();
 
             // add default session map to select
             _defaultSessionMap.IsEnabled = IsOriginalMapFilesBackedUp();
+            _defaultSessionMap.FullPath = PathToOriginalSessionMapFiles;
+            _defaultSessionMap.Tooltip = _defaultSessionMap.IsEnabled ? null : "The original Session game files have not been backed up to the custom Maps folder.";
             AvailableMaps.Add(_defaultSessionMap);
 
-
-            LoadAvailableMapsInSubDirectories(MapPath);
+            try
+            {
+                LoadAvailableMapsInSubDirectories(MapPath);
+            }
+            catch (Exception e)
+            {
+                UserMessage = $"Failed to load available maps: {e.Message}";
+                return false;
+            }
 
 
             UserMessage = "List of available maps loaded!";
+            return true;
         }
 
         private void LoadAvailableMapsInSubDirectories(string dirToSearch)
@@ -255,7 +271,9 @@ namespace SessionMapSwitcher.ViewModels
             // recursively search for .umap files in sub directories (skipping 'Original_Session_Map')
             foreach (string subFolder in Directory.GetDirectories(dirToSearch))
             {
-                if (subFolder != PathToOriginalSessionMapFiles)
+                DirectoryInfo info = new DirectoryInfo(subFolder);
+
+                if (info.Name != _backupFolderName)
                 {
                     LoadAvailableMapsInSubDirectories(subFolder);
                 }
@@ -323,6 +341,7 @@ namespace SessionMapSwitcher.ViewModels
             }
 
             _defaultSessionMap.IsEnabled = IsOriginalMapFilesBackedUp();
+            _defaultSessionMap.Tooltip = _defaultSessionMap.IsEnabled ? null : "The original Session game files have not been backed up to the custom Maps folder.";
             return true;
         }
 
@@ -487,28 +506,6 @@ namespace SessionMapSwitcher.ViewModels
             }
         }
 
-        private bool UpdateGameDefaultMapIniSetting(string defaultMapValue)
-        {
-            if (IsSessionPathValid() == false)
-            {
-                return false;
-            }
-
-            IniFile iniFile = new IniFile(DefaultEngineConfigFilePath);
-            return iniFile.WriteString("/Script/EngineSettings.GameMapsSettings", "GameDefaultMap", defaultMapValue);
-        }
-
-        private string GetGameDefaultMapIniSetting()
-        {
-            if (IsSessionPathValid() == false)
-            {
-                return "";
-            }
-
-            IniFile iniFile = new IniFile(DefaultEngineConfigFilePath);
-            return iniFile.ReadString("/Script/EngineSettings.GameMapsSettings", "GameDefaultMap");
-        }
-
         internal void LoadOriginalMap()
         {
             try
@@ -541,6 +538,28 @@ namespace SessionMapSwitcher.ViewModels
             }
         }
 
+        private bool UpdateGameDefaultMapIniSetting(string defaultMapValue)
+        {
+            if (IsSessionPathValid() == false)
+            {
+                return false;
+            }
+
+            IniFile iniFile = new IniFile(DefaultEngineIniFilePath);
+            return iniFile.WriteString("/Script/EngineSettings.GameMapsSettings", "GameDefaultMap", defaultMapValue);
+        }
+
+        private string GetGameDefaultMapIniSetting()
+        {
+            if (IsSessionPathValid() == false)
+            {
+                return "";
+            }
+
+            IniFile iniFile = new IniFile(DefaultEngineIniFilePath);
+            return iniFile.ReadString("/Script/EngineSettings.GameMapsSettings", "GameDefaultMap");
+        }
+
         private void DeleteAllMapFilesFromGame()
         {
             if (IsSessionPathValid() == false)
@@ -571,6 +590,42 @@ namespace SessionMapSwitcher.ViewModels
             {
                 int startIndex = iniValue.LastIndexOf("/") + 1;
                 CurrentlyLoadedMapName = iniValue.Substring(startIndex, iniValue.Length - startIndex);
+            }
+        }
+
+        internal void OpenFolderToSession()
+        {
+            try
+            {
+                Process.Start(SessionPath);
+            }
+            catch (Exception ex)
+            {
+                UserMessage = $"Cannot open folder: {ex.Message}";
+            }
+        }
+
+        internal void OpenFolderToAvailableMaps()
+        {
+            try
+            {
+                Process.Start(MapPath);
+            }
+            catch (Exception ex)
+            {
+                UserMessage = $"Cannot open folder: {ex.Message}";
+            }
+        }
+
+        internal void OpenFolderToSelectedMap(MapListItem map)
+        {
+            try
+            {
+                Process.Start(map.DirectoryPath);
+            }
+            catch (Exception ex)
+            {
+                UserMessage = $"Cannot open folder: {ex.Message}";
             }
         }
     }
