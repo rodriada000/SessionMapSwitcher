@@ -471,7 +471,6 @@ namespace SessionMapSwitcher.ViewModels
                 // delete original session map files + custom maps from game before loading new map
                 DeleteAllMapFilesFromGame();
 
-                            if (fileName.Contains("_BuiltData"))
                 CopyMapFilesToGame(map);
 
                 // update the ini file with the new map path
