@@ -244,5 +244,10 @@ namespace SessionMapSwitcher
             MapListItem selectedMap = lstMaps.SelectedItem as MapListItem;
             ViewModel.OpenFolderToSelectedMap(selectedMap);
         }
+
+        private void ChkShowInvalidMaps_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.FilteredAvailableMaps.Refresh();
+        }
     }
 }

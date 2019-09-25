@@ -4,10 +4,12 @@ using SessionMapSwitcher.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Data;
 
 namespace SessionMapSwitcher.ViewModels
 {
@@ -23,6 +25,7 @@ namespace SessionMapSwitcher.ViewModels
         private MapListItem _firstLoadedMap;
         private MapListItem _defaultSessionMap;
         private bool _inputControlsEnabled;
+        private bool _showInvalidMaps;
 
         private const string _backupFolderName = "Original_Session_Map";
 
@@ -72,7 +75,29 @@ namespace SessionMapSwitcher.ViewModels
             {
                 _availableMaps = value;
                 NotifyPropertyChanged();
+                NotifyPropertyChanged(nameof(FilteredAvailableMaps));
             }
+        }
+
+        /// <summary>
+        /// Filtered collection of the available maps for the UI to show/hide invalid maps
+        /// </summary>
+        public ICollectionView FilteredAvailableMaps
+        {
+            get
+            {
+                var source = CollectionViewSource.GetDefaultView(AvailableMaps);
+                source.Filter = p => Filter((MapListItem)p);
+                return source;
+            }
+        }
+
+        /// <summary>
+        /// Filter to hide maps when invalid and the option is unchecked
+        /// </summary>
+        private bool Filter(MapListItem p)
+        {
+            return ShowInvalidMapsIsChecked || (!ShowInvalidMapsIsChecked && p.IsValid);
         }
 
         public string UserMessage
@@ -158,6 +183,21 @@ namespace SessionMapSwitcher.ViewModels
             }
         }
 
+        public bool ShowInvalidMapsIsChecked
+        {
+            get => _showInvalidMaps;
+            set
+            {
+                if (value != _showInvalidMaps)
+                {
+                    _showInvalidMaps = value;
+                    NotifyPropertyChanged();
+                    AppSettingsUtil.AddOrUpdateAppSettings("ShowInvalidMaps", value.ToString());
+                }
+            }
+        }
+
+
         internal MapListItem FirstLoadedMap { get => _firstLoadedMap; set => _firstLoadedMap = value; }
 
         #endregion
@@ -166,6 +206,7 @@ namespace SessionMapSwitcher.ViewModels
         {
             SessionPath = AppSettingsUtil.GetAppSetting("PathToSession");
             MapPath = AppSettingsUtil.GetAppSetting("PathToMaps");
+            ShowInvalidMapsIsChecked = AppSettingsUtil.GetAppSetting("ShowInvalidMaps").Equals("true", StringComparison.OrdinalIgnoreCase);
             UserMessage = "";
             InputControlsEnabled = true;
 
@@ -224,12 +265,6 @@ namespace SessionMapSwitcher.ViewModels
                 return false;
             }
 
-            // add default session map to select
-            _defaultSessionMap.IsEnabled = IsOriginalMapFilesBackedUp();
-            _defaultSessionMap.FullPath = PathToOriginalSessionMapFiles;
-            _defaultSessionMap.Tooltip = _defaultSessionMap.IsEnabled ? null : "The original Session game files have not been backed up to the custom Maps folder.";
-            AvailableMaps.Add(_defaultSessionMap);
-
             try
             {
                 LoadAvailableMapsInSubDirectories(MapPath);
@@ -240,6 +275,13 @@ namespace SessionMapSwitcher.ViewModels
                 return false;
             }
 
+            AvailableMaps = new ObservableCollection<MapListItem>(AvailableMaps.OrderBy(m => m.DisplayName));
+
+            // add default session map to select (add last so it is always at top of list)
+            _defaultSessionMap.IsEnabled = IsOriginalMapFilesBackedUp();
+            _defaultSessionMap.FullPath = PathToOriginalSessionMapFiles;
+            _defaultSessionMap.Tooltip = _defaultSessionMap.IsEnabled ? null : "The original Session game files have not been backed up to the custom Maps folder.";
+            AvailableMaps.Insert(0, _defaultSessionMap);
 
             UserMessage = "List of available maps loaded!";
             return true;
@@ -261,6 +303,12 @@ namespace SessionMapSwitcher.ViewModels
                     DisplayName = file.Replace(dirToSearch + "\\", "").Replace(".umap", "")
                 };
                 mapItem.Validate();
+
+                if (mapItem.DirectoryPath.Contains(PathToNYCFolder))
+                {
+                    // skip files that are known to be apart of the original map so they are not displayed in list of avaiable maps (like the NYC01_Persistent.umap file)
+                    continue;
+                }
 
                 if (IsMapAdded(mapItem.DisplayName) == false)
                 {
