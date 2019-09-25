@@ -1,12 +1,12 @@
 # Session Map Switcher
 This is a Desktop Application to make switching between Session maps in-game easier without having to restart the game.
-![alt text](https://github.com/rodriada000/SessionMapSwitcher/tree/master/SessionMapSwitcher/docs/images/app_screenshot.png "App Screenshot")
+![](https://github.com/rodriada000/SessionMapSwitcher/blob/master/docs/images/app_screenshot.png "App Screenshot")
 
 ## Notes Before Using
 * Session should already be unpacked before using this program. You can learn how to unpack the game for modding by [watching this video](https://www.youtube.com/watch?v=UqmQeHYv8IQ).
 * **NOTE** You should start the game using Session Map Switcher's `Start Session` button. If Session is already running then close the game and start it from Session Map Switcher instead.
 * **NOTE:** Load a custom map in Session Map Switcher first before starting the game. There is a bug right now where you can not switch maps if you start the game with the default map (hoping to fix soon).
-* Make sure you have a folder that contains a copy of all your modded map files. ![alt text](https://github.com/rodriada000/SessionMapSwitcher/tree/master/SessionMapSwitcher/docs/images/maps_folder_example.png "Example of Maps Folder"). The program will use this folder to search for maps to load.
+* Make sure you have a folder that contains a copy of all your modded map files. ![](https://github.com/rodriada000/SessionMapSwitcher/blob/master/docs/images/maps_folder_example.png "Example of Maps Folder"). The program will use this folder to search for maps to load.
 * This tool will make a backup of the original game files for the Brooklyn Banks level so you can switch back to the original map. You will need ~1GB of free space to back the files up.
 
 ## How To Use
