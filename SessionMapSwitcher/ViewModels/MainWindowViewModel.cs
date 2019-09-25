@@ -23,7 +23,7 @@ namespace SessionMapSwitcher.ViewModels
         private string _userMessage;
         private string _currentlyLoadedMapName;
         private ObservableCollection<MapListItem> _availableMaps;
-        private MapListItem _initialLoadedMap;
+        private MapListItem _firstLoadedMap;
         private MapListItem _defaultSessionMap;
         private bool _buttonsEnabled;
 
@@ -156,7 +156,7 @@ namespace SessionMapSwitcher.ViewModels
             }
         }
 
-        internal MapListItem FirstLoadedMap { get => _initialLoadedMap; set => _initialLoadedMap = value; }
+        internal MapListItem FirstLoadedMap { get => _firstLoadedMap; set => _firstLoadedMap = value; }
 
         public MainWindowViewModel()
         {
@@ -223,8 +223,16 @@ namespace SessionMapSwitcher.ViewModels
             AvailableMaps.Add(_defaultSessionMap);
 
 
+            LoadAvailableMapsInSubDirectories(MapPath);
+
+
+            UserMessage = "List of available maps loaded!";
+        }
+
+        private void LoadAvailableMapsInSubDirectories(string dirToSearch)
+        {
             // loop over files in given map directory and look for files with the '.umap' extension
-            foreach (string file in Directory.GetFiles(MapPath))
+            foreach (string file in Directory.GetFiles(dirToSearch))
             {
                 if (file.EndsWith(".umap") == false)
                 {
@@ -234,20 +242,27 @@ namespace SessionMapSwitcher.ViewModels
                 MapListItem mapItem = new MapListItem
                 {
                     FullPath = file,
-                    DisplayName = file.Replace(MapPath + "\\", "").Replace(".umap", "")
+                    DisplayName = file.Replace(dirToSearch + "\\", "").Replace(".umap", "")
                 };
                 mapItem.Validate();
 
-                if (MapIsLoaded(mapItem.DisplayName) == false)
+                if (IsMapAdded(mapItem.DisplayName) == false)
                 {
                     AvailableMaps.Add(mapItem);
                 }
             }
 
-            UserMessage = "List of available maps loaded!";
+            // recursively search for .umap files in sub directories (skipping 'Original_Session_Map')
+            foreach (string subFolder in Directory.GetDirectories(dirToSearch))
+            {
+                if (subFolder != PathToOriginalSessionMapFiles)
+                {
+                    LoadAvailableMapsInSubDirectories(subFolder);
+                }
+            }
         }
 
-        private bool MapIsLoaded(string mapName)
+        private bool IsMapAdded(string mapName)
         {
             return AvailableMaps.Any(m => m.DisplayName == mapName);
         }
@@ -376,9 +391,60 @@ namespace SessionMapSwitcher.ViewModels
             return allProcs.Length > 0;
         }
 
-        internal void CopyMapFilesToGame()
+        private bool CopyMapFilesToGame(MapListItem map)
         {
+            if (IsSessionPathValid() == false)
+            {
+                return false;
+            }
 
+            string pathToLevelsFolder = PathToBrooklynFolder + "\\Levels";
+
+            Directory.CreateDirectory(pathToLevelsFolder);
+            System.Threading.Thread.Sleep(1000); // sleep for 1 second to avoid race condition where the newly created Directory cannot be copied to
+
+            if (Directory.Exists(pathToLevelsFolder) == false)
+            {
+                // check again due to race condition that the OS has created the directory
+                // ... wait a second then try creating again.
+                System.Threading.Thread.Sleep(1000);
+                Directory.CreateDirectory(pathToLevelsFolder);
+            }
+
+            // copy all files related to map to game directory
+            foreach (string fileName in Directory.GetFiles(map.DirectoryPath))
+            {
+                if (fileName.Contains(map.DisplayName))
+                {
+                    FileInfo fi = new FileInfo(fileName);
+                    string fullTargetFilePath = pathToLevelsFolder;
+
+
+                    if (IsSessionRunning() && FirstLoadedMap != null)
+                    {
+                        // while the game is running, the map being loaded must have the same name as the initial map that was loaded when the game first started.
+                        // ... thus we build the destination filename based on what was first loaded.
+                        if (fileName.Contains("_BuiltData"))
+                        {
+                            fullTargetFilePath += $"\\{FirstLoadedMap.DisplayName}_BuiltData{fi.Extension}";
+                        }
+                        else
+                        {
+                            fullTargetFilePath += $"\\{FirstLoadedMap.DisplayName}{fi.Extension}";
+                        }
+                    }
+                    else
+                    {
+                        // if the game is not running then the files can be copied as-is (file names do not need to be changed)
+                        string targetFileName = fileName.Replace(map.DirectoryPath, "");
+                        fullTargetFilePath += targetFileName;
+                    }
+
+                    File.Copy(fileName, fullTargetFilePath, true);
+                }
+            }
+
+            return true;
         }
 
         internal void LoadMap(MapListItem map)
@@ -402,54 +468,11 @@ namespace SessionMapSwitcher.ViewModels
                     FirstLoadedMap = map;
                 }
 
-                // delete original session map files + custom maps from game
+                // delete original session map files + custom maps from game before loading new map
                 DeleteAllMapFilesFromGame();
 
-                string pathToLevelsFolder = PathToBrooklynFolder + "\\Levels";
-
-                Directory.CreateDirectory(pathToLevelsFolder);
-                System.Threading.Thread.Sleep(1000); // sleep for 1 second to avoid race condition where the newly created Directory cannot be copied to
-
-                if (Directory.Exists(pathToLevelsFolder) == false)
-                {
-                    // check again due to race condition that the OS has created the directory
-                    // ... wait a second then try creating again.
-                    System.Threading.Thread.Sleep(1000);
-                    Directory.CreateDirectory(pathToLevelsFolder);
-                }
-
-                // copy all files related to map to game directory
-                foreach (string fileName in Directory.GetFiles(MapPath))
-                {
-                    if (fileName.Contains(map.DisplayName))
-                    {
-                        FileInfo fi = new FileInfo(fileName);
-                        string fullTargetFilePath = pathToLevelsFolder;
-
-
-                        if (IsSessionRunning() && FirstLoadedMap != null)
-                        {
-                            // while the game is running, the map being loaded must have the same name as the initial map that was loaded when the game first started.
-                            // ... thus we build the destination filename based on what was first loaded.
                             if (fileName.Contains("_BuiltData"))
-                            {
-                                fullTargetFilePath += $"\\{FirstLoadedMap.DisplayName}_BuiltData{fi.Extension}";
-                            }
-                            else
-                            {
-                                fullTargetFilePath += $"\\{FirstLoadedMap.DisplayName}{fi.Extension}";
-                            }
-                        }
-                        else
-                        {
-                            // if the game is not running then the files can be copied as-is (file names do not need to be changed)
-                            string targetFileName = fileName.Replace(MapPath, "");
-                            fullTargetFilePath += targetFileName;
-                        }
-
-                        File.Copy(fileName, fullTargetFilePath, true);
-                    }
-                }
+                CopyMapFilesToGame(map);
 
                 // update the ini file with the new map path
                 string selectedMapPath = "/Game/Art/Env/NYC/Brooklyn/Levels/" + map.DisplayName;
