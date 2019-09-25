@@ -331,8 +331,8 @@ namespace SessionMapSwitcher.ViewModels
                     }
                 }
 
-                // copy all files in 'Brooklyn'
-                FileUtils.CopyDirectoryRecursively(PathToBrooklynFolder, PathToOriginalSessionMapFiles + "\\Brooklyn", true);
+                // copy all files in 'Brooklyn\Levels'
+                FileUtils.CopyDirectoryRecursively($"{PathToBrooklynFolder}\\Levels", $"{PathToOriginalSessionMapFiles}\\Brooklyn\\Levels", true);
             }
             catch (Exception e)
             {
@@ -362,13 +362,9 @@ namespace SessionMapSwitcher.ViewModels
                 }
             }
 
-            List<string> expectedDirNames = new List<string>() { "Background", "Decals", "Levels", "Props", "Tileables" };
-            foreach (string dirName in expectedDirNames)
+            if (Directory.Exists($"{PathToOriginalSessionMapFiles}\\Brooklyn\\Levels") == false)
             {
-                if (Directory.Exists($"{PathToOriginalSessionMapFiles}\\Brooklyn\\{dirName}") == false)
-                {
-                    return false;
-                }
+                return false;
             }
 
             return true;
@@ -420,13 +416,13 @@ namespace SessionMapSwitcher.ViewModels
             string pathToLevelsFolder = PathToBrooklynFolder + "\\Levels";
 
             Directory.CreateDirectory(pathToLevelsFolder);
-            System.Threading.Thread.Sleep(1000); // sleep for 1 second to avoid race condition where the newly created Directory cannot be copied to
+            System.Threading.Thread.Sleep(500); // sleep for 1 second to avoid race condition where the newly created Directory cannot be copied to
 
             if (Directory.Exists(pathToLevelsFolder) == false)
             {
                 // check again due to race condition that the OS has created the directory
                 // ... wait a second then try creating again.
-                System.Threading.Thread.Sleep(1000);
+                System.Threading.Thread.Sleep(500);
                 Directory.CreateDirectory(pathToLevelsFolder);
             }
 
@@ -436,20 +432,29 @@ namespace SessionMapSwitcher.ViewModels
                 if (fileName.Contains(map.DisplayName))
                 {
                     FileInfo fi = new FileInfo(fileName);
-                    string fullTargetFilePath = pathToLevelsFolder;
+                    string fullTargetFilePath = PathToNYCFolder;
 
 
                     if (IsSessionRunning() && FirstLoadedMap != null)
                     {
                         // while the game is running, the map being loaded must have the same name as the initial map that was loaded when the game first started.
                         // ... thus we build the destination filename based on what was first loaded.
-                        if (fileName.Contains("_BuiltData"))
+                        if (FirstLoadedMap == _defaultSessionMap)
                         {
-                            fullTargetFilePath += $"\\{FirstLoadedMap.DisplayName}_BuiltData{fi.Extension}";
+                            fullTargetFilePath += $"\\NYC01_Persistent"; // this is the name of the default map that is loaded
                         }
                         else
                         {
-                            fullTargetFilePath += $"\\{FirstLoadedMap.DisplayName}{fi.Extension}";
+                            fullTargetFilePath += $"\\{FirstLoadedMap.DisplayName}";
+                        }
+
+                        if (fileName.Contains("_BuiltData"))
+                        {
+                            fullTargetFilePath += $"_BuiltData{fi.Extension}";
+                        }
+                        else
+                        {
+                            fullTargetFilePath += fi.Extension;
                         }
                     }
                     else
@@ -474,6 +479,11 @@ namespace SessionMapSwitcher.ViewModels
                 return;
             }
 
+            if (IsSessionRunning() == false || FirstLoadedMap == null)
+            {
+                FirstLoadedMap = map;
+            }
+
             if (map == _defaultSessionMap)
             {
                 LoadOriginalMap();
@@ -482,18 +492,13 @@ namespace SessionMapSwitcher.ViewModels
 
             try
             {
-                if (IsSessionRunning() == false || FirstLoadedMap == null)
-                {
-                    FirstLoadedMap = map;
-                }
-
                 // delete original session map files + custom maps from game before loading new map
                 DeleteAllMapFilesFromGame();
 
                 CopyMapFilesToGame(map);
 
                 // update the ini file with the new map path
-                string selectedMapPath = "/Game/Art/Env/NYC/Brooklyn/Levels/" + map.DisplayName;
+                string selectedMapPath = "/Game/Art/Env/NYC/" + map.DisplayName;
                 UpdateGameDefaultMapIniSetting(selectedMapPath);
 
                 SetCurrentlyLoadedMap();
@@ -572,9 +577,9 @@ namespace SessionMapSwitcher.ViewModels
                 File.Delete(fileName);
             }
 
-            foreach (string directoryName in Directory.GetDirectories(PathToBrooklynFolder))
+            if (Directory.Exists($"{PathToBrooklynFolder}\\Levels"))
             {
-                Directory.Delete(directoryName, true);
+                Directory.Delete($"{PathToBrooklynFolder}\\Levels", true);
             }
         }
 
