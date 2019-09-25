@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -155,6 +156,19 @@ namespace SessionMapSwitcher
             Task t = Task.Run(() => ViewModel.LoadMap(selectedItem));
 
             t.ContinueWith(continuationTask);
+        }
+
+        private void BtnReloadMaps_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.UserMessage = $"Reloading Available Maps ...";
+            ViewModel.ButtonsEnabled = false;
+
+            Task t = Task.Factory.StartNew(() => ViewModel.LoadAvailableMaps(), CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.FromCurrentSynchronizationContext());
+
+            t.ContinueWith((antecedent) =>
+            {
+                ViewModel.ButtonsEnabled = true;
+            });
         }
     }
 }

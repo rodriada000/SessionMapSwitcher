@@ -206,12 +206,13 @@ namespace SessionMapSwitcher.ViewModels
         {
             if (String.IsNullOrEmpty(MapPath))
             {
+                UserMessage = $"Cannot load available maps: 'Path To Maps' is missing.";
                 return;
             }
 
             if (Directory.Exists(MapPath) == false)
             {
-                UserMessage = $"error: {MapPath} does not exist.";
+                UserMessage = $"Cannot load available maps: {MapPath} does not exist.";
                 return;
             }
 
@@ -242,6 +243,8 @@ namespace SessionMapSwitcher.ViewModels
                     AvailableMaps.Add(mapItem);
                 }
             }
+
+            UserMessage = "List of available maps loaded!";
         }
 
         private bool MapIsLoaded(string mapName)
@@ -267,7 +270,7 @@ namespace SessionMapSwitcher.ViewModels
             if (IsOriginalMapFilesBackedUp())
             {
                 // the files are already backed up
-                UserMessage = "Cannot backup: files already backed up.";
+                UserMessage = "Skipping backup: original files already backed up.";
                 return false;
             }
 
