@@ -204,6 +204,11 @@ namespace SessionMapSwitcher.ViewModels
 
         public void LoadAvailableMaps()
         {
+            if (String.IsNullOrEmpty(MapPath))
+            {
+                return;
+            }
+
             if (Directory.Exists(MapPath) == false)
             {
                 UserMessage = $"error: {MapPath} does not exist.";
