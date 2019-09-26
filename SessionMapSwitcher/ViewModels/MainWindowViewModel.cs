@@ -808,6 +808,11 @@ namespace SessionMapSwitcher.ViewModels
         /// </summary>
         internal void GetObjectCountFromFile()
         {
+            if (IsSessionPathValid() == false)
+            {
+                return;
+            }
+
             string objectFilePath = $"{SessionPath}\\SessionGame\\Content\\ObjectPlacement\\Blueprints\\PBP_ObjectPlacementInventory.uexp";
             using (var stream = new FileStream(objectFilePath, FileMode.Open, FileAccess.Read))
             {
@@ -843,6 +848,11 @@ namespace SessionMapSwitcher.ViewModels
         /// </summary>
         internal void SetObjectCountInFile()
         {
+            if (IsSessionPathValid() == false)
+            {
+                return;
+            }
+
             string objectFilePath = $"{SessionPath}\\SessionGame\\Content\\ObjectPlacement\\Blueprints\\PBP_ObjectPlacementInventory.uexp";
 
             // this is a list of addresses where the item count for placeable objects are stored in the .uexp file

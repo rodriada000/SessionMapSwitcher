@@ -236,7 +236,12 @@ namespace SessionMapSwitcher
             ViewModel.SetSessionPath(path); // this will save it to app settings
             ViewModel.SetCurrentlyLoadedMap();
 
-            if (ViewModel.IsSessionPathValid() == false)
+            if (ViewModel.IsSessionPathValid())
+            {
+                ViewModel.RefreshGameSettingsFromIniFiles();
+                ViewModel.GetObjectCountFromFile();
+            }
+            else
             {
                 System.Windows.MessageBox.Show("You may have selected an incorrect path to Session. Make sure the directory you choose has the folders 'Engine' and 'SessionGame'.", "Warning!", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
@@ -313,6 +318,11 @@ namespace SessionMapSwitcher
             if (didSet)
             {
                 ViewModel.UserMessage = "Game settings updated!";
+
+                if (ViewModel.IsSessionRunning())
+                {
+                    ViewModel.UserMessage += " Restart the game for changes to take effect.";
+                }
             }
             else
             {
