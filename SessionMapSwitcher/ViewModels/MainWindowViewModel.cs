@@ -18,7 +18,6 @@ namespace SessionMapSwitcher.ViewModels
         #region Data Members And Properties
 
         private string _sessionPath;
-        private string _mapPath;
         private string _userMessage;
         private string _currentlyLoadedMapName;
         private ObservableCollection<MapListItem> _availableMaps;
@@ -47,20 +46,11 @@ namespace SessionMapSwitcher.ViewModels
                 NotifyPropertyChanged();
             }
         }
-        public string MapPath
+        public string SessionContentPath
         {
             get
             {
-                if (_mapPath.EndsWith("\\"))
-                {
-                    _mapPath = _mapPath.TrimEnd('\\');
-                }
-                return _mapPath;
-            }
-            set
-            {
-                _mapPath = value;
-                NotifyPropertyChanged();
+                return $"{SessionPath}\\SessionGame\\Content";
             }
         }
         public ObservableCollection<MapListItem> AvailableMaps
@@ -169,7 +159,7 @@ namespace SessionMapSwitcher.ViewModels
         {
             get
             {
-                return $"{MapPath}\\{_backupFolderName}";
+                return $"{SessionContentPath}\\{_backupFolderName}";
             }
         }
         internal string PathToSessionExe
@@ -246,10 +236,11 @@ namespace SessionMapSwitcher.ViewModels
         public MainWindowViewModel()
         {
             SessionPath = AppSettingsUtil.GetAppSetting("PathToSession");
-            MapPath = AppSettingsUtil.GetAppSetting("PathToMaps");
             ShowInvalidMapsIsChecked = AppSettingsUtil.GetAppSetting("ShowInvalidMaps").Equals("true", StringComparison.OrdinalIgnoreCase);
             UserMessage = "";
             InputControlsEnabled = true;
+            GravityText = "-980";
+            ObjectCountText = "1000";
 
             _defaultSessionMap = new MapListItem()
             {
@@ -275,6 +266,11 @@ namespace SessionMapSwitcher.ViewModels
 
         internal bool IsSessionPathValid()
         {
+            if (String.IsNullOrEmpty(SessionPath))
+            {
+                return false;
+            }
+
             if (Directory.Exists($"{SessionPath}\\Engine") == false)
             {
                 return false;
@@ -285,34 +281,33 @@ namespace SessionMapSwitcher.ViewModels
                 return false;
             }
 
-            return true;
-        }
+            if (Directory.Exists(SessionContentPath) == false)
+            {
+                return false;
+            }
 
-        public void SetMapPath(string pathToMaps)
-        {
-            MapPath = pathToMaps;
-            AppSettingsUtil.AddOrUpdateAppSettings("PathToMaps", pathToMaps);
+            return true;
         }
 
         public bool LoadAvailableMaps()
         {
             AvailableMaps.Clear();
 
-            if (String.IsNullOrEmpty(MapPath))
+            if (IsSessionPathValid() == false)
             {
-                UserMessage = $"Cannot load available maps: 'Path To Maps' is missing.";
+                UserMessage = $"Cannot load available maps: 'Path To Session' has not been set.";
                 return false;
             }
 
-            if (Directory.Exists(MapPath) == false)
+            if (Directory.Exists(SessionContentPath) == false)
             {
-                UserMessage = $"Cannot load available maps: {MapPath} does not exist.";
+                UserMessage = $"Cannot load available maps: {SessionContentPath} does not exist. Make sure the Session Path is set correctly.";
                 return false;
             }
 
             try
             {
-                LoadAvailableMapsInSubDirectories(MapPath);
+                LoadAvailableMapsInSubDirectories(SessionContentPath);
             }
             catch (Exception e)
             {
@@ -380,13 +375,6 @@ namespace SessionMapSwitcher.ViewModels
 
         internal bool BackupOriginalMapFiles()
         {
-            if (string.IsNullOrEmpty(MapPath))
-            {
-                // no path to 'Maps'
-                UserMessage = "Cannot backup: 'Path To Maps' has not been set.";
-                return false;
-            }
-
             if (IsSessionPathValid() == false)
             {
                 UserMessage = "Cannot backup: 'Path to Session' is invalid.";
@@ -654,8 +642,15 @@ namespace SessionMapSwitcher.ViewModels
                 return "";
             }
 
-            IniFile iniFile = new IniFile(DefaultEngineIniFilePath);
-            return iniFile.ReadString("/Script/EngineSettings.GameMapsSettings", "GameDefaultMap");
+            try
+            {
+                IniFile iniFile = new IniFile(DefaultEngineIniFilePath);
+                return iniFile.ReadString("/Script/EngineSettings.GameMapsSettings", "GameDefaultMap");
+            }
+            catch (Exception e)
+            {
+                return "";
+            }
         }
 
         private void DeleteAllMapFilesFromGame()
@@ -687,7 +682,15 @@ namespace SessionMapSwitcher.ViewModels
             else if (String.IsNullOrEmpty(iniValue) == false)
             {
                 int startIndex = iniValue.LastIndexOf("/") + 1;
-                CurrentlyLoadedMapName = iniValue.Substring(startIndex, iniValue.Length - startIndex);
+
+                if (startIndex >= 0)
+                {
+                    CurrentlyLoadedMapName = iniValue.Substring(startIndex, iniValue.Length - startIndex);
+                }
+                else
+                {
+                    CurrentlyLoadedMapName = "Unknown.";
+                }
             }
         }
 
@@ -703,11 +706,11 @@ namespace SessionMapSwitcher.ViewModels
             }
         }
 
-        internal void OpenFolderToAvailableMaps()
+        internal void OpenFolderToSessionContent()
         {
             try
             {
-                Process.Start(MapPath);
+                Process.Start(SessionContentPath);
             }
             catch (Exception ex)
             {
@@ -734,11 +737,25 @@ namespace SessionMapSwitcher.ViewModels
                 return;
             }
 
-            IniFile engineFile = new IniFile(DefaultEngineIniFilePath);
-            GravityText = engineFile.ReadString("/Script/Engine.PhysicsSettings", "DefaultGravityZ");
+            try
+            {
+                IniFile engineFile = new IniFile(DefaultEngineIniFilePath);
+                GravityText = engineFile.ReadString("/Script/Engine.PhysicsSettings", "DefaultGravityZ");
 
-            IniFile gameFile = new IniFile(DefaultGameIniFilePath);
-            SkipMovieIsChecked = gameFile.ReadBoolean("/Script/UnrealEd.ProjectPackagingSettings", "bSkipMovies");
+                if (String.IsNullOrWhiteSpace(GravityText))
+                {
+                    GravityText = "-980";
+                }
+
+                IniFile gameFile = new IniFile(DefaultGameIniFilePath);
+                SkipMovieIsChecked = gameFile.ReadBoolean("/Script/UnrealEd.ProjectPackagingSettings", "bSkipMovies");
+            }
+            catch(Exception e)
+            {
+                UserMessage = $"Failed to get game settings: {e.Message}";
+                GravityText = "-980";
+                SkipMovieIsChecked = true;
+            }
         }
 
         /// <summary>
@@ -772,32 +789,42 @@ namespace SessionMapSwitcher.ViewModels
 
             SetObjectCountInFile();
 
-            IniFile engineFile = new IniFile(DefaultEngineIniFilePath);
-            engineFile.WriteString("/Script/Engine.PhysicsSettings", "DefaultGravityZ", GravityText);
-
-            IniFile gameFile = new IniFile(DefaultGameIniFilePath);
-
-            if (SkipMovieIsChecked)
+            try
             {
-                // delete the two StartupMovies from .ini
-                if (gameFile.KeyExists("/Script/MoviePlayer.MoviePlayerSettings", "+StartupMovies"))
+                IniFile engineFile = new IniFile(DefaultEngineIniFilePath);
+                engineFile.WriteString("/Script/Engine.PhysicsSettings", "DefaultGravityZ", GravityText);
+
+                IniFile gameFile = new IniFile(DefaultGameIniFilePath);
+
+                if (SkipMovieIsChecked)
                 {
-                    gameFile.DeleteKey("/Script/MoviePlayer.MoviePlayerSettings", "+StartupMovies");
+                    // delete the two StartupMovies from .ini
+                    if (gameFile.KeyExists("/Script/MoviePlayer.MoviePlayerSettings", "+StartupMovies"))
+                    {
+                        gameFile.DeleteKey("/Script/MoviePlayer.MoviePlayerSettings", "+StartupMovies");
+                    }
+                    if (gameFile.KeyExists("/Script/MoviePlayer.MoviePlayerSettings", "+StartupMovies"))
+                    {
+                        gameFile.DeleteKey("/Script/MoviePlayer.MoviePlayerSettings", "+StartupMovies");
+                    }
                 }
-                if (gameFile.KeyExists("/Script/MoviePlayer.MoviePlayerSettings", "+StartupMovies"))
+                else
                 {
-                    gameFile.DeleteKey("/Script/MoviePlayer.MoviePlayerSettings", "+StartupMovies");
+                    if (gameFile.KeyExists("/Script/MoviePlayer.MoviePlayerSettings", "+StartupMovies") == false)
+                    {
+                        gameFile.WriteString("/Script/MoviePlayer.MoviePlayerSettings", "+StartupMovies", "UE4_Moving_Logo_720\n+StartupMovies=IntroLOGO_720_30");
+                    }
                 }
+
+                gameFile.WriteString("/Script/UnrealEd.ProjectPackagingSettings", "bSkipMovies", SkipMovieIsChecked.ToString());
             }
-            else
+            catch (Exception e)
             {
-                if (gameFile.KeyExists("/Script/MoviePlayer.MoviePlayerSettings", "+StartupMovies") == false)
-                {
-                    gameFile.WriteString("/Script/MoviePlayer.MoviePlayerSettings", "+StartupMovies", "UE4_Moving_Logo_720\n+StartupMovies=IntroLOGO_720_30");
-                }
+                UserMessage = $"Failed to update game settings: {e.Message}";
+                return false;
             }
 
-            gameFile.WriteString("/Script/UnrealEd.ProjectPackagingSettings", "bSkipMovies", SkipMovieIsChecked.ToString());
+
 
             return true;
         }
@@ -813,32 +840,39 @@ namespace SessionMapSwitcher.ViewModels
                 return;
             }
 
-            string objectFilePath = $"{SessionPath}\\SessionGame\\Content\\ObjectPlacement\\Blueprints\\PBP_ObjectPlacementInventory.uexp";
-            using (var stream = new FileStream(objectFilePath, FileMode.Open, FileAccess.Read))
+            try
             {
-                stream.Position = 351;
-                int byte1 = stream.ReadByte();
-                int byte2 = stream.ReadByte();
-                byte[] byteArray;
+                string objectFilePath = $"{SessionPath}\\SessionGame\\Content\\ObjectPlacement\\Blueprints\\PBP_ObjectPlacementInventory.uexp";
+                using (var stream = new FileStream(objectFilePath, FileMode.Open, FileAccess.Read))
+                {
+                    stream.Position = 351;
+                    int byte1 = stream.ReadByte();
+                    int byte2 = stream.ReadByte();
+                    byte[] byteArray;
 
-                // convert two bytes to a hex string. if the second byte is less than 16 than swap the bytes due to reasons....
-                if (byte2 == 0)
-                {
-                    byteArray = new byte[] { 0x00, Byte.Parse(byte1.ToString()) };
-                }
-                else if (byte2 < 16)
-                {
-                    byteArray = new byte[] { Byte.Parse(byte2.ToString()), Byte.Parse(byte1.ToString()) };
-                }
-                else
-                {
-                    byteArray = new byte[] { Byte.Parse(byte1.ToString()), Byte.Parse(byte2.ToString()) };
-                }
-                string hexString = BitConverter.ToString(byteArray).Replace("-", "");
+                    // convert two bytes to a hex string. if the second byte is less than 16 than swap the bytes due to reasons....
+                    if (byte2 == 0)
+                    {
+                        byteArray = new byte[] { 0x00, Byte.Parse(byte1.ToString()) };
+                    }
+                    else if (byte2 < 16)
+                    {
+                        byteArray = new byte[] { Byte.Parse(byte2.ToString()), Byte.Parse(byte1.ToString()) };
+                    }
+                    else
+                    {
+                        byteArray = new byte[] { Byte.Parse(byte1.ToString()), Byte.Parse(byte2.ToString()) };
+                    }
+                    string hexString = BitConverter.ToString(byteArray).Replace("-", "");
 
-                // convert the hex string to base 10 int value
-                int intAgain = int.Parse(hexString, System.Globalization.NumberStyles.HexNumber);
-                ObjectCountText = intAgain.ToString();
+                    // convert the hex string to base 10 int value
+                    int intAgain = int.Parse(hexString, System.Globalization.NumberStyles.HexNumber);
+                    ObjectCountText = intAgain.ToString();
+                }
+            }
+            catch (Exception e)
+            {
+                UserMessage = $"Failed to get object count: {e.Message}";
             }
         }
 
