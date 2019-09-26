@@ -49,6 +49,13 @@ namespace SessionMapSwitcher
                 if (result == System.Windows.Forms.DialogResult.OK)
                 {
                     SetAndValidateSessionPath(folderBrowserDialog.SelectedPath);
+
+                    if (ViewModel.IsSessionPathValid() && String.IsNullOrEmpty(ViewModel.MapPath))
+                    {
+                        ViewModel.SetMapPath($"{ViewModel.SessionPath}\\SessionGame\\Content");
+                        ReloadAvailableMapsInBackground();
+                        BackupMapFilesInBackground();
+                    }
                 }
             }
         }
@@ -214,6 +221,13 @@ namespace SessionMapSwitcher
             {
                 SetAndValidateSessionPath(ViewModel.SessionPath); // the viewmodel is 2-way binded so the new path value is already set when enter is pressed so we pass the same value to store in app setttings and validate it
                 ViewModel.UserMessage = "Session Path updated!";
+
+                if (ViewModel.IsSessionPathValid() && String.IsNullOrEmpty(ViewModel.MapPath))
+                {
+                    ViewModel.SetMapPath($"{ViewModel.SessionPath}\\SessionGame\\Content");
+                    ReloadAvailableMapsInBackground();
+                    BackupMapFilesInBackground();
+                }
             }
         }
 
