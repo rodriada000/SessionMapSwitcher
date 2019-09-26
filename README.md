@@ -5,7 +5,6 @@ This is a Desktop Application to make switching between Session maps in-game eas
 ## Notes Before Using
 * Session should already be unpacked before using this program. You can learn how to unpack the game for modding by [watching this video](https://www.youtube.com/watch?v=UqmQeHYv8IQ).
 * **NOTE** You should start the game using Session Map Switcher's `Start Session` button. If Session is already running then close the game and start it from Session Map Switcher instead.
-* Make sure you have a folder that contains a copy of all your modded map files. ![](https://github.com/rodriada000/SessionMapSwitcher/blob/master/docs/images/maps_folder_example.png "Example of Maps Folder"). The program will use this folder to search for maps to load, recursively searching any subfolders for maps.
 * This tool will make a backup of the original game files for the Brooklyn Banks level so you can switch back to the original map. You will need ~145MB of free space to back the files up.
 
 ## How To Use
@@ -14,10 +13,11 @@ This is a Desktop Application to make switching between Session maps in-game eas
 1. Download the latest [release here](https://github.com/rodriada000/SessionMapSwitcher/releases/latest).
 2. Unzip the program anywhere you like.
 3. Open SessionMapSwitcher.exe
-4. Set the 'Path To Session' and path to your custom maps by clicking the `...` buttons. (_These paths will be remembered when the program is re-opened._)
-5. After setting 'Path to Maps', the original Session map files will be backed up (_to a folder named `Original_Session_Map`). You can not load a map or start the game while the files are backing up.
+4. Set the 'Path To Session' by clicking the `...` button or pasting the path and pressing 'Enter' key. The path should be the top level folder of the game directory e.g. `C:\Program Files (x86)\Steam\steamapps\common\Session`.
+5. If the path is valid then the 'Path to Maps' will be auto set to the games `Content` folder and the original Session map files will be backed up to a folder named `Original_Session_Map`.
 6. Select a modded map from the list (_you can also double click the map in the list to load it._).
-7. Click `Start Session` (_this will load the selected map before starting the game_).
+7. Before sarting the game, change any game settings like gravity or number of objects you can place down.  
+8. Click `Start Session` (_this will load the selected map and save your game settings before starting the game_).
 
 ### Switching Maps In-game
 _This assumes you have already Session Map Switcher open and Session running. To load a new map follow the below steps._

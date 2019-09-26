@@ -8,6 +8,7 @@
         mc:Ignorable="d"
         Title="Session Map Switcher"
         Icon="Resources/sessionmapswitchericon.png"
+        MinHeight="415" MinWidth="510"
         Height="450" Width="745"
         Background="LightGray">
     <Window.Resources>
@@ -20,7 +21,7 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
-        
+
         <Style x:Key="MapListItem" TargetType="ListBoxItem">
             <Setter Property="Template">
                 <Setter.Value>
@@ -51,13 +52,13 @@
                                 <Setter TargetName="mapText" Property="Foreground" Value="Maroon"/>
                                 <Setter TargetName="validationText" Property="Visibility" Value="Visible"/>
                             </DataTrigger>
-                            
+
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="border" Property="Background" Value="#008080"/>
                                 <Setter TargetName="mapText" Property="Foreground" Value="White"/>
                                 <Setter TargetName="validationText" Property="Foreground" Value="White"/>
                             </Trigger>
-                            
+
                             <Trigger SourceName="border" Property="IsEnabled" Value="False">
                                 <Setter TargetName="border" Property="Background" Value="Gray"/>
                                 <Setter TargetName="mapText" Property="Foreground" Value="White"/>
@@ -74,7 +75,7 @@
                                 </MultiDataTrigger.Setters>
                             </MultiDataTrigger>
                         </ControlTemplate.Triggers>
-                        
+
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -97,12 +98,17 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="398*"/>
+        </Grid.ColumnDefinitions>
 
         <Label Content="Path To Session:"
                FontWeight="SemiBold"
-               VerticalAlignment="Top" HorizontalAlignment="Left" Margin="5,10,0,0"/>
+               VerticalAlignment="Top" HorizontalAlignment="Left" Margin="5,10,0,0" Height="26" Width="97"/>
 
         <TextBox x:Name="txtSessionPath" 
+                 Grid.Column="0" Grid.ColumnSpan="2"
                  VerticalAlignment="Top" HorizontalAlignment="Stretch"
                  Text="{Binding SessionPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  IsEnabled="{Binding InputControlsEnabled}"
@@ -113,6 +119,7 @@
 
 
         <Button Name="btnBrowseSessionPath" 
+                Grid.Column="1"
                 Content="..." 
                 ToolTip="Browse for path to Session"
                 IsEnabled="{Binding InputControlsEnabled}"
@@ -120,13 +127,14 @@
                 Margin="0,10,18,0" 
                 Height="27" Width="27"
                 Click="BtnBrowseSessionPath_Click"/>
-        
+
 
         <Label Content="Path To Maps:"
                FontWeight="SemiBold"
-               VerticalAlignment="Top" HorizontalAlignment="Left" Margin="15,42,0,0" Grid.RowSpan="2"/>
+               VerticalAlignment="Top" HorizontalAlignment="Left" Margin="15,42,0,0" Height="26" Width="86"/>
 
         <TextBox x:Name="txtMapPath"
+                 Grid.Column="0" Grid.ColumnSpan="2"
                  VerticalAlignment="Top" HorizontalAlignment="Stretch"
                  Margin="100,42,50,0"
                  Text="{Binding MapPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -136,6 +144,7 @@
                  Height="27"/>
 
         <Button Name="btnBrowseMapPath"
+                Grid.Column="1"
                 Content="..."
                 ToolTip="Browse for custom maps folder"
                 IsEnabled="{Binding InputControlsEnabled}"
@@ -148,11 +157,11 @@
         <WrapPanel Grid.Row="1"
                    HorizontalAlignment="Left"
                    VerticalAlignment="Top"
-                   Margin="8,8,0,0">
-            
+                   Margin="8,8,0,0" Height="26">
+
             <Label Content="Available Maps:"
                    FontWeight="SemiBold"/>
-            
+
             <Button x:Name="btnReloadMaps"
                     Click="BtnReloadMaps_Click"
                     IsEnabled="{Binding InputControlsEnabled}"
@@ -174,37 +183,100 @@
                     </Style>
                 </Button.Style>
             </Button>
+
+            <CheckBox x:Name="chkShowInvalidMaps"
+                      Content="Show Invalid Maps"
+                      ToolTip="Show/hide maps that are invalid in the Maps folder (e.g. missing gamemode)"
+                      IsChecked="{Binding ShowInvalidMapsIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='True'}"
+                      Click="ChkShowInvalidMaps_Click"
+                      FontSize="10"
+                      Margin="5,2,0,0"
+                      VerticalAlignment="Center"/>
         </WrapPanel>
 
 
         <ListBox x:Name="lstMaps" 
-                 Grid.Row="1"
+                 Grid.Row="1" Grid.Column="0"
                  HorizontalAlignment="Left"
                  VerticalAlignment="Stretch"
-                 MinWidth="400"
+                 MinWidth="300" MaxWidth="350"
+                 Width="320"
+                 ScrollViewer.CanContentScroll="False"
                  Margin="10,32,0,5"
-                 ItemsSource="{Binding AvailableMaps}"
+                 ItemsSource="{Binding FilteredAvailableMaps}"
                  ItemContainerStyle="{StaticResource MapListItem}"
                  ContextMenu="{StaticResource mainContextMenu}">
         </ListBox>
 
-        <WrapPanel Grid.Row="1"
-                   HorizontalAlignment="Left"
-                   VerticalAlignment="Bottom"
-                   Margin="410,0,0,0">
-            <Label Content="Currently Loaded Map:"
-                   FontSize="12"
-                   FontWeight="SemiBold"/>
+        <ScrollViewer Grid.Row="1" Grid.Column="1" 
+                      VerticalScrollBarVisibility="Auto"
+                      Margin="0,20,0,0">
+            <StackPanel>
 
-            <Label x:Name="txtLoadedMap"
-                   FontSize="12"
-                   Padding="3,5,0,0"
-                   Content="{Binding CurrentlyLoadedMapName, FallbackValue='GrindCity_Yeah'}"/>
-        </WrapPanel>
-        
+                <GroupBox x:Name="grpIniOptions"
+                  Header="Game Settings"
+                  HorizontalAlignment="Stretch"
+                  VerticalAlignment="Top"
+                  Margin="10,0,10,0">
+
+                    <StackPanel>
+                        <WrapPanel Margin="10,10,0,0" HorizontalAlignment="Right">
+                            <Label Content="Gravity:" Padding="0,0,5,0"/>
+                            <TextBox x:Name="txtGravity"
+                                     Width="150"
+                                     Height="20"
+                                     Text="{Binding GravityText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='-666.000000'}"
+                                     Margin="0,0,10,0"/>
+                        </WrapPanel>
+
+                        <WrapPanel Margin="10,10,0,0" HorizontalAlignment="Right">
+                            <Label Content="Object Placement Count:" Padding="0,0,5,0"/>
+                            <TextBox x:Name="txtObjectCount"
+                                     MaxWidth="150"
+                                     Width="150"
+                                     Height="20"
+                                     Text="{Binding ObjectCountText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='5'}"
+                                     Margin="0,0,10,0"/>
+                        </WrapPanel>
+
+                        <CheckBox Content="Skip Intro Movie"
+                                  HorizontalAlignment="Right"
+                                  IsChecked="{Binding SkipMovieIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='True'}"
+                                  Margin="0,10,10,0"/>
+
+                        <Button x:Name="btnApplySettings"
+                                Content="Apply"
+                                ToolTip="Update the .ini files with new setting values."
+                                Click="BtnApplySettings_Click"
+                                IsEnabled="{Binding InputControlsEnabled}"
+                                HorizontalAlignment="Right"
+                                Margin="10,10,10,5"
+                                Padding="10,0,10,2"/>
+                    </StackPanel>
+
+                </GroupBox>
+
+
+                <WrapPanel HorizontalAlignment="Left"
+                       VerticalAlignment="Bottom"
+                       Margin="5,0,0,5">
+                    <Label Content="Currently Loaded Map:"
+                       FontSize="12"
+                       FontWeight="SemiBold"/>
+
+                    <Label x:Name="txtLoadedMap"
+                       FontSize="12"
+                       Padding="3,5,0,0"
+                       Content="{Binding CurrentlyLoadedMapName, FallbackValue='GrindCity_Yeah'}"/>
+                </WrapPanel>
+
+            </StackPanel>
+        </ScrollViewer>
+
+
 
         <TextBlock x:Name="lblUserMessage"
-                   Grid.Row="2" 
+                   Grid.Row="2" Grid.ColumnSpan="2"
                    HorizontalAlignment="Left"
                    VerticalAlignment="Bottom"
                    Margin="10,0,0,50"
@@ -214,7 +286,7 @@
                    FontSize="14"/>
 
         <Button x:Name="btnLoadMap"
-                Grid.Row="2"
+                Grid.Row="2" Grid.ColumnSpan="2"
                 Content="Load Map"
                 ToolTip="Load selected map from the list"
                 IsEnabled="{Binding InputControlsEnabled}"
@@ -223,10 +295,10 @@
                 FontSize="16"
                 Margin="0,0,125,10"
                 Padding="5"
-                Click="BtnLoadMap_Click"/>
+                Click="BtnLoadMap_Click" Height="33" Width="83"/>
 
         <Button x:Name="btnStartGame"
-                Grid.Row="2"
+                Grid.Row="2" Grid.ColumnSpan="2"
                 Content="Start Session"
                 ToolTip="Load selected map and start the game"
                 IsEnabled="{Binding InputControlsEnabled}"
@@ -235,6 +307,6 @@
                 FontSize="16"
                 Margin="0,0,10,10"
                 Padding="5"
-                Click="BtnStartGame_Click"/>
+                Click="BtnStartGame_Click" Height="33" Width="102"/>
     </Grid>
 </Window>

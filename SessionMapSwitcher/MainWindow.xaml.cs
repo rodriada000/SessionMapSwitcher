@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
+using System.Linq;
 
 namespace SessionMapSwitcher
 {
@@ -20,7 +21,7 @@ namespace SessionMapSwitcher
             InitializeComponent();
 
             ViewModel = new MainWindowViewModel();
-            ReloadAvailableMapsInBackground();
+            ReloadAvailableMapsInBackground(autoSelectLoadedMap: true);
 
             this.DataContext = ViewModel;
         }
@@ -48,6 +49,13 @@ namespace SessionMapSwitcher
                 if (result == System.Windows.Forms.DialogResult.OK)
                 {
                     SetAndValidateSessionPath(folderBrowserDialog.SelectedPath);
+
+                    if (ViewModel.IsSessionPathValid() && String.IsNullOrEmpty(ViewModel.MapPath))
+                    {
+                        ViewModel.SetMapPath($"{ViewModel.SessionPath}\\SessionGame\\Content");
+                        ReloadAvailableMapsInBackground();
+                        BackupMapFilesInBackground();
+                    }
                 }
             }
         }
@@ -78,14 +86,36 @@ namespace SessionMapSwitcher
         {
             if (ViewModel.IsSessionRunning())
             {
-                System.Windows.MessageBox.Show("Session is already running!");
-                return;
+                MessageBoxResult result = System.Windows.MessageBox.Show("Session is already running! Click 'Yes' if you want to restart the game.", "Notice!", MessageBoxButton.YesNo, MessageBoxImage.Information, MessageBoxResult.No);
+
+                if (result == MessageBoxResult.No)
+                {
+                    return;
+                }
+                else
+                {
+                    // kill the process
+                    System.Diagnostics.Process[] procs = System.Diagnostics.Process.GetProcessesByName("SessionGame-Win64-Shipping");
+                    if (procs.Length > 0)
+                    {
+                        procs[0].Kill();
+                    }
+                }
             }
 
             if (ViewModel.IsSessionPathValid() == false)
             {
                 System.Windows.MessageBox.Show("You have selected an incorrect path to Session. Make sure the directory you choose has the folders 'Engine' and 'SessionGame'.", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
+            }
+
+            // validate and set game settings
+            bool didSet = ViewModel.WriteGameSettingsToFile();
+
+            if (didSet == false)
+            {
+                ViewModel.UserMessage = "Cannot start game: " + ViewModel.UserMessage;
+                return; // do not start game with invalid settings
             }
 
             LoadMapInBackgroundAndContinueWith((antecedent) =>
@@ -154,7 +184,7 @@ namespace SessionMapSwitcher
             ReloadAvailableMapsInBackground();
         }
 
-        private void ReloadAvailableMapsInBackground()
+        private void ReloadAvailableMapsInBackground(bool autoSelectLoadedMap = false)
         {
             ViewModel.UserMessage = $"Reloading Available Maps ...";
             ViewModel.InputControlsEnabled = false;
@@ -164,6 +194,16 @@ namespace SessionMapSwitcher
             t.ContinueWith((antecedent) =>
             {
                 ViewModel.InputControlsEnabled = true;
+
+                if (autoSelectLoadedMap)
+                {
+                    MapListItem currentlyLoaded = ViewModel.AvailableMaps.Where(m => m.DisplayName == ViewModel.CurrentlyLoadedMapName).FirstOrDefault();
+
+                    if (currentlyLoaded != null)
+                    {
+                        currentlyLoaded.IsSelected = true;
+                    }
+                }
             });
         }
 
@@ -181,6 +221,13 @@ namespace SessionMapSwitcher
             {
                 SetAndValidateSessionPath(ViewModel.SessionPath); // the viewmodel is 2-way binded so the new path value is already set when enter is pressed so we pass the same value to store in app setttings and validate it
                 ViewModel.UserMessage = "Session Path updated!";
+
+                if (ViewModel.IsSessionPathValid() && String.IsNullOrEmpty(ViewModel.MapPath))
+                {
+                    ViewModel.SetMapPath($"{ViewModel.SessionPath}\\SessionGame\\Content");
+                    ReloadAvailableMapsInBackground();
+                    BackupMapFilesInBackground();
+                }
             }
         }
 
@@ -189,7 +236,12 @@ namespace SessionMapSwitcher
             ViewModel.SetSessionPath(path); // this will save it to app settings
             ViewModel.SetCurrentlyLoadedMap();
 
-            if (ViewModel.IsSessionPathValid() == false)
+            if (ViewModel.IsSessionPathValid())
+            {
+                ViewModel.RefreshGameSettingsFromIniFiles();
+                ViewModel.GetObjectCountFromFile();
+            }
+            else
             {
                 System.Windows.MessageBox.Show("You may have selected an incorrect path to Session. Make sure the directory you choose has the folders 'Engine' and 'SessionGame'.", "Warning!", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
@@ -243,6 +295,40 @@ namespace SessionMapSwitcher
 
             MapListItem selectedMap = lstMaps.SelectedItem as MapListItem;
             ViewModel.OpenFolderToSelectedMap(selectedMap);
+        }
+
+        private void ChkShowInvalidMaps_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.FilteredAvailableMaps.Refresh();
+        }
+
+        private void BtnApplySettings_Click(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel.InputControlsEnabled == false)
+            {
+                return;
+            }
+
+            ViewModel.InputControlsEnabled = false;
+
+            bool didSet = ViewModel.WriteGameSettingsToFile();
+
+            ViewModel.InputControlsEnabled = true;
+
+            if (didSet)
+            {
+                ViewModel.UserMessage = "Game settings updated!";
+
+                if (ViewModel.IsSessionRunning())
+                {
+                    ViewModel.UserMessage += " Restart the game for changes to take effect.";
+                }
+            }
+            else
+            {
+                ViewModel.UserMessage = "Failed to apply settings: " + ViewModel.UserMessage;
+            }
+
         }
     }
 }
