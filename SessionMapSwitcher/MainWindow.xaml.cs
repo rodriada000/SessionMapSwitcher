@@ -102,7 +102,7 @@ namespace SessionMapSwitcher
             }
 
             // validate and set game settings
-            bool didSet = ViewModel.SetGameSettingsForIniFiles();
+            bool didSet = ViewModel.WriteGameSettingsToFile();
 
             if (didSet == false)
             {
@@ -274,7 +274,16 @@ namespace SessionMapSwitcher
 
         private void BtnApplySettings_Click(object sender, RoutedEventArgs e)
         {
-            bool didSet = ViewModel.SetGameSettingsForIniFiles();
+            if (ViewModel.InputControlsEnabled == false)
+            {
+                return;
+            }
+
+            ViewModel.InputControlsEnabled = false;
+
+            bool didSet = ViewModel.WriteGameSettingsToFile();
+
+            ViewModel.InputControlsEnabled = true;
 
             if (didSet)
             {

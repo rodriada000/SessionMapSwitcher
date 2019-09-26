@@ -157,7 +157,7 @@
         <WrapPanel Grid.Row="1"
                    HorizontalAlignment="Left"
                    VerticalAlignment="Top"
-                   Margin="8,8,0,0" Height="26" Width="318">
+                   Margin="8,8,0,0" Height="26">
 
             <Label Content="Available Maps:"
                    FontWeight="SemiBold"/>
@@ -223,52 +223,35 @@
                         <WrapPanel Margin="10,10,0,0" HorizontalAlignment="Right">
                             <Label Content="Gravity:" Padding="0,0,5,0"/>
                             <TextBox x:Name="txtGravity"
-                                 Width="150"
-                                 Height="20"
-                                 Text="{Binding GravityText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='-666.000000'}"
-                                 Margin="0,0,10,0"/>
-                        </WrapPanel>
-
-                        <WrapPanel Margin="10,10,0,0" HorizontalAlignment="Right">
-                            <Label Content="Terminal Velocity:" Padding="0,0,5,0"/>
-                            <TextBox x:Name="txtVelocity"
-                                 Width="150"
-                                 Height="20"
-                                 Text="{Binding VelocityText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='500.000000'}"
-                                 Margin="0,0,10,0"/>
-                        </WrapPanel>
-
-                        <WrapPanel Margin="10,10,0,0" HorizontalAlignment="Right">
-                            <Label Content="Fluid Friction:" Padding="0,0,5,0"/>
-                            <TextBox x:Name="txtFluidFriction"
-                                 Width="150"
-                                 Height="20"
-                                 Text="{Binding FluidFrictionText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='0.320000'}"
-                                 Margin="0,0,10,0"/>
+                                     Width="150"
+                                     Height="20"
+                                     Text="{Binding GravityText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='-666.000000'}"
+                                     Margin="0,0,10,0"/>
                         </WrapPanel>
 
                         <WrapPanel Margin="10,10,0,0" HorizontalAlignment="Right">
                             <Label Content="Object Placement Count:" Padding="0,0,5,0"/>
                             <TextBox x:Name="txtObjectCount"
-                                 MaxWidth="150"
-                                 Width="150"
-                                 Height="20"
-                                 Text="{Binding ObjectCountText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='5'}"
-                                 Margin="0,0,10,0"/>
+                                     MaxWidth="150"
+                                     Width="150"
+                                     Height="20"
+                                     Text="{Binding ObjectCountText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='5'}"
+                                     Margin="0,0,10,0"/>
                         </WrapPanel>
 
                         <CheckBox Content="Skip Intro Movie"
-                              HorizontalAlignment="Right"
-                              IsChecked="{Binding SkipMovieIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                              Margin="0,10,10,0"/>
+                                  HorizontalAlignment="Right"
+                                  IsChecked="{Binding SkipMovieIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='True'}"
+                                  Margin="0,10,10,0"/>
 
                         <Button x:Name="btnApplySettings"
-                            Content="Apply"
-                            ToolTip="Update the .ini files with new setting values."
-                            Click="BtnApplySettings_Click"
-                            HorizontalAlignment="Right"
-                            Margin="10,10,10,5"
-                            Padding="10,0,10,2"/>
+                                Content="Apply"
+                                ToolTip="Update the .ini files with new setting values."
+                                Click="BtnApplySettings_Click"
+                                IsEnabled="{Binding InputControlsEnabled}"
+                                HorizontalAlignment="Right"
+                                Margin="10,10,10,5"
+                                Padding="10,0,10,2"/>
                     </StackPanel>
 
                 </GroupBox>
