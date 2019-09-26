@@ -8,7 +8,7 @@ class MapListItem : ViewModelBase
     private string _validationHint;
     private string _tooltip;
     private bool _isEnabled = true;
-    private bool _isSelected = true;
+    private bool _isSelected = false;
     private bool _isValid = true;
 
 

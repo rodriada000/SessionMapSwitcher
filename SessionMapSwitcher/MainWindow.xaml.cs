@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
+using System.Linq;
 
 namespace SessionMapSwitcher
 {
@@ -20,7 +21,7 @@ namespace SessionMapSwitcher
             InitializeComponent();
 
             ViewModel = new MainWindowViewModel();
-            ReloadAvailableMapsInBackground();
+            ReloadAvailableMapsInBackground(autoSelectLoadedMap: true);
 
             this.DataContext = ViewModel;
         }
@@ -176,7 +177,7 @@ namespace SessionMapSwitcher
             ReloadAvailableMapsInBackground();
         }
 
-        private void ReloadAvailableMapsInBackground()
+        private void ReloadAvailableMapsInBackground(bool autoSelectLoadedMap = false)
         {
             ViewModel.UserMessage = $"Reloading Available Maps ...";
             ViewModel.InputControlsEnabled = false;
@@ -186,6 +187,16 @@ namespace SessionMapSwitcher
             t.ContinueWith((antecedent) =>
             {
                 ViewModel.InputControlsEnabled = true;
+
+                if (autoSelectLoadedMap)
+                {
+                    MapListItem currentlyLoaded = ViewModel.AvailableMaps.Where(m => m.DisplayName == ViewModel.CurrentlyLoadedMapName).FirstOrDefault();
+
+                    if (currentlyLoaded != null)
+                    {
+                        currentlyLoaded.IsSelected = true;
+                    }
+                }
             });
         }
 
