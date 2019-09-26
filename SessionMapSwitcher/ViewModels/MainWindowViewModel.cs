@@ -26,7 +26,11 @@ namespace SessionMapSwitcher.ViewModels
         private MapListItem _defaultSessionMap;
         private bool _inputControlsEnabled;
         private bool _showInvalidMaps;
-
+        private string _gravityText;
+        private string _velocityText;
+        private string _fluidFrictionText;
+        private string _objectCountText;
+        private bool _skipMovieIsChecked;
         private const string _backupFolderName = "Original_Session_Map";
 
         public string SessionPath
@@ -138,6 +142,14 @@ namespace SessionMapSwitcher.ViewModels
             }
         }
 
+        internal string DefaultGameIniFilePath
+        {
+            get
+            {
+                return $"{PathToConfigFolder}\\DefaultGame.ini";
+            }
+        }
+
         /// <summary>
         /// Returns absolute path to the NYC folder in Session game directory. Requires <see cref="SessionPath"/>.
         /// </summary>
@@ -200,7 +212,58 @@ namespace SessionMapSwitcher.ViewModels
 
         internal MapListItem FirstLoadedMap { get => _firstLoadedMap; set => _firstLoadedMap = value; }
 
+        public string GravityText
+        {
+            get { return _gravityText; }
+            set
+            {
+                _gravityText = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public string VelocityText
+        {
+            get { return _velocityText; }
+            set
+            {
+                _velocityText = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public string FluidFrictionText
+        {
+            get { return _fluidFrictionText; }
+            set
+            {
+                _fluidFrictionText = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public string ObjectCountText
+        {
+            get { return _objectCountText; }
+            set
+            {
+                _objectCountText = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public bool SkipMovieIsChecked
+        {
+            get { return _skipMovieIsChecked; }
+            set
+            {
+                _skipMovieIsChecked = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         #endregion
+
 
         public MainWindowViewModel()
         {
@@ -215,6 +278,8 @@ namespace SessionMapSwitcher.ViewModels
                 FullPath = PathToOriginalSessionMapFiles,
                 DisplayName = "Session Default Map - Brooklyn Banks"
             };
+
+            RefreshGameSettingsFromIniFiles();
 
             SetCurrentlyLoadedMap();
         }
@@ -680,6 +745,83 @@ namespace SessionMapSwitcher.ViewModels
             {
                 UserMessage = $"Cannot open folder: {ex.Message}";
             }
+        }
+
+        public void RefreshGameSettingsFromIniFiles()
+        {
+            if (IsSessionPathValid() == false)
+            {
+                return;
+            }
+
+            IniFile engineFile = new IniFile(DefaultEngineIniFilePath);
+            GravityText = engineFile.ReadString("/Script/Engine.PhysicsSettings", "DefaultGravityZ");
+            VelocityText = engineFile.ReadString("/Script/Engine.PhysicsSettings", "DefaultTerminalVelocity");
+            FluidFrictionText = engineFile.ReadString("/Script/Engine.PhysicsSettings", "DefaultFluidFriction");
+
+            IniFile gameFile = new IniFile(DefaultGameIniFilePath);
+            SkipMovieIsChecked = gameFile.KeyExists("/Script/MoviePlayer.MoviePlayerSettings", "+StartupMovies");
+        }
+
+        /// <summary>
+        /// validate and update the settings in the .ini files for the game.
+        /// </summary>
+        /// <returns> true if settings updated; false otherwise. </returns>
+        public bool SetGameSettingsForIniFiles()
+        {
+            if (IsSessionPathValid() == false)
+            {
+                return false;
+            }
+
+            if (float.TryParse(GravityText, out float parsedFloat) == false)
+            {
+                UserMessage = "Invalid Gravity setting.";
+                return false;
+            }
+
+            if (float.TryParse(VelocityText, out parsedFloat) == false)
+            {
+                UserMessage = "Invalid Velocity setting.";
+                return false;
+            }
+
+            if (float.TryParse(FluidFrictionText, out parsedFloat) == false)
+            {
+                UserMessage = "Invalid Friction setting.";
+                return false;
+            }
+
+            IniFile engineFile = new IniFile(DefaultEngineIniFilePath);
+            engineFile.WriteString("/Script/Engine.PhysicsSettings", "DefaultGravityZ", GravityText);
+            engineFile.WriteString("/Script/Engine.PhysicsSettings", "DefaultTerminalVelocity", VelocityText);
+            engineFile.WriteString("/Script/Engine.PhysicsSettings", "DefaultFluidFriction", FluidFrictionText);
+
+            IniFile gameFile = new IniFile(DefaultGameIniFilePath);
+
+            if (SkipMovieIsChecked)
+            {
+                // delete the two StartupMovies from .ini
+                if (gameFile.KeyExists("/Script/MoviePlayer.MoviePlayerSettings", "+StartupMovies"))
+                {
+                    gameFile.DeleteKey("/Script/MoviePlayer.MoviePlayerSettings", "+StartupMovies");
+                }
+                if (gameFile.KeyExists("/Script/MoviePlayer.MoviePlayerSettings", "+StartupMovies"))
+                {
+                    gameFile.DeleteKey("/Script/MoviePlayer.MoviePlayerSettings", "+StartupMovies");
+                }
+            }
+            else
+            {
+                if (gameFile.KeyExists("/Script/MoviePlayer.MoviePlayerSettings", "+StartupMovies") == false)
+                {
+                    gameFile.WriteString("/Script/MoviePlayer.MoviePlayerSettings", "+StartupMovies", "UE4_Moving_Logo_720\n+StartupMovies=IntroLOGO_720_30");
+                }
+            }
+
+            gameFile.WriteString("/Script/UnrealEd.ProjectPackagingSettings", "bSkipMovies", SkipMovieIsChecked.ToString());
+
+            return true;
         }
     }
 

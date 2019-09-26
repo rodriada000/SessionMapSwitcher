@@ -78,14 +78,36 @@ namespace SessionMapSwitcher
         {
             if (ViewModel.IsSessionRunning())
             {
-                System.Windows.MessageBox.Show("Session is already running!");
-                return;
+                MessageBoxResult result = System.Windows.MessageBox.Show("Session is already running! Click 'Yes' if you want to restart the game.", "Notice!", MessageBoxButton.YesNo, MessageBoxImage.Information, MessageBoxResult.No);
+
+                if (result == MessageBoxResult.No)
+                {
+                    return;
+                }
+                else
+                {
+                    // kill the process
+                    System.Diagnostics.Process[] procs = System.Diagnostics.Process.GetProcessesByName("SessionGame-Win64-Shipping");
+                    if (procs.Length > 0)
+                    {
+                        procs[0].Kill();
+                    }
+                }
             }
 
             if (ViewModel.IsSessionPathValid() == false)
             {
                 System.Windows.MessageBox.Show("You have selected an incorrect path to Session. Make sure the directory you choose has the folders 'Engine' and 'SessionGame'.", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
+            }
+
+            // validate and set game settings
+            bool didSet = ViewModel.SetGameSettingsForIniFiles();
+
+            if (didSet == false)
+            {
+                ViewModel.UserMessage = "Cannot start game: " + ViewModel.UserMessage;
+                return; // do not start game with invalid settings
             }
 
             LoadMapInBackgroundAndContinueWith((antecedent) =>
@@ -248,6 +270,21 @@ namespace SessionMapSwitcher
         private void ChkShowInvalidMaps_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.FilteredAvailableMaps.Refresh();
+        }
+
+        private void BtnApplySettings_Click(object sender, RoutedEventArgs e)
+        {
+            bool didSet = ViewModel.SetGameSettingsForIniFiles();
+
+            if (didSet)
+            {
+                ViewModel.UserMessage = "Game settings updated!";
+            }
+            else
+            {
+                ViewModel.UserMessage = "Failed to apply settings: " + ViewModel.UserMessage;
+            }
+
         }
     }
 }
