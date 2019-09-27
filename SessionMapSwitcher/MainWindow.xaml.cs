@@ -6,6 +6,8 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Linq;
+using System.Diagnostics;
+using System.Reflection;
 
 namespace SessionMapSwitcher
 {
@@ -24,21 +26,7 @@ namespace SessionMapSwitcher
             ReloadAvailableMapsInBackground(autoSelectLoadedMap: true);
 
             this.DataContext = ViewModel;
-        }
-
-        private void BtnBrowseMapPath_Click(object sender, RoutedEventArgs e)
-        {
-            using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
-            {
-                DialogResult result = folderBrowserDialog.ShowDialog();
-                if (result == System.Windows.Forms.DialogResult.OK)
-                {
-                    ViewModel.SetMapPath(folderBrowserDialog.SelectedPath);
-                    ReloadAvailableMapsInBackground();
-
-                    BackupMapFilesInBackground();
-                }
-            }
+            this.Title = $"Session Map Switcher - v{typeof(SessionMapSwitcher.App).Assembly.GetName().Version}";
         }
 
         private void BtnBrowseSessionPath_Click(object sender, RoutedEventArgs e)
@@ -49,13 +37,6 @@ namespace SessionMapSwitcher
                 if (result == System.Windows.Forms.DialogResult.OK)
                 {
                     SetAndValidateSessionPath(folderBrowserDialog.SelectedPath);
-
-                    if (ViewModel.IsSessionPathValid() && String.IsNullOrEmpty(ViewModel.MapPath))
-                    {
-                        ViewModel.SetMapPath($"{ViewModel.SessionPath}\\SessionGame\\Content");
-                        ReloadAvailableMapsInBackground();
-                        BackupMapFilesInBackground();
-                    }
                 }
             }
         }
@@ -141,15 +122,6 @@ namespace SessionMapSwitcher
 
         private void LoadMapInBackgroundAndContinueWith(Action<Task> continuationTask)
         {
-            if (lstMaps.SelectedItem == null)
-            {
-                System.Windows.MessageBox.Show("Select a map to load first!",
-                                                "Notice!",
-                                                MessageBoxButton.OK,
-                                                MessageBoxImage.Information);
-                return;
-            }
-
             if (ViewModel.IsOriginalMapFilesBackedUp() == false)
             {
                 System.Windows.MessageBox.Show("The original Session game map files have not been backed up yet. Click OK to backup the files then click 'Load Map' again",
@@ -159,6 +131,16 @@ namespace SessionMapSwitcher
                 BackupMapFilesInBackground();
                 return;
             }
+
+            if (lstMaps.SelectedItem == null)
+            {
+                System.Windows.MessageBox.Show("Select a map to load first!",
+                                                "Notice!",
+                                                MessageBoxButton.OK,
+                                                MessageBoxImage.Information);
+                return;
+            }
+
 
             MapListItem selectedItem = lstMaps.SelectedItem as MapListItem;
 
@@ -221,13 +203,6 @@ namespace SessionMapSwitcher
             {
                 SetAndValidateSessionPath(ViewModel.SessionPath); // the viewmodel is 2-way binded so the new path value is already set when enter is pressed so we pass the same value to store in app setttings and validate it
                 ViewModel.UserMessage = "Session Path updated!";
-
-                if (ViewModel.IsSessionPathValid() && String.IsNullOrEmpty(ViewModel.MapPath))
-                {
-                    ViewModel.SetMapPath($"{ViewModel.SessionPath}\\SessionGame\\Content");
-                    ReloadAvailableMapsInBackground();
-                    BackupMapFilesInBackground();
-                }
             }
         }
 
@@ -240,38 +215,12 @@ namespace SessionMapSwitcher
             {
                 ViewModel.RefreshGameSettingsFromIniFiles();
                 ViewModel.GetObjectCountFromFile();
+                ReloadAvailableMapsInBackground();
+                BackupMapFilesInBackground();
             }
             else
             {
                 System.Windows.MessageBox.Show("You may have selected an incorrect path to Session. Make sure the directory you choose has the folders 'Engine' and 'SessionGame'.", "Warning!", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
-        }
-
-        private void TxtMapPath_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter)
-            {
-                ViewModel.SetMapPath(ViewModel.MapPath);
-
-                ViewModel.UserMessage = $"Reloading Available Maps ...";
-                ViewModel.InputControlsEnabled = false;
-
-                bool didReload = false;
-
-                Task t = Task.Factory.StartNew(() =>
-                {
-                    didReload = ViewModel.LoadAvailableMaps();
-                }, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.FromCurrentSynchronizationContext());
-
-                t.ContinueWith((antecedent) =>
-                {
-                    ViewModel.InputControlsEnabled = true;
-                    if (didReload)
-                    {
-                        ViewModel.UserMessage = "Map Path updated! The original game files may have to be backed up to this path before starting the game.";
-                    }
-                });
-
             }
         }
 
@@ -282,7 +231,7 @@ namespace SessionMapSwitcher
 
         private void MenuOpenMapsFolder_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.OpenFolderToAvailableMaps();
+            ViewModel.OpenFolderToSessionContent();
         }
 
         private void MenuOpenSelectedMapFolder_Click(object sender, RoutedEventArgs e)
@@ -324,11 +273,16 @@ namespace SessionMapSwitcher
                     ViewModel.UserMessage += " Restart the game for changes to take effect.";
                 }
             }
-            else
-            {
-                ViewModel.UserMessage = "Failed to apply settings: " + ViewModel.UserMessage;
-            }
+        }
 
+        private void MenuOpenReadme_Click(object sender, RoutedEventArgs e)
+        {
+            ProcessStartInfo info = new ProcessStartInfo()
+            {
+                FileName = "https://github.com/rodriada000/SessionMapSwitcher/blob/master/README.md"
+            };
+
+            Process.Start(info);
         }
     }
 }

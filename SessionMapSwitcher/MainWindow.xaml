@@ -26,7 +26,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ListBoxItem">
-                        <Border x:Name="border" IsEnabled="{Binding IsEnabled}" 
+                        <Border x:Name="border" IsEnabled="{Binding IsEnabled}" Background="{TemplateBinding Background}"
                                 ToolTipService.ShowOnDisabled="True" ToolTip="{Binding Tooltip}">
                             <WrapPanel>
                                 <TextBlock x:Name="mapText" Text="{Binding DisplayName, FallbackValue='Test Map Name'}"
@@ -53,7 +53,7 @@
                                 <Setter TargetName="validationText" Property="Visibility" Value="Visible"/>
                             </DataTrigger>
 
-                            <Trigger Property="IsMouseOver" Value="True">
+                            <Trigger SourceName="border" Property="IsMouseOver" Value="True">
                                 <Setter TargetName="border" Property="Background" Value="#008080"/>
                                 <Setter TargetName="mapText" Property="Foreground" Value="White"/>
                                 <Setter TargetName="validationText" Property="Foreground" Value="White"/>
@@ -87,8 +87,9 @@
 
         <ContextMenu x:Key="mainContextMenu">
             <MenuItem x:Name="menuOpenSessionFolder" Header="Open Session Folder ..."  Click="MenuOpenSessionFolder_Click"/>
-            <MenuItem x:Name="menuOpenMapsFolder" Header="Open Maps Folder ..." Click="MenuOpenMapsFolder_Click"/>
+            <MenuItem x:Name="menuOpenMapsFolder" Header="Open Content Folder ..." Click="MenuOpenMapsFolder_Click"/>
             <MenuItem x:Name="menuOpenSelectedMapFolder" Header="Open Selected Map Folder ..." Click="MenuOpenSelectedMapFolder_Click"/>
+            <MenuItem x:Name="menuOpenReadme" Header="View Help ..." Click="MenuOpenReadme_Click"/>
         </ContextMenu>
     </Window.Resources>
 
@@ -129,31 +130,8 @@
                 Click="BtnBrowseSessionPath_Click"/>
 
 
-        <Label Content="Path To Maps:"
-               FontWeight="SemiBold"
-               VerticalAlignment="Top" HorizontalAlignment="Left" Margin="15,42,0,0" Height="26" Width="86"/>
 
-        <TextBox x:Name="txtMapPath"
-                 Grid.Column="0" Grid.ColumnSpan="2"
-                 VerticalAlignment="Top" HorizontalAlignment="Stretch"
-                 Margin="100,42,50,0"
-                 Text="{Binding MapPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                 IsEnabled="{Binding InputControlsEnabled}"
-                 ContextMenu="{StaticResource mainContextMenu}"
-                 KeyUp="TxtMapPath_KeyUp"
-                 Height="27"/>
-
-        <Button Name="btnBrowseMapPath"
-                Grid.Column="1"
-                Content="..."
-                ToolTip="Browse for custom maps folder"
-                IsEnabled="{Binding InputControlsEnabled}"
-                VerticalAlignment="Top" HorizontalAlignment="Right" 
-                Margin="0,42,18,0" 
-                Height="27" Width="27"
-                Click="BtnBrowseMapPath_Click"/>
-
-
+        
         <WrapPanel Grid.Row="1"
                    HorizontalAlignment="Left"
                    VerticalAlignment="Top"
@@ -208,6 +186,7 @@
                  ContextMenu="{StaticResource mainContextMenu}">
         </ListBox>
 
+        
         <ScrollViewer Grid.Row="1" Grid.Column="1" 
                       VerticalScrollBarVisibility="Auto"
                       Margin="0,20,0,0">
@@ -223,6 +202,7 @@
                         <WrapPanel Margin="10,10,0,0" HorizontalAlignment="Right">
                             <Label Content="Gravity:" Padding="0,0,5,0"/>
                             <TextBox x:Name="txtGravity"
+                                     ToolTip="Default value is -980"
                                      Width="150"
                                      Height="20"
                                      Text="{Binding GravityText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='-666.000000'}"
@@ -300,7 +280,7 @@
         <Button x:Name="btnStartGame"
                 Grid.Row="2" Grid.ColumnSpan="2"
                 Content="Start Session"
-                ToolTip="Load selected map and start the game"
+                ToolTip="Load selected map and start the game. Restart game if already running."
                 IsEnabled="{Binding InputControlsEnabled}"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
