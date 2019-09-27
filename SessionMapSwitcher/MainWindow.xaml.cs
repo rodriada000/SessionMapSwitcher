@@ -90,6 +90,46 @@ namespace SessionMapSwitcher
                 return;
             }
 
+            if (ViewModel.IsSessionUnpacked() == false)
+            {
+                MessageBoxResult result = System.Windows.MessageBox.Show("It seems the Session game has not been unpacked. This is required before using Map Switcher.\n\nWould you like to open the README for steps on how to unpack?", 
+                                                "Notice!", 
+                                                MessageBoxButton.YesNo, 
+                                                MessageBoxImage.Warning, 
+                                                MessageBoxResult.Yes);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    OpenReadMeInBrowser();
+                }
+
+                return;
+            }
+
+            if (ViewModel.IsSessionPakFileRenamed() == false)
+            {
+                MessageBoxResult result = System.Windows.MessageBox.Show("It seems the .pak file has not been renamed yet. This is required before using custom maps and the Map Switcher.\n\nClick 'Yes' to auto rename the .pak file.",
+                                                "Notice!",
+                                                MessageBoxButton.YesNo,
+                                                MessageBoxImage.Information,
+                                                MessageBoxResult.Yes);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    bool didRename = ViewModel.RenamePakFile();
+
+                    if (didRename == false)
+                    {
+                        System.Windows.MessageBox.Show("The .pak file could not be renamed. Make sure the game is unpacked correctly and try again.", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+                }
+                else
+                {
+                    return;
+                }
+            }
+
             // validate and set game settings
             bool didSet = ViewModel.WriteGameSettingsToFile();
 
@@ -276,6 +316,11 @@ namespace SessionMapSwitcher
         }
 
         private void MenuOpenReadme_Click(object sender, RoutedEventArgs e)
+        {
+            OpenReadMeInBrowser();
+        }
+
+        private static void OpenReadMeInBrowser()
         {
             ProcessStartInfo info = new ProcessStartInfo()
             {

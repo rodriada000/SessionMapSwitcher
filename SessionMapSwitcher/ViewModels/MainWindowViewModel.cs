@@ -30,6 +30,19 @@ namespace SessionMapSwitcher.ViewModels
         private bool _skipMovieIsChecked;
         private const string _backupFolderName = "Original_Session_Map";
 
+        public String SessionPathTextInput
+        {
+            get
+            {
+                return _sessionPath;
+            }
+            set
+            {
+                _sessionPath = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         public string SessionPath
         {
             get
@@ -39,11 +52,6 @@ namespace SessionMapSwitcher.ViewModels
                     _sessionPath = _sessionPath.TrimEnd('\\');
                 }
                 return _sessionPath;
-            }
-            set
-            {
-                _sessionPath = value;
-                NotifyPropertyChanged();
             }
         }
         public string SessionContentPath
@@ -122,6 +130,16 @@ namespace SessionMapSwitcher.ViewModels
                 return $"{SessionPath}\\SessionGame\\Config";
             }
         }
+
+        internal string PathToPakFile
+        {
+            get
+            {
+                return $"{SessionContentPath}\\Paks\\SessionGame-WindowsNoEditor.pak";
+            }
+        }
+
+
         internal string DefaultEngineIniFilePath
         {
             get
@@ -155,6 +173,7 @@ namespace SessionMapSwitcher.ViewModels
                 return $"{PathToNYCFolder}\\Brooklyn";
             }
         }
+
         internal string PathToOriginalSessionMapFiles
         {
             get
@@ -235,7 +254,7 @@ namespace SessionMapSwitcher.ViewModels
 
         public MainWindowViewModel()
         {
-            SessionPath = AppSettingsUtil.GetAppSetting("PathToSession");
+            SessionPathTextInput = AppSettingsUtil.GetAppSetting("PathToSession");
             ShowInvalidMapsIsChecked = AppSettingsUtil.GetAppSetting("ShowInvalidMaps").Equals("true", StringComparison.OrdinalIgnoreCase);
             UserMessage = "";
             InputControlsEnabled = true;
@@ -260,7 +279,7 @@ namespace SessionMapSwitcher.ViewModels
         /// </summary>
         public void SetSessionPath(string pathToSession)
         {
-            SessionPath = pathToSession;
+            SessionPathTextInput = pathToSession;
             AppSettingsUtil.AddOrUpdateAppSettings("PathToSession", pathToSession);
         }
 
@@ -287,6 +306,60 @@ namespace SessionMapSwitcher.ViewModels
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Determines if Session is properly unpacked by checking for specific directories
+        /// </summary>
+        internal bool IsSessionUnpacked()
+        {
+            if (Directory.Exists(PathToConfigFolder) == false)
+            {
+                return false;
+            }
+
+            List<string> expectedDirectories = new List<string>() { "Animation", "Art", "Character", "Customization", "ObjectPlacement", "MainHUB", "Skateboard", "VideoEditor" };
+            foreach (string expectedDir in expectedDirectories)
+            {
+                if (Directory.Exists($"{SessionContentPath}\\{expectedDir}") == false)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Determines if the file extension for SessionGame-WindowsNoEditor.pak was changed to .bak
+        /// </summary>
+        internal bool IsSessionPakFileRenamed()
+        {
+            return (File.Exists(PathToPakFile) == false);
+        }
+
+        /// <summary>
+        /// Renames the file SessionGame-WindowsNoEditor.pak to SessionGame-WindowsNoEditor.bak
+        /// </summary>
+        /// <returns> true if file was renamed; false otherwise. </returns>
+        internal bool RenamePakFile()
+        {
+            if (IsSessionPakFileRenamed())
+            {
+                return true; // already renamed nothing to do
+            }
+
+            try
+            {
+                File.Move(PathToPakFile, PathToPakFile.Replace(".pak", ".bak"));
+                System.Threading.Thread.Sleep(750); // wait a second after renaming the file ensure it is updated (due to race conditions where the next process starts too soon before realzing the file name changed) 
+                return true;
+            }
+            catch (Exception e)
+            {
+                UserMessage = $"Failed to rename .pak file: {e.Message}";
+                return false;
+            }
         }
 
         public bool LoadAvailableMaps()
