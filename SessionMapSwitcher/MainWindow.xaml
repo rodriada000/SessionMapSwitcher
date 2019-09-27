@@ -111,7 +111,7 @@
         <TextBox x:Name="txtSessionPath" 
                  Grid.Column="0" Grid.ColumnSpan="2"
                  VerticalAlignment="Top" HorizontalAlignment="Stretch"
-                 Text="{Binding SessionPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 Text="{Binding SessionPathTextInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  IsEnabled="{Binding InputControlsEnabled}"
                  KeyUp="TxtSessionPath_KeyUp"
                  Height="27"
