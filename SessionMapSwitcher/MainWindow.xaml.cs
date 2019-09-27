@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Linq;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace SessionMapSwitcher
 {
@@ -25,6 +26,7 @@ namespace SessionMapSwitcher
             ReloadAvailableMapsInBackground(autoSelectLoadedMap: true);
 
             this.DataContext = ViewModel;
+            this.Title = $"Session Map Switcher - v{typeof(SessionMapSwitcher.App).Assembly.GetName().Version}";
         }
 
         private void BtnBrowseSessionPath_Click(object sender, RoutedEventArgs e)
