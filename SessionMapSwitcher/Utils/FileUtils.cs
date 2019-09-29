@@ -11,6 +11,16 @@ namespace SessionMapSwitcher.Utils
     {
         internal static void CopyDirectoryRecursively(string sourceDirName, string destDirName, bool copySubDirs)
         {
+            CopyOrMoveDirectoryRecursively(sourceDirName, destDirName, copySubDirs, moveFiles: false);
+        }
+
+        internal static void MoveDirectoryRecursively(string sourceDirName, string destDirName, bool copySubDirs)
+        {
+            CopyOrMoveDirectoryRecursively(sourceDirName, destDirName, copySubDirs, moveFiles: true);
+        }
+
+        private static void CopyOrMoveDirectoryRecursively(string sourceDirName, string destDirName, bool includSubeFolders, bool moveFiles)
+        {
             // reference: https://docs.microsoft.com/en-us/dotnet/standard/io/how-to-copy-directories
 
             // Get the subdirectories for the specified directory.
@@ -37,19 +47,26 @@ namespace SessionMapSwitcher.Utils
 
                 if (!File.Exists(temppath))
                 {
-                    file.CopyTo(temppath, true);
+                    if (moveFiles)
+                    {
+                        file.MoveTo(temppath);
+                    }
+                    else
+                    {
+                        file.CopyTo(temppath, true);
+                    }
                 }
             }
 
             // If copying subdirectories, copy them and their contents to new location.
-            if (copySubDirs)
+            if (includSubeFolders)
             {
                 DirectoryInfo[] dirs = dir.GetDirectories();
 
                 foreach (DirectoryInfo subdir in dirs)
                 {
                     string temppath = Path.Combine(destDirName, subdir.Name);
-                    CopyDirectoryRecursively(subdir.FullName, temppath, copySubDirs);
+                    CopyDirectoryRecursively(subdir.FullName, temppath, includSubeFolders);
                 }
             }
         }
