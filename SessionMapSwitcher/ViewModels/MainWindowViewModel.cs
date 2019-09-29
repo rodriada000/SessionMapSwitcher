@@ -473,20 +473,20 @@ namespace SessionMapSwitcher.ViewModels
                 // create folder if it doesn't exist
                 Directory.CreateDirectory(PathToOriginalSessionMapFiles);
 
-                // copy top level NYC map files
+                // copy top level NYC01_Persistent map files
                 foreach (string fullPathToFile in Directory.GetFiles(PathToNYCFolder))
                 {
-                    string fileName = fullPathToFile.Replace(PathToNYCFolder, "");
-                    string destFilePath = PathToOriginalSessionMapFiles + fileName;
-
-                    if (File.Exists(destFilePath) == false)
+                    if (fullPathToFile.Contains("NYC01_Persistent"))
                     {
-                        File.Copy(fullPathToFile, destFilePath, overwrite: true);
+                        string fileName = fullPathToFile.Replace(PathToNYCFolder, "");
+                        string destFilePath = PathToOriginalSessionMapFiles + fileName;
+
+                        if (File.Exists(destFilePath) == false)
+                        {
+                            File.Copy(fullPathToFile, destFilePath, overwrite: true);
+                        }
                     }
                 }
-
-                // copy all files in 'Brooklyn\Levels'
-                FileUtils.CopyDirectoryRecursively($"{PathToBrooklynFolder}\\Levels", $"{PathToOriginalSessionMapFiles}\\Brooklyn\\Levels", true);
             }
             catch (Exception e)
             {
@@ -507,18 +507,13 @@ namespace SessionMapSwitcher.ViewModels
             }
 
             // check that a subset of the NYC files exist
-            List<string> expectedFileNames = new List<string>() { "NYC01_Background.uexp", "NYC01_Persistent.uexp", "NYC01_PostProcess.uexp", "NYC01_SFX.uexp", "NYC01_Sky.uexp", "NYC01_Tutorials.uexp", "NYC01_VFX_BuiltData.uasset" };
+            List<string> expectedFileNames = new List<string>() { "NYC01_Persistent.umap", "NYC01_Persistent.uexp" };
             foreach (string fileName in expectedFileNames)
             {
                 if (File.Exists($"{PathToOriginalSessionMapFiles}\\{fileName}") == false)
                 {
                     return false;
                 }
-            }
-
-            if (Directory.Exists($"{PathToOriginalSessionMapFiles}\\Brooklyn\\Levels") == false)
-            {
-                return false;
             }
 
             return true;
@@ -531,20 +526,11 @@ namespace SessionMapSwitcher.ViewModels
                 return false;
             }
 
-            // check that a subset of the NYC files exist
-            List<string> expectedFileNames = new List<string>() { "NYC01_Background.uexp", "NYC01_Persistent.uexp", "NYC01_PostProcess.uexp", "NYC01_SFX.uexp", "NYC01_Sky.uexp", "NYC01_Tutorials.uexp", "NYC01_VFX_BuiltData.uasset" };
+            // check that NYC files exist
+            List<string> expectedFileNames = new List<string>() { "NYC01_Persistent.umap", "NYC01_Persistent.uexp" };
             foreach (string fileName in expectedFileNames)
             {
                 if (File.Exists($"{PathToNYCFolder}\\{fileName}") == false)
-                {
-                    return false;
-                }
-            }
-
-            List<string> expectedDirNames = new List<string>() { "Background", "Decals", "Levels", "Props", "Tileables" };
-            foreach (string dirName in expectedDirNames)
-            {
-                if (Directory.Exists($"{PathToNYCFolder}\\Brooklyn\\{dirName}") == false)
                 {
                     return false;
                 }
@@ -560,24 +546,11 @@ namespace SessionMapSwitcher.ViewModels
             return allProcs.Length > 0;
         }
 
-        private bool CopyMapFilesToGame(MapListItem map)
+        private bool CopyMapFilesToNYCFolder(MapListItem map)
         {
             if (IsSessionPathValid() == false)
             {
                 return false;
-            }
-
-            string pathToLevelsFolder = PathToBrooklynFolder + "\\Levels";
-
-            Directory.CreateDirectory(pathToLevelsFolder);
-            System.Threading.Thread.Sleep(500); // sleep for 1 second to avoid race condition where the newly created Directory cannot be copied to
-
-            if (Directory.Exists(pathToLevelsFolder) == false)
-            {
-                // check again due to race condition that the OS has created the directory
-                // ... wait a second then try creating again.
-                System.Threading.Thread.Sleep(500);
-                Directory.CreateDirectory(pathToLevelsFolder);
             }
 
             // copy all files related to map to game directory
@@ -646,10 +619,10 @@ namespace SessionMapSwitcher.ViewModels
 
             try
             {
-                // delete original session map files + custom maps from game before loading new map
+                // delete session map files / custom maps from game  named NYC_Persistent
                 DeleteAllMapFilesFromGame();
 
-                CopyMapFilesToGame(map);
+                CopyMapFilesToNYCFolder(map);
 
                 // update the ini file with the new map path
                 string selectedMapPath = "/Game/Art/Env/NYC/" + map.DisplayName;
@@ -682,7 +655,6 @@ namespace SessionMapSwitcher.ViewModels
                     }
                 }
 
-                FileUtils.CopyDirectoryRecursively(PathToOriginalSessionMapFiles + "\\Brooklyn", PathToBrooklynFolder, true);
 
                 UpdateGameDefaultMapIniSetting("/Game/Tutorial/Intro/MAP_EntryPoint.MAP_EntryPoint");
 
@@ -735,12 +707,11 @@ namespace SessionMapSwitcher.ViewModels
 
             foreach (string fileName in Directory.GetFiles(PathToNYCFolder))
             {
-                File.Delete(fileName);
-            }
-
-            if (Directory.Exists($"{PathToBrooklynFolder}\\Levels"))
-            {
-                Directory.Delete($"{PathToBrooklynFolder}\\Levels", true);
+                // only delete NYC01_Persistent map files
+                if (fileName.Contains("NYC01_Persistent"))
+                {
+                    File.Delete(fileName);
+                }
             }
         }
 
@@ -823,7 +794,7 @@ namespace SessionMapSwitcher.ViewModels
                 IniFile gameFile = new IniFile(DefaultGameIniFilePath);
                 SkipMovieIsChecked = gameFile.ReadBoolean("/Script/UnrealEd.ProjectPackagingSettings", "bSkipMovies");
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 UserMessage = $"Failed to get game settings: {e.Message}";
                 GravityText = "-980";
@@ -840,6 +811,13 @@ namespace SessionMapSwitcher.ViewModels
             if (IsSessionPathValid() == false)
             {
                 return false;
+            }
+
+            // remove trailing 0's from float value for it to parse correctly
+            int indexOfDot = GravityText.IndexOf(".");
+            if (indexOfDot >= 0)
+            {
+                GravityText = GravityText.Substring(0, indexOfDot);
             }
 
             if (float.TryParse(GravityText, out float parsedFloat) == false)
