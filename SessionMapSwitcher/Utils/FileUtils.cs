@@ -66,7 +66,7 @@ namespace SessionMapSwitcher.Utils
                 foreach (DirectoryInfo subdir in dirs)
                 {
                     string temppath = Path.Combine(destDirName, subdir.Name);
-                    CopyDirectoryRecursively(subdir.FullName, temppath, includSubeFolders);
+                    CopyOrMoveDirectoryRecursively(subdir.FullName, temppath, includSubeFolders, moveFiles);
                 }
             }
         }
