@@ -57,6 +57,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -78,6 +79,7 @@
     </ApplicationDefinition>
     <Compile Include="Utils\AppSettingsUtil.cs" />
     <Compile Include="Utils\FileUtils.cs" />
+    <Compile Include="Utils\UnpackUtils.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\MapListItem.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />

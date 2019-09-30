@@ -275,7 +275,7 @@
                 FontSize="16"
                 Margin="0,0,125,10"
                 Padding="5"
-                Click="BtnLoadMap_Click" Height="33" Width="83"/>
+                Click="BtnLoadMap_Click" Height="33"/>
 
         <Button x:Name="btnStartGame"
                 Grid.Row="2" Grid.ColumnSpan="2"
