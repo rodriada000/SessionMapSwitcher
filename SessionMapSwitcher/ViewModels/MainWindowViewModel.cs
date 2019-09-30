@@ -21,6 +21,7 @@ namespace SessionMapSwitcher.ViewModels
         private string _userMessage;
         private string _currentlyLoadedMapName;
         private ObservableCollection<MapListItem> _availableMaps;
+        private object collectionLock = new object();
         private MapListItem _firstLoadedMap;
         private MapListItem _defaultSessionMap;
         private bool _inputControlsEnabled;
@@ -28,6 +29,7 @@ namespace SessionMapSwitcher.ViewModels
         private string _gravityText;
         private string _objectCountText;
         private bool _skipMovieIsChecked;
+        private UnpackUtils _unpackUtils;
         private const string _backupFolderName = "Original_Session_Map";
 
         public String SessionPathTextInput
@@ -68,6 +70,7 @@ namespace SessionMapSwitcher.ViewModels
                 if (_availableMaps == null)
                 {
                     _availableMaps = new ObservableCollection<MapListItem>();
+                    BindingOperations.EnableCollectionSynchronization(AvailableMaps, collectionLock);
                 }
                 return _availableMaps;
             }
@@ -138,7 +141,6 @@ namespace SessionMapSwitcher.ViewModels
                 return $"{SessionContentPath}\\Paks\\SessionGame-WindowsNoEditor.pak";
             }
         }
-
 
         internal string DefaultEngineIniFilePath
         {
@@ -364,7 +366,10 @@ namespace SessionMapSwitcher.ViewModels
 
         public bool LoadAvailableMaps()
         {
-            AvailableMaps.Clear();
+            lock (collectionLock)
+            {
+                AvailableMaps.Clear();
+            }
 
             if (IsSessionPathValid() == false)
             {
@@ -388,13 +393,17 @@ namespace SessionMapSwitcher.ViewModels
                 return false;
             }
 
-            AvailableMaps = new ObservableCollection<MapListItem>(AvailableMaps.OrderBy(m => m.DisplayName));
+            lock (collectionLock)
+            {
+                AvailableMaps = new ObservableCollection<MapListItem>(AvailableMaps.OrderBy(m => m.DisplayName));
+                BindingOperations.EnableCollectionSynchronization(AvailableMaps, collectionLock);
 
-            // add default session map to select (add last so it is always at top of list)
-            _defaultSessionMap.IsEnabled = IsOriginalMapFilesBackedUp();
-            _defaultSessionMap.FullPath = PathToOriginalSessionMapFiles;
-            _defaultSessionMap.Tooltip = _defaultSessionMap.IsEnabled ? null : "The original Session game files have not been backed up to the custom Maps folder.";
-            AvailableMaps.Insert(0, _defaultSessionMap);
+                // add default session map to select (add last so it is always at top of list)
+                _defaultSessionMap.IsEnabled = IsOriginalMapFilesBackedUp();
+                _defaultSessionMap.FullPath = PathToOriginalSessionMapFiles;
+                _defaultSessionMap.Tooltip = _defaultSessionMap.IsEnabled ? null : "The original Session game files have not been backed up to the custom Maps folder.";
+                AvailableMaps.Insert(0, _defaultSessionMap);
+            }
 
             UserMessage = "List of available maps loaded!";
             return true;
@@ -423,9 +432,12 @@ namespace SessionMapSwitcher.ViewModels
                     continue;
                 }
 
-                if (IsMapAdded(mapItem.DisplayName) == false)
+                lock (collectionLock)
                 {
-                    AvailableMaps.Add(mapItem);
+                    if (IsMapAdded(mapItem.DisplayName) == false)
+                    {
+                        AvailableMaps.Add(mapItem);
+                    }
                 }
             }
 
@@ -1004,6 +1016,44 @@ namespace SessionMapSwitcher.ViewModels
                 bytes[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
             return bytes;
         }
+
+        internal void StartUnpacking()
+        {
+            _unpackUtils = new UnpackUtils();
+
+            _unpackUtils.ProgressChanged += _unpackUtils_ProgressChanged;
+            _unpackUtils.UnpackCompleted += _unpackUtils_UnpackCompleted;
+
+            InputControlsEnabled = false;
+            _unpackUtils.StartUnpackingAsync(SessionPath);
+        }
+
+        private void _unpackUtils_UnpackCompleted(bool wasSuccessful)
+        {
+            _unpackUtils.ProgressChanged -= _unpackUtils_ProgressChanged;
+            _unpackUtils.UnpackCompleted -= _unpackUtils_UnpackCompleted;
+            _unpackUtils = null;
+
+            if (wasSuccessful)
+            {
+                // confirm game unpacked
+                if (IsSessionUnpacked())
+                {
+                    BackupOriginalMapFiles();
+                    LoadAvailableMaps();
+                }
+
+                UserMessage = "Unpacking complete! You should now be able to play custom maps ...";
+            }
+
+            InputControlsEnabled = true;
+        }
+
+        private void _unpackUtils_ProgressChanged(string message)
+        {
+            UserMessage = message;
+        }
+
     }
 
 }

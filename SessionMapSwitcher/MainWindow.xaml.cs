@@ -27,6 +27,11 @@ namespace SessionMapSwitcher
 
             this.DataContext = ViewModel;
             this.Title = $"Session Map Switcher - v{typeof(SessionMapSwitcher.App).Assembly.GetName().Version}";
+
+            if (ViewModel.IsSessionUnpacked() == false)
+            {
+                btnLoadMap.Content = "Unpack Game";
+            }
         }
 
         private void BtnBrowseSessionPath_Click(object sender, RoutedEventArgs e)
@@ -92,7 +97,7 @@ namespace SessionMapSwitcher
 
             if (ViewModel.IsSessionUnpacked() == false)
             {
-                MessageBoxResult result = System.Windows.MessageBox.Show("It seems the Session game has not been unpacked. This is required before using Map Switcher.\n\nWould you like to open the README for steps on how to unpack?", 
+                MessageBoxResult result = System.Windows.MessageBox.Show("It seems the Session game has not been unpacked. This is required before using Map Switcher.\n\nWould you like to download the required files to auto-unpack?", 
                                                 "Notice!", 
                                                 MessageBoxButton.YesNo, 
                                                 MessageBoxImage.Warning, 
@@ -100,7 +105,7 @@ namespace SessionMapSwitcher
 
                 if (result == MessageBoxResult.Yes)
                 {
-                    OpenReadMeInBrowser();
+                    BeginUnpackingProcess();
                 }
 
                 return;
@@ -146,6 +151,12 @@ namespace SessionMapSwitcher
             });
         }
 
+        private void BeginUnpackingProcess()
+        {
+            btnLoadMap.Content = "Load Map";
+            ViewModel.StartUnpacking();
+        }
+
         private void BtnLoadMap_Click(object sender, RoutedEventArgs e)
         {
             // double check the controls are disabled and should not load (e.g. when double clicking map in list)
@@ -162,6 +173,22 @@ namespace SessionMapSwitcher
 
         private void LoadMapInBackgroundAndContinueWith(Action<Task> continuationTask)
         {
+            if (ViewModel.IsSessionUnpacked() == false)
+            {
+                MessageBoxResult result = System.Windows.MessageBox.Show("It seems the Session game has not been unpacked. This is required before using Map Switcher.\n\nWould you like to download the required files to auto-unpack?",
+                                                "Notice!",
+                                                MessageBoxButton.YesNo,
+                                                MessageBoxImage.Warning,
+                                                MessageBoxResult.Yes);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    BeginUnpackingProcess();
+                }
+
+                return;
+            }
+
             if (ViewModel.IsOriginalMapFilesBackedUp() == false)
             {
                 System.Windows.MessageBox.Show("The original Session game map files have not been backed up yet. Click OK to backup the files then click 'Load Map' again",
