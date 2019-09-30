@@ -1,0 +1,50 @@
+﻿<Window x:Class="SessionMapSwitcher.OnlineImportWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SessionMapSwitcher"
+        mc:Ignorable="d"
+        MinHeight="400" MinWidth="400"
+        Style="{StaticResource WindowStyle}"
+        Title="Import Map From Online Repository" Height="450" Width="400">
+    <Window.Resources>
+        <ContextMenu x:Key="menuOptions">
+            <MenuItem x:Name="menuImportSelected" Header="Import Map ..." Click="MenuImportSelected_Click"/>
+            <MenuItem x:Name="menuOpenMapUrl" Header="Open Map Description ..." Click="MenuOpenMapUrl_Click"/>
+        </ContextMenu>
+
+        <Style TargetType="Button" BasedOn="{StaticResource MainButtonStyle}">
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Bottom"/>
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+    </Window.Resources>
+    <Grid x:Name="mainGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Margin="10,10,10,0"
+                   Text="Loading list of downloadable maps ..."/>
+
+        <ListBox Grid.Row="1"
+                 VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                 Margin="10">
+            <ListBoxItem Content="Example Map"/>
+        </ListBox>
+
+        <Button x:Name="btnPreviewSelected"
+                Click="BtnPreviewSelected_Click"
+                Grid.Row="2" Margin="0,0,165,10"
+                Content="View Preview Of Selected Map"/>
+
+        <Button x:Name="btnImportSelected"
+                Click="BtnImportSelected_Click"
+                Grid.Row="2" Margin="195,0,0,10"
+                Content="Import Selected Map"/>
+    </Grid>
+</Window>

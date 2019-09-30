@@ -27,11 +27,6 @@ namespace SessionMapSwitcher
 
             this.DataContext = ViewModel;
             this.Title = $"Session Map Switcher - v{typeof(SessionMapSwitcher.App).Assembly.GetName().Version}";
-
-            if (ViewModel.IsSessionUnpacked() == false)
-            {
-                btnLoadMap.Content = "Unpack Game";
-            }
         }
 
         private void BtnBrowseSessionPath_Click(object sender, RoutedEventArgs e)
@@ -355,6 +350,21 @@ namespace SessionMapSwitcher
             };
 
             Process.Start(info);
+        }
+
+        private void BtnImportMap_Click(object sender, RoutedEventArgs e)
+        {
+            importContextMenu.IsOpen = true;
+        }
+
+        private void MenuComputerImport_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void MenuOnlineImport_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.OpenOnlineImportWindow();
         }
     }
 }

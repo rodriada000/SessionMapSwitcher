@@ -70,7 +70,7 @@ namespace SessionMapSwitcher.ViewModels
                 if (_availableMaps == null)
                 {
                     _availableMaps = new ObservableCollection<MapListItem>();
-                    BindingOperations.EnableCollectionSynchronization(AvailableMaps, collectionLock);
+                    BindingOperations.EnableCollectionSynchronization(_availableMaps, collectionLock);
                 }
                 return _availableMaps;
             }
@@ -451,6 +451,12 @@ namespace SessionMapSwitcher.ViewModels
                     LoadAvailableMapsInSubDirectories(subFolder);
                 }
             }
+        }
+
+        internal void OpenOnlineImportWindow()
+        {
+            OnlineImportWindow importWindow = new OnlineImportWindow();
+            importWindow.ShowDialog();
         }
 
         private bool IsMapAdded(string mapName)
