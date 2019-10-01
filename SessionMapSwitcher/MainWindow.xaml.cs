@@ -142,8 +142,8 @@ namespace SessionMapSwitcher
 
             LoadMapInBackgroundAndContinueWith((antecedent) =>
             {
-                ViewModel.InputControlsEnabled = true;
                 System.Diagnostics.Process.Start(ViewModel.PathToSessionExe);
+                ViewModel.InputControlsEnabled = true;
             });
         }
 

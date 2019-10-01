@@ -106,9 +106,6 @@ namespace SessionMapSwitcher.ViewModels
 
         public OnlineImportViewModel()
         {
-            HeaderMessage = "This will let you download and import maps that have been created by the community.";
-            HeaderMessage += " It may be faster to download the map through your browser, then go to 'Import Map > From Computer...' to import the download.";
-            HeaderMessage += " Right-click a selected map for more options.";
         }
 
         internal void CancelPendingImport()
@@ -134,6 +131,7 @@ namespace SessionMapSwitcher.ViewModels
             if (DownloadableMaps.Count == 0)
             {
                 DownloadableMaps = new ObservableCollection<DownloadableMap>(GetDownloadableMapsFromGit());
+                BindingOperations.EnableCollectionSynchronization(DownloadableMaps, collectionLock);
 
                 if (DownloadableMaps.Count == 0)
                 {

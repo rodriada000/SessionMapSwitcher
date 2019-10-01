@@ -210,7 +210,7 @@ namespace SessionMapSwitcher.Utils
 
             ProgressChanged("Copying unpacked files to Session game directory, this may take a few minutes. You should see files being copied to the Content folder that opens ...");
             Process.Start($"{PathToSession}\\SessionGame\\Content");
-            FileUtils.MoveDirectoryRecursively(outFolderPath, PathToSession, true);
+            FileUtils.MoveDirectoryRecursively(outFolderPath, PathToSession);
 
             System.Threading.Thread.Sleep(500);
 

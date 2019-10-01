@@ -12,6 +12,9 @@ namespace SessionMapSwitcher.ViewModels
 {
     public class ComputerImportViewModel : ViewModelBase
     {
+        private List<string> FilesToExclude = new List<string>() { "DefaultEngine.ini", "DefaultGame.ini" };
+        private List<string> FoldersToExclude = new List<string>() { "Data" };
+
 
         private bool _isZipFileImport;
         private bool _isImporting;
@@ -180,6 +183,7 @@ namespace SessionMapSwitcher.ViewModels
             else
             {
                 UserMessage += " Copying can take a couple of minutes depending on the amount of files to copy.";
+                EnsurePathToMapFilesIsCorrect();
             }
 
             IsImporting = true;
@@ -220,7 +224,7 @@ namespace SessionMapSwitcher.ViewModels
                     sourceFolderToCopy = PathToFileOrFolder;
                 }
 
-                FileUtils.CopyDirectoryRecursively(sourceFolderToCopy, PathToSessionContent, true);
+                FileUtils.CopyDirectoryRecursively(sourceFolderToCopy, PathToSessionContent, FilesToExclude, FoldersToExclude);
 
                 if (IsZipFileImport && Directory.Exists(PathToTempUnzipFolder))
                 {
@@ -243,6 +247,18 @@ namespace SessionMapSwitcher.ViewModels
             });
 
 
+        }
+
+        /// <summary>
+        /// This will check if the user selected the top-level folder of a map to import instead of 'Content'
+        /// and will change <see cref="PathToFileOrFolder"/> to be [PathToFileOrFolder]\Content
+        /// </summary>
+        private void EnsurePathToMapFilesIsCorrect()
+        {
+            if (Directory.Exists($"{PathToFileOrFolder}\\Content"))
+            {
+                PathInput = $"{PathToFileOrFolder}\\Content";
+            }
         }
     }
 }
