@@ -23,44 +23,45 @@ namespace SessionMapSwitcher.Utils
         /// </summary>
         public static string GetTxtDocumentFromGitHubRepo(string githubUrl)
         {
-            HttpClient client = new HttpClient();
+            using (HttpClient client = new HttpClient())
+            {
+                Task<HttpResponseMessage> task = client.GetAsync(githubUrl);
+                task.Wait();
 
-            Task<HttpResponseMessage> task = client.GetAsync(githubUrl);
-            task.Wait();
+                HttpResponseMessage response = task.Result;
+                // Check that response was successful or throw exception
+                response.EnsureSuccessStatusCode();
 
-            HttpResponseMessage response = task.Result;
-            // Check that response was successful or throw exception
-            response.EnsureSuccessStatusCode();
+                var readTask = response.Content.ReadAsStringAsync();
+                readTask.Wait();
 
-            var readTask = response.Content.ReadAsStringAsync();
-            readTask.Wait();
-
-            return readTask.Result;
+                return readTask.Result;
+            }
         }
 
         /// <summary>
-        /// Make request to anonfile download page and scrape direct download url from it
+        /// Make request to anonfile download page and scrape direct download url from it.
+        /// Will throw an exception if http request fails
         /// </summary>
-        /// <param name="anonFileUrl"></param>
-        /// <returns></returns>
         public static string GetDirectDownloadLinkFromAnonPage(string anonFileUrl)
         {
-            HttpClient client = new HttpClient();
+            using (HttpClient client = new HttpClient())
+            {
+                Task<HttpResponseMessage> requestTask = client.GetAsync(anonFileUrl);
+                requestTask.Wait();
 
-            Task<HttpResponseMessage> requestTask = client.GetAsync(anonFileUrl);
-            requestTask.Wait();
+                HttpResponseMessage response = requestTask.Result;
+                // Check that response was successful or throw exception
+                response.EnsureSuccessStatusCode();
 
-            HttpResponseMessage response = requestTask.Result;
-            // Check that response was successful or throw exception
-            response.EnsureSuccessStatusCode();
+                var readTask = response.Content.ReadAsStringAsync();
+                readTask.Wait();
 
-            var readTask = response.Content.ReadAsStringAsync();
-            readTask.Wait();
+                string html = readTask.Result;
+                string downloadUrl = FindDirectDownloadUrlInHtml(html);
 
-            string html = readTask.Result;
-            string downloadUrl = FindDirectDownloadUrlInHtml(html);
-
-            return downloadUrl;
+                return downloadUrl;
+            }
         }
 
         /// <summary>
@@ -93,56 +94,35 @@ namespace SessionMapSwitcher.Utils
         /// </summary>
         public static async Task DownloadFileToFolderAsync(string downloadUrl, string savePath, CancellationToken cancelToken, bool noTimeout = false)
         {
-            HttpClient client = new HttpClient();
-
-            if (noTimeout)
+            using (HttpClient client = new HttpClient())
             {
-                client.Timeout = System.Threading.Timeout.InfiniteTimeSpan;
-            }
-
-            if (cancelToken != CancellationToken.None)
-            {
-                cancelToken.Register(() =>
+                if (noTimeout)
                 {
-                    client.CancelPendingRequests();
-                    cancelToken.ThrowIfCancellationRequested();
-                });
-            }
+                    client.Timeout = System.Threading.Timeout.InfiniteTimeSpan;
+                }
 
-
-            using (HttpResponseMessage response = await client.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead, cancelToken))
-            {
-                long? totalBytes = response.Content.Headers.ContentLength;
-
-                // You must use as stream to have control over buffering and number of bytes read/received
-                using (Stream stream = await response.Content.ReadAsStreamAsync())
+                if (cancelToken != CancellationToken.None)
                 {
-                    await ProcessContentStreamAsync(totalBytes, stream, savePath, cancelToken);
+                    cancelToken.Register(() =>
+                    {
+                        client.CancelPendingRequests();
+                        cancelToken.ThrowIfCancellationRequested();
+                    });
+                }
+
+
+                using (HttpResponseMessage response = await client.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead, cancelToken))
+                {
+                    long? totalBytes = response.Content.Headers.ContentLength;
+
+                    // You must use as stream to have control over buffering and number of bytes read/received
+                    using (Stream stream = await response.Content.ReadAsStreamAsync())
+                    {
+                        await ProcessContentStreamAsync(totalBytes, stream, savePath, cancelToken);
+                    }
                 }
             }
-
         }
-
-        /// <summary>
-        /// Extract a zip file to a given path. Returns true on success.
-        /// </summary>
-        public static bool ExtractZipFile(string pathToZip, string extractPath)
-        {
-            try
-            {
-                ZipFile.ExtractToDirectory(pathToZip, extractPath);
-            }
-            catch (Exception e)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-
-
-
 
         private static async Task ProcessContentStreamAsync(long? totalDownloadSize, Stream contentStream, string destinationFilePath, CancellationToken token)
         {

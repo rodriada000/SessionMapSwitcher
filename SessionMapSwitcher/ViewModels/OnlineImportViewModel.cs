@@ -257,7 +257,7 @@ namespace SessionMapSwitcher.ViewModels
                     return;
                 }
 
-                didExtract = DownloadUtils.ExtractZipFile(pathToZip, PathToSessionContent);
+                didExtract = FileUtils.ExtractZipFile(pathToZip, PathToSessionContent);
             });
 
 

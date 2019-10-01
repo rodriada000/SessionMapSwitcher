@@ -70,7 +70,7 @@ namespace SessionMapSwitcher.Utils
                 }
 
                 ProgressChanged("Extracting .zip file ...");
-                bool isExtracted = DownloadUtils.ExtractZipFile($"{PathToPakFolder}\\{DownloadedZipFileName}", PathToPakFolder);
+                bool isExtracted = FileUtils.ExtractZipFile($"{PathToPakFolder}\\{DownloadedZipFileName}", PathToPakFolder);
 
                 if (isExtracted == false)
                 {
@@ -108,7 +108,7 @@ namespace SessionMapSwitcher.Utils
                     {
                         if (Directory.Exists($"{PathToPakFolder}{dir}") == false)
                         {
-                            ProgressChanged("Failed to unpack files correctly. Cannot continue.");
+                            ProgressChanged($"Failed to unpack files correctly. The expected folders were not found ({PathToPakFolder}{dir}). Cannot continue.");
                             UnpackCompleted(false);
                             return;
                         }

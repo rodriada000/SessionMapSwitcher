@@ -200,7 +200,7 @@ namespace SessionMapSwitcher.ViewModels
 
                     // extract files first before copying
                     Directory.CreateDirectory(PathToTempUnzipFolder);
-                    didExtract = DownloadUtils.ExtractZipFile(PathToFileOrFolder, PathToTempUnzipFolder);
+                    didExtract = FileUtils.ExtractZipFile(PathToFileOrFolder, PathToTempUnzipFolder);
 
                     if (didExtract == false)
                     {

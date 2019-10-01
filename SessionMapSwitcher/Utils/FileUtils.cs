@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -69,6 +70,23 @@ namespace SessionMapSwitcher.Utils
                     CopyOrMoveDirectoryRecursively(subdir.FullName, temppath, includSubeFolders, moveFiles);
                 }
             }
+        }
+
+        /// <summary>
+        /// Extract a zip file to a given path. Returns true on success.
+        /// </summary>
+        public static bool ExtractZipFile(string pathToZip, string extractPath)
+        {
+            try
+            {
+                ZipFile.ExtractToDirectory(pathToZip, extractPath);
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

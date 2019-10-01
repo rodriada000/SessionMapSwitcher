@@ -7,6 +7,7 @@
         xmlns:local="clr-namespace:SessionMapSwitcher"
         mc:Ignorable="d"
         Title="Session Map Switcher"
+        Loaded="MainWindow_Loaded"
         MinHeight="415" MinWidth="510"
         Height="450" Width="745"
         Style="{StaticResource WindowStyle}">

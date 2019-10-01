@@ -13,5 +13,9 @@ namespace SessionMapSwitcher
     /// </summary>
     public partial class App : Application
     {
+        public static Version GetAppVersion()
+        {
+            return typeof(SessionMapSwitcher.App).Assembly.GetName().Version;
+        }
     }
 }
