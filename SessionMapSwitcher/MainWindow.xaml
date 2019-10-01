@@ -155,7 +155,7 @@
 
                     <Button x:Name="btnImportMap"
                             Style="{StaticResource MainButtonStyle}"
-                            IsEnabled="{Binding InputControlsEnabled}"
+                            IsEnabled="{Binding ImportMapButtonIsEnabled}"
                             Content="Import Map"
                             Click="BtnImportMap_Click"
                             Margin="10,0,0,0"
@@ -281,7 +281,7 @@
 
         <Button x:Name="btnLoadMap"
                 Grid.Row="2" Grid.ColumnSpan="2"
-                Content="Load Map"
+                Content="{Binding LoadMapButtonText, FallbackValue='Load Map'}"
                 ToolTip="Load selected map from the list"
                 Style="{StaticResource MainButtonStyle}"
                 IsEnabled="{Binding InputControlsEnabled}"

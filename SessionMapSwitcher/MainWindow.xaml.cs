@@ -148,7 +148,6 @@ namespace SessionMapSwitcher
 
         private void BeginUnpackingProcess()
         {
-            btnLoadMap.Content = "Load Map";
             ViewModel.StartUnpacking();
         }
 

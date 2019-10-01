@@ -45,6 +45,8 @@ namespace SessionMapSwitcher.ViewModels
             {
                 _sessionPath = value;
                 NotifyPropertyChanged();
+                NotifyPropertyChanged(nameof(LoadMapButtonText));
+                NotifyPropertyChanged(nameof(ImportMapButtonIsEnabled));
             }
         }
 
@@ -251,6 +253,30 @@ namespace SessionMapSwitcher.ViewModels
             {
                 _skipMovieIsChecked = value;
                 NotifyPropertyChanged();
+            }
+        }
+
+        public string LoadMapButtonText
+        {
+            get
+            {
+                if (IsSessionUnpacked())
+                {
+                    return "Load Map";
+                }
+                return "Unpack Game";
+            }
+        }
+
+        public bool ImportMapButtonIsEnabled
+        {
+            get
+            {
+                if (IsSessionUnpacked())
+                {
+                    return true && InputControlsEnabled;
+                }
+                return false;
             }
         }
 
@@ -1063,6 +1089,12 @@ namespace SessionMapSwitcher.ViewModels
 
         internal void StartUnpacking()
         {
+            if (IsSessionPathValid() == false)
+            {
+                UserMessage = "Cannot unpack: Set Path to Session before unpacking game.";
+                return;
+            }
+
             _unpackUtils = new UnpackUtils();
 
             _unpackUtils.ProgressChanged += _unpackUtils_ProgressChanged;
@@ -1084,13 +1116,15 @@ namespace SessionMapSwitcher.ViewModels
                 if (IsSessionUnpacked())
                 {
                     BackupOriginalMapFiles();
-                    LoadAvailableMaps();
                 }
 
-                UserMessage = "Unpacking complete! You should now be able to play custom maps ...";
+                UserMessage = "Unpacking complete! You should now be able to play custom maps. Click 'Reload Available Maps' to see list of available maps (some maps were left by the devs of Session).";
             }
 
             InputControlsEnabled = true;
+            NotifyPropertyChanged(nameof(LoadMapButtonText));
+            NotifyPropertyChanged(nameof(ImportMapButtonIsEnabled));
+
         }
 
         private void _unpackUtils_ProgressChanged(string message)

@@ -173,6 +173,17 @@ namespace SessionMapSwitcher.Utils
 
             ProgressChanged("Waiting for UnrealPak.exe to finish ...");
             proc.WaitForExit();
+
+            System.Threading.Thread.Sleep(500);
+
+            // delete the UnrealPak.exe files and .bat file since done using
+            foreach (string fileName in Directory.GetFiles(PathToPakFolder))
+            {
+                if (fileName.Contains("SessionGame-WindowsNoEditor") == false)
+                {
+                    File.Delete(fileName);
+                }
+            }
         }
 
         /// <summary>
@@ -195,9 +206,19 @@ namespace SessionMapSwitcher.Utils
 
         internal void CopyUnpackedFilesToSession()
         {
+            string outFolderPath = $"{PathToPakFolder}\\out";
+
             ProgressChanged("Copying unpacked files to Session game directory, this may take a few minutes. You should see files being copied to the Content folder that opens ...");
             Process.Start($"{PathToSession}\\SessionGame\\Content");
-            FileUtils.MoveDirectoryRecursively($"{PathToPakFolder}\\out", PathToSession, true);
+            FileUtils.MoveDirectoryRecursively(outFolderPath, PathToSession, true);
+
+            System.Threading.Thread.Sleep(500);
+
+            // delete out file since empty now
+            if (Directory.Exists(outFolderPath))
+            {
+                Directory.Delete(outFolderPath, true);
+            }
         }
     }
 }
