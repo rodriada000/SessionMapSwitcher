@@ -134,7 +134,26 @@ namespace SessionMapSwitcher.Utils
         {
             try
             {
-                ZipFile.ExtractToDirectory(pathToZip, extractPath);
+                using (ZipArchive archive = ZipFile.OpenRead(pathToZip))
+                {
+                    foreach (ZipArchiveEntry entry in archive.Entries)
+                    {
+                        string fullFileName = Path.Combine(extractPath, entry.FullName);
+                        string entryPath = Path.GetDirectoryName(fullFileName);
+
+                        if (Directory.Exists(entryPath) == false)
+                        {
+                            Directory.CreateDirectory(entryPath);
+                        }
+
+                        bool isFileToExtract = (Path.GetFileName(fullFileName) != "");
+
+                        if (isFileToExtract)
+                        {
+                            entry.ExtractToFile(Path.GetFullPath(fullFileName), overwrite: true);
+                        }
+                    }
+                }
             }
             catch (Exception e)
             {
