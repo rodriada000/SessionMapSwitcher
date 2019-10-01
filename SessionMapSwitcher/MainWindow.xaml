@@ -7,10 +7,9 @@
         xmlns:local="clr-namespace:SessionMapSwitcher"
         mc:Ignorable="d"
         Title="Session Map Switcher"
-        Icon="Resources/sessionmapswitchericon.png"
         MinHeight="415" MinWidth="510"
         Height="450" Width="745"
-        Background="LightGray">
+        Style="{StaticResource WindowStyle}">
     <Window.Resources>
 
         <Style x:Key="mainGridStyle" TargetType="Grid">
@@ -91,6 +90,7 @@
             <MenuItem x:Name="menuOpenSelectedMapFolder" Header="Open Selected Map Folder ..." Click="MenuOpenSelectedMapFolder_Click"/>
             <MenuItem x:Name="menuOpenReadme" Header="View Help ..." Click="MenuOpenReadme_Click"/>
         </ContextMenu>
+        
     </Window.Resources>
 
     <Grid Style="{StaticResource mainGridStyle}">
@@ -104,6 +104,7 @@
             <ColumnDefinition Width="398*"/>
         </Grid.ColumnDefinitions>
 
+        <!--PATH TO SESSION TEXTBOX AND BUTTONS-->
         <Label Content="Path To Session:"
                FontWeight="SemiBold"
                VerticalAlignment="Top" HorizontalAlignment="Left" Margin="5,10,0,0" Height="26" Width="97"/>
@@ -123,6 +124,7 @@
                 Grid.Column="1"
                 Content="..." 
                 ToolTip="Browse for path to Session"
+                Style="{StaticResource MainButtonStyle}"
                 IsEnabled="{Binding InputControlsEnabled}"
                 VerticalAlignment="Top" HorizontalAlignment="Right" 
                 Margin="0,10,18,0" 
@@ -130,73 +132,84 @@
                 Click="BtnBrowseSessionPath_Click"/>
 
 
+        <!--AVAILABLE MAPS GROUPBOX-->
+        <GroupBox Grid.Row="1" Header="Available Maps" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,0,3" BorderBrush="#BDBDBD">
 
-        
-        <WrapPanel Grid.Row="1"
-                   HorizontalAlignment="Left"
-                   VerticalAlignment="Top"
-                   Margin="8,8,0,0" Height="26">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
 
-            <Label Content="Available Maps:"
-                   FontWeight="SemiBold"/>
+                <WrapPanel HorizontalAlignment="Left" VerticalAlignment="Top" Margin="3,8,0,0" Width="{Binding ElementName=lstMaps, Path=ActualWidth}">
 
-            <Button x:Name="btnReloadMaps"
-                    Click="BtnReloadMaps_Click"
-                    IsEnabled="{Binding InputControlsEnabled}"
-                    Content="(Reload Available Maps)"
-                    ToolTip="Reload the list of available maps (e.g. when adding new files)"
-                    Padding="5,0,5,0"
-                    Background="{Binding ElementName=mainWindow, Path=Background}"
-                    Foreground="DarkBlue"
-                    BorderThickness="0"
-                    Height="18"
-                    FontSize="10">
-                <Button.Style>
-                    <Style TargetType="Button">
-                        <Style.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Cursor" Value="Hand"/>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </Button.Style>
-            </Button>
-
-            <CheckBox x:Name="chkShowInvalidMaps"
-                      Content="Show Invalid Maps"
-                      ToolTip="Show/hide maps that are invalid in the Maps folder (e.g. missing gamemode)"
-                      IsChecked="{Binding ShowInvalidMapsIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='True'}"
-                      Click="ChkShowInvalidMaps_Click"
-                      FontSize="10"
-                      Margin="5,2,0,0"
-                      VerticalAlignment="Center"/>
-        </WrapPanel>
+                    <Button x:Name="btnReloadMaps"
+                            Style="{StaticResource MainButtonStyle}"
+                            Click="BtnReloadMaps_Click"
+                            IsEnabled="{Binding InputControlsEnabled}"
+                            Content="Reload Available Maps"
+                            ToolTip="Reload the list of available maps (e.g. when adding new files)"
+                            Padding="5,1,5,1"
+                            FontSize="11"/>
 
 
-        <ListBox x:Name="lstMaps" 
-                 Grid.Row="1" Grid.Column="0"
-                 HorizontalAlignment="Left"
-                 VerticalAlignment="Stretch"
-                 MinWidth="300" MaxWidth="350"
-                 Width="320"
-                 ScrollViewer.CanContentScroll="False"
-                 Margin="10,32,0,5"
-                 ItemsSource="{Binding FilteredAvailableMaps}"
-                 ItemContainerStyle="{StaticResource MapListItem}"
-                 ContextMenu="{StaticResource mainContextMenu}">
-        </ListBox>
+                    <Button x:Name="btnImportMap"
+                            Style="{StaticResource MainButtonStyle}"
+                            IsEnabled="{Binding ImportMapButtonIsEnabled}"
+                            Content="Import Map"
+                            Click="BtnImportMap_Click"
+                            Margin="10,0,0,0"
+                            Padding="5,1,5,1"
+                            FontSize="11">
+                        <Button.ContextMenu>
+                            <ContextMenu x:Name="importContextMenu">
+                                <MenuItem x:Name="menuComputerImport" Header="From Computer ..." Click="MenuComputerImport_Click"/>
+                                <MenuItem x:Name="menuOnlineImport" Header="From Online ..." Click="MenuOnlineImport_Click"/>
+                            </ContextMenu>
+                        </Button.ContextMenu>
+                    </Button>
 
-        
+                    <CheckBox x:Name="chkShowInvalidMaps"
+                              Content="Show Invalid Maps"
+                              ToolTip="Show/hide maps that are invalid in the Maps folder (e.g. missing gamemode)"
+                              IsChecked="{Binding ShowInvalidMapsIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='True'}"
+                              Click="ChkShowInvalidMaps_Click"
+                              FontSize="10"
+                              Margin="10,5,0,0"
+                              VerticalAlignment="Center"/>
+                </WrapPanel>
+
+
+                <ListBox x:Name="lstMaps"
+                         Grid.Row="1"
+                         HorizontalAlignment="Left" VerticalAlignment="Stretch"
+                         MinWidth="300" MaxWidth="350"
+                         Width="320"
+                         ScrollViewer.CanContentScroll="False"
+                         Margin="2,1,1,5"
+                         ItemsSource="{Binding FilteredAvailableMaps}"
+                         ItemContainerStyle="{StaticResource MapListItem}"
+                         ContextMenu="{StaticResource mainContextMenu}">
+                </ListBox>
+            </Grid>
+
+        </GroupBox>
+
+
+
+
+        <!--GAME SETTING GROUP BOX-->
         <ScrollViewer Grid.Row="1" Grid.Column="1" 
                       VerticalScrollBarVisibility="Auto"
-                      Margin="0,20,0,0">
+                      Margin="0,10,0,0">
             <StackPanel>
 
                 <GroupBox x:Name="grpIniOptions"
-                  Header="Game Settings"
-                  HorizontalAlignment="Stretch"
-                  VerticalAlignment="Top"
-                  Margin="10,0,10,0">
+                          BorderBrush="#BDBDBD"
+                          Header="Game Settings"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Top"
+                          Margin="10,0,10,0">
 
                     <StackPanel>
                         <WrapPanel Margin="10,10,0,0" HorizontalAlignment="Right">
@@ -228,6 +241,7 @@
                                 Content="Apply"
                                 ToolTip="Update the .ini files with new setting values."
                                 Click="BtnApplySettings_Click"
+                                Style="{StaticResource MainButtonStyle}"
                                 IsEnabled="{Binding InputControlsEnabled}"
                                 HorizontalAlignment="Right"
                                 Margin="10,10,10,5"
@@ -254,7 +268,7 @@
         </ScrollViewer>
 
 
-
+        <!--USER MESSAGE AND LOAD/START BUTTONS-->
         <TextBlock x:Name="lblUserMessage"
                    Grid.Row="2" Grid.ColumnSpan="2"
                    HorizontalAlignment="Left"
@@ -267,26 +281,28 @@
 
         <Button x:Name="btnLoadMap"
                 Grid.Row="2" Grid.ColumnSpan="2"
-                Content="Load Map"
+                Content="{Binding LoadMapButtonText, FallbackValue='Load Map'}"
                 ToolTip="Load selected map from the list"
+                Style="{StaticResource MainButtonStyle}"
                 IsEnabled="{Binding InputControlsEnabled}"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
                 FontSize="16"
                 Margin="0,0,125,10"
-                Padding="5"
+                Padding="5,0,5,0"
                 Click="BtnLoadMap_Click" Height="33"/>
 
         <Button x:Name="btnStartGame"
                 Grid.Row="2" Grid.ColumnSpan="2"
                 Content="Start Session"
                 ToolTip="Load selected map and start the game. Restart game if already running."
+                Style="{StaticResource MainButtonStyle}"
                 IsEnabled="{Binding InputControlsEnabled}"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
                 FontSize="16"
                 Margin="0,0,10,10"
-                Padding="5"
+                Padding="0"
                 Click="BtnStartGame_Click" Height="33" Width="102"/>
     </Grid>
 </Window>

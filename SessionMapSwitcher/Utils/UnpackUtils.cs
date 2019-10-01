@@ -41,7 +41,7 @@ namespace SessionMapSwitcher.Utils
         /// <summary>
         /// Github link to .txt file that contains the latest download link to the files required for unpacking
         /// </summary>
-        private string GitHubUrl = "https://raw.githubusercontent.com/rodriada000/SessionMapSwitcher/url_updates/docs/batFileDownloadUrl.txt";
+        private const string GitHubUrl = "https://raw.githubusercontent.com/rodriada000/SessionMapSwitcher/url_updates/docs/batFileDownloadUrl.txt";
 
         /// <summary>
         /// Handles the entire unpacking process
@@ -69,10 +69,12 @@ namespace SessionMapSwitcher.Utils
                     return;
                 }
 
-                bool isExtracted = ExtractZipFile();
+                ProgressChanged("Extracting .zip file ...");
+                bool isExtracted = DownloadUtils.ExtractZipFile($"{PathToPakFolder}\\{DownloadedZipFileName}", PathToPakFolder);
 
                 if (isExtracted == false)
                 {
+                    ProgressChanged($"Failed to unzip file. Cannot continue.");
                     UnpackCompleted(false);
                     return;
                 }
@@ -126,123 +128,32 @@ namespace SessionMapSwitcher.Utils
             try
             {
                 // visit github to get current anon file download link
-                string downloadUrl = GetDownloadUrlFromGit();
+                ProgressChanged("Downloading .zip file - getting download url from git ...");
+                string downloadUrl = DownloadUtils.GetTxtDocumentFromGitHubRepo(GitHubUrl);
 
                 // visit anon file to get direct file download link from html page
-                string directLinkToZip = GetDirectDownloadLinkFromAnonPage(downloadUrl);
+                ProgressChanged("Downloading .zip file -  scraping direct download link download page ...");
+                string directLinkToZip = DownloadUtils.GetDirectDownloadLinkFromAnonPage(downloadUrl);
 
                 if (directLinkToZip == "")
                 {
+                    ProgressChanged("Failed to get download link from html page. Cannot continue.");
                     return false;
                 }
 
                 // download to Paks folder
-                DownloadZipFileToPaksFolder(directLinkToZip);
+                ProgressChanged("Downloading .zip file -  downloading actual file ...");
+                var downloadTask = DownloadUtils.DownloadFileToFolderAsync(directLinkToZip, $"{PathToPakFolder}\\{DownloadedZipFileName}", System.Threading.CancellationToken.None);
+                downloadTask.Wait();
+            }
+            catch (AggregateException e)
+            {
+                ProgressChanged($"Failed to download .zip file: {e.InnerExceptions[0].Message}. Cannot continue.");
+                return false;
             }
             catch (Exception e)
             {
                 ProgressChanged($"Failed to download .zip file: {e.Message}. Cannot continue.");
-                return false;
-            }
-
-            return true;
-        }
-
-        private string GetDownloadUrlFromGit()
-        {
-            ProgressChanged("Downloading .zip file - getting download url from git ...");
-            HttpClient client = new HttpClient();
-
-            Task<HttpResponseMessage> task = client.GetAsync(GitHubUrl);
-            task.Wait();
-
-            HttpResponseMessage response = task.Result;
-            // Check that response was successful or throw exception
-            response.EnsureSuccessStatusCode();
-
-            var readTask = response.Content.ReadAsStringAsync();
-            readTask.Wait();
-
-            return readTask.Result;
-        }
-
-        private string GetDirectDownloadLinkFromAnonPage(string anonFileUrl)
-        {
-            ProgressChanged("Downloading .zip file - getting direct download link ...");
-            HttpClient client = new HttpClient();
-
-            Task<HttpResponseMessage> requestTask = client.GetAsync(anonFileUrl);
-            requestTask.Wait();
-
-            HttpResponseMessage response = requestTask.Result;
-            // Check that response was successful or throw exception
-            response.EnsureSuccessStatusCode();
-
-            var readTask = response.Content.ReadAsStringAsync();
-            readTask.Wait();
-
-            string html = readTask.Result;
-            string downloadUrl = FindDirectDownloadUrlInHtml(html);
-
-            return downloadUrl;
-        }
-
-        private void DownloadZipFileToPaksFolder(string downloadUrl)
-        {
-            ProgressChanged("Downloading .zip file -  downloading actual file ...");
-            HttpClient client = new HttpClient();
-
-            Task<HttpResponseMessage> requestTask = client.GetAsync(downloadUrl);
-            requestTask.Wait();
-
-            // Get HTTP response from completed task.
-            HttpResponseMessage response = requestTask.Result;
-            // Check that response was successful or throw exception
-            response.EnsureSuccessStatusCode();
-
-            using (FileStream w = File.OpenWrite($"{PathToPakFolder}\\{DownloadedZipFileName}"))
-            {
-                response.Content.CopyToAsync(w).Wait();
-            }
-        }
-
-        private string FindDirectDownloadUrlInHtml(string html)
-        {
-            ProgressChanged("Downloading .zip file -  scraping direct download url ...");
-
-            Regex regex = new Regex("<a type=\"button\" id=\"download-url\"[.\\s]*.*\\s*href.*\">");
-            Match match = regex.Match(html);
-
-            if (match.Success)
-            {
-                string downloadUrl = match.Value.TrimEnd(new char[] { '\"', '>', '<' });
-
-                string hrefStr = "href=\"";
-                int index = downloadUrl.IndexOf(hrefStr);
-
-                downloadUrl = downloadUrl.Substring(index + hrefStr.Length);
-
-                return downloadUrl;
-            }
-            else
-            {
-                ProgressChanged("Could not get direct download link from page. Cannot continue");
-                return "";
-            }
-        }
-
-        internal bool ExtractZipFile()
-        {
-            ProgressChanged("Extracting .zip file ...");
-
-            try
-            {
-                
-                ZipFile.ExtractToDirectory($"{PathToPakFolder}\\{DownloadedZipFileName}", PathToPakFolder);
-            }
-            catch (Exception e)
-            {
-                ProgressChanged($"Failed to unzip file: {e.Message}. Cannot continue.");
                 return false;
             }
 
@@ -262,6 +173,17 @@ namespace SessionMapSwitcher.Utils
 
             ProgressChanged("Waiting for UnrealPak.exe to finish ...");
             proc.WaitForExit();
+
+            System.Threading.Thread.Sleep(500);
+
+            // delete the UnrealPak.exe files and .bat file since done using
+            foreach (string fileName in Directory.GetFiles(PathToPakFolder))
+            {
+                if (fileName.Contains("SessionGame-WindowsNoEditor") == false)
+                {
+                    File.Delete(fileName);
+                }
+            }
         }
 
         /// <summary>
@@ -284,9 +206,19 @@ namespace SessionMapSwitcher.Utils
 
         internal void CopyUnpackedFilesToSession()
         {
+            string outFolderPath = $"{PathToPakFolder}\\out";
+
             ProgressChanged("Copying unpacked files to Session game directory, this may take a few minutes. You should see files being copied to the Content folder that opens ...");
             Process.Start($"{PathToSession}\\SessionGame\\Content");
-            FileUtils.MoveDirectoryRecursively($"{PathToPakFolder}\\out", PathToSession, true);
+            FileUtils.MoveDirectoryRecursively(outFolderPath, PathToSession, true);
+
+            System.Threading.Thread.Sleep(500);
+
+            // delete out file since empty now
+            if (Directory.Exists(outFolderPath))
+            {
+                Directory.Delete(outFolderPath, true);
+            }
         }
     }
 }

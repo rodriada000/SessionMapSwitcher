@@ -32,6 +32,9 @@ namespace SessionMapSwitcher.ViewModels
         private UnpackUtils _unpackUtils;
         private const string _backupFolderName = "Original_Session_Map";
 
+        private OnlineImportViewModel ImportViewModel;
+
+
         public String SessionPathTextInput
         {
             get
@@ -42,6 +45,8 @@ namespace SessionMapSwitcher.ViewModels
             {
                 _sessionPath = value;
                 NotifyPropertyChanged();
+                NotifyPropertyChanged(nameof(LoadMapButtonText));
+                NotifyPropertyChanged(nameof(ImportMapButtonIsEnabled));
             }
         }
 
@@ -70,7 +75,7 @@ namespace SessionMapSwitcher.ViewModels
                 if (_availableMaps == null)
                 {
                     _availableMaps = new ObservableCollection<MapListItem>();
-                    BindingOperations.EnableCollectionSynchronization(AvailableMaps, collectionLock);
+                    BindingOperations.EnableCollectionSynchronization(_availableMaps, collectionLock);
                 }
                 return _availableMaps;
             }
@@ -248,6 +253,30 @@ namespace SessionMapSwitcher.ViewModels
             {
                 _skipMovieIsChecked = value;
                 NotifyPropertyChanged();
+            }
+        }
+
+        public string LoadMapButtonText
+        {
+            get
+            {
+                if (IsSessionUnpacked())
+                {
+                    return "Load Map";
+                }
+                return "Unpack Game";
+            }
+        }
+
+        public bool ImportMapButtonIsEnabled
+        {
+            get
+            {
+                if (IsSessionUnpacked())
+                {
+                    return true && InputControlsEnabled;
+                }
+                return false;
             }
         }
 
@@ -451,6 +480,47 @@ namespace SessionMapSwitcher.ViewModels
                     LoadAvailableMapsInSubDirectories(subFolder);
                 }
             }
+        }
+
+        internal void OpenComputerImportWindow()
+        {
+            if (IsSessionPathValid() == false)
+            {
+                UserMessage = "Cannot import: You must set your path to Session before importing maps.";
+                return;
+            }
+
+            ComputerImportViewModel importViewModel = new ComputerImportViewModel(SessionPath);
+
+            ComputerImportWindow importWindow = new ComputerImportWindow(importViewModel);
+            importWindow.WindowStyle = WindowStyle.ToolWindow;
+            importWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            importWindow.ShowDialog();
+
+            LoadAvailableMaps(); // reload list of available maps as it may have changed
+        }
+
+        internal void OpenOnlineImportWindow()
+        {
+            if (IsSessionPathValid() == false)
+            {
+                UserMessage = "Cannot import: You must set your path to Session before importing maps.";
+                return;
+            }
+
+            if (ImportViewModel == null)
+            {
+                // keep view model in memory for entire app so list of downloadable maps is cached (until force refreshed)
+                ImportViewModel = new OnlineImportViewModel();
+            }
+
+            ImportViewModel.SetSessionPath(SessionPath);
+            OnlineImportWindow importWindow = new OnlineImportWindow(ImportViewModel);
+            importWindow.WindowStyle = WindowStyle.ToolWindow;
+            importWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            importWindow.ShowDialog();
+
+            LoadAvailableMaps(); // reload list of available maps as it may have changed
         }
 
         private bool IsMapAdded(string mapName)
@@ -1019,6 +1089,12 @@ namespace SessionMapSwitcher.ViewModels
 
         internal void StartUnpacking()
         {
+            if (IsSessionPathValid() == false)
+            {
+                UserMessage = "Cannot unpack: Set Path to Session before unpacking game.";
+                return;
+            }
+
             _unpackUtils = new UnpackUtils();
 
             _unpackUtils.ProgressChanged += _unpackUtils_ProgressChanged;
@@ -1040,13 +1116,15 @@ namespace SessionMapSwitcher.ViewModels
                 if (IsSessionUnpacked())
                 {
                     BackupOriginalMapFiles();
-                    LoadAvailableMaps();
                 }
 
-                UserMessage = "Unpacking complete! You should now be able to play custom maps ...";
+                UserMessage = "Unpacking complete! You should now be able to play custom maps. Click 'Reload Available Maps' to see list of available maps (some maps were left by the devs of Session).";
             }
 
             InputControlsEnabled = true;
+            NotifyPropertyChanged(nameof(LoadMapButtonText));
+            NotifyPropertyChanged(nameof(ImportMapButtonIsEnabled));
+
         }
 
         private void _unpackUtils_ProgressChanged(string message)

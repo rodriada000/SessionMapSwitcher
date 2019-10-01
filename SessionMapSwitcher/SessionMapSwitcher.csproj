@@ -80,12 +80,25 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ComputerImportWindow.xaml.cs">
+      <DependentUpon>ComputerImportWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="OnlineImportWindow.xaml.cs">
+      <DependentUpon>OnlineImportWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utils\AppSettingsUtil.cs" />
+    <Compile Include="Utils\DownloadUtils.cs" />
     <Compile Include="Utils\FileUtils.cs" />
     <Compile Include="Utils\UnpackUtils.cs" />
+    <Compile Include="ViewModels\ComputerImportViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\MapListItem.cs" />
+    <Compile Include="ViewModels\OnlineImportViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
+    <Page Include="ComputerImportWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -98,6 +111,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="OnlineImportWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
