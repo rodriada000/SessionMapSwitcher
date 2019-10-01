@@ -204,15 +204,27 @@ namespace SessionMapSwitcher.ViewModels
                 return;
             }
 
-            string directDownloadUrl = DownloadUtils.GetDirectDownloadLinkFromAnonPage(selectedMap.DownloadUrl);
+            string directDownloadUrl;
 
-            if (directDownloadUrl == "")
+            // check if we have to scrape for the direct download link or it's already provided
+            if (selectedMap.IsDownloadUrlDirect() == false)
             {
-                HeaderMessage = "Could not get direct download link for selected map.";
-                IsImportingMap = false;
-                MapImported?.Invoke(false);
-                return;
+                directDownloadUrl = DownloadUtils.GetDirectDownloadLinkFromAnonPage(selectedMap.DownloadUrl);
+
+                if (directDownloadUrl == "")
+                {
+                    HeaderMessage = "Could not get direct download link for selected map.";
+                    IsImportingMap = false;
+                    MapImported?.Invoke(false);
+                    return;
+                }
             }
+            else
+            {
+                directDownloadUrl = selectedMap.DownloadUrlWithPrefixRemoved;
+            }
+
+
 
             if (Directory.Exists(PathToMapDownloads) == false)
             {
@@ -317,6 +329,18 @@ namespace SessionMapSwitcher.ViewModels
             }
         }
 
+        internal string DownloadUrlWithPrefixRemoved
+        {
+            get
+            {
+                if (IsDownloadUrlDirect())
+                {
+                    return DownloadUrl.Substring("DIRECT:".Length);
+                }
+                return DownloadUrl;
+            }
+        }
+
         internal void OpenPreviewUrlInBrowser()
         {
             if (String.IsNullOrEmpty(PreviewUrl))
@@ -357,5 +381,11 @@ namespace SessionMapSwitcher.ViewModels
             }
 
         }
+
+        internal bool IsDownloadUrlDirect()
+        {
+            return DownloadUrl.StartsWith("DIRECT:");
+        }
+
     }
 }
