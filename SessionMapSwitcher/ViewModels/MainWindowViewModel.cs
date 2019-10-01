@@ -32,6 +32,9 @@ namespace SessionMapSwitcher.ViewModels
         private UnpackUtils _unpackUtils;
         private const string _backupFolderName = "Original_Session_Map";
 
+        private OnlineImportViewModel ImportViewModel;
+
+
         public String SessionPathTextInput
         {
             get
@@ -453,10 +456,45 @@ namespace SessionMapSwitcher.ViewModels
             }
         }
 
+        internal void OpenComputerImportWindow()
+        {
+            if (IsSessionPathValid() == false)
+            {
+                UserMessage = "Cannot import: You must set your path to Session before importing maps.";
+                return;
+            }
+
+            ComputerImportViewModel importViewModel = new ComputerImportViewModel(SessionPath);
+
+            ComputerImportWindow importWindow = new ComputerImportWindow(importViewModel);
+            importWindow.WindowStyle = WindowStyle.ToolWindow;
+            importWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            importWindow.ShowDialog();
+
+            LoadAvailableMaps(); // reload list of available maps as it may have changed
+        }
+
         internal void OpenOnlineImportWindow()
         {
-            OnlineImportWindow importWindow = new OnlineImportWindow();
+            if (IsSessionPathValid() == false)
+            {
+                UserMessage = "Cannot import: You must set your path to Session before importing maps.";
+                return;
+            }
+
+            if (ImportViewModel == null)
+            {
+                // keep view model in memory for entire app so list of downloadable maps is cached (until force refreshed)
+                ImportViewModel = new OnlineImportViewModel();
+            }
+
+            ImportViewModel.SetSessionPath(SessionPath);
+            OnlineImportWindow importWindow = new OnlineImportWindow(ImportViewModel);
+            importWindow.WindowStyle = WindowStyle.ToolWindow;
+            importWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             importWindow.ShowDialog();
+
+            LoadAvailableMaps(); // reload list of available maps as it may have changed
         }
 
         private bool IsMapAdded(string mapName)

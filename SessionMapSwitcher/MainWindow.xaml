@@ -7,7 +7,6 @@
         xmlns:local="clr-namespace:SessionMapSwitcher"
         mc:Ignorable="d"
         Title="Session Map Switcher"
-        Icon="Resources/sessionmapswitchericon.png"
         MinHeight="415" MinWidth="510"
         Height="450" Width="745"
         Style="{StaticResource WindowStyle}">
@@ -156,6 +155,7 @@
 
                     <Button x:Name="btnImportMap"
                             Style="{StaticResource MainButtonStyle}"
+                            IsEnabled="{Binding InputControlsEnabled}"
                             Content="Import Map"
                             Click="BtnImportMap_Click"
                             Margin="10,0,0,0"

@@ -359,7 +359,7 @@ namespace SessionMapSwitcher
 
         private void MenuComputerImport_Click(object sender, RoutedEventArgs e)
         {
-
+            ViewModel.OpenComputerImportWindow();
         }
 
         private void MenuOnlineImport_Click(object sender, RoutedEventArgs e)
