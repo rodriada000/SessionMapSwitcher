@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Linq;
 using System.Diagnostics;
 using System.Reflection;
+using SessionMapSwitcher.Classes;
 
 namespace SessionMapSwitcher
 {
@@ -26,7 +27,7 @@ namespace SessionMapSwitcher
             ReloadAvailableMapsInBackground(autoSelectLoadedMap: true);
 
             this.DataContext = ViewModel;
-            this.Title = $"Session Map Switcher - v{typeof(SessionMapSwitcher.App).Assembly.GetName().Version}";
+            this.Title = $"Session Map Switcher - v{App.GetAppVersion()}";
         }
 
         private void BtnBrowseSessionPath_Click(object sender, RoutedEventArgs e)
@@ -141,8 +142,8 @@ namespace SessionMapSwitcher
 
             LoadMapInBackgroundAndContinueWith((antecedent) =>
             {
-                ViewModel.InputControlsEnabled = true;
                 System.Diagnostics.Process.Start(ViewModel.PathToSessionExe);
+                ViewModel.InputControlsEnabled = true;
             });
         }
 
@@ -364,6 +365,38 @@ namespace SessionMapSwitcher
         private void MenuOnlineImport_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.OpenOnlineImportWindow();
+        }
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            CheckForNewVersionInBackground();
+        }
+
+        private void CheckForNewVersionInBackground()
+        {
+            bool isNewVersionAvailable = false;
+
+            Task task = Task.Factory.StartNew(() => 
+            {
+                isNewVersionAvailable = VersionChecker.IsNewVersionAvailable();
+            });
+
+            task.ContinueWith((antecedent) => 
+            {
+                if (isNewVersionAvailable)
+                {
+                    MessageBoxResult result = System.Windows.MessageBox.Show("There is a new version available. Click 'Yes' to open the release page and download the latest version.", 
+                                                   "Update Available!",
+                                                   MessageBoxButton.YesNo,
+                                                   MessageBoxImage.Question,
+                                                   MessageBoxResult.Yes);
+
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        VersionChecker.OpenLatestReleaseInBrowser();
+                    }
+                }
+            });
         }
     }
 }

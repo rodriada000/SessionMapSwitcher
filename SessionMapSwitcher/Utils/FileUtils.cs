@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,20 +10,67 @@ namespace SessionMapSwitcher.Utils
 {
     class FileUtils
     {
-        internal static void CopyDirectoryRecursively(string sourceDirName, string destDirName, bool copySubDirs)
+        internal static void CopyDirectoryRecursively(string sourceDirName, string destDirName, List<string> filesToExclude, List<string> foldersToInclude)
         {
-            CopyOrMoveDirectoryRecursively(sourceDirName, destDirName, copySubDirs, moveFiles: false);
+            CopySettings settings = new CopySettings()
+            {
+                IsMovingFiles = false,
+                CopySubFolders = true,
+                ExcludeFiles = filesToExclude,
+                ExcludeFolders = foldersToInclude
+            };
+
+            CopyOrMoveDirectoryRecursively(sourceDirName, destDirName, settings);
         }
 
-        internal static void MoveDirectoryRecursively(string sourceDirName, string destDirName, bool copySubDirs)
+        internal static void CopyDirectoryRecursively(string sourceDirName, string destDirName)
         {
-            CopyOrMoveDirectoryRecursively(sourceDirName, destDirName, copySubDirs, moveFiles: true);
+            CopySettings settings = new CopySettings()
+            {
+                IsMovingFiles = false,
+                CopySubFolders = true,
+            };
+
+            CopyOrMoveDirectoryRecursively(sourceDirName, destDirName, settings);
         }
 
-        private static void CopyOrMoveDirectoryRecursively(string sourceDirName, string destDirName, bool includSubeFolders, bool moveFiles)
+        internal static void MoveDirectoryRecursively(string sourceDirName, string destDirName, List<string> filesToExclude, List<string> foldersToInclude)
         {
+            CopySettings settings = new CopySettings()
+            {
+                IsMovingFiles = true,
+                CopySubFolders = true,
+                ExcludeFiles = filesToExclude,
+                ExcludeFolders = foldersToInclude
+            };
+
+            CopyOrMoveDirectoryRecursively(sourceDirName, destDirName, settings);
+        }
+
+        internal static void MoveDirectoryRecursively(string sourceDirName, string destDirName)
+        {
+            CopySettings settings = new CopySettings()
+            {
+                IsMovingFiles = true,
+                CopySubFolders = true,
+            };
+
+            CopyOrMoveDirectoryRecursively(sourceDirName, destDirName, settings);
+        }
+
+        private static void CopyOrMoveDirectoryRecursively(string sourceDirName, string destDirName, CopySettings settings)
+        {
+            if (settings.ExcludeFiles == null)
+            {
+                settings.ExcludeFiles = new List<string>();
+            }
+
+            if (settings.ExcludeFolders == null)
+            {
+                settings.ExcludeFolders = new List<string>();
+            }
+
             // reference: https://docs.microsoft.com/en-us/dotnet/standard/io/how-to-copy-directories
-
             // Get the subdirectories for the specified directory.
             DirectoryInfo dir = new DirectoryInfo(sourceDirName);
 
@@ -43,32 +91,58 @@ namespace SessionMapSwitcher.Utils
             FileInfo[] files = dir.GetFiles();
             foreach (FileInfo file in files)
             {
+                if (settings.ExcludeFiles.Contains(file.Name))
+                {
+                    continue; // skip file as it is excluded
+                }
+
                 string temppath = Path.Combine(destDirName, file.Name);
 
-                if (!File.Exists(temppath))
+                if (settings.IsMovingFiles)
                 {
-                    if (moveFiles)
-                    {
-                        file.MoveTo(temppath);
-                    }
-                    else
-                    {
-                        file.CopyTo(temppath, true);
-                    }
+                    file.MoveTo(temppath);
+                }
+                else
+                {
+                    file.CopyTo(temppath, true);
                 }
             }
 
             // If copying subdirectories, copy them and their contents to new location.
-            if (includSubeFolders)
+            if (settings.CopySubFolders)
             {
                 DirectoryInfo[] dirs = dir.GetDirectories();
 
                 foreach (DirectoryInfo subdir in dirs)
                 {
-                    string temppath = Path.Combine(destDirName, subdir.Name);
-                    CopyOrMoveDirectoryRecursively(subdir.FullName, temppath, includSubeFolders, moveFiles);
+                    if (settings.ExcludeFolders.Contains(subdir.Name))
+                    {
+                        continue; // skip folder as it is excluded
+                    }
+
+                    string tempPath = Path.Combine(destDirName, subdir.Name);
+                    CopyOrMoveDirectoryRecursively(subdir.FullName, tempPath, settings);
                 }
             }
         }
+
+
+        /// <summary>
+        /// Extract a zip file to a given path. Returns true on success.
+        /// </summary>
+        public static bool ExtractZipFile(string pathToZip, string extractPath)
+        {
+            try
+            {
+                ZipFile.ExtractToDirectory(pathToZip, extractPath);
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+
+            return true;
+        }
     }
+
 }

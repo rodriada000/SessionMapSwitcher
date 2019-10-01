@@ -70,7 +70,7 @@ namespace SessionMapSwitcher.Utils
                 }
 
                 ProgressChanged("Extracting .zip file ...");
-                bool isExtracted = DownloadUtils.ExtractZipFile($"{PathToPakFolder}\\{DownloadedZipFileName}", PathToPakFolder);
+                bool isExtracted = FileUtils.ExtractZipFile($"{PathToPakFolder}\\{DownloadedZipFileName}", PathToPakFolder);
 
                 if (isExtracted == false)
                 {
@@ -108,7 +108,7 @@ namespace SessionMapSwitcher.Utils
                     {
                         if (Directory.Exists($"{PathToPakFolder}{dir}") == false)
                         {
-                            ProgressChanged("Failed to unpack files correctly. Cannot continue.");
+                            ProgressChanged($"Failed to unpack files correctly. The expected folders were not found ({PathToPakFolder}{dir}). Cannot continue.");
                             UnpackCompleted(false);
                             return;
                         }
@@ -210,7 +210,7 @@ namespace SessionMapSwitcher.Utils
 
             ProgressChanged("Copying unpacked files to Session game directory, this may take a few minutes. You should see files being copied to the Content folder that opens ...");
             Process.Start($"{PathToSession}\\SessionGame\\Content");
-            FileUtils.MoveDirectoryRecursively(outFolderPath, PathToSession, true);
+            FileUtils.MoveDirectoryRecursively(outFolderPath, PathToSession);
 
             System.Threading.Thread.Sleep(500);
 
