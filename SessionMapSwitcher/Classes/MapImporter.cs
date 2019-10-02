@@ -12,13 +12,13 @@ namespace SessionMapSwitcher.Classes
         public const string MetaFolderName = "MapSwitcherMetaData";
 
         /// <summary>
-        /// Recursively searches folders for a .umap file and returns the name of it
+        /// Recursively searches folders for a .umap file that has the valid Session gamemode and returns the name of it
         /// </summary>
         public static string GetMapFileNameFromFolder(string folder)
         {
             foreach (string fileName in Directory.GetFiles(folder))
             {
-                if (fileName.EndsWith(".umap"))
+                if (fileName.EndsWith(".umap") && MapListItem.HasGameMode(fileName))
                 {
                     FileInfo fileInfo = new FileInfo(fileName);
                     return fileInfo.Name;
