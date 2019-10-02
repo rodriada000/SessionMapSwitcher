@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SessionMapSwitcher.Classes;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -70,11 +71,11 @@ namespace SessionMapSwitcher.Utils
                 }
 
                 ProgressChanged("Extracting .zip file ...");
-                bool isExtracted = FileUtils.ExtractZipFile($"{PathToPakFolder}\\{DownloadedZipFileName}", PathToPakFolder);
+                BoolWithMessage isExtracted = FileUtils.ExtractZipFile($"{PathToPakFolder}\\{DownloadedZipFileName}", PathToPakFolder);
 
-                if (isExtracted == false)
+                if (isExtracted.Result == false)
                 {
-                    ProgressChanged($"Failed to unzip file. Cannot continue.");
+                    ProgressChanged($"Failed to unzip file: {isExtracted.Message}. Cannot continue.");
                     UnpackCompleted(false);
                     return;
                 }

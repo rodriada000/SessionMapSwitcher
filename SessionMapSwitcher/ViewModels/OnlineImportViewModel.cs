@@ -1,4 +1,5 @@
-﻿using SessionMapSwitcher.Utils;
+﻿using SessionMapSwitcher.Classes;
+using SessionMapSwitcher.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -234,7 +235,7 @@ namespace SessionMapSwitcher.ViewModels
             HeaderMessage = $"Downloading and copying map files. This may take a couple of minutes. Click '{ImportButtonText}' to stop ...";
 
             bool didDownload = false;
-            bool didExtract = false;
+            BoolWithMessage didExtract = null;
 
             tokenSource = new System.Threading.CancellationTokenSource();
             cancelToken = tokenSource.Token;
@@ -267,6 +268,7 @@ namespace SessionMapSwitcher.ViewModels
                     return;
                 }
 
+                HeaderMessage = "Extracting downloaded .zip ...";
                 didExtract = FileUtils.ExtractZipFile(pathToZip, PathToSessionContent);
             });
 
@@ -281,9 +283,9 @@ namespace SessionMapSwitcher.ViewModels
                     return;
                 }
 
-                if (didExtract == false)
+                if (didExtract?.Result == false)
                 {
-                    HeaderMessage = $"Failed to extract map files.";
+                    HeaderMessage = $"Failed to extract map files: {didExtract?.Message}.";
                     MapImported?.Invoke(false);
                     return;
                 }
@@ -296,7 +298,7 @@ namespace SessionMapSwitcher.ViewModels
 
         private void DownloadUtils_ProgressChanged(long? totalFileSize, long totalBytesDownloaded, double? progressPercentage)
         {
-            HeaderMessage = $"Downloading map files: {(double)totalBytesDownloaded / 1000000:0.00} / {(double)totalFileSize / 1000000:0.00} | {progressPercentage:0.00}% Complete";
+            HeaderMessage = $"Downloading map files: {(double)totalBytesDownloaded / 1000000:0.00} / {(double)totalFileSize / 1000000:0.00} MB | {progressPercentage:0.00}% Complete";
         }
     }
 

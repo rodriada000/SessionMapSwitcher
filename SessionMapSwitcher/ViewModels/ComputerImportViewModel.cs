@@ -1,4 +1,5 @@
-﻿using SessionMapSwitcher.Utils;
+﻿using SessionMapSwitcher.Classes;
+using SessionMapSwitcher.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -188,7 +189,7 @@ namespace SessionMapSwitcher.ViewModels
 
             IsImporting = true;
 
-            bool didExtract = false;
+            BoolWithMessage didExtract = null;
 
             Task task = Task.Factory.StartNew(() =>
             {
@@ -206,7 +207,7 @@ namespace SessionMapSwitcher.ViewModels
                     Directory.CreateDirectory(PathToTempUnzipFolder);
                     didExtract = FileUtils.ExtractZipFile(PathToFileOrFolder, PathToTempUnzipFolder);
 
-                    if (didExtract == false)
+                    if (didExtract.Result == false)
                     {
                         return;
                     }
@@ -237,9 +238,9 @@ namespace SessionMapSwitcher.ViewModels
             {
                 IsImporting = false;
 
-                if (IsZipFileImport && didExtract == false)
+                if (IsZipFileImport && didExtract?.Result == false)
                 {
-                    UserMessage = "Failed to extract .zip file.";
+                    UserMessage = $"Failed to extract .zip file: {didExtract.Message}";
                     return;
                 }
 

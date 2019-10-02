@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SessionMapSwitcher.Classes;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -130,7 +131,7 @@ namespace SessionMapSwitcher.Utils
         /// <summary>
         /// Extract a zip file to a given path. Returns true on success.
         /// </summary>
-        public static bool ExtractZipFile(string pathToZip, string extractPath)
+        public static BoolWithMessage ExtractZipFile(string pathToZip, string extractPath)
         {
             try
             {
@@ -157,10 +158,10 @@ namespace SessionMapSwitcher.Utils
             }
             catch (Exception e)
             {
-                return false;
+                return new BoolWithMessage(false, e.Message);
             }
 
-            return true;
+            return new BoolWithMessage(true);
         }
     }
 
