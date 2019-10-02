@@ -83,7 +83,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Classes\BoolWithMessage.cs" />
     <Compile Include="Classes\CopySettings.cs" />
+    <Compile Include="Classes\MapImporter.cs" />
+    <Compile Include="Classes\ThreadFriendlyObservableCollection.cs" />
     <Compile Include="Classes\VersionChecker.cs" />
     <Compile Include="ComputerImportWindow.xaml.cs">
       <DependentUpon>ComputerImportWindow.xaml</DependentUpon>

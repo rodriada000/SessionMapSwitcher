@@ -24,10 +24,10 @@ namespace SessionMapSwitcher
             InitializeComponent();
 
             ViewModel = new MainWindowViewModel();
-            ReloadAvailableMapsInBackground(autoSelectLoadedMap: true);
+            ReloadAvailableMapsInBackground();
 
             this.DataContext = ViewModel;
-            this.Title = $"Session Map Switcher - v{App.GetAppVersion()}";
+            this.Title = $"{App.GetAppName()} - v{App.GetAppVersion()}";
         }
 
         private void BtnBrowseSessionPath_Click(object sender, RoutedEventArgs e)
@@ -228,7 +228,7 @@ namespace SessionMapSwitcher
             ReloadAvailableMapsInBackground();
         }
 
-        private void ReloadAvailableMapsInBackground(bool autoSelectLoadedMap = false)
+        private void ReloadAvailableMapsInBackground(bool autoSelectLoadedMap = true)
         {
             ViewModel.UserMessage = $"Reloading Available Maps ...";
             ViewModel.InputControlsEnabled = false;
@@ -397,6 +397,44 @@ namespace SessionMapSwitcher
                     }
                 }
             });
+        }
+
+        private void MenuReimporSelectedMap_Click(object sender, RoutedEventArgs e)
+        {
+            if (lstMaps.SelectedItem == null)
+            {
+                System.Windows.MessageBox.Show("Select a map to load first!",
+                                                "Notice!",
+                                                MessageBoxButton.OK,
+                                                MessageBoxImage.Information);
+                return;
+            }
+
+
+            MapListItem selectedItem = lstMaps.SelectedItem as MapListItem;
+
+            ViewModel.ReimportMapFiles(selectedItem);
+        }
+
+        private void ContextMenu_ContextMenuOpening(object sender, System.Windows.Controls.ContextMenuEventArgs e)
+        {
+            // disable certain menu items if no map selected
+            bool isMapSelected = (lstMaps.SelectedItem != null);
+            bool isSessionPathValid = ViewModel.IsSessionPathValid();
+
+            menuReimporSelectedMap.IsEnabled = isMapSelected;
+            menuOpenSelectedMapFolder.IsEnabled = isMapSelected;
+
+            menuOpenSessionFolder.IsEnabled = isSessionPathValid;
+            menuOpenMapsFolder.IsEnabled = isSessionPathValid;
+
+            if (isMapSelected)
+            {
+                MapListItem selected = (lstMaps.SelectedItem as MapListItem);
+                bool hasImportLocation = MapImporter.IsImportLocationStored(ViewModel.SessionContentPath, selected.DisplayName);
+                menuReimporSelectedMap.IsEnabled = hasImportLocation;
+                menuReimporSelectedMap.ToolTip = hasImportLocation ? null : "You can only re-import if you imported the map from 'Import Map > From Computer ...' and imported a folder.\n(does not work with .zip files)";
+            }
         }
     }
 }

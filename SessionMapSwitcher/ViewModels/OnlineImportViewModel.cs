@@ -1,4 +1,5 @@
-﻿using SessionMapSwitcher.Utils;
+﻿using SessionMapSwitcher.Classes;
+using SessionMapSwitcher.Utils;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -18,7 +19,7 @@ namespace SessionMapSwitcher.ViewModels
 
         private string _headerMessage;
         private bool _isImportingMap = false;
-        private ObservableCollection<DownloadableMap> _downloadableMaps;
+        private ThreadFriendlyObservableCollection<DownloadableMap> _downloadableMaps;
         private object collectionLock = new object();
 
         public delegate void ImportComplete(bool wasSuccessful);
@@ -86,13 +87,13 @@ namespace SessionMapSwitcher.ViewModels
             }
         }
 
-        public ObservableCollection<DownloadableMap> DownloadableMaps
+        public ThreadFriendlyObservableCollection<DownloadableMap> DownloadableMaps
         {
             get
             {
                 if (_downloadableMaps == null)
                 {
-                    _downloadableMaps = new ObservableCollection<DownloadableMap>();
+                    _downloadableMaps = new ThreadFriendlyObservableCollection<DownloadableMap>();
                     BindingOperations.EnableCollectionSynchronization(_downloadableMaps, collectionLock);
                 }
                 return _downloadableMaps;
@@ -130,7 +131,7 @@ namespace SessionMapSwitcher.ViewModels
         {
             if (DownloadableMaps.Count == 0)
             {
-                DownloadableMaps = new ObservableCollection<DownloadableMap>(GetDownloadableMapsFromGit());
+                DownloadableMaps = new ThreadFriendlyObservableCollection<DownloadableMap>(GetDownloadableMapsFromGit());
                 BindingOperations.EnableCollectionSynchronization(DownloadableMaps, collectionLock);
 
                 if (DownloadableMaps.Count == 0)
@@ -234,7 +235,7 @@ namespace SessionMapSwitcher.ViewModels
             HeaderMessage = $"Downloading and copying map files. This may take a couple of minutes. Click '{ImportButtonText}' to stop ...";
 
             bool didDownload = false;
-            bool didExtract = false;
+            BoolWithMessage didExtract = null;
 
             tokenSource = new System.Threading.CancellationTokenSource();
             cancelToken = tokenSource.Token;
@@ -267,6 +268,7 @@ namespace SessionMapSwitcher.ViewModels
                     return;
                 }
 
+                HeaderMessage = "Extracting downloaded .zip ...";
                 didExtract = FileUtils.ExtractZipFile(pathToZip, PathToSessionContent);
             });
 
@@ -281,9 +283,9 @@ namespace SessionMapSwitcher.ViewModels
                     return;
                 }
 
-                if (didExtract == false)
+                if (didExtract?.Result == false)
                 {
-                    HeaderMessage = $"Failed to extract map files.";
+                    HeaderMessage = $"Failed to extract map files: {didExtract?.Message}.";
                     MapImported?.Invoke(false);
                     return;
                 }
@@ -296,7 +298,7 @@ namespace SessionMapSwitcher.ViewModels
 
         private void DownloadUtils_ProgressChanged(long? totalFileSize, long totalBytesDownloaded, double? progressPercentage)
         {
-            HeaderMessage = $"Downloading map files: {(double)totalBytesDownloaded / 1000000:0.00} / {(double)totalFileSize / 1000000:0.00} | {progressPercentage:0.00}% Complete";
+            HeaderMessage = $"Downloading map files: {(double)totalBytesDownloaded / 1000000:0.00} / {(double)totalFileSize / 1000000:0.00} MB | {progressPercentage:0.00}% Complete";
         }
     }
 

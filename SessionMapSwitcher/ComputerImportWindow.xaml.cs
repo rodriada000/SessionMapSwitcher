@@ -42,7 +42,7 @@ namespace SessionMapSwitcher
 
         private void BtnImportMap_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.ImportMapAsync();
+            ViewModel.BeginImportMapAsync();
         }
     }
 }

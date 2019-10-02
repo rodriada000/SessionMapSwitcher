@@ -7,8 +7,8 @@
         x:Name="mainWindow"
         mc:Ignorable="d"
         Style="{StaticResource WindowStyle}"
-        MinWidth="300" MinHeight="230" MaxHeight="230" MaxWidth="600"
-        Title="Import Map From Computer" Height="230" Width="400">
+        MinWidth="300" MinHeight="230" MaxHeight="230" MaxWidth="800"
+        Title="Import Map From Computer" Height="230" Width="600">
     <Window.Resources>
         <Style x:Key="mainGridStyle" TargetType="Grid">
             <Setter Property="Background" Value="{Binding ElementName=mainWindow, Path=Background}"/>
