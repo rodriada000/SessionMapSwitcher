@@ -11,7 +11,6 @@ class MapListItem : ViewModelBase
     private bool _isSelected = false;
     private bool _isValid = true;
 
-
     public string DisplayName
     {
         get { return _displayName; }
@@ -110,19 +109,28 @@ class MapListItem : ViewModelBase
             ValidationHint = "(file missing)";
         }
 
+        if (MapListItem.HasGameMode(FullPath) == false)
+        {
+            IsValid = false;
+            ValidationHint = "(missing gamemode)";
+        }
+    }
+
+    /// <summary>
+    /// Reads the file and looks for the string '/Game/Data/PBP_InGameSessionGameMode'
+    /// </summary>
+    /// <param name="fullPath"> full path to file </param>
+    internal static bool HasGameMode(string fullPath)
+    {
         try
         {
-            string umapContents = File.ReadAllText(FullPath);
+            string umapContents = File.ReadAllText(fullPath);
 
-            if (umapContents.Contains("/Game/Data/PBP_InGameSessionGameMode") == false)
-            {
-                IsValid = false;
-                ValidationHint = "(missing gamemode)";
-            }
+            return umapContents.Contains("/Game/Data/PBP_InGameSessionGameMode");
         }
         catch (Exception e)
         {
-            IsValid = false;
+            return false;
         }
     }
 }
