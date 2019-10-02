@@ -207,6 +207,7 @@ namespace SessionMapSwitcher.ViewModels
             {
                 _inputControlsEnabled = value;
                 NotifyPropertyChanged();
+                NotifyPropertyChanged(nameof(ImportMapButtonIsEnabled));
             }
         }
 
