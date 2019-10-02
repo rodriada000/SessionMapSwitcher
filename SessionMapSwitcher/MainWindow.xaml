@@ -84,14 +84,6 @@
             <Setter Property="IsEnabled" Value="{Binding IsEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         </Style>
-
-        <ContextMenu x:Key="mainContextMenu">
-            <MenuItem x:Name="menuOpenSessionFolder" Header="Open Session Folder ..."  Click="MenuOpenSessionFolder_Click"/>
-            <MenuItem x:Name="menuOpenMapsFolder" Header="Open Content Folder ..." Click="MenuOpenMapsFolder_Click"/>
-            <MenuItem x:Name="menuOpenSelectedMapFolder" Header="Open Selected Map Folder ..." Click="MenuOpenSelectedMapFolder_Click"/>
-            <MenuItem x:Name="menuOpenReadme" Header="View Help ..." Click="MenuOpenReadme_Click"/>
-        </ContextMenu>
-        
     </Window.Resources>
 
     <Grid Style="{StaticResource mainGridStyle}">
@@ -115,10 +107,11 @@
                  VerticalAlignment="Top" HorizontalAlignment="Stretch"
                  Text="{Binding SessionPathTextInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  IsEnabled="{Binding InputControlsEnabled}"
+                 ContextMenuOpening="ContextMenu_ContextMenuOpening"
                  KeyUp="TxtSessionPath_KeyUp"
                  Height="27"
                  Margin="100,10,50,0"
-                 ContextMenu="{StaticResource mainContextMenu}"/>
+                 ContextMenu="{Binding ElementName=mainContextMenu}"/>
 
 
         <Button Name="btnBrowseSessionPath" 
@@ -190,7 +183,18 @@
                          Margin="2,1,1,5"
                          ItemsSource="{Binding FilteredAvailableMaps}"
                          ItemContainerStyle="{StaticResource MapListItem}"
-                         ContextMenu="{StaticResource mainContextMenu}">
+                         ContextMenuOpening="ContextMenu_ContextMenuOpening">
+                    <ListBox.ContextMenu>
+                        <ContextMenu x:Name="mainContextMenu">
+                            <MenuItem x:Name="menuReimporSelectedMap" Header="Re-import Selected Map ..."  Click="MenuReimporSelectedMap_Click" ToolTipService.ShowOnDisabled="True" ToolTipService.ShowDuration="8000"/>
+                            <Separator/>
+                            <MenuItem x:Name="menuOpenSessionFolder" Header="Open Session Folder ..."  Click="MenuOpenSessionFolder_Click"/>
+                            <MenuItem x:Name="menuOpenMapsFolder" Header="Open Content Folder ..." Click="MenuOpenMapsFolder_Click"/>
+                            <MenuItem x:Name="menuOpenSelectedMapFolder" Header="Open Selected Map Folder ..." Click="MenuOpenSelectedMapFolder_Click"/>
+                            <Separator/>
+                            <MenuItem x:Name="menuOpenReadme" Header="View Help ..." Click="MenuOpenReadme_Click"/>
+                        </ContextMenu>
+                    </ListBox.ContextMenu>
                 </ListBox>
             </Grid>
 

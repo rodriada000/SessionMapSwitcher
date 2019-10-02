@@ -1,5 +1,6 @@
 ﻿
 using Ini.Net;
+using SessionMapSwitcher.Classes;
 using SessionMapSwitcher.Utils;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,7 @@ namespace SessionMapSwitcher.ViewModels
         private string _sessionPath;
         private string _userMessage;
         private string _currentlyLoadedMapName;
-        private ObservableCollection<MapListItem> _availableMaps;
+        private ThreadFriendlyObservableCollection<MapListItem> _availableMaps;
         private object collectionLock = new object();
         private MapListItem _firstLoadedMap;
         private MapListItem _defaultSessionMap;
@@ -68,13 +69,13 @@ namespace SessionMapSwitcher.ViewModels
                 return $"{SessionPath}\\SessionGame\\Content";
             }
         }
-        public ObservableCollection<MapListItem> AvailableMaps
+        public ThreadFriendlyObservableCollection<MapListItem> AvailableMaps
         {
             get
             {
                 if (_availableMaps == null)
                 {
-                    _availableMaps = new ObservableCollection<MapListItem>();
+                    _availableMaps = new ThreadFriendlyObservableCollection<MapListItem>();
                     BindingOperations.EnableCollectionSynchronization(_availableMaps, collectionLock);
                 }
                 return _availableMaps;
@@ -424,7 +425,7 @@ namespace SessionMapSwitcher.ViewModels
 
             lock (collectionLock)
             {
-                AvailableMaps = new ObservableCollection<MapListItem>(AvailableMaps.OrderBy(m => m.DisplayName));
+                AvailableMaps = new ThreadFriendlyObservableCollection<MapListItem>(AvailableMaps.OrderBy(m => m.DisplayName));
                 BindingOperations.EnableCollectionSynchronization(AvailableMaps, collectionLock);
 
                 // add default session map to select (add last so it is always at top of list)
@@ -521,6 +522,37 @@ namespace SessionMapSwitcher.ViewModels
             importWindow.ShowDialog();
 
             LoadAvailableMaps(); // reload list of available maps as it may have changed
+        }
+
+        internal void ReimportMapFiles(MapListItem selectedItem)
+        {
+            if (IsSessionPathValid() == false)
+            {
+                UserMessage = "Failed to re-import: Path To Session is invalid.";
+                return;
+            }
+
+            ComputerImportViewModel importViewModel = new ComputerImportViewModel(SessionPath)
+            {
+                IsZipFileImport = false,
+                PathInput = MapImporter.GetOriginalImportLocation(selectedItem.DisplayName, SessionContentPath)
+            };
+
+            UserMessage = "Re-importing in progress ...";
+
+            importViewModel.ImportMapAsyncAndContinueWith(isReimport: true,
+                (antecedent) =>
+                {
+                    if (antecedent.Result.Result)
+                    {
+                        UserMessage = "Map Re-imported Successfully!";
+                        LoadAvailableMaps();
+                    }
+                    else
+                    {
+                        UserMessage = $"Failed to re-import map: {antecedent.Result.Message}";
+                    }
+                });
         }
 
         private bool IsMapAdded(string mapName)

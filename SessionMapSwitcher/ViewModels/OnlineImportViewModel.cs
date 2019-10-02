@@ -19,7 +19,7 @@ namespace SessionMapSwitcher.ViewModels
 
         private string _headerMessage;
         private bool _isImportingMap = false;
-        private ObservableCollection<DownloadableMap> _downloadableMaps;
+        private ThreadFriendlyObservableCollection<DownloadableMap> _downloadableMaps;
         private object collectionLock = new object();
 
         public delegate void ImportComplete(bool wasSuccessful);
@@ -87,13 +87,13 @@ namespace SessionMapSwitcher.ViewModels
             }
         }
 
-        public ObservableCollection<DownloadableMap> DownloadableMaps
+        public ThreadFriendlyObservableCollection<DownloadableMap> DownloadableMaps
         {
             get
             {
                 if (_downloadableMaps == null)
                 {
-                    _downloadableMaps = new ObservableCollection<DownloadableMap>();
+                    _downloadableMaps = new ThreadFriendlyObservableCollection<DownloadableMap>();
                     BindingOperations.EnableCollectionSynchronization(_downloadableMaps, collectionLock);
                 }
                 return _downloadableMaps;
@@ -131,7 +131,7 @@ namespace SessionMapSwitcher.ViewModels
         {
             if (DownloadableMaps.Count == 0)
             {
-                DownloadableMaps = new ObservableCollection<DownloadableMap>(GetDownloadableMapsFromGit());
+                DownloadableMaps = new ThreadFriendlyObservableCollection<DownloadableMap>(GetDownloadableMapsFromGit());
                 BindingOperations.EnableCollectionSynchronization(DownloadableMaps, collectionLock);
 
                 if (DownloadableMaps.Count == 0)

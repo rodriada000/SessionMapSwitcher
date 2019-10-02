@@ -173,7 +173,7 @@ namespace SessionMapSwitcher.ViewModels
             }
         }
 
-        internal void ImportMapAsync()
+        internal void BeginImportMapAsync(bool isReimport = false)
         {
             UserMessage = "Importing Map ...";
 
@@ -189,65 +189,17 @@ namespace SessionMapSwitcher.ViewModels
 
             IsImporting = true;
 
-            BoolWithMessage didExtract = null;
-
-            Task task = Task.Factory.StartNew(() =>
-            {
-                string sourceFolderToCopy;
-
-                if (IsZipFileImport)
-                {
-                    if (File.Exists(PathToFileOrFolder) == false)
-                    {
-                        System.Windows.MessageBox.Show("File does not exist", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
-                        return;
-                    }
-
-                    // extract files first before copying
-                    Directory.CreateDirectory(PathToTempUnzipFolder);
-                    didExtract = FileUtils.ExtractZipFile(PathToFileOrFolder, PathToTempUnzipFolder);
-
-                    if (didExtract.Result == false)
-                    {
-                        return;
-                    }
-
-                    sourceFolderToCopy = PathToTempUnzipFolder;
-                }
-                else
-                {
-                    if (Directory.Exists(PathToFileOrFolder) == false)
-                    {
-                        System.Windows.MessageBox.Show("Folder does not exist", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
-                        return;
-                    }
-
-                    sourceFolderToCopy = PathToFileOrFolder;
-                }
-
-                FileUtils.CopyDirectoryRecursively(sourceFolderToCopy, PathToSessionContent, FilesToExclude, FoldersToExclude);
-
-                if (IsZipFileImport && Directory.Exists(PathToTempUnzipFolder))
-                {
-                    // remove unzipped temp files
-                    Directory.Delete(PathToTempUnzipFolder, true);
-                }
-            });
+            Task<BoolWithMessage> task = ImportMapAsync(isReimport);
 
             task.ContinueWith((antecedent) =>
             {
                 IsImporting = false;
 
-                if (IsZipFileImport && didExtract?.Result == false)
+                if (antecedent.Result.Result)
                 {
-                    UserMessage = $"Failed to extract .zip file: {didExtract.Message}";
-                    return;
+                    UserMessage = "Map Imported!";
                 }
-
-                UserMessage = "Map Imported!";
             });
-
-
         }
 
         /// <summary>
@@ -260,6 +212,69 @@ namespace SessionMapSwitcher.ViewModels
             {
                 PathInput = $"{PathToFileOrFolder}\\Content";
             }
+        }
+
+        internal void ImportMapAsyncAndContinueWith(bool isReimport, Action<Task<BoolWithMessage>> continuationTask)
+        {
+            Task<BoolWithMessage> task = ImportMapAsync(isReimport);
+            task.ContinueWith(continuationTask);
+        }
+
+        internal Task<BoolWithMessage> ImportMapAsync(bool isReimport = false)
+        {
+            Task<BoolWithMessage> task = Task.Factory.StartNew(() =>
+            {
+                string sourceFolderToCopy;
+
+                if (IsZipFileImport)
+                {
+                    if (File.Exists(PathToFileOrFolder) == false)
+                    {
+                        System.Windows.MessageBox.Show("File does not exist", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return new BoolWithMessage(false, $"{PathToFileOrFolder} does not exist.");
+                    }
+
+                    // extract files first before copying
+                    Directory.CreateDirectory(PathToTempUnzipFolder);
+                    BoolWithMessage didExtract = FileUtils.ExtractZipFile(PathToFileOrFolder, PathToTempUnzipFolder);
+
+                    if (didExtract.Result == false)
+                    {
+                        UserMessage = $"Failed to extract .zip file: {didExtract.Message}";
+                        return new BoolWithMessage(false, $"Failed to extract zip: {didExtract.Message}.");
+                    }
+
+                    sourceFolderToCopy = PathToTempUnzipFolder;
+                }
+                else
+                {
+                    if (Directory.Exists(PathToFileOrFolder) == false)
+                    {
+                        System.Windows.MessageBox.Show("Folder does not exist", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return new BoolWithMessage(false, $"{PathToFileOrFolder} does not exist.");
+                    }
+
+                    sourceFolderToCopy = PathToFileOrFolder;
+                }
+
+                FileUtils.CopyDirectoryRecursively(sourceFolderToCopy, PathToSessionContent, FilesToExclude, FoldersToExclude);
+
+                if (IsZipFileImport && Directory.Exists(PathToTempUnzipFolder))
+                {
+                    // remove unzipped temp files
+                    Directory.Delete(PathToTempUnzipFolder, true);
+                }
+                else if (isReimport == false)
+                {
+                    // make .meta file to tag where the imported map came from to support the 'Re-import' feature
+                    string mapName = MapImporter.GetMapFileNameFromFolder(sourceFolderToCopy);
+                    BoolWithMessage result = MapImporter.TrackMapLocation(mapName, sourceFolderToCopy, PathToSessionContent);
+                }
+
+                return new BoolWithMessage(true);
+            });
+
+            return task;
         }
     }
 }

@@ -76,7 +76,6 @@
             <TextBlock TextWrapping="Wrap" Margin="0,0,0,15">
                 <TextBlock.Text>
                     This will let you download and import maps that have been created by the community...
-                    It may be faster to download the map through your browser, then go to 'Import Map > From Computer...' to import the download...
                     Right-click a selected map to download from browser and other options.
                 </TextBlock.Text>
             </TextBlock>
