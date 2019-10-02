@@ -24,7 +24,7 @@ namespace SessionMapSwitcher.ViewModels
         private ThreadFriendlyObservableCollection<MapListItem> _availableMaps;
         private object collectionLock = new object();
         private MapListItem _firstLoadedMap;
-        private MapListItem _defaultSessionMap;
+        private readonly MapListItem _defaultSessionMap;
         private bool _inputControlsEnabled;
         private bool _showInvalidMaps;
         private string _gravityText;
@@ -493,9 +493,11 @@ namespace SessionMapSwitcher.ViewModels
 
             ComputerImportViewModel importViewModel = new ComputerImportViewModel(SessionPath);
 
-            ComputerImportWindow importWindow = new ComputerImportWindow(importViewModel);
-            importWindow.WindowStyle = WindowStyle.ToolWindow;
-            importWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            ComputerImportWindow importWindow = new ComputerImportWindow(importViewModel)
+            {
+                WindowStyle = WindowStyle.ToolWindow,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            };
             importWindow.ShowDialog();
 
             LoadAvailableMaps(); // reload list of available maps as it may have changed
@@ -516,9 +518,11 @@ namespace SessionMapSwitcher.ViewModels
             }
 
             ImportViewModel.SetSessionPath(SessionPath);
-            OnlineImportWindow importWindow = new OnlineImportWindow(ImportViewModel);
-            importWindow.WindowStyle = WindowStyle.ToolWindow;
-            importWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            OnlineImportWindow importWindow = new OnlineImportWindow(ImportViewModel)
+            {
+                WindowStyle = WindowStyle.ToolWindow,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            };
             importWindow.ShowDialog();
 
             LoadAvailableMaps(); // reload list of available maps as it may have changed
@@ -806,7 +810,7 @@ namespace SessionMapSwitcher.ViewModels
                 IniFile iniFile = new IniFile(DefaultEngineIniFilePath);
                 return iniFile.ReadString("/Script/EngineSettings.GameMapsSettings", "GameDefaultMap");
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "";
             }
@@ -934,7 +938,7 @@ namespace SessionMapSwitcher.ViewModels
                 GravityText = GravityText.Substring(0, indexOfDot);
             }
 
-            if (float.TryParse(GravityText, out float parsedFloat) == false)
+            if (float.TryParse(GravityText, out _) == false)
             {
                 UserMessage = "Invalid Gravity setting.";
                 return false;
@@ -1144,17 +1148,17 @@ namespace SessionMapSwitcher.ViewModels
 
             _unpackUtils = new UnpackUtils();
 
-            _unpackUtils.ProgressChanged += _unpackUtils_ProgressChanged;
-            _unpackUtils.UnpackCompleted += _unpackUtils_UnpackCompleted;
+            _unpackUtils.ProgressChanged += UnpackUtils_ProgressChanged;
+            _unpackUtils.UnpackCompleted += UnpackUtils_UnpackCompleted;
 
             InputControlsEnabled = false;
             _unpackUtils.StartUnpackingAsync(SessionPath);
         }
 
-        private void _unpackUtils_UnpackCompleted(bool wasSuccessful)
+        private void UnpackUtils_UnpackCompleted(bool wasSuccessful)
         {
-            _unpackUtils.ProgressChanged -= _unpackUtils_ProgressChanged;
-            _unpackUtils.UnpackCompleted -= _unpackUtils_UnpackCompleted;
+            _unpackUtils.ProgressChanged -= UnpackUtils_ProgressChanged;
+            _unpackUtils.UnpackCompleted -= UnpackUtils_UnpackCompleted;
             _unpackUtils = null;
 
             if (wasSuccessful)
@@ -1174,7 +1178,7 @@ namespace SessionMapSwitcher.ViewModels
 
         }
 
-        private void _unpackUtils_ProgressChanged(string message)
+        private void UnpackUtils_ProgressChanged(string message)
         {
             UserMessage = message;
         }

@@ -128,7 +128,7 @@ class MapListItem : ViewModelBase
 
             return umapContents.Contains("/Game/Data/PBP_InGameSessionGameMode");
         }
-        catch (Exception e)
+        catch (Exception)
         {
             return false;
         }

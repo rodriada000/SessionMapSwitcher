@@ -112,8 +112,8 @@ namespace SessionMapSwitcher.Utils
                         }
                     }
 
-                    CopyUnpackedFilesToSession();
-                    UnpackCompleted(true);
+                    bool didCopy = CopyUnpackedFilesToSession();
+                    UnpackCompleted(didCopy);
                 });
 
             });
@@ -202,20 +202,30 @@ namespace SessionMapSwitcher.Utils
             return "";
         }
 
-        internal void CopyUnpackedFilesToSession()
+        internal bool CopyUnpackedFilesToSession()
         {
             string outFolderPath = $"{PathToPakFolder}\\out";
 
             ProgressChanged("Copying unpacked files to Session game directory, this may take a few minutes. You should see files being copied to the Content folder that opens ...");
             Process.Start($"{PathToSession}\\SessionGame\\Content");
-            FileUtils.MoveDirectoryRecursively(outFolderPath, PathToSession);
 
-            System.Threading.Thread.Sleep(500);
-
-            // delete out file since empty now
-            if (Directory.Exists(outFolderPath))
+            try
             {
-                Directory.Delete(outFolderPath, true);
+                FileUtils.MoveDirectoryRecursively(outFolderPath, PathToSession);
+
+                System.Threading.Thread.Sleep(500);
+
+                // delete out file since empty now
+                if (Directory.Exists(outFolderPath))
+                {
+                    Directory.Delete(outFolderPath, true);
+                }
+                return true;
+            }
+            catch(Exception e)
+            {
+                ProgressChanged($"Failed to copy files to Session game directory: {e.Message}. Unpacking failed.");
+                return false;
             }
         }
     }
