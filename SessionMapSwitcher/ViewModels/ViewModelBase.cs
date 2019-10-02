@@ -13,4 +13,12 @@ public class ViewModelBase : INotifyPropertyChanged
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
+
+    public string WindowTitle
+    {
+        get
+        {
+            return SessionMapSwitcher.App.GetAppName();
+        }
+    }
 }

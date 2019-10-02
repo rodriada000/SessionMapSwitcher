@@ -1095,6 +1095,21 @@ namespace SessionMapSwitcher.ViewModels
                 return;
             }
 
+            if (App.IsRunningAppAsAdministrator() == false)
+            {
+                MessageBoxResult result = MessageBox.Show($"{App.GetAppName()} is not running as Administrator. This can lead to the unpacking process failing to copy files.\n\nDo you want to restart the program as Administrator?",
+                                                           "Warning!",
+                                                           MessageBoxButton.YesNo,
+                                                           MessageBoxImage.Warning,
+                                                           MessageBoxResult.Yes);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    App.RestartAsAdminstrator();
+                    return;
+                }
+            }
+
             _unpackUtils = new UnpackUtils();
 
             _unpackUtils.ProgressChanged += _unpackUtils_ProgressChanged;

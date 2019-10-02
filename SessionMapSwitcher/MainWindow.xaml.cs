@@ -27,7 +27,7 @@ namespace SessionMapSwitcher
             ReloadAvailableMapsInBackground(autoSelectLoadedMap: true);
 
             this.DataContext = ViewModel;
-            this.Title = $"Session Map Switcher - v{App.GetAppVersion()}";
+            this.Title = $"{App.GetAppName()} - v{App.GetAppVersion()}";
         }
 
         private void BtnBrowseSessionPath_Click(object sender, RoutedEventArgs e)
