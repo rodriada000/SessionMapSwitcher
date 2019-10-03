@@ -4,12 +4,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SessionMapSwitcher"
+        xmlns:ui="clr-namespace:SessionMapSwitcher.UI"
         mc:Ignorable="d"
         Title="Session Map Switcher"
         Loaded="MainWindow_Loaded"
+        Unloaded="MainWindow_Unloaded"
         MinHeight="415" MinWidth="510"
-        Height="450" Width="745"
+        MaxWidth="1600"
+        Height="575" Width="775"
         Style="{StaticResource WindowStyle}">
     <Window.Resources>
 
@@ -133,6 +135,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
 
                 <WrapPanel HorizontalAlignment="Left" VerticalAlignment="Top" Margin="3,8,0,0" Width="{Binding ElementName=lstMaps, Path=ActualWidth}">
@@ -149,7 +152,7 @@
 
                     <Button x:Name="btnImportMap"
                             Style="{StaticResource MainButtonStyle}"
-                            IsEnabled="{Binding ImportMapButtonIsEnabled}"
+                            IsEnabled="{Binding IsImportMapButtonEnabled}"
                             Content="Import Map"
                             Click="BtnImportMap_Click"
                             Margin="10,0,0,0"
@@ -196,6 +199,18 @@
                         </ContextMenu>
                     </ListBox.ContextMenu>
                 </ListBox>
+
+                <WrapPanel Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,0,0,3">
+                    <Label Content="Currently Loaded Map:"
+                           Padding="3,0,0,0"
+                           FontSize="12"
+                           FontWeight="SemiBold"/>
+
+                    <Label x:Name="txtLoadedMap"
+                           Padding="5,0,0,0"
+                           FontSize="12"
+                           Content="{Binding CurrentlyLoadedMapName, FallbackValue='GrindCity_Yeah'}"/>
+                </WrapPanel>
             </Grid>
 
         </GroupBox>
@@ -256,19 +271,15 @@
                 </GroupBox>
 
 
-                <WrapPanel HorizontalAlignment="Left"
-                       VerticalAlignment="Bottom"
-                       Margin="5,0,0,5">
-                    <Label Content="Currently Loaded Map:"
-                       FontSize="12"
-                       FontWeight="SemiBold"/>
-
-                    <Label x:Name="txtLoadedMap"
-                       FontSize="12"
-                       Padding="3,5,0,0"
-                       Content="{Binding CurrentlyLoadedMapName, FallbackValue='GrindCity_Yeah'}"/>
-                </WrapPanel>
-
+                <GroupBox x:Name="grpTextureReplace"
+                          BorderBrush="#BDBDBD"
+                          Header="Texture Replacer"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Top"
+                          IsEnabled="{Binding IsReplaceTextureControlEnabled}"
+                          Margin="10,10,10,0">
+                    <ui:TextureReplacerUserControl x:Name="ctrlTextureReplacer"/>
+                </GroupBox>
             </StackPanel>
         </ScrollViewer>
 

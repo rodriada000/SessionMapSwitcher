@@ -47,7 +47,8 @@ namespace SessionMapSwitcher.ViewModels
                 _sessionPath = value;
                 NotifyPropertyChanged();
                 NotifyPropertyChanged(nameof(LoadMapButtonText));
-                NotifyPropertyChanged(nameof(ImportMapButtonIsEnabled));
+                NotifyPropertyChanged(nameof(IsImportMapButtonEnabled));
+                NotifyPropertyChanged(nameof(IsReplaceTextureControlEnabled));
             }
         }
 
@@ -207,7 +208,8 @@ namespace SessionMapSwitcher.ViewModels
             {
                 _inputControlsEnabled = value;
                 NotifyPropertyChanged();
-                NotifyPropertyChanged(nameof(ImportMapButtonIsEnabled));
+                NotifyPropertyChanged(nameof(IsImportMapButtonEnabled));
+                NotifyPropertyChanged(nameof(IsReplaceTextureControlEnabled));
             }
         }
 
@@ -270,13 +272,25 @@ namespace SessionMapSwitcher.ViewModels
             }
         }
 
-        public bool ImportMapButtonIsEnabled
+        public bool IsImportMapButtonEnabled
         {
             get
             {
                 if (IsSessionUnpacked())
                 {
                     return true && InputControlsEnabled;
+                }
+                return false;
+            }
+        }
+
+        public bool IsReplaceTextureControlEnabled
+        {
+            get
+            {
+                if (IsSessionPathValid())
+                {
+                    return InputControlsEnabled;
                 }
                 return false;
             }
@@ -1175,8 +1189,7 @@ namespace SessionMapSwitcher.ViewModels
 
             InputControlsEnabled = true;
             NotifyPropertyChanged(nameof(LoadMapButtonText));
-            NotifyPropertyChanged(nameof(ImportMapButtonIsEnabled));
-
+            NotifyPropertyChanged(nameof(IsImportMapButtonEnabled));
         }
 
         private void UnpackUtils_ProgressChanged(string message)

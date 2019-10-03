@@ -82,6 +82,7 @@
     </ApplicationDefinition>
     <Compile Include="Classes\BoolWithMessage.cs" />
     <Compile Include="Classes\CopySettings.cs" />
+    <Compile Include="Classes\FileInfoExtensionMethods.cs" />
     <Compile Include="Classes\MapImporter.cs" />
     <Compile Include="Classes\ThreadFriendlyObservableCollection.cs" />
     <Compile Include="Classes\VersionChecker.cs" />
@@ -91,6 +92,9 @@
     <Compile Include="UI\OnlineImportWindow.xaml.cs">
       <DependentUpon>OnlineImportWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\TextureReplacerUserControl.xaml.cs">
+      <DependentUpon>TextureReplacerUserControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utils\AppSettingsUtil.cs" />
     <Compile Include="Utils\DownloadUtils.cs" />
     <Compile Include="Utils\FileUtils.cs" />
@@ -99,6 +103,7 @@
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\MapListItem.cs" />
     <Compile Include="ViewModels\OnlineImportViewModel.cs" />
+    <Compile Include="ViewModels\TextureReplacerViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Page Include="UI\ComputerImportWindow.xaml">
       <SubType>Designer</SubType>
@@ -117,6 +122,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="UI\OnlineImportWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\TextureReplacerUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
