@@ -311,7 +311,7 @@ namespace SessionMapSwitcher.ViewModels
             _defaultSessionMap = new MapListItem()
             {
                 FullPath = PathToOriginalSessionMapFiles,
-                DisplayName = "Session Default Map - Brooklyn Banks"
+                MapName = "Session Default Map - Brooklyn Banks"
             };
 
             RefreshGameSettingsFromIniFiles();
@@ -440,7 +440,7 @@ namespace SessionMapSwitcher.ViewModels
 
             lock (collectionLock)
             {
-                AvailableMaps = new ThreadFriendlyObservableCollection<MapListItem>(AvailableMaps.OrderBy(m => m.DisplayName));
+                AvailableMaps = new ThreadFriendlyObservableCollection<MapListItem>(AvailableMaps.OrderBy(m => m.MapName));
                 BindingOperations.EnableCollectionSynchronization(AvailableMaps, collectionLock);
 
                 // add default session map to select (add last so it is always at top of list)
@@ -467,7 +467,7 @@ namespace SessionMapSwitcher.ViewModels
                 MapListItem mapItem = new MapListItem
                 {
                     FullPath = file,
-                    DisplayName = file.Replace(dirToSearch + "\\", "").Replace(".umap", "")
+                    MapName = file.Replace(dirToSearch + "\\", "").Replace(".umap", "")
                 };
                 mapItem.Validate();
 
@@ -479,7 +479,7 @@ namespace SessionMapSwitcher.ViewModels
 
                 lock (collectionLock)
                 {
-                    if (IsMapAdded(mapItem.DisplayName) == false)
+                    if (IsMapAdded(mapItem.MapName) == false)
                     {
                         AvailableMaps.Add(mapItem);
                     }
@@ -554,7 +554,7 @@ namespace SessionMapSwitcher.ViewModels
             ComputerImportViewModel importViewModel = new ComputerImportViewModel(SessionPath)
             {
                 IsZipFileImport = false,
-                PathInput = MapImporter.GetOriginalImportLocation(selectedItem.DisplayName, SessionContentPath)
+                PathInput = MapImporter.GetOriginalImportLocation(selectedItem.MapName, SessionContentPath)
             };
 
             UserMessage = "Re-importing in progress ...";
@@ -576,7 +576,7 @@ namespace SessionMapSwitcher.ViewModels
 
         private bool IsMapAdded(string mapName)
         {
-            return AvailableMaps.Any(m => m.DisplayName == mapName);
+            return AvailableMaps.Any(m => m.MapName == mapName);
         }
 
         internal bool BackupOriginalMapFiles()
@@ -689,7 +689,7 @@ namespace SessionMapSwitcher.ViewModels
             // copy all files related to map to game directory
             foreach (string fileName in Directory.GetFiles(map.DirectoryPath))
             {
-                if (fileName.Contains(map.DisplayName))
+                if (fileName.Contains(map.MapName))
                 {
                     FileInfo fi = new FileInfo(fileName);
                     string fullTargetFilePath = PathToNYCFolder;
@@ -705,7 +705,7 @@ namespace SessionMapSwitcher.ViewModels
                         }
                         else
                         {
-                            fullTargetFilePath += $"\\{FirstLoadedMap.DisplayName}";
+                            fullTargetFilePath += $"\\{FirstLoadedMap.MapName}";
                         }
 
                         if (fileName.Contains("_BuiltData"))
@@ -758,16 +758,16 @@ namespace SessionMapSwitcher.ViewModels
                 CopyMapFilesToNYCFolder(map);
 
                 // update the ini file with the new map path
-                string selectedMapPath = "/Game/Art/Env/NYC/" + map.DisplayName;
+                string selectedMapPath = "/Game/Art/Env/NYC/" + map.MapName;
                 UpdateGameDefaultMapIniSetting(selectedMapPath);
 
                 SetCurrentlyLoadedMap();
 
-                UserMessage = $"{map.DisplayName} Loaded!";
+                UserMessage = $"{map.MapName} Loaded!";
             }
             catch (Exception e)
             {
-                UserMessage = $"Failed to load {map.DisplayName}: {e.Message}";
+                UserMessage = $"Failed to load {map.MapName}: {e.Message}";
             }
         }
 
@@ -793,7 +793,7 @@ namespace SessionMapSwitcher.ViewModels
 
                 SetCurrentlyLoadedMap();
 
-                UserMessage = $"{_defaultSessionMap.DisplayName} Loaded!";
+                UserMessage = $"{_defaultSessionMap.MapName} Loaded!";
 
             }
             catch (Exception e)
@@ -854,7 +854,7 @@ namespace SessionMapSwitcher.ViewModels
 
             if (iniValue == "/Game/Tutorial/Intro/MAP_EntryPoint.MAP_EntryPoint")
             {
-                CurrentlyLoadedMapName = _defaultSessionMap.DisplayName;
+                CurrentlyLoadedMapName = _defaultSessionMap.MapName;
             }
             else if (String.IsNullOrEmpty(iniValue) == false)
             {

@@ -216,7 +216,7 @@ namespace SessionMapSwitcher
                 return;
             }
 
-            ViewModel.UserMessage = $"Loading {selectedItem.DisplayName} ...";
+            ViewModel.UserMessage = $"Loading {selectedItem.MapName} ...";
             ViewModel.InputControlsEnabled = false;
 
             Task t = Task.Run(() => ViewModel.LoadMap(selectedItem));
@@ -242,7 +242,7 @@ namespace SessionMapSwitcher
 
                 if (autoSelectLoadedMap)
                 {
-                    MapListItem currentlyLoaded = ViewModel.AvailableMaps.Where(m => m.DisplayName == ViewModel.CurrentlyLoadedMapName).FirstOrDefault();
+                    MapListItem currentlyLoaded = ViewModel.AvailableMaps.Where(m => m.MapName == ViewModel.CurrentlyLoadedMapName).FirstOrDefault();
 
                     if (currentlyLoaded != null)
                     {
@@ -439,7 +439,7 @@ namespace SessionMapSwitcher
             if (isMapSelected)
             {
                 MapListItem selected = (lstMaps.SelectedItem as MapListItem);
-                bool hasImportLocation = MapImporter.IsImportLocationStored(ViewModel.SessionContentPath, selected.DisplayName);
+                bool hasImportLocation = MapImporter.IsImportLocationStored(ViewModel.SessionContentPath, selected.MapName);
                 menuReimporSelectedMap.IsEnabled = hasImportLocation;
                 menuReimporSelectedMap.ToolTip = hasImportLocation ? null : "You can only re-import if you imported the map from 'Import Map > From Computer ...' and imported a folder.\n(does not work with .zip files)";
             }
@@ -448,6 +448,11 @@ namespace SessionMapSwitcher
         private void MainWindow_Unloaded(object sender, RoutedEventArgs e)
         {
             ctrlTextureReplacer.ViewModel.MessageChanged -= TextureReplacer_MessageChanged;
+        }
+
+        private void MenuRenameSelectedMap_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

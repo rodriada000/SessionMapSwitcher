@@ -3,7 +3,8 @@ using System.IO;
 
 class MapListItem : ViewModelBase
 {
-    private string _displayName;
+    private string _mapName;
+    private string _customName;
     private string _fullPath;
     private string _validationHint;
     private string _tooltip;
@@ -11,13 +12,38 @@ class MapListItem : ViewModelBase
     private bool _isSelected = false;
     private bool _isValid = true;
 
-    public string DisplayName
+
+    public string CustomName
     {
-        get { return _displayName; }
+        get { return _customName; }
         set
         {
-            _displayName = value;
+            _customName = value;
             NotifyPropertyChanged();
+            NotifyPropertyChanged(DisplayName);
+        }
+    }
+
+    public string MapName
+    {
+        get { return _mapName; }
+        set
+        {
+            _mapName = value;
+            NotifyPropertyChanged();
+            NotifyPropertyChanged(DisplayName);
+        }
+    }
+
+    public string DisplayName
+    {
+        get
+        {
+            if (string.IsNullOrEmpty(CustomName))
+            {
+                return MapName;
+            }
+            return CustomName;
         }
     }
 
