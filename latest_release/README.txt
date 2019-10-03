@@ -1,0 +1,1 @@
+https://github.com/rodriada000/SessionMapSwitcher/blob/master/README.md
