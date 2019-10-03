@@ -25,6 +25,7 @@ namespace SessionMapSwitcher
 
             ViewModel = new MainWindowViewModel();
             ReloadAvailableMapsInBackground();
+            ctrlTextureReplacer.SetSessionPath(ViewModel.SessionPath);
 
             this.DataContext = ViewModel;
             this.Title = $"{App.GetAppName()} - v{App.GetAppVersion()}";
@@ -279,6 +280,7 @@ namespace SessionMapSwitcher
                 ViewModel.GetObjectCountFromFile();
                 ReloadAvailableMapsInBackground();
                 BackupMapFilesInBackground();
+                ctrlTextureReplacer.SetSessionPath(ViewModel.SessionPath);
             }
             else
             {
@@ -370,6 +372,12 @@ namespace SessionMapSwitcher
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             CheckForNewVersionInBackground();
+            ctrlTextureReplacer.ViewModel.MessageChanged += TextureReplacer_MessageChanged;
+        }
+
+        private void TextureReplacer_MessageChanged(string message)
+        {
+            ViewModel.UserMessage = message;
         }
 
         private void CheckForNewVersionInBackground()
@@ -435,6 +443,11 @@ namespace SessionMapSwitcher
                 menuReimporSelectedMap.IsEnabled = hasImportLocation;
                 menuReimporSelectedMap.ToolTip = hasImportLocation ? null : "You can only re-import if you imported the map from 'Import Map > From Computer ...' and imported a folder.\n(does not work with .zip files)";
             }
+        }
+
+        private void MainWindow_Unloaded(object sender, RoutedEventArgs e)
+        {
+            ctrlTextureReplacer.ViewModel.MessageChanged -= TextureReplacer_MessageChanged;
         }
     }
 }

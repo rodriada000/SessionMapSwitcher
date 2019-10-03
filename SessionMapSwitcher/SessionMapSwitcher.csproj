@@ -85,14 +85,18 @@
     </ApplicationDefinition>
     <Compile Include="Classes\BoolWithMessage.cs" />
     <Compile Include="Classes\CopySettings.cs" />
+    <Compile Include="Classes\FileInfoExtensionMethods.cs" />
     <Compile Include="Classes\MapImporter.cs" />
     <Compile Include="Classes\ThreadFriendlyObservableCollection.cs" />
     <Compile Include="Classes\VersionChecker.cs" />
-    <Compile Include="ComputerImportWindow.xaml.cs">
+    <Compile Include="UI\ComputerImportWindow.xaml.cs">
       <DependentUpon>ComputerImportWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="OnlineImportWindow.xaml.cs">
+    <Compile Include="UI\OnlineImportWindow.xaml.cs">
       <DependentUpon>OnlineImportWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\TextureReplacerUserControl.xaml.cs">
+      <DependentUpon>TextureReplacerUserControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utils\AppSettingsUtil.cs" />
     <Compile Include="Utils\DownloadUtils.cs" />
@@ -102,12 +106,13 @@
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\MapListItem.cs" />
     <Compile Include="ViewModels\OnlineImportViewModel.cs" />
+    <Compile Include="ViewModels\TextureReplacerViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
-    <Page Include="ComputerImportWindow.xaml">
+    <Page Include="UI\ComputerImportWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow.xaml">
+    <Page Include="UI\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -115,11 +120,15 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="UI\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="OnlineImportWindow.xaml">
+    <Page Include="UI\OnlineImportWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\TextureReplacerUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

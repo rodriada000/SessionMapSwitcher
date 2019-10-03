@@ -101,6 +101,10 @@ namespace SessionMapSwitcher.Utils
 
                 if (settings.IsMovingFiles)
                 {
+                    if (File.Exists(temppath))
+                    {
+                        File.Delete(temppath); // delete existing file before moving new file
+                    }
                     file.MoveTo(temppath);
                 }
                 else
