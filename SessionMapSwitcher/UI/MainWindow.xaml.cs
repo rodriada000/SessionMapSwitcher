@@ -7,7 +7,6 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Linq;
 using System.Diagnostics;
-using System.Reflection;
 using SessionMapSwitcher.Classes;
 
 namespace SessionMapSwitcher
@@ -384,16 +383,19 @@ namespace SessionMapSwitcher
         {
             bool isNewVersionAvailable = false;
 
+            ViewModel.UserMessage = "Checking for updates ...";
             Task task = Task.Factory.StartNew(() => 
             {
-                isNewVersionAvailable = VersionChecker.IsNewVersionAvailable();
+                isNewVersionAvailable = VersionChecker.CheckForUpdates();
             });
 
             task.ContinueWith((antecedent) => 
             {
+                ViewModel.UserMessage = "";
+
                 if (isNewVersionAvailable)
                 {
-                    MessageBoxResult result = System.Windows.MessageBox.Show("There is a new version available. Click 'Yes' to open the release page and download the latest version.", 
+                    MessageBoxResult result = System.Windows.MessageBox.Show("There is a new version available. Click 'Yes' to download the latest version (the program will close and re-open).", 
                                                    "Update Available!",
                                                    MessageBoxButton.YesNo,
                                                    MessageBoxImage.Question,
@@ -401,10 +403,26 @@ namespace SessionMapSwitcher
 
                     if (result == MessageBoxResult.Yes)
                     {
-                        VersionChecker.OpenLatestReleaseInBrowser();
+                        ViewModel.UserMessage = "Updating app ...";
+                        VersionChecker.AppUpdater.ReportProgress += AppUpdater_ReportProgress;
+
+                        Task updateTask = Task.Factory.StartNew(() =>
+                        {
+                            VersionChecker.UpdateApplication();
+                        });
+
+                        updateTask.ContinueWith((updateAntecedent) => 
+                        {
+                            VersionChecker.AppUpdater.ReportProgress -= AppUpdater_ReportProgress;
+                        });
                     }
                 }
             });
+        }
+
+        private void AppUpdater_ReportProgress(NAppUpdate.Framework.Common.UpdateProgressInfo currentStatus)
+        {
+            ViewModel.UserMessage = $"Updating app: {currentStatus.Message} | {currentStatus.Percentage}%";
         }
 
         private void MenuReimporSelectedMap_Click(object sender, RoutedEventArgs e)
