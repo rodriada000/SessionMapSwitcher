@@ -57,6 +57,9 @@
     <Reference Include="Ini.Net, Version=1.0.5531.18665, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ini.net.1.1.0\lib\net20\Ini.Net.dll</HintPath>
     </Reference>
+    <Reference Include="NAppUpdate.Framework, Version=0.5.1.0, Culture=neutral, PublicKeyToken=d1f1d1f19f9e5a56, processorArchitecture=MSIL">
+      <HintPath>..\packages\NAppUpdate.Framework.0.5.1.0\lib\net40\NAppUpdate.Framework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
