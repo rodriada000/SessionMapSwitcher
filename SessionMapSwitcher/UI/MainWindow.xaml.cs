@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Linq;
 using System.Diagnostics;
+using System.Reflection;
 using SessionMapSwitcher.Classes;
 
 namespace SessionMapSwitcher
@@ -215,7 +216,7 @@ namespace SessionMapSwitcher
                 return;
             }
 
-            ViewModel.UserMessage = $"Loading {selectedItem.DisplayName} ...";
+            ViewModel.UserMessage = $"Loading {selectedItem.MapName} ...";
             ViewModel.InputControlsEnabled = false;
 
             Task t = Task.Run(() => ViewModel.LoadMap(selectedItem));
@@ -228,7 +229,7 @@ namespace SessionMapSwitcher
             ReloadAvailableMapsInBackground();
         }
 
-        private void ReloadAvailableMapsInBackground(bool autoSelectLoadedMap = true)
+        private void ReloadAvailableMapsInBackground()
         {
             ViewModel.UserMessage = $"Reloading Available Maps ...";
             ViewModel.InputControlsEnabled = false;
@@ -239,14 +240,12 @@ namespace SessionMapSwitcher
             {
                 ViewModel.InputControlsEnabled = true;
 
-                if (autoSelectLoadedMap)
-                {
-                    MapListItem currentlyLoaded = ViewModel.AvailableMaps.Where(m => m.DisplayName == ViewModel.CurrentlyLoadedMapName).FirstOrDefault();
 
-                    if (currentlyLoaded != null)
-                    {
-                        currentlyLoaded.IsSelected = true;
-                    }
+                MapListItem currentlyLoaded = ViewModel.AvailableMaps.Where(m => m.MapName == ViewModel.CurrentlyLoadedMapName).FirstOrDefault();
+
+                if (currentlyLoaded != null)
+                {
+                    currentlyLoaded.IsSelected = true;
                 }
             });
         }
@@ -389,7 +388,7 @@ namespace SessionMapSwitcher
                 isNewVersionAvailable = VersionChecker.CheckForUpdates();
             });
 
-            task.ContinueWith((antecedent) => 
+            task.ContinueWith((antecedent) =>
             {
                 ViewModel.UserMessage = "";
 
@@ -457,7 +456,7 @@ namespace SessionMapSwitcher
             if (isMapSelected)
             {
                 MapListItem selected = (lstMaps.SelectedItem as MapListItem);
-                bool hasImportLocation = MapImporter.IsImportLocationStored(ViewModel.SessionContentPath, selected.DisplayName);
+                bool hasImportLocation = MetaDataManager.IsImportLocationStored(ViewModel.SessionContentPath, selected.MapName);
                 menuReimporSelectedMap.IsEnabled = hasImportLocation;
                 menuReimporSelectedMap.ToolTip = hasImportLocation ? null : "You can only re-import if you imported the map from 'Import Map > From Computer ...' and imported a folder.\n(does not work with .zip files)";
             }
@@ -466,6 +465,25 @@ namespace SessionMapSwitcher
         private void MainWindow_Unloaded(object sender, RoutedEventArgs e)
         {
             ctrlTextureReplacer.ViewModel.MessageChanged -= TextureReplacer_MessageChanged;
+        }
+
+        /// <summary>
+        /// Opens the window to rename a map. 
+        /// </summary>
+        private void MenuRenameSelectedMap_Click(object sender, RoutedEventArgs e)
+        {
+            if (lstMaps.SelectedItem == null)
+            {
+                System.Windows.MessageBox.Show("Select a map to rename first!",
+                                                "Notice!",
+                                                MessageBoxButton.OK,
+                                                MessageBoxImage.Information);
+                return;
+            }
+
+
+            MapListItem selectedItem = lstMaps.SelectedItem as MapListItem;
+            ViewModel.OpenRenameMapWindow(selectedItem);
         }
     }
 }

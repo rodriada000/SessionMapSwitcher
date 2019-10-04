@@ -267,8 +267,8 @@ namespace SessionMapSwitcher.ViewModels
                 else if (isReimport == false)
                 {
                     // make .meta file to tag where the imported map came from to support the 'Re-import' feature
-                    string mapName = MapImporter.GetMapFileNameFromFolder(sourceFolderToCopy);
-                    BoolWithMessage result = MapImporter.TrackMapLocation(mapName, sourceFolderToCopy, PathToSessionContent);
+                    string mapName = MetaDataManager.GetMapFileNameFromFolder(sourceFolderToCopy);
+                    BoolWithMessage result = MetaDataManager.TrackMapLocation(mapName, sourceFolderToCopy, PathToSessionContent);
                 }
 
                 return new BoolWithMessage(true);

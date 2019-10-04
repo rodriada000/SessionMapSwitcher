@@ -98,6 +98,9 @@
     <Compile Include="UI\OnlineImportWindow.xaml.cs">
       <DependentUpon>OnlineImportWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\RenameMapWindow.xaml.cs">
+      <DependentUpon>RenameMapWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\TextureReplacerUserControl.xaml.cs">
       <DependentUpon>TextureReplacerUserControl.xaml</DependentUpon>
     </Compile>
@@ -109,6 +112,7 @@
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\MapListItem.cs" />
     <Compile Include="ViewModels\OnlineImportViewModel.cs" />
+    <Compile Include="ViewModels\RenameMapViewModel.cs" />
     <Compile Include="ViewModels\TextureReplacerViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Page Include="UI\ComputerImportWindow.xaml">
@@ -128,6 +132,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="UI\OnlineImportWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\RenameMapWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
