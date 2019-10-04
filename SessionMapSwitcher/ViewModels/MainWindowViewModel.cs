@@ -88,7 +88,7 @@ namespace SessionMapSwitcher.ViewModels
         /// </summary>
         private bool Filter(MapListItem p)
         {
-            return ShowInvalidMapsIsChecked || (!ShowInvalidMapsIsChecked && p.IsValid);
+            return ShowInvalidMapsIsChecked || (!ShowInvalidMapsIsChecked && p.IsValid && !p.IsHiddenByUser);
         }
 
         public string UserMessage
@@ -275,7 +275,7 @@ namespace SessionMapSwitcher.ViewModels
                 return false;
             }
 
-            MetaDataManager.SetCustomNamesForMaps(AvailableMaps);
+            MetaDataManager.SetCustomPropertiesForMaps(AvailableMaps);
 
             lock (collectionLock)
             {
@@ -430,7 +430,7 @@ namespace SessionMapSwitcher.ViewModels
 
             if (result.GetValueOrDefault(false) == true)
             {
-                bool didWrite = MetaDataManager.WriteCustomNamesToFile(AvailableMaps);
+                bool didWrite = MetaDataManager.WriteCustomMapPropertiesToFile(AvailableMaps);
 
                 if (didWrite == false)
                 {
@@ -598,6 +598,24 @@ namespace SessionMapSwitcher.ViewModels
             }
 
             return true;
+        }
+
+        internal void ToggleVisiblityOfMap(MapListItem map)
+        {
+            map.IsHiddenByUser = !map.IsHiddenByUser;
+
+            bool didWrite = MetaDataManager.WriteCustomMapPropertiesToFile(AvailableMaps);
+
+            if (didWrite == false)
+            {
+                UserMessage = "Failed to update .meta file. Map may have not have been hidden.";
+                return;
+            }
+
+            LoadAvailableMaps();
+
+            string word = map.IsHiddenByUser ? "hidden" : "visible";
+            UserMessage = $"{map.DisplayName} is now {word}!";
         }
 
         internal void LoadMap(MapListItem map)
