@@ -90,6 +90,7 @@
     <Compile Include="Classes\CopySettings.cs" />
     <Compile Include="Classes\FileInfoExtensionMethods.cs" />
     <Compile Include="Classes\MapImporter.cs" />
+    <Compile Include="Classes\SessionPath.cs" />
     <Compile Include="Classes\ThreadFriendlyObservableCollection.cs" />
     <Compile Include="Classes\VersionChecker.cs" />
     <Compile Include="UI\ComputerImportWindow.xaml.cs">
@@ -109,6 +110,7 @@
     <Compile Include="Utils\FileUtils.cs" />
     <Compile Include="Utils\UnpackUtils.cs" />
     <Compile Include="ViewModels\ComputerImportViewModel.cs" />
+    <Compile Include="ViewModels\DownloadableMap.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\MapListItem.cs" />
     <Compile Include="ViewModels\OnlineImportViewModel.cs" />

@@ -15,7 +15,7 @@ namespace SessionMapSwitcher.Classes
         {
             get
             {
-                return $"{App.PathToSessionContent}\\{MetaFolderName}";
+                return $"{SessionPath.ToContent}\\{MetaFolderName}";
             }
         }
 
@@ -48,7 +48,7 @@ namespace SessionMapSwitcher.Classes
         /// <summary>
         /// Creates a .meta file in the folder 'MapSwitcherMetaData' to store the original import source folder location.
         /// </summary>
-        internal static BoolWithMessage TrackMapLocation(string mapName, string sourceFolderToCopy, string trackingFileLocation)
+        internal static BoolWithMessage TrackMapLocation(string mapName, string sourceFolderToCopy)
         {
             string umapExt = ".umap";
 
@@ -59,14 +59,9 @@ namespace SessionMapSwitcher.Classes
                     mapName = mapName.Substring(0, mapName.Length - umapExt.Length);
                 }
 
-                string fullMetaDataPath = $"{trackingFileLocation}\\{MetaFolderName}";
+                CreateMetaDataFolder();
 
-                if (Directory.Exists(fullMetaDataPath) == false)
-                {
-                    Directory.CreateDirectory(fullMetaDataPath);
-                }
-
-                string trackingFileName = Path.Combine(fullMetaDataPath, $".meta_{mapName}");
+                string trackingFileName = Path.Combine(FullPathToMetaFolder, $".meta_{mapName}");
                 File.WriteAllText(trackingFileName, sourceFolderToCopy);
                 return new BoolWithMessage(true);
             }
@@ -76,12 +71,12 @@ namespace SessionMapSwitcher.Classes
             }
         }
 
-        internal static string GetOriginalImportLocation(string displayName, string sessionContentPath)
+        internal static string GetOriginalImportLocation(string mapName)
         {
             try
             {
-                string fullMetaDataPath = $"{sessionContentPath}\\{MetaFolderName}";
-                string trackingFileName = Path.Combine(fullMetaDataPath, $".meta_{displayName}");
+                string fullMetaDataPath = $"{SessionPath.ToContent}\\{MetaFolderName}";
+                string trackingFileName = Path.Combine(fullMetaDataPath, $".meta_{mapName}");
 
                 return File.ReadAllText(trackingFileName);
             }
@@ -91,9 +86,9 @@ namespace SessionMapSwitcher.Classes
             }
         }
 
-        internal static bool IsImportLocationStored(string sessionContentPath, string displayName)
+        internal static bool IsImportLocationStored(string mapName)
         {
-            return GetOriginalImportLocation(displayName, sessionContentPath) != "";
+            return GetOriginalImportLocation(mapName) != "";
         }
 
         /// <summary>

@@ -19,8 +19,6 @@ namespace SessionMapSwitcher.ViewModels
 
         public event MessageChange MessageChanged;
 
-        public string PathToSession { get; set; }
-
         public string PathToFile
         {
             get { return _pathToFile; }
@@ -35,7 +33,7 @@ namespace SessionMapSwitcher.ViewModels
         {
             get
             {
-                return $"{PathToSession}\\SessionGame\\{_tempZipFolder}";
+                return $"{SessionPath.ToSessionGame}\\{_tempZipFolder}";
             }
         }
 
@@ -43,6 +41,9 @@ namespace SessionMapSwitcher.ViewModels
         {
             get
             {
+                if (PathToFile == null)
+                    return false;
+
                 return PathToFile.EndsWith(".zip");
             }
         }
@@ -193,7 +194,7 @@ namespace SessionMapSwitcher.ViewModels
         {
             if (startingDir == null)
             {
-                startingDir = $"{PathToSession}\\SessionGame\\Content";
+                startingDir = SessionPath.ToContent;
             }
 
             foreach (string file in Directory.GetFiles(startingDir))

@@ -1,4 +1,5 @@
-﻿using SessionMapSwitcher.Utils;
+﻿using SessionMapSwitcher.Classes;
+using SessionMapSwitcher.Utils;
 using System;
 using System.Diagnostics;
 using System.Security.Principal;
@@ -58,19 +59,9 @@ namespace SessionMapSwitcher
             }
         }
 
-        public static string PathToSession { get; set; }
-
-        public static string PathToSessionContent
-        {
-            get
-            {
-                return $"{PathToSession}\\SessionGame\\Content";
-            }
-        }
-
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            PathToSession = AppSettingsUtil.GetAppSetting("PathToSession");
+            SessionPath.ToSession = AppSettingsUtil.GetAppSetting("PathToSession");
         }
     }
 }

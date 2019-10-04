@@ -13,29 +13,20 @@ namespace SessionMapSwitcher.ViewModels
 {
     public class ComputerImportViewModel : ViewModelBase
     {
-        private List<string> FilesToExclude = new List<string>() { "DefaultEngine.ini", "DefaultGame.ini" };
-        private List<string> FoldersToExclude = new List<string>() { "Data" };
+        private readonly List<string> FilesToExclude = new List<string>() { "DefaultEngine.ini", "DefaultGame.ini" };
+        private readonly List<string> FoldersToExclude = new List<string>() { "Data" };
 
 
         private bool _isZipFileImport;
         private bool _isImporting;
         private string _userMessage;
         private string _pathInput;
-        private string SessionPath { get; set; }
-
-        public string PathToSessionContent
-        {
-            get
-            {
-                return $"{SessionPath}\\SessionGame\\Content";
-            }
-        }
 
         public string PathToTempUnzipFolder
         {
             get
             {
-                return $"{SessionPath}\\SessionGame\\Temp_Unzipped";
+                return $"{SessionPath.ToSessionGame}\\Temp_Unzipped";
             }
         }
 
@@ -135,12 +126,11 @@ namespace SessionMapSwitcher.ViewModels
             }
         }
 
-        public ComputerImportViewModel(string sessionPath)
+        public ComputerImportViewModel()
         {
             this.UserMessage = "";
             this.IsZipFileImport = false;
             this.PathInput = "";
-            this.SessionPath = sessionPath;
         }
 
         internal void BrowseForFolderOrFile()
@@ -257,7 +247,7 @@ namespace SessionMapSwitcher.ViewModels
                     sourceFolderToCopy = PathToFileOrFolder;
                 }
 
-                FileUtils.CopyDirectoryRecursively(sourceFolderToCopy, PathToSessionContent, FilesToExclude, FoldersToExclude);
+                FileUtils.CopyDirectoryRecursively(sourceFolderToCopy, SessionPath.ToContent, FilesToExclude, FoldersToExclude);
 
                 if (IsZipFileImport && Directory.Exists(PathToTempUnzipFolder))
                 {
@@ -268,7 +258,7 @@ namespace SessionMapSwitcher.ViewModels
                 {
                     // make .meta file to tag where the imported map came from to support the 'Re-import' feature
                     string mapName = MetaDataManager.GetMapFileNameFromFolder(sourceFolderToCopy);
-                    BoolWithMessage result = MetaDataManager.TrackMapLocation(mapName, sourceFolderToCopy, PathToSessionContent);
+                    BoolWithMessage result = MetaDataManager.TrackMapLocation(mapName, sourceFolderToCopy);
                 }
 
                 return new BoolWithMessage(true);

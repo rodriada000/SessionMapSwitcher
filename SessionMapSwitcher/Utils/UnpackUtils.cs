@@ -173,15 +173,17 @@ namespace SessionMapSwitcher.Utils
         {
             ProgressChanged("Starting UnrealPak.exe bat file ...");
 
-            Process proc = new Process();
-            proc.StartInfo.WorkingDirectory = this.PathToPakFolder;
-            proc.StartInfo.FileName = GetBatFileName(this.PathToPakFolder);
-            proc.StartInfo.CreateNoWindow = false;
-            proc.Start();
+            using (Process proc = new Process())
+            {
+                proc.StartInfo.WorkingDirectory = this.PathToPakFolder;
+                proc.StartInfo.FileName = GetBatFileName(this.PathToPakFolder);
+                proc.StartInfo.CreateNoWindow = false;
+                proc.Start();
 
 
-            ProgressChanged("Waiting for UnrealPak.exe to finish ...");
-            proc.WaitForExit();
+                ProgressChanged("Waiting for UnrealPak.exe to finish ...");
+                proc.WaitForExit();
+            }
 
             System.Threading.Thread.Sleep(500);
 
@@ -236,6 +238,59 @@ namespace SessionMapSwitcher.Utils
             catch(Exception e)
             {
                 ProgressChanged($"Failed to copy files to Session game directory: {e.Message}. Unpacking failed.");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Determines if Session is properly unpacked by checking for specific directories
+        /// </summary>
+        public static bool IsSessionUnpacked()
+        {
+            if (Directory.Exists(SessionPath.ToConfig) == false)
+            {
+                return false;
+            }
+
+            List<string> expectedDirectories = new List<string>() { "Animation", "Art", "Character", "Customization", "ObjectPlacement", "MainHUB", "Skateboard", "VideoEditor" };
+            foreach (string expectedDir in expectedDirectories)
+            {
+                if (Directory.Exists($"{SessionPath.ToContent}\\{expectedDir}") == false)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Determines if the file extension for SessionGame-WindowsNoEditor.pak was changed to .bak
+        /// </summary>
+        public static bool IsSessionPakFileRenamed()
+        {
+            return (File.Exists(SessionPath.ToPakFile) == false);
+        }
+
+        /// <summary>
+        /// Renames the file SessionGame-WindowsNoEditor.pak to SessionGame-WindowsNoEditor.bak
+        /// </summary>
+        /// <returns> true if file was renamed; false otherwise. </returns>
+        public static bool RenamePakFile()
+        {
+            if (IsSessionPakFileRenamed())
+            {
+                return true; // already renamed nothing to do
+            }
+
+            try
+            {
+                File.Move(SessionPath.ToPakFile, SessionPath.ToPakFile.Replace(".pak", ".bak"));
+                System.Threading.Thread.Sleep(750); // wait a second after renaming the file ensure it is updated (due to race conditions where the next process starts too soon before realzing the file name changed) 
+                return true;
+            }
+            catch (Exception)
+            {
                 return false;
             }
         }

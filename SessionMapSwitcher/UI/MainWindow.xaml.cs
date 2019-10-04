@@ -9,6 +9,7 @@ using System.Linq;
 using System.Diagnostics;
 using System.Reflection;
 using SessionMapSwitcher.Classes;
+using SessionMapSwitcher.Utils;
 
 namespace SessionMapSwitcher
 {
@@ -17,7 +18,7 @@ namespace SessionMapSwitcher
     /// </summary>
     public partial class MainWindow : Window
     {
-        private MainWindowViewModel ViewModel;
+        private readonly MainWindowViewModel ViewModel;
 
         public MainWindow()
         {
@@ -25,7 +26,6 @@ namespace SessionMapSwitcher
 
             ViewModel = new MainWindowViewModel();
             ReloadAvailableMapsInBackground();
-            ctrlTextureReplacer.SetSessionPath(ViewModel.SessionPath);
 
             this.DataContext = ViewModel;
             this.Title = $"{App.GetAppName()} - v{App.GetAppVersion()}";
@@ -86,13 +86,13 @@ namespace SessionMapSwitcher
                 }
             }
 
-            if (ViewModel.IsSessionPathValid() == false)
+            if (SessionPath.IsSessionPathValid() == false)
             {
                 System.Windows.MessageBox.Show("You have selected an incorrect path to Session. Make sure the directory you choose has the folders 'Engine' and 'SessionGame'.", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            if (ViewModel.IsSessionUnpacked() == false)
+            if (UnpackUtils.IsSessionUnpacked() == false)
             {
                 MessageBoxResult result = System.Windows.MessageBox.Show("It seems the Session game has not been unpacked. This is required before using Map Switcher.\n\nWould you like to download the required files to auto-unpack?", 
                                                 "Notice!", 
@@ -108,7 +108,7 @@ namespace SessionMapSwitcher
                 return;
             }
 
-            if (ViewModel.IsSessionPakFileRenamed() == false)
+            if (UnpackUtils.IsSessionPakFileRenamed() == false)
             {
                 MessageBoxResult result = System.Windows.MessageBox.Show("It seems the .pak file has not been renamed yet. This is required before using custom maps and the Map Switcher.\n\nClick 'Yes' to auto rename the .pak file.",
                                                 "Notice!",
@@ -118,7 +118,7 @@ namespace SessionMapSwitcher
 
                 if (result == MessageBoxResult.Yes)
                 {
-                    bool didRename = ViewModel.RenamePakFile();
+                    bool didRename = UnpackUtils.RenamePakFile();
 
                     if (didRename == false)
                     {
@@ -143,7 +143,7 @@ namespace SessionMapSwitcher
 
             LoadMapInBackgroundAndContinueWith((antecedent) =>
             {
-                System.Diagnostics.Process.Start(ViewModel.PathToSessionExe);
+                System.Diagnostics.Process.Start(SessionPath.ToSessionExe);
                 ViewModel.InputControlsEnabled = true;
             });
         }
@@ -169,7 +169,7 @@ namespace SessionMapSwitcher
 
         private void LoadMapInBackgroundAndContinueWith(Action<Task> continuationTask)
         {
-            if (ViewModel.IsSessionUnpacked() == false)
+            if (UnpackUtils.IsSessionUnpacked() == false)
             {
                 MessageBoxResult result = System.Windows.MessageBox.Show("It seems the Session game has not been unpacked. This is required before using Map Switcher.\n\nWould you like to download the required files to auto-unpack?",
                                                 "Notice!",
@@ -262,7 +262,7 @@ namespace SessionMapSwitcher
         {
             if (e.Key == Key.Enter)
             {
-                SetAndValidateSessionPath(ViewModel.SessionPath); // the viewmodel is 2-way binded so the new path value is already set when enter is pressed so we pass the same value to store in app setttings and validate it
+                SetAndValidateSessionPath(ViewModel.SessionPathTextInput); // the viewmodel is 2-way binded so the new path value is already set when enter is pressed so we pass the same value to store in app setttings and validate it
                 ViewModel.UserMessage = "Session Path updated!";
             }
         }
@@ -272,13 +272,12 @@ namespace SessionMapSwitcher
             ViewModel.SetSessionPath(path); // this will save it to app settings
             ViewModel.SetCurrentlyLoadedMap();
 
-            if (ViewModel.IsSessionPathValid())
+            if (SessionPath.IsSessionPathValid())
             {
                 ViewModel.RefreshGameSettingsFromIniFiles();
                 ViewModel.GetObjectCountFromFile();
                 ReloadAvailableMapsInBackground();
                 BackupMapFilesInBackground();
-                ctrlTextureReplacer.SetSessionPath(ViewModel.SessionPath);
             }
             else
             {
@@ -445,7 +444,7 @@ namespace SessionMapSwitcher
         {
             // disable certain menu items if no map selected
             bool isMapSelected = (lstMaps.SelectedItem != null);
-            bool isSessionPathValid = ViewModel.IsSessionPathValid();
+            bool isSessionPathValid = SessionPath.IsSessionPathValid();
 
             menuReimporSelectedMap.IsEnabled = isMapSelected;
             menuOpenSelectedMapFolder.IsEnabled = isMapSelected;
@@ -456,7 +455,7 @@ namespace SessionMapSwitcher
             if (isMapSelected)
             {
                 MapListItem selected = (lstMaps.SelectedItem as MapListItem);
-                bool hasImportLocation = MetaDataManager.IsImportLocationStored(ViewModel.SessionContentPath, selected.MapName);
+                bool hasImportLocation = MetaDataManager.IsImportLocationStored(selected.MapName);
                 menuReimporSelectedMap.IsEnabled = hasImportLocation;
                 menuReimporSelectedMap.ToolTip = hasImportLocation ? null : "You can only re-import if you imported the map from 'Import Map > From Computer ...' and imported a folder.\n(does not work with .zip files)";
             }
