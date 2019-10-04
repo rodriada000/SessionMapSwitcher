@@ -89,7 +89,8 @@
     <Compile Include="Classes\BoolWithMessage.cs" />
     <Compile Include="Classes\CopySettings.cs" />
     <Compile Include="Classes\FileInfoExtensionMethods.cs" />
-    <Compile Include="Classes\MapImporter.cs" />
+    <Compile Include="Classes\MetaDataManager.cs" />
+    <Compile Include="Classes\SessionPath.cs" />
     <Compile Include="Classes\ThreadFriendlyObservableCollection.cs" />
     <Compile Include="Classes\VersionChecker.cs" />
     <Compile Include="UI\ComputerImportWindow.xaml.cs">
@@ -97,6 +98,9 @@
     </Compile>
     <Compile Include="UI\OnlineImportWindow.xaml.cs">
       <DependentUpon>OnlineImportWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\RenameMapWindow.xaml.cs">
+      <DependentUpon>RenameMapWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\TextureReplacerUserControl.xaml.cs">
       <DependentUpon>TextureReplacerUserControl.xaml</DependentUpon>
@@ -106,9 +110,11 @@
     <Compile Include="Utils\FileUtils.cs" />
     <Compile Include="Utils\UnpackUtils.cs" />
     <Compile Include="ViewModels\ComputerImportViewModel.cs" />
+    <Compile Include="ViewModels\DownloadableMap.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\MapListItem.cs" />
     <Compile Include="ViewModels\OnlineImportViewModel.cs" />
+    <Compile Include="ViewModels\RenameMapViewModel.cs" />
     <Compile Include="ViewModels\TextureReplacerViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Page Include="UI\ComputerImportWindow.xaml">
@@ -128,6 +134,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="UI\OnlineImportWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\RenameMapWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

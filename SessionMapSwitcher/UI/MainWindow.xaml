@@ -138,7 +138,7 @@
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
 
-                <WrapPanel HorizontalAlignment="Left" VerticalAlignment="Top" Margin="3,8,0,0" Width="{Binding ElementName=lstMaps, Path=ActualWidth}">
+                <WrapPanel HorizontalAlignment="Left" VerticalAlignment="Top" Margin="3,8,0,0" >
 
                     <Button x:Name="btnReloadMaps"
                             Style="{StaticResource MainButtonStyle}"
@@ -167,8 +167,8 @@
                     </Button>
 
                     <CheckBox x:Name="chkShowInvalidMaps"
-                              Content="Show Invalid Maps"
-                              ToolTip="Show/hide maps that are invalid in the Maps folder (e.g. missing gamemode)"
+                              Content="Show Invalid/Hidden Maps"
+                              ToolTip="Show/hide maps that are invalid in the Maps folder (e.g. missing gamemode) or hidden by you."
                               IsChecked="{Binding ShowInvalidMapsIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='True'}"
                               Click="ChkShowInvalidMaps_Click"
                               FontSize="10"
@@ -179,17 +179,19 @@
 
                 <ListBox x:Name="lstMaps"
                          Grid.Row="1"
-                         HorizontalAlignment="Left" VerticalAlignment="Stretch"
+                         HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                          MinWidth="300" MaxWidth="350"
-                         Width="320"
+                         
                          ScrollViewer.CanContentScroll="False"
-                         Margin="2,1,1,5"
+                         Margin="2,1,2,5"
                          ItemsSource="{Binding FilteredAvailableMaps}"
                          ItemContainerStyle="{StaticResource MapListItem}"
                          ContextMenuOpening="ContextMenu_ContextMenuOpening">
                     <ListBox.ContextMenu>
                         <ContextMenu x:Name="mainContextMenu">
                             <MenuItem x:Name="menuReimporSelectedMap" Header="Re-import Selected Map ..."  Click="MenuReimporSelectedMap_Click" ToolTipService.ShowOnDisabled="True" ToolTipService.ShowDuration="8000"/>
+                            <MenuItem x:Name="menuRenameSelectedMap" Header="Rename Selected Map ..."  Click="MenuRenameSelectedMap_Click"  ToolTipService.ShowOnDisabled="True" ToolTipService.ShowDuration="8000"/>
+                            <MenuItem x:Name="menuHideSelectedMap" Header="Hide Selected Map ..."  Click="MenuHideSelectedMap_Click"  ToolTipService.ShowOnDisabled="True" ToolTipService.ShowDuration="8000"/>
                             <Separator/>
                             <MenuItem x:Name="menuOpenSessionFolder" Header="Open Session Folder ..."  Click="MenuOpenSessionFolder_Click"/>
                             <MenuItem x:Name="menuOpenMapsFolder" Header="Open Content Folder ..." Click="MenuOpenMapsFolder_Click"/>
@@ -206,10 +208,10 @@
                            FontSize="12"
                            FontWeight="SemiBold"/>
 
-                    <Label x:Name="txtLoadedMap"
-                           Padding="5,0,0,0"
-                           FontSize="12"
-                           Content="{Binding CurrentlyLoadedMapName, FallbackValue='GrindCity_Yeah'}"/>
+                    <TextBlock x:Name="txtLoadedMap"
+                               Padding="5,0,0,0"
+                               FontSize="12"
+                               Text="{Binding CurrentlyLoadedMapName, FallbackValue='GrindCity_Yeah'}"/>
                 </WrapPanel>
             </Grid>
 
