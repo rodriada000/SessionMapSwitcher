@@ -1,23 +1,49 @@
 ﻿using System;
 using System.IO;
 
-class MapListItem : ViewModelBase
+public class MapListItem : ViewModelBase
 {
-    private string _displayName;
+    private string _mapName;
+    private string _customName;
     private string _fullPath;
     private string _validationHint;
     private string _tooltip;
     private bool _isEnabled = true;
     private bool _isSelected = false;
     private bool _isValid = true;
+    private bool _isHiddenByUser = false;
+
+    public string CustomName
+    {
+        get { return _customName; }
+        set
+        {
+            _customName = value;
+            NotifyPropertyChanged();
+            NotifyPropertyChanged(DisplayName);
+        }
+    }
+
+    public string MapName
+    {
+        get { return _mapName; }
+        set
+        {
+            _mapName = value;
+            NotifyPropertyChanged();
+            NotifyPropertyChanged(DisplayName);
+        }
+    }
 
     public string DisplayName
     {
-        get { return _displayName; }
-        set
+        get
         {
-            _displayName = value;
-            NotifyPropertyChanged();
+            if (string.IsNullOrEmpty(CustomName))
+            {
+                return MapName;
+            }
+            return CustomName;
         }
     }
 
@@ -68,6 +94,15 @@ class MapListItem : ViewModelBase
         }
     }
 
+    public bool IsHiddenByUser
+    {
+        get { return _isHiddenByUser; }
+        set
+        {
+            _isHiddenByUser = value;
+            NotifyPropertyChanged();
+        }
+    }
 
     public bool IsEnabled
     {
@@ -96,6 +131,18 @@ class MapListItem : ViewModelBase
         {
             _isValid = value;
             NotifyPropertyChanged();
+        }
+    }
+
+    /// <summary>
+    /// Returns a string of the DirectoryPath, MapName, and other custom properties seperated by '|'
+    /// Used to write to meta data file.
+    /// </summary>
+    public string MetaData
+    {
+        get
+        {
+            return $"{DirectoryPath} | {MapName} | {CustomName} | {IsHiddenByUser}";
         }
     }
 

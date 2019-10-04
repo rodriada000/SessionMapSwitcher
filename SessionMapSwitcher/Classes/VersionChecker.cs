@@ -1,5 +1,9 @@
-﻿using System;
+﻿using NAppUpdate.Framework;
+using NAppUpdate.Framework.Tasks;
+using System;
 using System.Diagnostics;
+using System.IO.Pipes;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -9,30 +13,18 @@ namespace SessionMapSwitcher.Classes
     {
         private const string LatestReleaseUrl = "https://github.com/rodriada000/SessionMapSwitcher/releases/latest";
 
-        public static bool IsNewVersionAvailable()
+        private const string UpdateFeedUrl = "https://raw.githubusercontent.com/rodriada000/SessionMapSwitcher/release_updates/latest_release/updatefeed.xml";
+
+        private const string _nameOfExe = "SessionMapSwitcher.exe";
+
+        /// <summary>
+        /// Get the instance of <see cref="UpdateManager.Instance"/>
+        /// </summary>
+        public static UpdateManager AppUpdater
         {
-            try
+            get
             {
-                using (HttpClient client = new HttpClient())
-                {
-                    Task<HttpResponseMessage> task = client.GetAsync(LatestReleaseUrl);
-                    task.Wait();
-
-                    HttpResponseMessage response = task.Result;
-                    // Check that response was successful or throw exception
-                    response.EnsureSuccessStatusCode();
-
-                    Uri actualReleaseUri = response.RequestMessage.RequestUri;
-
-                    Version latestVersion = GetVersionFromUrl(actualReleaseUri.AbsoluteUri);
-
-                    return (App.GetAppVersion().CompareTo(latestVersion) < 0);
-                }
-            }
-            catch (Exception)
-            {
-                // silently fail if fails to update... just skip the update check
-                return false;
+                return UpdateManager.Instance;
             }
         }
 
@@ -45,16 +37,64 @@ namespace SessionMapSwitcher.Classes
             Process.Start(startInfo);
         }
 
-        private static Version GetVersionFromUrl(string url)
+        /// <summary>
+        /// Makes request to feed.xml url to and check if there is an update available
+        /// </summary>
+        /// <returns> Returns true if an update is available. </returns>
+        public static bool CheckForUpdates()
         {
-            int index = url.LastIndexOf("/");
+            try
+            {
+                AppUpdater.UpdateSource = new NAppUpdate.Framework.Sources.SimpleWebSource(UpdateFeedUrl);
+                AppUpdater.CheckForUpdates();
 
-            string versionFromUrl = url.Substring(index + 1).TrimStart('v');
+                return HasUpdatesAvailable();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
 
-            // version from url is three digits (1.2.0) so append another 0 to make it 1.2.0.0
-            Version version = Version.Parse($"{versionFromUrl}.0");
+        /// <summary>
+        /// Loops over the update tasks and looks for 'SessionMapSwitcher.exe'
+        /// </summary>
+        /// <returns> true if FileUpdateTask is found with the name 'SessionMapSwitcher.exe' </returns>
+        public static bool HasUpdatesAvailable()
+        {
+            foreach (IUpdateTask task in AppUpdater.Tasks)
+            {
+                if (task is FileUpdateTask)
+                {
+                    FileUpdateTask fileTask = (task as FileUpdateTask);
+                    if (fileTask.LocalPath == _nameOfExe)
+                    {
+                        return true;
+                    }
+                }
+            }
 
-            return version;
+            return false;
+        }
+
+        public static void UpdateApplication()
+        {
+            if (HasUpdatesAvailable())
+            {
+                try
+                {
+                    AppUpdater.PrepareUpdates();
+                    AppUpdater.ApplyUpdates(true, true, false);
+                }
+                catch (Exception e)
+                {
+                    System.Windows.MessageBox.Show($"An error occurred while trying to update: {e.Message}", "Error Updating!", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                }
+                finally
+                {
+                    AppUpdater.CleanUp();
+                }
+            }
         }
     }
 }

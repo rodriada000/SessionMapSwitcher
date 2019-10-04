@@ -9,6 +9,7 @@ using System.Linq;
 using System.Diagnostics;
 using System.Reflection;
 using SessionMapSwitcher.Classes;
+using SessionMapSwitcher.Utils;
 
 namespace SessionMapSwitcher
 {
@@ -17,7 +18,7 @@ namespace SessionMapSwitcher
     /// </summary>
     public partial class MainWindow : Window
     {
-        private MainWindowViewModel ViewModel;
+        private readonly MainWindowViewModel ViewModel;
 
         public MainWindow()
         {
@@ -25,7 +26,6 @@ namespace SessionMapSwitcher
 
             ViewModel = new MainWindowViewModel();
             ReloadAvailableMapsInBackground();
-            ctrlTextureReplacer.SetSessionPath(ViewModel.SessionPath);
 
             this.DataContext = ViewModel;
             this.Title = $"{App.GetAppName()} - v{App.GetAppVersion()}";
@@ -86,13 +86,13 @@ namespace SessionMapSwitcher
                 }
             }
 
-            if (ViewModel.IsSessionPathValid() == false)
+            if (SessionPath.IsSessionPathValid() == false)
             {
                 System.Windows.MessageBox.Show("You have selected an incorrect path to Session. Make sure the directory you choose has the folders 'Engine' and 'SessionGame'.", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            if (ViewModel.IsSessionUnpacked() == false)
+            if (UnpackUtils.IsSessionUnpacked() == false)
             {
                 MessageBoxResult result = System.Windows.MessageBox.Show("It seems the Session game has not been unpacked. This is required before using Map Switcher.\n\nWould you like to download the required files to auto-unpack?", 
                                                 "Notice!", 
@@ -108,7 +108,7 @@ namespace SessionMapSwitcher
                 return;
             }
 
-            if (ViewModel.IsSessionPakFileRenamed() == false)
+            if (UnpackUtils.IsSessionPakFileRenamed() == false)
             {
                 MessageBoxResult result = System.Windows.MessageBox.Show("It seems the .pak file has not been renamed yet. This is required before using custom maps and the Map Switcher.\n\nClick 'Yes' to auto rename the .pak file.",
                                                 "Notice!",
@@ -118,7 +118,7 @@ namespace SessionMapSwitcher
 
                 if (result == MessageBoxResult.Yes)
                 {
-                    bool didRename = ViewModel.RenamePakFile();
+                    bool didRename = UnpackUtils.RenamePakFile();
 
                     if (didRename == false)
                     {
@@ -143,7 +143,7 @@ namespace SessionMapSwitcher
 
             LoadMapInBackgroundAndContinueWith((antecedent) =>
             {
-                System.Diagnostics.Process.Start(ViewModel.PathToSessionExe);
+                System.Diagnostics.Process.Start(SessionPath.ToSessionExe);
                 ViewModel.InputControlsEnabled = true;
             });
         }
@@ -169,7 +169,7 @@ namespace SessionMapSwitcher
 
         private void LoadMapInBackgroundAndContinueWith(Action<Task> continuationTask)
         {
-            if (ViewModel.IsSessionUnpacked() == false)
+            if (UnpackUtils.IsSessionUnpacked() == false)
             {
                 MessageBoxResult result = System.Windows.MessageBox.Show("It seems the Session game has not been unpacked. This is required before using Map Switcher.\n\nWould you like to download the required files to auto-unpack?",
                                                 "Notice!",
@@ -185,7 +185,7 @@ namespace SessionMapSwitcher
                 return;
             }
 
-            if (ViewModel.IsOriginalMapFilesBackedUp() == false)
+            if (ViewModel.IsOriginalMapFileBackedUp() == false)
             {
                 System.Windows.MessageBox.Show("The original Session game map files have not been backed up yet. Click OK to backup the files then click 'Load Map' again",
                                                 "Notice!",
@@ -216,7 +216,7 @@ namespace SessionMapSwitcher
                 return;
             }
 
-            ViewModel.UserMessage = $"Loading {selectedItem.DisplayName} ...";
+            ViewModel.UserMessage = $"Loading {selectedItem.MapName} ...";
             ViewModel.InputControlsEnabled = false;
 
             Task t = Task.Run(() => ViewModel.LoadMap(selectedItem));
@@ -229,7 +229,7 @@ namespace SessionMapSwitcher
             ReloadAvailableMapsInBackground();
         }
 
-        private void ReloadAvailableMapsInBackground(bool autoSelectLoadedMap = true)
+        private void ReloadAvailableMapsInBackground()
         {
             ViewModel.UserMessage = $"Reloading Available Maps ...";
             ViewModel.InputControlsEnabled = false;
@@ -240,14 +240,12 @@ namespace SessionMapSwitcher
             {
                 ViewModel.InputControlsEnabled = true;
 
-                if (autoSelectLoadedMap)
-                {
-                    MapListItem currentlyLoaded = ViewModel.AvailableMaps.Where(m => m.DisplayName == ViewModel.CurrentlyLoadedMapName).FirstOrDefault();
 
-                    if (currentlyLoaded != null)
-                    {
-                        currentlyLoaded.IsSelected = true;
-                    }
+                MapListItem currentlyLoaded = ViewModel.AvailableMaps.Where(m => m.MapName == ViewModel.CurrentlyLoadedMapName).FirstOrDefault();
+
+                if (currentlyLoaded != null)
+                {
+                    currentlyLoaded.IsSelected = true;
                 }
             });
         }
@@ -264,7 +262,7 @@ namespace SessionMapSwitcher
         {
             if (e.Key == Key.Enter)
             {
-                SetAndValidateSessionPath(ViewModel.SessionPath); // the viewmodel is 2-way binded so the new path value is already set when enter is pressed so we pass the same value to store in app setttings and validate it
+                SetAndValidateSessionPath(ViewModel.SessionPathTextInput); // the viewmodel is 2-way binded so the new path value is already set when enter is pressed so we pass the same value to store in app setttings and validate it
                 ViewModel.UserMessage = "Session Path updated!";
             }
         }
@@ -274,13 +272,12 @@ namespace SessionMapSwitcher
             ViewModel.SetSessionPath(path); // this will save it to app settings
             ViewModel.SetCurrentlyLoadedMap();
 
-            if (ViewModel.IsSessionPathValid())
+            if (SessionPath.IsSessionPathValid())
             {
                 ViewModel.RefreshGameSettingsFromIniFiles();
                 ViewModel.GetObjectCountFromFile();
                 ReloadAvailableMapsInBackground();
                 BackupMapFilesInBackground();
-                ctrlTextureReplacer.SetSessionPath(ViewModel.SessionPath);
             }
             else
             {
@@ -384,16 +381,19 @@ namespace SessionMapSwitcher
         {
             bool isNewVersionAvailable = false;
 
+            ViewModel.UserMessage = "Checking for updates ...";
             Task task = Task.Factory.StartNew(() => 
             {
-                isNewVersionAvailable = VersionChecker.IsNewVersionAvailable();
+                isNewVersionAvailable = VersionChecker.CheckForUpdates();
             });
 
-            task.ContinueWith((antecedent) => 
+            task.ContinueWith((antecedent) =>
             {
+                ViewModel.UserMessage = "";
+
                 if (isNewVersionAvailable)
                 {
-                    MessageBoxResult result = System.Windows.MessageBox.Show("There is a new version available. Click 'Yes' to open the release page and download the latest version.", 
+                    MessageBoxResult result = System.Windows.MessageBox.Show("There is a new version available. Click 'Yes' to download the latest version (the program will close and re-open).", 
                                                    "Update Available!",
                                                    MessageBoxButton.YesNo,
                                                    MessageBoxImage.Question,
@@ -401,10 +401,26 @@ namespace SessionMapSwitcher
 
                     if (result == MessageBoxResult.Yes)
                     {
-                        VersionChecker.OpenLatestReleaseInBrowser();
+                        ViewModel.UserMessage = "Updating app ...";
+                        VersionChecker.AppUpdater.ReportProgress += AppUpdater_ReportProgress;
+
+                        Task updateTask = Task.Factory.StartNew(() =>
+                        {
+                            VersionChecker.UpdateApplication();
+                        });
+
+                        updateTask.ContinueWith((updateAntecedent) => 
+                        {
+                            VersionChecker.AppUpdater.ReportProgress -= AppUpdater_ReportProgress;
+                        });
                     }
                 }
             });
+        }
+
+        private void AppUpdater_ReportProgress(NAppUpdate.Framework.Common.UpdateProgressInfo currentStatus)
+        {
+            ViewModel.UserMessage = $"Updating app: {currentStatus.Message} | {currentStatus.Percentage}%";
         }
 
         private void MenuReimporSelectedMap_Click(object sender, RoutedEventArgs e)
@@ -428,10 +444,12 @@ namespace SessionMapSwitcher
         {
             // disable certain menu items if no map selected
             bool isMapSelected = (lstMaps.SelectedItem != null);
-            bool isSessionPathValid = ViewModel.IsSessionPathValid();
+            bool isSessionPathValid = SessionPath.IsSessionPathValid();
 
             menuReimporSelectedMap.IsEnabled = isMapSelected;
             menuOpenSelectedMapFolder.IsEnabled = isMapSelected;
+            menuRenameSelectedMap.IsEnabled = isMapSelected;
+            menuHideSelectedMap.IsEnabled = isMapSelected;
 
             menuOpenSessionFolder.IsEnabled = isSessionPathValid;
             menuOpenMapsFolder.IsEnabled = isSessionPathValid;
@@ -439,15 +457,50 @@ namespace SessionMapSwitcher
             if (isMapSelected)
             {
                 MapListItem selected = (lstMaps.SelectedItem as MapListItem);
-                bool hasImportLocation = MapImporter.IsImportLocationStored(ViewModel.SessionContentPath, selected.DisplayName);
+                bool hasImportLocation = MetaDataManager.IsImportLocationStored(selected.MapName);
                 menuReimporSelectedMap.IsEnabled = hasImportLocation;
                 menuReimporSelectedMap.ToolTip = hasImportLocation ? null : "You can only re-import if you imported the map from 'Import Map > From Computer ...' and imported a folder.\n(does not work with .zip files)";
+                menuHideSelectedMap.Header = selected.IsHiddenByUser ? "Show Selected Map ..." : "Hide Selected Map ...";
             }
         }
 
         private void MainWindow_Unloaded(object sender, RoutedEventArgs e)
         {
             ctrlTextureReplacer.ViewModel.MessageChanged -= TextureReplacer_MessageChanged;
+        }
+
+        /// <summary>
+        /// Opens the window to rename a map. 
+        /// </summary>
+        private void MenuRenameSelectedMap_Click(object sender, RoutedEventArgs e)
+        {
+            if (lstMaps.SelectedItem == null)
+            {
+                System.Windows.MessageBox.Show("Select a map to rename first!",
+                                                "Notice!",
+                                                MessageBoxButton.OK,
+                                                MessageBoxImage.Information);
+                return;
+            }
+
+
+            MapListItem selectedItem = lstMaps.SelectedItem as MapListItem;
+            ViewModel.OpenRenameMapWindow(selectedItem);
+        }
+
+        private void MenuHideSelectedMap_Click(object sender, RoutedEventArgs e)
+        {
+            if (lstMaps.SelectedItem == null)
+            {
+                System.Windows.MessageBox.Show("Select a map to hide/show first!",
+                                                "Notice!",
+                                                MessageBoxButton.OK,
+                                                MessageBoxImage.Information);
+                return;
+            }
+
+            MapListItem selectedItem = lstMaps.SelectedItem as MapListItem;
+            ViewModel.ToggleVisiblityOfMap(selectedItem);
         }
     }
 }
