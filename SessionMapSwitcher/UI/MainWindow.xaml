@@ -207,10 +207,10 @@
                            FontSize="12"
                            FontWeight="SemiBold"/>
 
-                    <Label x:Name="txtLoadedMap"
-                           Padding="5,0,0,0"
-                           FontSize="12"
-                           Content="{Binding CurrentlyLoadedMapName, FallbackValue='GrindCity_Yeah'}"/>
+                    <TextBlock x:Name="txtLoadedMap"
+                               Padding="5,0,0,0"
+                               FontSize="12"
+                               Text="{Binding CurrentlyLoadedMapName, FallbackValue='GrindCity_Yeah'}"/>
                 </WrapPanel>
             </Grid>
 

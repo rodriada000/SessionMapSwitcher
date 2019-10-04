@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-class MapListItem : ViewModelBase
+public class MapListItem : ViewModelBase
 {
     private string _mapName;
     private string _customName;

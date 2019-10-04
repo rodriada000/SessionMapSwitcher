@@ -1,6 +1,7 @@
 ﻿
 using Ini.Net;
 using SessionMapSwitcher.Classes;
+using SessionMapSwitcher.UI;
 using SessionMapSwitcher.Utils;
 using System;
 using System.Collections.Generic;
@@ -327,7 +328,8 @@ namespace SessionMapSwitcher.ViewModels
         public void SetSessionPath(string pathToSession)
         {
             SessionPathTextInput = pathToSession;
-            AppSettingsUtil.AddOrUpdateAppSettings("PathToSession", pathToSession);
+            App.PathToSession = SessionPath;
+            AppSettingsUtil.AddOrUpdateAppSettings("PathToSession", SessionPath);
         }
 
         internal bool IsSessionPathValid()
@@ -438,9 +440,12 @@ namespace SessionMapSwitcher.ViewModels
                 return false;
             }
 
+            MetaDataManager.SetCustomNamesForMaps(AvailableMaps);
+
             lock (collectionLock)
             {
-                AvailableMaps = new ThreadFriendlyObservableCollection<MapListItem>(AvailableMaps.OrderBy(m => m.MapName));
+                // sort the maps A -> Z
+                AvailableMaps = new ThreadFriendlyObservableCollection<MapListItem>(AvailableMaps.OrderBy(m => m.DisplayName));
                 BindingOperations.EnableCollectionSynchronization(AvailableMaps, collectionLock);
 
                 // add default session map to select (add last so it is always at top of list)
@@ -449,6 +454,7 @@ namespace SessionMapSwitcher.ViewModels
                 _defaultSessionMap.Tooltip = _defaultSessionMap.IsEnabled ? null : "The original Session game files have not been backed up to the custom Maps folder.";
                 AvailableMaps.Insert(0, _defaultSessionMap);
             }
+
 
             UserMessage = "List of available maps loaded!";
             return true;
@@ -511,7 +517,7 @@ namespace SessionMapSwitcher.ViewModels
             ComputerImportWindow importWindow = new ComputerImportWindow(importViewModel)
             {
                 WindowStyle = WindowStyle.ToolWindow,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner
+                WindowStartupLocation = WindowStartupLocation.CenterScreen
             };
             importWindow.ShowDialog();
 
@@ -536,7 +542,7 @@ namespace SessionMapSwitcher.ViewModels
             OnlineImportWindow importWindow = new OnlineImportWindow(ImportViewModel)
             {
                 WindowStyle = WindowStyle.ToolWindow,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner
+                WindowStartupLocation = WindowStartupLocation.CenterScreen
             };
             importWindow.ShowDialog();
 
@@ -554,7 +560,7 @@ namespace SessionMapSwitcher.ViewModels
             ComputerImportViewModel importViewModel = new ComputerImportViewModel(SessionPath)
             {
                 IsZipFileImport = false,
-                PathInput = MapImporter.GetOriginalImportLocation(selectedItem.MapName, SessionContentPath)
+                PathInput = MetaDataManager.GetOriginalImportLocation(selectedItem.MapName, SessionContentPath)
             };
 
             UserMessage = "Re-importing in progress ...";
@@ -572,6 +578,35 @@ namespace SessionMapSwitcher.ViewModels
                         UserMessage = $"Failed to re-import map: {antecedent.Result.Message}";
                     }
                 });
+        }
+
+        /// <summary>
+        /// Opens a window to enter a new name for a map.
+        /// Writes to meta data file if user clicks 'Rename' in window.
+        /// </summary>
+        /// <param name="selectedMap"></param>
+        internal void OpenRenameMapWindow(MapListItem selectedMap)
+        {
+            RenameMapViewModel viewModel = new RenameMapViewModel(selectedMap);
+            RenameMapWindow window = new RenameMapWindow(viewModel)
+            {
+                WindowStartupLocation = WindowStartupLocation.CenterScreen
+            };
+            bool? result = window.ShowDialog();
+
+            if (result.GetValueOrDefault(false) == true)
+            {
+                bool didWrite = MetaDataManager.WriteCustomNamesToFile(AvailableMaps);
+
+                if (didWrite == false)
+                {
+                    UserMessage = "Failed to update .meta file with new custom name. Your custom name may have not been saved and will be lost when the app restarts.";
+                    return;
+                }
+
+                LoadAvailableMaps();
+                UserMessage = $"{selectedMap.MapName} renamed to {selectedMap.CustomName}!";
+            }
         }
 
         private bool IsMapAdded(string mapName)
