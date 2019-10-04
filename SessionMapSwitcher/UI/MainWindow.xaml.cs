@@ -448,6 +448,7 @@ namespace SessionMapSwitcher
 
             menuReimporSelectedMap.IsEnabled = isMapSelected;
             menuOpenSelectedMapFolder.IsEnabled = isMapSelected;
+            menuRenameSelectedMap.IsEnabled = isMapSelected;
             menuHideSelectedMap.IsEnabled = isMapSelected;
 
             menuOpenSessionFolder.IsEnabled = isSessionPathValid;
