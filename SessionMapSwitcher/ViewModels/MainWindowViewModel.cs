@@ -284,7 +284,7 @@ namespace SessionMapSwitcher.ViewModels
                 BindingOperations.EnableCollectionSynchronization(AvailableMaps, collectionLock);
 
                 // add default session map to select (add last so it is always at top of list)
-                _defaultSessionMap.IsEnabled = IsOriginalMapFilesBackedUp();
+                _defaultSessionMap.IsEnabled = IsOriginalMapFileBackedUp();
                 _defaultSessionMap.FullPath = SessionPath.ToOriginalSessionMapFiles;
                 _defaultSessionMap.Tooltip = _defaultSessionMap.IsEnabled ? null : "The original Session game files have not been backed up to the custom Maps folder.";
                 AvailableMaps.Insert(0, _defaultSessionMap);
@@ -456,14 +456,14 @@ namespace SessionMapSwitcher.ViewModels
                 return false;
             }
 
-            if (IsOriginalMapFilesBackedUp())
+            if (IsOriginalMapFileBackedUp())
             {
                 // the files are already backed up
                 UserMessage = "Skipping backup: original files already backed up.";
                 return false;
             }
 
-            if (DoesOriginalMapFilesExistInGameDirectory() == false)
+            if (DoesOriginalMapFileExistInGameDirectory() == false)
             {
                 // the original files are missing from the Session directory
                 UserMessage = "Cannot backup: original map files for Session are missing from Session game directory.";
@@ -475,20 +475,11 @@ namespace SessionMapSwitcher.ViewModels
                 // create folder if it doesn't exist
                 Directory.CreateDirectory(SessionPath.ToOriginalSessionMapFiles);
 
-                // copy top level NYC01_Persistent map files
-                foreach (string fullPathToFile in Directory.GetFiles(SessionPath.ToNYCFolder))
-                {
-                    if (fullPathToFile.Contains("NYC01_Persistent"))
-                    {
-                        string fileName = fullPathToFile.Replace(SessionPath.ToNYCFolder, "");
-                        string destFilePath = SessionPath.ToOriginalSessionMapFiles + fileName;
+                string fullPathToFile = $"{SessionPath.ToNYCFolder}\\NYC01_Persistent.umap";
+                string destFilePath = $"{SessionPath.ToOriginalSessionMapFiles}\\NYC01_Persistent.umap";
 
-                        if (File.Exists(destFilePath) == false)
-                        {
-                            File.Copy(fullPathToFile, destFilePath, overwrite: true);
-                        }
-                    }
-                }
+                // copy NYC01_Persistent umap file to backup folder
+                File.Copy(fullPathToFile, destFilePath, overwrite: true);
             }
             catch (Exception e)
             {
@@ -496,49 +487,33 @@ namespace SessionMapSwitcher.ViewModels
                 return false;
             }
 
-            _defaultSessionMap.IsEnabled = IsOriginalMapFilesBackedUp();
+            _defaultSessionMap.IsEnabled = IsOriginalMapFileBackedUp();
             _defaultSessionMap.Tooltip = _defaultSessionMap.IsEnabled ? null : "The original Session game files have not been backed up to the custom Maps folder.";
             return true;
         }
 
-        internal bool IsOriginalMapFilesBackedUp()
+        internal bool IsOriginalMapFileBackedUp()
         {
             if (Directory.Exists(SessionPath.ToOriginalSessionMapFiles) == false)
             {
                 return false;
             }
 
-            // check that a subset of the NYC files exist
-            List<string> expectedFileNames = new List<string>() { "NYC01_Persistent.umap", "NYC01_Persistent.uexp" };
-            foreach (string fileName in expectedFileNames)
-            {
-                if (File.Exists($"{SessionPath.ToOriginalSessionMapFiles}\\{fileName}") == false)
-                {
-                    return false;
-                }
-            }
+            string fullPathToFile = $"{SessionPath.ToOriginalSessionMapFiles}\\NYC01_Persistent.umap";
 
-            return true;
+            return File.Exists(fullPathToFile);
         }
 
-        internal bool DoesOriginalMapFilesExistInGameDirectory()
+        internal bool DoesOriginalMapFileExistInGameDirectory()
         {
             if (Directory.Exists(SessionPath.ToNYCFolder) == false)
             {
                 return false;
             }
 
-            // check that NYC files exist
-            List<string> expectedFileNames = new List<string>() { "NYC01_Persistent.umap", "NYC01_Persistent.uexp" };
-            foreach (string fileName in expectedFileNames)
-            {
-                if (File.Exists($"{SessionPath.ToNYCFolder}\\{fileName}") == false)
-                {
-                    return false;
-                }
-            }
+            string fullPathToFile = $"{SessionPath.ToNYCFolder}\\NYC01_Persistent.umap";
 
-            return true;
+            return File.Exists(fullPathToFile);
         }
 
         internal bool IsSessionRunning()
@@ -639,8 +614,8 @@ namespace SessionMapSwitcher.ViewModels
 
             try
             {
-                // delete session map files / custom maps from game  named NYC_Persistent
-                DeleteAllMapFilesFromGame();
+                // delete session map file / custom maps from game 
+                DeleteMapFilesFromNYCFolder();
 
                 CopyMapFilesToNYCFolder(map);
 
@@ -662,7 +637,7 @@ namespace SessionMapSwitcher.ViewModels
         {
             try
             {
-                DeleteAllMapFilesFromGame();
+                DeleteMapFilesFromNYCFolder();
 
                 foreach (string fileName in Directory.GetFiles(SessionPath.ToOriginalSessionMapFiles))
                 {
@@ -718,7 +693,16 @@ namespace SessionMapSwitcher.ViewModels
             }
         }
 
-        private void DeleteAllMapFilesFromGame()
+        /// <summary>
+        /// Deletes all files in the Content\Art\Env\NYC folder
+        /// that does not have NYC_01 prefix (original game files).
+        /// Also deletes NYC01_Persistent.umap file
+        /// </summary>
+        /// <remarks>
+        /// The NYC01_Persistent.umap file must be deleted so a custom map can be loaded when you leave the apartment in-game.
+        /// If this file is not deleted then the game loads the default map when you leave the apartment.
+        /// </remarks>
+        private void DeleteMapFilesFromNYCFolder()
         {
             if (SessionPath.IsSessionPathValid() == false)
             {
@@ -727,8 +711,8 @@ namespace SessionMapSwitcher.ViewModels
 
             foreach (string fileName in Directory.GetFiles(SessionPath.ToNYCFolder))
             {
-                // only delete NYC01_Persistent map files
-                if (fileName.Contains("NYC01_Persistent"))
+                // only delete custom map files, not NYC01 files
+                if (fileName.Contains("NYC01_") == false || fileName.Contains("NYC01_Persistent.umap"))
                 {
                     File.Delete(fileName);
                 }

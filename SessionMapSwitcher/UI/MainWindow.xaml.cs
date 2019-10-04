@@ -185,7 +185,7 @@ namespace SessionMapSwitcher
                 return;
             }
 
-            if (ViewModel.IsOriginalMapFilesBackedUp() == false)
+            if (ViewModel.IsOriginalMapFileBackedUp() == false)
             {
                 System.Windows.MessageBox.Show("The original Session game map files have not been backed up yet. Click OK to backup the files then click 'Load Map' again",
                                                 "Notice!",
@@ -448,6 +448,7 @@ namespace SessionMapSwitcher
 
             menuReimporSelectedMap.IsEnabled = isMapSelected;
             menuOpenSelectedMapFolder.IsEnabled = isMapSelected;
+            menuRenameSelectedMap.IsEnabled = isMapSelected;
             menuHideSelectedMap.IsEnabled = isMapSelected;
 
             menuOpenSessionFolder.IsEnabled = isSessionPathValid;
