@@ -281,6 +281,16 @@
                           Margin="10,10,10,0">
                     <ui:TextureReplacerUserControl x:Name="ctrlTextureReplacer"/>
                 </GroupBox>
+
+                <GroupBox x:Name="grpProjectWatch"
+                          BorderBrush="#BDBDBD"
+                          Header="Project Watcher"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Top"
+                          IsEnabled="{Binding IsProjectWatchControlEnabled}"
+                          Margin="10,10,10,0">
+                    <ui:ProjectWatcherUserControl x:Name="ctrlProjectWatcher"/>
+                </GroupBox>
             </StackPanel>
         </ScrollViewer>
 

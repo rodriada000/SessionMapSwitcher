@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Reflection;
 using SessionMapSwitcher.Classes;
 using SessionMapSwitcher.Utils;
+using SessionMapSwitcher.Classes.Events;
 
 namespace SessionMapSwitcher
 {
@@ -370,11 +371,17 @@ namespace SessionMapSwitcher
         {
             CheckForNewVersionInBackground();
             ctrlTextureReplacer.ViewModel.MessageChanged += TextureReplacer_MessageChanged;
+            ctrlProjectWatcher.ViewModel.MapImported += ProjectWatcher_MapImported;
         }
 
         private void TextureReplacer_MessageChanged(string message)
         {
             ViewModel.UserMessage = message;
+        }
+
+        private void ProjectWatcher_MapImported(object sender, MapImportedEventArgs e)
+        {
+            ViewModel.LoadMap(e.MapName);
         }
 
         private void CheckForNewVersionInBackground()
