@@ -186,7 +186,7 @@ namespace SessionMapSwitcher
                 return;
             }
 
-            if (ViewModel.IsOriginalMapFilesBackedUp() == false)
+            if (ViewModel.IsOriginalMapFileBackedUp() == false)
             {
                 System.Windows.MessageBox.Show("The original Session game map files have not been backed up yet. Click OK to backup the files then click 'Load Map' again",
                                                 "Notice!",
@@ -455,6 +455,8 @@ namespace SessionMapSwitcher
 
             menuReimporSelectedMap.IsEnabled = isMapSelected;
             menuOpenSelectedMapFolder.IsEnabled = isMapSelected;
+            menuRenameSelectedMap.IsEnabled = isMapSelected;
+            menuHideSelectedMap.IsEnabled = isMapSelected;
 
             menuOpenSessionFolder.IsEnabled = isSessionPathValid;
             menuOpenMapsFolder.IsEnabled = isSessionPathValid;
@@ -465,6 +467,7 @@ namespace SessionMapSwitcher
                 bool hasImportLocation = MetaDataManager.IsImportLocationStored(selected.MapName);
                 menuReimporSelectedMap.IsEnabled = hasImportLocation;
                 menuReimporSelectedMap.ToolTip = hasImportLocation ? null : "You can only re-import if you imported the map from 'Import Map > From Computer ...' and imported a folder.\n(does not work with .zip files)";
+                menuHideSelectedMap.Header = selected.IsHiddenByUser ? "Show Selected Map ..." : "Hide Selected Map ...";
             }
         }
 
@@ -490,6 +493,21 @@ namespace SessionMapSwitcher
 
             MapListItem selectedItem = lstMaps.SelectedItem as MapListItem;
             ViewModel.OpenRenameMapWindow(selectedItem);
+        }
+
+        private void MenuHideSelectedMap_Click(object sender, RoutedEventArgs e)
+        {
+            if (lstMaps.SelectedItem == null)
+            {
+                System.Windows.MessageBox.Show("Select a map to hide/show first!",
+                                                "Notice!",
+                                                MessageBoxButton.OK,
+                                                MessageBoxImage.Information);
+                return;
+            }
+
+            MapListItem selectedItem = lstMaps.SelectedItem as MapListItem;
+            ViewModel.ToggleVisiblityOfMap(selectedItem);
         }
     }
 }

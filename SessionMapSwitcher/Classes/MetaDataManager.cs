@@ -98,9 +98,9 @@ namespace SessionMapSwitcher.Classes
         /// <returns> true if file updated; false if exception thrown </returns>
         /// <remarks>
         /// The map directory and map name is used as the Key to the custom name and is written to the file like so:
-        /// MapDirectory | MapName | CustomName
+        /// MapDirectory | MapName | CustomName | IsHidden
         /// </remarks>
-        internal static bool WriteCustomNamesToFile(IEnumerable<MapListItem> maps)
+        internal static bool WriteCustomMapPropertiesToFile(IEnumerable<MapListItem> maps)
         {
             try
             {
@@ -110,9 +110,10 @@ namespace SessionMapSwitcher.Classes
 
                 foreach (MapListItem map in maps)
                 {
-                    if (String.IsNullOrWhiteSpace(map.CustomName) == false)
+                    // only write maps to meta data file that users have set custom properties for
+                    if (String.IsNullOrWhiteSpace(map.CustomName) == false || map.IsHiddenByUser)
                     {
-                        linesToWrite.Add($"{map.DirectoryPath} | {map.MapName} | {map.CustomName}");
+                        linesToWrite.Add(map.MetaData);
                     }
                 }
 
@@ -141,7 +142,7 @@ namespace SessionMapSwitcher.Classes
         /// <remarks>
         /// customNames.meta uses the map directory and the map name as the Key to find the correct custom map name
         /// </remarks>
-        internal static void SetCustomNamesForMaps(IEnumerable<MapListItem> maps)
+        internal static void SetCustomPropertiesForMaps(IEnumerable<MapListItem> maps)
         {
             try
             {
@@ -155,15 +156,18 @@ namespace SessionMapSwitcher.Classes
                 foreach (string line in File.ReadAllLines(pathToMetaFile))
                 {
                     string[] parts = line.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
-                    parts[0] = parts[0].Trim();
-                    parts[1] = parts[1].Trim();
-                    parts[2] = parts[2].Trim();
+                    string dirPath = parts[0].Trim();
+                    string mapName = parts[1].Trim();
+                    string customName = parts[2].Trim();
+                    string isHidden = parts[3].Trim();
 
-                    MapListItem foundMap = maps.Where(m => m.DirectoryPath == parts[0] && m.MapName == parts[1]).FirstOrDefault();
+
+                    MapListItem foundMap = maps.Where(m => m.DirectoryPath == dirPath && m.MapName == mapName).FirstOrDefault();
                     
                     if (foundMap != null)
                     {
-                        foundMap.CustomName = parts[2];
+                        foundMap.CustomName = customName;
+                        foundMap.IsHiddenByUser = (isHidden.Equals("true", StringComparison.OrdinalIgnoreCase));
                     }
                 }
             }

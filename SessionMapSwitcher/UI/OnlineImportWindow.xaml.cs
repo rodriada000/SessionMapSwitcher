@@ -91,8 +91,6 @@ namespace SessionMapSwitcher
                 ViewModel.CancelPendingImport();
                 ViewModel.IsImportingMap = false;
             }
-
-            menuImportSelected.Header = $"{ViewModel.ImportButtonText} ...";
         }
 
         private void ViewModel_MapImported(bool wasSuccessful)
@@ -102,9 +100,7 @@ namespace SessionMapSwitcher
 
         private void ContextCallback(object entry)
         {
-            menuImportSelected.Header = $"{ViewModel.ImportButtonText} ...";
             ViewModel.MapImported -= ViewModel_MapImported;
-
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -130,6 +126,11 @@ namespace SessionMapSwitcher
 
             DownloadableMap selectedMap = lstMaps.SelectedItem as DownloadableMap;
             selectedMap.BeginDownloadInBrowser();
+        }
+
+        private void LstMaps_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+        {
+            menuImportSelected.Header = $"{ViewModel.ImportButtonText} ...";
         }
     }
 }

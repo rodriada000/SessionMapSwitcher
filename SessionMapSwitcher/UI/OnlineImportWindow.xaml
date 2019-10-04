@@ -88,7 +88,8 @@
                  VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
                  Margin="10"
-                 ItemsSource="{Binding DownloadableMaps}">
+                 ItemsSource="{Binding DownloadableMaps}"
+                 ContextMenuOpening="LstMaps_ContextMenuOpening">
             <ListBox.ContextMenu>
                 <ContextMenu x:Name="menuOptions">
                     <MenuItem x:Name="menuImportSelected" Header="Import Selected Map ..." Click="MenuImportSelected_Click"/>

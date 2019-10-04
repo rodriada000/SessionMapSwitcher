@@ -11,7 +11,7 @@ public class MapListItem : ViewModelBase
     private bool _isEnabled = true;
     private bool _isSelected = false;
     private bool _isValid = true;
-
+    private bool _isHiddenByUser = false;
 
     public string CustomName
     {
@@ -94,6 +94,15 @@ public class MapListItem : ViewModelBase
         }
     }
 
+    public bool IsHiddenByUser
+    {
+        get { return _isHiddenByUser; }
+        set
+        {
+            _isHiddenByUser = value;
+            NotifyPropertyChanged();
+        }
+    }
 
     public bool IsEnabled
     {
@@ -122,6 +131,18 @@ public class MapListItem : ViewModelBase
         {
             _isValid = value;
             NotifyPropertyChanged();
+        }
+    }
+
+    /// <summary>
+    /// Returns a string of the DirectoryPath, MapName, and other custom properties seperated by '|'
+    /// Used to write to meta data file.
+    /// </summary>
+    public string MetaData
+    {
+        get
+        {
+            return $"{DirectoryPath} | {MapName} | {CustomName} | {IsHiddenByUser}";
         }
     }
 
