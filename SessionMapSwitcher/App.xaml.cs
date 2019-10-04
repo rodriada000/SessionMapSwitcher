@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SessionMapSwitcher.Classes;
+using SessionMapSwitcher.Utils;
+using System;
 using System.Diagnostics;
 using System.Security.Principal;
 using System.Windows;
@@ -55,6 +57,11 @@ namespace SessionMapSwitcher
             {
                 MessageBox.Show($"Failed to restart as administrator: {e.Message}.", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private void Application_Startup(object sender, StartupEventArgs e)
+        {
+            SessionPath.ToSession = AppSettingsUtil.GetAppSetting("PathToSession");
         }
     }
 }

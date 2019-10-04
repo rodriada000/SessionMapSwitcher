@@ -1,6 +1,7 @@
 ﻿
 using Ini.Net;
 using SessionMapSwitcher.Classes;
+using SessionMapSwitcher.UI;
 using SessionMapSwitcher.Utils;
 using System;
 using System.Collections.Generic;
@@ -31,8 +32,6 @@ namespace SessionMapSwitcher.ViewModels
         private string _objectCountText;
         private bool _skipMovieIsChecked;
         private UnpackUtils _unpackUtils;
-        private const string _backupFolderName = "Original_Session_Map";
-
         private OnlineImportViewModel ImportViewModel;
 
 
@@ -52,24 +51,6 @@ namespace SessionMapSwitcher.ViewModels
             }
         }
 
-        public string SessionPath
-        {
-            get
-            {
-                if (_sessionPath.EndsWith("\\"))
-                {
-                    _sessionPath = _sessionPath.TrimEnd('\\');
-                }
-                return _sessionPath;
-            }
-        }
-        public string SessionContentPath
-        {
-            get
-            {
-                return $"{SessionPath}\\SessionGame\\Content";
-            }
-        }
         public ThreadFriendlyObservableCollection<MapListItem> AvailableMaps
         {
             get
@@ -133,71 +114,6 @@ namespace SessionMapSwitcher.ViewModels
             }
         }
 
-        internal string PathToConfigFolder
-        {
-            get
-            {
-                return $"{SessionPath}\\SessionGame\\Config";
-            }
-        }
-
-        internal string PathToPakFile
-        {
-            get
-            {
-                return $"{SessionContentPath}\\Paks\\SessionGame-WindowsNoEditor.pak";
-            }
-        }
-
-        internal string DefaultEngineIniFilePath
-        {
-            get
-            {
-                return $"{PathToConfigFolder}\\DefaultEngine.ini";
-            }
-        }
-
-        internal string DefaultGameIniFilePath
-        {
-            get
-            {
-                return $"{PathToConfigFolder}\\DefaultGame.ini";
-            }
-        }
-
-        /// <summary>
-        /// Returns absolute path to the NYC folder in Session game directory. Requires <see cref="SessionPath"/>.
-        /// </summary>
-        internal string PathToNYCFolder
-        {
-            get
-            {
-                return $"{SessionPath}\\SessionGame\\Content\\Art\\Env\\NYC";
-            }
-        }
-        internal string PathToBrooklynFolder
-        {
-            get
-            {
-                return $"{PathToNYCFolder}\\Brooklyn";
-            }
-        }
-
-        internal string PathToOriginalSessionMapFiles
-        {
-            get
-            {
-                return $"{SessionContentPath}\\{_backupFolderName}";
-            }
-        }
-        internal string PathToSessionExe
-        {
-            get
-            {
-                return $"{SessionPath}\\SessionGame\\Binaries\\Win64\\SessionGame-Win64-Shipping.exe";
-            }
-        }
-
         /// <summary>
         /// Determine if all controls (buttons, textboxes) should be enabled or disabled in main window.
         /// </summary>
@@ -226,7 +142,6 @@ namespace SessionMapSwitcher.ViewModels
                 }
             }
         }
-
 
         internal MapListItem FirstLoadedMap { get => _firstLoadedMap; set => _firstLoadedMap = value; }
 
@@ -264,7 +179,7 @@ namespace SessionMapSwitcher.ViewModels
         {
             get
             {
-                if (IsSessionUnpacked())
+                if (UnpackUtils.IsSessionUnpacked())
                 {
                     return "Load Map";
                 }
@@ -276,7 +191,7 @@ namespace SessionMapSwitcher.ViewModels
         {
             get
             {
-                if (IsSessionUnpacked())
+                if (UnpackUtils.IsSessionUnpacked())
                 {
                     return true && InputControlsEnabled;
                 }
@@ -288,7 +203,7 @@ namespace SessionMapSwitcher.ViewModels
         {
             get
             {
-                if (IsSessionPathValid())
+                if (SessionPath.IsSessionPathValid())
                 {
                     return InputControlsEnabled;
                 }
@@ -310,8 +225,8 @@ namespace SessionMapSwitcher.ViewModels
 
             _defaultSessionMap = new MapListItem()
             {
-                FullPath = PathToOriginalSessionMapFiles,
-                DisplayName = "Session Default Map - Brooklyn Banks"
+                FullPath = SessionPath.ToOriginalSessionMapFiles,
+                MapName = "Session Default Map - Brooklyn Banks"
             };
 
             RefreshGameSettingsFromIniFiles();
@@ -322,91 +237,13 @@ namespace SessionMapSwitcher.ViewModels
         }
 
         /// <summary>
-        /// Sets <see cref="SessionPath"/> and saves the value to appSettings in the applications .config file
+        /// Sets <see cref="SessionPath.ToSession"/> and saves the value to appSettings in the applications .config file
         /// </summary>
         public void SetSessionPath(string pathToSession)
         {
+            SessionPath.ToSession = pathToSession;
             SessionPathTextInput = pathToSession;
-            AppSettingsUtil.AddOrUpdateAppSettings("PathToSession", pathToSession);
-        }
-
-        internal bool IsSessionPathValid()
-        {
-            if (String.IsNullOrEmpty(SessionPath))
-            {
-                return false;
-            }
-
-            if (Directory.Exists($"{SessionPath}\\Engine") == false)
-            {
-                return false;
-            }
-
-            if (Directory.Exists($"{SessionPath}\\SessionGame") == false)
-            {
-                return false;
-            }
-
-            if (Directory.Exists(SessionContentPath) == false)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// Determines if Session is properly unpacked by checking for specific directories
-        /// </summary>
-        internal bool IsSessionUnpacked()
-        {
-            if (Directory.Exists(PathToConfigFolder) == false)
-            {
-                return false;
-            }
-
-            List<string> expectedDirectories = new List<string>() { "Animation", "Art", "Character", "Customization", "ObjectPlacement", "MainHUB", "Skateboard", "VideoEditor" };
-            foreach (string expectedDir in expectedDirectories)
-            {
-                if (Directory.Exists($"{SessionContentPath}\\{expectedDir}") == false)
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// Determines if the file extension for SessionGame-WindowsNoEditor.pak was changed to .bak
-        /// </summary>
-        internal bool IsSessionPakFileRenamed()
-        {
-            return (File.Exists(PathToPakFile) == false);
-        }
-
-        /// <summary>
-        /// Renames the file SessionGame-WindowsNoEditor.pak to SessionGame-WindowsNoEditor.bak
-        /// </summary>
-        /// <returns> true if file was renamed; false otherwise. </returns>
-        internal bool RenamePakFile()
-        {
-            if (IsSessionPakFileRenamed())
-            {
-                return true; // already renamed nothing to do
-            }
-
-            try
-            {
-                File.Move(PathToPakFile, PathToPakFile.Replace(".pak", ".bak"));
-                System.Threading.Thread.Sleep(750); // wait a second after renaming the file ensure it is updated (due to race conditions where the next process starts too soon before realzing the file name changed) 
-                return true;
-            }
-            catch (Exception e)
-            {
-                UserMessage = $"Failed to rename .pak file: {e.Message}";
-                return false;
-            }
+            AppSettingsUtil.AddOrUpdateAppSettings("PathToSession", SessionPath.ToSession);
         }
 
         public bool LoadAvailableMaps()
@@ -416,21 +253,21 @@ namespace SessionMapSwitcher.ViewModels
                 AvailableMaps.Clear();
             }
 
-            if (IsSessionPathValid() == false)
+            if (SessionPath.IsSessionPathValid() == false)
             {
                 UserMessage = $"Cannot load available maps: 'Path To Session' has not been set.";
                 return false;
             }
 
-            if (Directory.Exists(SessionContentPath) == false)
+            if (Directory.Exists(SessionPath.ToContent) == false)
             {
-                UserMessage = $"Cannot load available maps: {SessionContentPath} does not exist. Make sure the Session Path is set correctly.";
+                UserMessage = $"Cannot load available maps: {SessionPath.ToContent} does not exist. Make sure the Session Path is set correctly.";
                 return false;
             }
 
             try
             {
-                LoadAvailableMapsInSubDirectories(SessionContentPath);
+                LoadAvailableMapsInSubDirectories(SessionPath.ToContent);
             }
             catch (Exception e)
             {
@@ -438,17 +275,21 @@ namespace SessionMapSwitcher.ViewModels
                 return false;
             }
 
+            MetaDataManager.SetCustomNamesForMaps(AvailableMaps);
+
             lock (collectionLock)
             {
+                // sort the maps A -> Z
                 AvailableMaps = new ThreadFriendlyObservableCollection<MapListItem>(AvailableMaps.OrderBy(m => m.DisplayName));
                 BindingOperations.EnableCollectionSynchronization(AvailableMaps, collectionLock);
 
                 // add default session map to select (add last so it is always at top of list)
                 _defaultSessionMap.IsEnabled = IsOriginalMapFilesBackedUp();
-                _defaultSessionMap.FullPath = PathToOriginalSessionMapFiles;
+                _defaultSessionMap.FullPath = SessionPath.ToOriginalSessionMapFiles;
                 _defaultSessionMap.Tooltip = _defaultSessionMap.IsEnabled ? null : "The original Session game files have not been backed up to the custom Maps folder.";
                 AvailableMaps.Insert(0, _defaultSessionMap);
             }
+
 
             UserMessage = "List of available maps loaded!";
             return true;
@@ -467,11 +308,11 @@ namespace SessionMapSwitcher.ViewModels
                 MapListItem mapItem = new MapListItem
                 {
                     FullPath = file,
-                    DisplayName = file.Replace(dirToSearch + "\\", "").Replace(".umap", "")
+                    MapName = file.Replace(dirToSearch + "\\", "").Replace(".umap", "")
                 };
                 mapItem.Validate();
 
-                if (mapItem.DirectoryPath.Contains(PathToNYCFolder))
+                if (mapItem.DirectoryPath.Contains(SessionPath.ToNYCFolder))
                 {
                     // skip files that are known to be apart of the original map so they are not displayed in list of avaiable maps (like the NYC01_Persistent.umap file)
                     continue;
@@ -479,7 +320,7 @@ namespace SessionMapSwitcher.ViewModels
 
                 lock (collectionLock)
                 {
-                    if (IsMapAdded(mapItem.DisplayName) == false)
+                    if (IsMapAdded(mapItem.MapName) == false)
                     {
                         AvailableMaps.Add(mapItem);
                     }
@@ -491,7 +332,7 @@ namespace SessionMapSwitcher.ViewModels
             {
                 DirectoryInfo info = new DirectoryInfo(subFolder);
 
-                if (info.Name != _backupFolderName)
+                if (info.Name != SessionPath.MapBackupFolderName)
                 {
                     LoadAvailableMapsInSubDirectories(subFolder);
                 }
@@ -500,18 +341,18 @@ namespace SessionMapSwitcher.ViewModels
 
         internal void OpenComputerImportWindow()
         {
-            if (IsSessionPathValid() == false)
+            if (SessionPath.IsSessionPathValid() == false)
             {
                 UserMessage = "Cannot import: You must set your path to Session before importing maps.";
                 return;
             }
 
-            ComputerImportViewModel importViewModel = new ComputerImportViewModel(SessionPath);
+            ComputerImportViewModel importViewModel = new ComputerImportViewModel();
 
             ComputerImportWindow importWindow = new ComputerImportWindow(importViewModel)
             {
                 WindowStyle = WindowStyle.ToolWindow,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner
+                WindowStartupLocation = WindowStartupLocation.CenterScreen
             };
             importWindow.ShowDialog();
 
@@ -520,7 +361,7 @@ namespace SessionMapSwitcher.ViewModels
 
         internal void OpenOnlineImportWindow()
         {
-            if (IsSessionPathValid() == false)
+            if (SessionPath.IsSessionPathValid() == false)
             {
                 UserMessage = "Cannot import: You must set your path to Session before importing maps.";
                 return;
@@ -528,15 +369,14 @@ namespace SessionMapSwitcher.ViewModels
 
             if (ImportViewModel == null)
             {
-                // keep view model in memory for entire app so list of downloadable maps is cached (until force refreshed)
+                // keep view model in memory for entire app so list of downloadable maps is cached (until app restart)
                 ImportViewModel = new OnlineImportViewModel();
             }
 
-            ImportViewModel.SetSessionPath(SessionPath);
             OnlineImportWindow importWindow = new OnlineImportWindow(ImportViewModel)
             {
                 WindowStyle = WindowStyle.ToolWindow,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner
+                WindowStartupLocation = WindowStartupLocation.CenterScreen
             };
             importWindow.ShowDialog();
 
@@ -545,16 +385,16 @@ namespace SessionMapSwitcher.ViewModels
 
         internal void ReimportMapFiles(MapListItem selectedItem)
         {
-            if (IsSessionPathValid() == false)
+            if (SessionPath.IsSessionPathValid() == false)
             {
                 UserMessage = "Failed to re-import: Path To Session is invalid.";
                 return;
             }
 
-            ComputerImportViewModel importViewModel = new ComputerImportViewModel(SessionPath)
+            ComputerImportViewModel importViewModel = new ComputerImportViewModel()
             {
                 IsZipFileImport = false,
-                PathInput = MapImporter.GetOriginalImportLocation(selectedItem.DisplayName, SessionContentPath)
+                PathInput = MetaDataManager.GetOriginalImportLocation(selectedItem.MapName)
             };
 
             UserMessage = "Re-importing in progress ...";
@@ -574,14 +414,43 @@ namespace SessionMapSwitcher.ViewModels
                 });
         }
 
+        /// <summary>
+        /// Opens a window to enter a new name for a map.
+        /// Writes to meta data file if user clicks 'Rename' in window.
+        /// </summary>
+        /// <param name="selectedMap"></param>
+        internal void OpenRenameMapWindow(MapListItem selectedMap)
+        {
+            RenameMapViewModel viewModel = new RenameMapViewModel(selectedMap);
+            RenameMapWindow window = new RenameMapWindow(viewModel)
+            {
+                WindowStartupLocation = WindowStartupLocation.CenterScreen
+            };
+            bool? result = window.ShowDialog();
+
+            if (result.GetValueOrDefault(false) == true)
+            {
+                bool didWrite = MetaDataManager.WriteCustomNamesToFile(AvailableMaps);
+
+                if (didWrite == false)
+                {
+                    UserMessage = "Failed to update .meta file with new custom name. Your custom name may have not been saved and will be lost when the app restarts.";
+                    return;
+                }
+
+                LoadAvailableMaps();
+                UserMessage = $"{selectedMap.MapName} renamed to {selectedMap.CustomName}!";
+            }
+        }
+
         private bool IsMapAdded(string mapName)
         {
-            return AvailableMaps.Any(m => m.DisplayName == mapName);
+            return AvailableMaps.Any(m => m.MapName == mapName);
         }
 
         internal bool BackupOriginalMapFiles()
         {
-            if (IsSessionPathValid() == false)
+            if (SessionPath.IsSessionPathValid() == false)
             {
                 UserMessage = "Cannot backup: 'Path to Session' is invalid.";
                 return false;
@@ -604,15 +473,15 @@ namespace SessionMapSwitcher.ViewModels
             try
             {
                 // create folder if it doesn't exist
-                Directory.CreateDirectory(PathToOriginalSessionMapFiles);
+                Directory.CreateDirectory(SessionPath.ToOriginalSessionMapFiles);
 
                 // copy top level NYC01_Persistent map files
-                foreach (string fullPathToFile in Directory.GetFiles(PathToNYCFolder))
+                foreach (string fullPathToFile in Directory.GetFiles(SessionPath.ToNYCFolder))
                 {
                     if (fullPathToFile.Contains("NYC01_Persistent"))
                     {
-                        string fileName = fullPathToFile.Replace(PathToNYCFolder, "");
-                        string destFilePath = PathToOriginalSessionMapFiles + fileName;
+                        string fileName = fullPathToFile.Replace(SessionPath.ToNYCFolder, "");
+                        string destFilePath = SessionPath.ToOriginalSessionMapFiles + fileName;
 
                         if (File.Exists(destFilePath) == false)
                         {
@@ -634,7 +503,7 @@ namespace SessionMapSwitcher.ViewModels
 
         internal bool IsOriginalMapFilesBackedUp()
         {
-            if (Directory.Exists(PathToOriginalSessionMapFiles) == false)
+            if (Directory.Exists(SessionPath.ToOriginalSessionMapFiles) == false)
             {
                 return false;
             }
@@ -643,7 +512,7 @@ namespace SessionMapSwitcher.ViewModels
             List<string> expectedFileNames = new List<string>() { "NYC01_Persistent.umap", "NYC01_Persistent.uexp" };
             foreach (string fileName in expectedFileNames)
             {
-                if (File.Exists($"{PathToOriginalSessionMapFiles}\\{fileName}") == false)
+                if (File.Exists($"{SessionPath.ToOriginalSessionMapFiles}\\{fileName}") == false)
                 {
                     return false;
                 }
@@ -654,7 +523,7 @@ namespace SessionMapSwitcher.ViewModels
 
         internal bool DoesOriginalMapFilesExistInGameDirectory()
         {
-            if (Directory.Exists(PathToNYCFolder) == false)
+            if (Directory.Exists(SessionPath.ToNYCFolder) == false)
             {
                 return false;
             }
@@ -663,7 +532,7 @@ namespace SessionMapSwitcher.ViewModels
             List<string> expectedFileNames = new List<string>() { "NYC01_Persistent.umap", "NYC01_Persistent.uexp" };
             foreach (string fileName in expectedFileNames)
             {
-                if (File.Exists($"{PathToNYCFolder}\\{fileName}") == false)
+                if (File.Exists($"{SessionPath.ToNYCFolder}\\{fileName}") == false)
                 {
                     return false;
                 }
@@ -681,7 +550,7 @@ namespace SessionMapSwitcher.ViewModels
 
         private bool CopyMapFilesToNYCFolder(MapListItem map)
         {
-            if (IsSessionPathValid() == false)
+            if (SessionPath.IsSessionPathValid() == false)
             {
                 return false;
             }
@@ -689,10 +558,10 @@ namespace SessionMapSwitcher.ViewModels
             // copy all files related to map to game directory
             foreach (string fileName in Directory.GetFiles(map.DirectoryPath))
             {
-                if (fileName.Contains(map.DisplayName))
+                if (fileName.Contains(map.MapName))
                 {
                     FileInfo fi = new FileInfo(fileName);
-                    string fullTargetFilePath = PathToNYCFolder;
+                    string fullTargetFilePath = SessionPath.ToNYCFolder;
 
 
                     if (IsSessionRunning() && FirstLoadedMap != null)
@@ -705,7 +574,7 @@ namespace SessionMapSwitcher.ViewModels
                         }
                         else
                         {
-                            fullTargetFilePath += $"\\{FirstLoadedMap.DisplayName}";
+                            fullTargetFilePath += $"\\{FirstLoadedMap.MapName}";
                         }
 
                         if (fileName.Contains("_BuiltData"))
@@ -733,7 +602,7 @@ namespace SessionMapSwitcher.ViewModels
 
         internal void LoadMap(MapListItem map)
         {
-            if (IsSessionPathValid() == false)
+            if (SessionPath.IsSessionPathValid() == false)
             {
                 UserMessage = "Cannot Load: 'Path to Session' is invalid.";
                 return;
@@ -758,16 +627,16 @@ namespace SessionMapSwitcher.ViewModels
                 CopyMapFilesToNYCFolder(map);
 
                 // update the ini file with the new map path
-                string selectedMapPath = "/Game/Art/Env/NYC/" + map.DisplayName;
+                string selectedMapPath = "/Game/Art/Env/NYC/" + map.MapName;
                 UpdateGameDefaultMapIniSetting(selectedMapPath);
 
                 SetCurrentlyLoadedMap();
 
-                UserMessage = $"{map.DisplayName} Loaded!";
+                UserMessage = $"{map.MapName} Loaded!";
             }
             catch (Exception e)
             {
-                UserMessage = $"Failed to load {map.DisplayName}: {e.Message}";
+                UserMessage = $"Failed to load {map.MapName}: {e.Message}";
             }
         }
 
@@ -777,10 +646,10 @@ namespace SessionMapSwitcher.ViewModels
             {
                 DeleteAllMapFilesFromGame();
 
-                foreach (string fileName in Directory.GetFiles(PathToOriginalSessionMapFiles))
+                foreach (string fileName in Directory.GetFiles(SessionPath.ToOriginalSessionMapFiles))
                 {
-                    string targetFileName = fileName.Replace(PathToOriginalSessionMapFiles, "");
-                    string fullTargetFilePath = PathToNYCFolder + targetFileName;
+                    string targetFileName = fileName.Replace(SessionPath.ToOriginalSessionMapFiles, "");
+                    string fullTargetFilePath = SessionPath.ToNYCFolder + targetFileName;
 
                     if (File.Exists(fullTargetFilePath) == false)
                     {
@@ -793,7 +662,7 @@ namespace SessionMapSwitcher.ViewModels
 
                 SetCurrentlyLoadedMap();
 
-                UserMessage = $"{_defaultSessionMap.DisplayName} Loaded!";
+                UserMessage = $"{_defaultSessionMap.MapName} Loaded!";
 
             }
             catch (Exception e)
@@ -804,25 +673,25 @@ namespace SessionMapSwitcher.ViewModels
 
         private bool UpdateGameDefaultMapIniSetting(string defaultMapValue)
         {
-            if (IsSessionPathValid() == false)
+            if (SessionPath.IsSessionPathValid() == false)
             {
                 return false;
             }
 
-            IniFile iniFile = new IniFile(DefaultEngineIniFilePath);
+            IniFile iniFile = new IniFile(SessionPath.ToDefaultEngineIniFile);
             return iniFile.WriteString("/Script/EngineSettings.GameMapsSettings", "GameDefaultMap", defaultMapValue);
         }
 
         private string GetGameDefaultMapIniSetting()
         {
-            if (IsSessionPathValid() == false)
+            if (SessionPath.IsSessionPathValid() == false)
             {
                 return "";
             }
 
             try
             {
-                IniFile iniFile = new IniFile(DefaultEngineIniFilePath);
+                IniFile iniFile = new IniFile(SessionPath.ToDefaultEngineIniFile);
                 return iniFile.ReadString("/Script/EngineSettings.GameMapsSettings", "GameDefaultMap");
             }
             catch (Exception)
@@ -833,12 +702,12 @@ namespace SessionMapSwitcher.ViewModels
 
         private void DeleteAllMapFilesFromGame()
         {
-            if (IsSessionPathValid() == false)
+            if (SessionPath.IsSessionPathValid() == false)
             {
                 return;
             }
 
-            foreach (string fileName in Directory.GetFiles(PathToNYCFolder))
+            foreach (string fileName in Directory.GetFiles(SessionPath.ToNYCFolder))
             {
                 // only delete NYC01_Persistent map files
                 if (fileName.Contains("NYC01_Persistent"))
@@ -854,7 +723,7 @@ namespace SessionMapSwitcher.ViewModels
 
             if (iniValue == "/Game/Tutorial/Intro/MAP_EntryPoint.MAP_EntryPoint")
             {
-                CurrentlyLoadedMapName = _defaultSessionMap.DisplayName;
+                CurrentlyLoadedMapName = _defaultSessionMap.MapName;
             }
             else if (String.IsNullOrEmpty(iniValue) == false)
             {
@@ -875,7 +744,7 @@ namespace SessionMapSwitcher.ViewModels
         {
             try
             {
-                Process.Start(SessionPath);
+                Process.Start(SessionPath.ToSession);
             }
             catch (Exception ex)
             {
@@ -887,7 +756,7 @@ namespace SessionMapSwitcher.ViewModels
         {
             try
             {
-                Process.Start(SessionContentPath);
+                Process.Start(SessionPath.ToContent);
             }
             catch (Exception ex)
             {
@@ -909,14 +778,14 @@ namespace SessionMapSwitcher.ViewModels
 
         public void RefreshGameSettingsFromIniFiles()
         {
-            if (IsSessionPathValid() == false)
+            if (SessionPath.IsSessionPathValid() == false)
             {
                 return;
             }
 
             try
             {
-                IniFile engineFile = new IniFile(DefaultEngineIniFilePath);
+                IniFile engineFile = new IniFile(SessionPath.ToDefaultEngineIniFile);
                 GravityText = engineFile.ReadString("/Script/Engine.PhysicsSettings", "DefaultGravityZ");
 
                 if (String.IsNullOrWhiteSpace(GravityText))
@@ -924,7 +793,7 @@ namespace SessionMapSwitcher.ViewModels
                     GravityText = "-980";
                 }
 
-                IniFile gameFile = new IniFile(DefaultGameIniFilePath);
+                IniFile gameFile = new IniFile(SessionPath.ToDefaultGameIniFile);
                 SkipMovieIsChecked = gameFile.ReadBoolean("/Script/UnrealEd.ProjectPackagingSettings", "bSkipMovies");
             }
             catch (Exception e)
@@ -941,7 +810,7 @@ namespace SessionMapSwitcher.ViewModels
         /// <returns> true if settings updated; false otherwise. </returns>
         public bool WriteGameSettingsToFile()
         {
-            if (IsSessionPathValid() == false)
+            if (SessionPath.IsSessionPathValid() == false)
             {
                 return false;
             }
@@ -975,10 +844,10 @@ namespace SessionMapSwitcher.ViewModels
 
             try
             {
-                IniFile engineFile = new IniFile(DefaultEngineIniFilePath);
+                IniFile engineFile = new IniFile(SessionPath.ToDefaultEngineIniFile);
                 engineFile.WriteString("/Script/Engine.PhysicsSettings", "DefaultGravityZ", GravityText);
 
-                IniFile gameFile = new IniFile(DefaultGameIniFilePath);
+                IniFile gameFile = new IniFile(SessionPath.ToDefaultGameIniFile);
 
                 if (SkipMovieIsChecked)
                 {
@@ -1019,14 +888,14 @@ namespace SessionMapSwitcher.ViewModels
         /// </summary>
         internal void GetObjectCountFromFile()
         {
-            if (IsSessionPathValid() == false)
+            if (SessionPath.IsSessionPathValid() == false)
             {
                 return;
             }
 
             try
             {
-                string objectFilePath = $"{SessionPath}\\SessionGame\\Content\\ObjectPlacement\\Blueprints\\PBP_ObjectPlacementInventory.uexp";
+                string objectFilePath = $"{SessionPath.ToSession}\\SessionGame\\Content\\ObjectPlacement\\Blueprints\\PBP_ObjectPlacementInventory.uexp";
                 using (var stream = new FileStream(objectFilePath, FileMode.Open, FileAccess.Read))
                 {
                     stream.Position = 351;
@@ -1066,12 +935,12 @@ namespace SessionMapSwitcher.ViewModels
         /// </summary>
         internal void SetObjectCountInFile()
         {
-            if (IsSessionPathValid() == false)
+            if (SessionPath.IsSessionPathValid() == false)
             {
                 return;
             }
 
-            string objectFilePath = $"{SessionPath}\\SessionGame\\Content\\ObjectPlacement\\Blueprints\\PBP_ObjectPlacementInventory.uexp";
+            string objectFilePath = $"{SessionPath.ToSession}\\SessionGame\\Content\\ObjectPlacement\\Blueprints\\PBP_ObjectPlacementInventory.uexp";
 
             // this is a list of addresses where the item count for placeable objects are stored in the .uexp file
             // ... if this file is modified then these addresses will NOT match so it is important to not mod/change the PBP_ObjectPlacementInventory file (until further notice...)
@@ -1140,7 +1009,7 @@ namespace SessionMapSwitcher.ViewModels
 
         internal void StartUnpacking()
         {
-            if (IsSessionPathValid() == false)
+            if (SessionPath.IsSessionPathValid() == false)
             {
                 UserMessage = "Cannot unpack: Set Path to Session before unpacking game.";
                 return;
@@ -1167,7 +1036,7 @@ namespace SessionMapSwitcher.ViewModels
             _unpackUtils.UnpackCompleted += UnpackUtils_UnpackCompleted;
 
             InputControlsEnabled = false;
-            _unpackUtils.StartUnpackingAsync(SessionPath);
+            _unpackUtils.StartUnpackingAsync(SessionPath.ToSession);
         }
 
         private void UnpackUtils_UnpackCompleted(bool wasSuccessful)
@@ -1179,7 +1048,7 @@ namespace SessionMapSwitcher.ViewModels
             if (wasSuccessful)
             {
                 // confirm game unpacked
-                if (IsSessionUnpacked())
+                if (UnpackUtils.IsSessionUnpacked())
                 {
                     BackupOriginalMapFiles();
                 }
@@ -1194,7 +1063,10 @@ namespace SessionMapSwitcher.ViewModels
 
         private void UnpackUtils_ProgressChanged(string message)
         {
-            UserMessage = message;
+            System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke(() =>
+            {
+                UserMessage = message;
+            }, System.Windows.Threading.DispatcherPriority.Background);
         }
 
     }
