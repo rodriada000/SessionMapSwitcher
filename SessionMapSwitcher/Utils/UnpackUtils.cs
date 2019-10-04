@@ -39,7 +39,7 @@ namespace SessionMapSwitcher.Utils
         /// <summary>
         /// Github link to .txt file that contains the latest download link to the files required for unpacking
         /// </summary>
-        private const string GitHubUrl = "https://raw.githubusercontent.com/rodriada000/SessionMapSwitcher/url_updates/docs/batFileDownloadUrl.txt";
+        private const string GitHubUrl = "https://raw.githubusercontent.com/rodriada000/SessionMapSwitcher/url_updates/docs/batFileDownloadUrl_v2.txt";
 
         /// <summary>
         /// Handles the entire unpacking process
@@ -101,19 +101,18 @@ namespace SessionMapSwitcher.Utils
                     }
 
                     // validate files were unpacked by checking subset of expected folders
-                    List<string> expectedDirs = new List<string>() { "\\out\\SessionGame\\Config", "\\out\\SessionGame\\Content", "\\out\\SessionGame\\Content\\Customization" };
+                    List<string> expectedDirs = new List<string>() { "\\SessionGame\\Config", "\\SessionGame\\Content", "\\SessionGame\\Content\\Customization" };
                     foreach (string dir in expectedDirs)
                     {
-                        if (Directory.Exists($"{PathToPakFolder}{dir}") == false)
+                        if (Directory.Exists($"{PathToSession}{dir}") == false)
                         {
-                            ProgressChanged($"Failed to unpack files correctly. The expected folders were not found ({PathToPakFolder}{dir}). Cannot continue.");
+                            ProgressChanged($"Failed to unpack files correctly. The expected folders were not found ({PathToSession}{dir}). Cannot continue.");
                             UnpackCompleted(false);
                             return;
                         }
                     }
 
-                    bool didCopy = CopyUnpackedFilesToSession();
-                    UnpackCompleted(didCopy);
+                    UnpackCompleted(true);
                 });
 
             });
@@ -125,6 +124,8 @@ namespace SessionMapSwitcher.Utils
 
             try
             {
+                DownloadUtils.ProgressChanged += DownloadUtils_ProgressChanged;
+
                 // visit github to get current anon file download link
                 ProgressChanged("Downloading .zip file - getting download url from git ...");
                 string downloadUrl = DownloadUtils.GetTxtDocumentFromGitHubRepo(GitHubUrl);
@@ -141,8 +142,9 @@ namespace SessionMapSwitcher.Utils
 
                 // download to Paks folder
                 ProgressChanged("Downloading .zip file -  downloading actual file ...");
+
                 var downloadTask = DownloadUtils.DownloadFileToFolderAsync(directLinkToZip, $"{PathToPakFolder}\\{DownloadedZipFileName}", System.Threading.CancellationToken.None);
-                downloadTask.Wait();
+                downloadTask.Wait();   
             }
             catch (AggregateException e)
             {
@@ -154,8 +156,17 @@ namespace SessionMapSwitcher.Utils
                 ProgressChanged($"Failed to download .zip file: {e.Message}. Cannot continue.");
                 return false;
             }
+            finally
+            {
+                DownloadUtils.ProgressChanged -= DownloadUtils_ProgressChanged;
+            }
 
             return true;
+        }
+
+        private void DownloadUtils_ProgressChanged(long? totalFileSize, long totalBytesDownloaded, double? progressPercentage)
+        {
+            ProgressChanged($"Downloading .zip file -  {(double)totalBytesDownloaded / 1000000:0.00} / {(double)totalFileSize / 1000000:0.00} MB | {progressPercentage:0.00}% Complete");
         }
 
         internal void RunUnrealPakBatFile()

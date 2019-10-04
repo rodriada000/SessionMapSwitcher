@@ -248,9 +248,8 @@ namespace SessionMapSwitcher.ViewModels
                 {
                     DownloadUtils.ProgressChanged += DownloadUtils_ProgressChanged;
                     Task task = DownloadUtils.DownloadFileToFolderAsync(directDownloadUrl, pathToZip, cancelToken, noTimeout: true);
-                    task.Wait();
-                    DownloadUtils.ProgressChanged -= DownloadUtils_ProgressChanged;
 
+                    task.Wait();
                     didDownload = true;
                 }
                 catch (AggregateException e)
@@ -266,6 +265,10 @@ namespace SessionMapSwitcher.ViewModels
                     didDownload = false;
                     MapImported?.Invoke(false);
                     return;
+                }
+                finally
+                {
+                    DownloadUtils.ProgressChanged -= DownloadUtils_ProgressChanged;
                 }
 
                 HeaderMessage = "Extracting downloaded .zip ...";

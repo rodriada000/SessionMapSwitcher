@@ -1194,7 +1194,10 @@ namespace SessionMapSwitcher.ViewModels
 
         private void UnpackUtils_ProgressChanged(string message)
         {
-            UserMessage = message;
+            System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke(() =>
+            {
+                UserMessage = message;
+            }, System.Windows.Threading.DispatcherPriority.Background);
         }
 
     }
