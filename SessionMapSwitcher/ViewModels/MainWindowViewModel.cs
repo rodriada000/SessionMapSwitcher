@@ -293,6 +293,8 @@ namespace SessionMapSwitcher.ViewModels
 
             lock (collectionLock)
             {
+                SelectCurrentlyLoadedMapInList();
+
                 // sort the maps A -> Z
                 AvailableMaps = new ThreadFriendlyObservableCollection<MapListItem>(AvailableMaps.OrderBy(m => m.DisplayName));
                 BindingOperations.EnableCollectionSynchronization(AvailableMaps, collectionLock);
@@ -307,6 +309,20 @@ namespace SessionMapSwitcher.ViewModels
 
             UserMessage = "List of available maps loaded!";
             return true;
+        }
+
+        private void SelectCurrentlyLoadedMapInList()
+        {
+            MapListItem currentlyLoaded = AvailableMaps.Where(m => m.MapName == CurrentlyLoadedMapName).FirstOrDefault();
+
+            if (currentlyLoaded != null)
+            {
+                foreach (MapListItem map in AvailableMaps)
+                {
+                    map.IsSelected = false;
+                }
+                currentlyLoaded.IsSelected = true;
+            }
         }
 
         private void LoadAvailableMapsInSubDirectories(string dirToSearch)
@@ -592,6 +608,7 @@ namespace SessionMapSwitcher.ViewModels
         internal void LoadMap(string mapName)
         {
             LoadAvailableMaps();
+
             foreach (var map in AvailableMaps)
             {
                 if (map.MapName == mapName)
@@ -633,6 +650,12 @@ namespace SessionMapSwitcher.ViewModels
             {
                 FirstLoadedMap = map;
             }
+
+            foreach (MapListItem availableMap in AvailableMaps)
+            {
+                availableMap.IsSelected = false;
+            }
+            map.IsSelected = true;
 
             if (map == _defaultSessionMap)
             {

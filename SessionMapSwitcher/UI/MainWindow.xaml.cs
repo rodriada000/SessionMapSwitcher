@@ -240,14 +240,6 @@ namespace SessionMapSwitcher
             t.ContinueWith((antecedent) =>
             {
                 ViewModel.InputControlsEnabled = true;
-
-
-                MapListItem currentlyLoaded = ViewModel.AvailableMaps.Where(m => m.MapName == ViewModel.CurrentlyLoadedMapName).FirstOrDefault();
-
-                if (currentlyLoaded != null)
-                {
-                    currentlyLoaded.IsSelected = true;
-                }
             });
         }
 
