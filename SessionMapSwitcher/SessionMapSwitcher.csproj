@@ -63,6 +63,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\System.IO.Compression.4.3.0\lib\net46\System.IO.Compression.dll</HintPath>
     </Reference>
@@ -88,6 +89,7 @@
     </ApplicationDefinition>
     <Compile Include="Classes\BoolWithMessage.cs" />
     <Compile Include="Classes\CopySettings.cs" />
+    <Compile Include="Classes\Events\MapImportedEventArgs.cs" />
     <Compile Include="Classes\FileInfoExtensionMethods.cs" />
     <Compile Include="Classes\MetaDataManager.cs" />
     <Compile Include="Classes\SessionPath.cs" />
@@ -102,6 +104,9 @@
     <Compile Include="UI\RenameMapWindow.xaml.cs">
       <DependentUpon>RenameMapWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\ProjectWatcherUserControl.xaml.cs">
+      <DependentUpon>ProjectWatcherUserControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\TextureReplacerUserControl.xaml.cs">
       <DependentUpon>TextureReplacerUserControl.xaml</DependentUpon>
     </Compile>
@@ -115,6 +120,7 @@
     <Compile Include="ViewModels\MapListItem.cs" />
     <Compile Include="ViewModels\OnlineImportViewModel.cs" />
     <Compile Include="ViewModels\RenameMapViewModel.cs" />
+    <Compile Include="ViewModels\ProjectWatcherViewModel.cs" />
     <Compile Include="ViewModels\TextureReplacerViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Page Include="UI\ComputerImportWindow.xaml">
@@ -138,6 +144,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\RenameMapWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\ProjectWatcherUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -191,5 +201,6 @@
   <ItemGroup>
     <Resource Include="switcher.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

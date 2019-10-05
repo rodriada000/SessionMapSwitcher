@@ -48,6 +48,7 @@ namespace SessionMapSwitcher.ViewModels
                 NotifyPropertyChanged(nameof(LoadMapButtonText));
                 NotifyPropertyChanged(nameof(IsImportMapButtonEnabled));
                 NotifyPropertyChanged(nameof(IsReplaceTextureControlEnabled));
+                NotifyPropertyChanged(nameof(IsProjectWatchControlEnabled));
             }
         }
 
@@ -126,6 +127,7 @@ namespace SessionMapSwitcher.ViewModels
                 NotifyPropertyChanged();
                 NotifyPropertyChanged(nameof(IsImportMapButtonEnabled));
                 NotifyPropertyChanged(nameof(IsReplaceTextureControlEnabled));
+                NotifyPropertyChanged(nameof(IsProjectWatchControlEnabled));
             }
         }
 
@@ -200,6 +202,18 @@ namespace SessionMapSwitcher.ViewModels
         }
 
         public bool IsReplaceTextureControlEnabled
+        {
+            get
+            {
+                if (SessionPath.IsSessionPathValid())
+                {
+                    return InputControlsEnabled;
+                }
+                return false;
+            }
+        }
+
+        public bool IsProjectWatchControlEnabled
         {
             get
             {
@@ -575,6 +589,20 @@ namespace SessionMapSwitcher.ViewModels
             return true;
         }
 
+        internal void LoadMap(string mapName)
+        {
+            LoadAvailableMaps();
+            foreach (var map in AvailableMaps)
+            {
+                if (map.MapName == mapName)
+                {
+                    LoadMap(map);
+                    return;
+                }
+            }
+            UserMessage = $"Cannot find map with name {mapName}!";
+        }
+        
         internal void ToggleVisiblityOfMap(MapListItem map)
         {
             map.IsHiddenByUser = !map.IsHiddenByUser;
