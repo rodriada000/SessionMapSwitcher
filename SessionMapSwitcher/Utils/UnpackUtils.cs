@@ -285,7 +285,15 @@ namespace SessionMapSwitcher.Utils
 
             try
             {
-                File.Move(SessionPath.ToPakFile, SessionPath.ToPakFile.Replace(".pak", ".bak"));
+                string bakFileName = SessionPath.ToPakFile.Replace(".pak", ".bak");
+
+                // check if for some reason the .pak file and .bak file both exist; delete the .bak file so that moving .pak -> .bak file does not fail
+                if (File.Exists(SessionPath.ToPakFile) && File.Exists(bakFileName))
+                {
+                    File.Delete(bakFileName);
+                }
+
+                File.Move(SessionPath.ToPakFile, bakFileName);
                 System.Threading.Thread.Sleep(750); // wait a second after renaming the file ensure it is updated (due to race conditions where the next process starts too soon before realzing the file name changed) 
                 return true;
             }

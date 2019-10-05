@@ -7,8 +7,20 @@ using System.Threading.Tasks;
 
 namespace SessionMapSwitcher.Utils
 {
+    enum SettingKey
+    {
+        PathToSession,
+        ShowInvalidMaps,
+        ProjectWatcherPath
+    }
+
     class AppSettingsUtil
     {
+        public static void AddOrUpdateAppSettings(SettingKey key, string value)
+        {
+            AddOrUpdateAppSettings(key.ToString(), value);
+        }
+
         public static void AddOrUpdateAppSettings(string key, string value)
         {
             try
@@ -34,7 +46,12 @@ namespace SessionMapSwitcher.Utils
             }
         }
 
-        internal static string GetAppSetting(string key)
+        public static string GetAppSetting(SettingKey key)
+        {
+            return GetAppSetting(key.ToString());
+        }
+
+        public static string GetAppSetting(string key)
         {
             try
             {

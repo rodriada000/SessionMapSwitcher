@@ -61,7 +61,7 @@ namespace SessionMapSwitcher
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            SessionPath.ToSession = AppSettingsUtil.GetAppSetting("PathToSession");
+            SessionPath.ToSession = AppSettingsUtil.GetAppSetting(SettingKey.PathToSession);
         }
     }
 }

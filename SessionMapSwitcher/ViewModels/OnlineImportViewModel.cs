@@ -225,9 +225,10 @@ namespace SessionMapSwitcher.ViewModels
             tokenSource = new System.Threading.CancellationTokenSource();
             cancelToken = tokenSource.Token;
 
+            string pathToZip = $"{PathToMapDownloads}\\{selectedMap.ZipFileName}";
+
             var downloadTask = Task.Factory.StartNew(() =>
             {
-                string pathToZip = $"{PathToMapDownloads}\\{selectedMap.ZipFileName}";
 
                 try
                 {
@@ -276,6 +277,12 @@ namespace SessionMapSwitcher.ViewModels
                     HeaderMessage = $"Failed to extract map files: {didExtract?.Message}.";
                     MapImported?.Invoke(false);
                     return;
+                }
+                
+                // delete .zip after download and extraction
+                if (File.Exists(pathToZip))
+                {
+                    File.Delete(pathToZip);
                 }
 
                 HeaderMessage = "Map imported! You should now be able to play the downloaded map.";
