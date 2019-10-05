@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System;
 using SessionMapSwitcher.Classes.Events;
+using SessionMapSwitcher.Utils;
 
 namespace SessionMapSwitcher.ViewModels
 {
@@ -128,6 +129,7 @@ namespace SessionMapSwitcher.ViewModels
             {
                 IsZipFileImport = false
             };
+            PathToProject = AppSettingsUtil.GetAppSetting(SettingKey.ProjectWatcherPath);
             SetDefaultStatus();
         }
 
@@ -142,6 +144,7 @@ namespace SessionMapSwitcher.ViewModels
                 if (projectFileBrowser.ShowDialog() == DialogResult.OK)
                 {
                     PathToProject = projectFileBrowser.FileName;
+                    AppSettingsUtil.AddOrUpdateAppSettings(SettingKey.ProjectWatcherPath, PathToProject);
                 }
             }
 

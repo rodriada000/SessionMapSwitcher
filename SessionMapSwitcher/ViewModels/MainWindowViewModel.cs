@@ -140,7 +140,7 @@ namespace SessionMapSwitcher.ViewModels
                 {
                     _showInvalidMaps = value;
                     NotifyPropertyChanged();
-                    AppSettingsUtil.AddOrUpdateAppSettings("ShowInvalidMaps", value.ToString());
+                    AppSettingsUtil.AddOrUpdateAppSettings(SettingKey.ShowInvalidMaps, value.ToString());
                 }
             }
         }
@@ -230,8 +230,8 @@ namespace SessionMapSwitcher.ViewModels
 
         public MainWindowViewModel()
         {
-            SessionPathTextInput = AppSettingsUtil.GetAppSetting("PathToSession");
-            ShowInvalidMapsIsChecked = AppSettingsUtil.GetAppSetting("ShowInvalidMaps").Equals("true", StringComparison.OrdinalIgnoreCase);
+            SessionPathTextInput = AppSettingsUtil.GetAppSetting(SettingKey.PathToSession);
+            ShowInvalidMapsIsChecked = AppSettingsUtil.GetAppSetting(SettingKey.ShowInvalidMaps).Equals("true", StringComparison.OrdinalIgnoreCase);
             UserMessage = "";
             InputControlsEnabled = true;
             GravityText = "-980";
@@ -257,7 +257,7 @@ namespace SessionMapSwitcher.ViewModels
         {
             SessionPath.ToSession = pathToSession;
             SessionPathTextInput = pathToSession;
-            AppSettingsUtil.AddOrUpdateAppSettings("PathToSession", SessionPath.ToSession);
+            AppSettingsUtil.AddOrUpdateAppSettings(SettingKey.PathToSession, SessionPath.ToSession);
         }
 
         public bool LoadAvailableMaps()
