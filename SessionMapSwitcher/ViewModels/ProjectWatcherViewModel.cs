@@ -21,7 +21,7 @@ namespace SessionMapSwitcher.ViewModels
 
         public delegate void OnMapImported(object sender, MapImportedEventArgs e);
         public event OnMapImported MapImported;
-        protected virtual void RaiseMapImported(string mapName) => 
+        protected virtual void RaiseMapImported(string mapName) =>
             MapImported?.Invoke(this, new MapImportedEventArgs(mapName));
 
         private string _pathToProject;
@@ -130,7 +130,15 @@ namespace SessionMapSwitcher.ViewModels
                 IsZipFileImport = false
             };
             PathToProject = AppSettingsUtil.GetAppSetting(SettingKey.ProjectWatcherPath);
-            SetDefaultStatus();
+
+            if (IsValidProjectPath)
+            {
+                WatchProject();
+            }
+            else
+            {
+                SetDefaultStatus();
+            }
         }
 
         internal void BrowseForProject()
@@ -191,8 +199,11 @@ namespace SessionMapSwitcher.ViewModels
                 return;
             }
 
-            _projectWatcher.Changed -= OnCooked;
-            _projectWatcher?.Dispose();
+            if (_projectWatcher != null)
+            {
+                _projectWatcher.Changed -= OnCooked;
+                _projectWatcher?.Dispose();
+            }
 
             StatusText = "Not watching project.";
             StatusColor = Brushes.Red;
