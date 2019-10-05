@@ -174,7 +174,7 @@ namespace SessionMapSwitcher.ViewModels
             else
             {
                 UserMessage += " Copying can take a couple of minutes depending on the amount of files to copy.";
-                EnsurePathToMapFilesIsCorrect();
+                PathInput = EnsurePathToMapFilesIsCorrect(PathToFileOrFolder);
             }
 
             IsImporting = true;
@@ -193,15 +193,19 @@ namespace SessionMapSwitcher.ViewModels
         }
 
         /// <summary>
-        /// This will check if the user selected the top-level folder of a map to import instead of 'Content'
-        /// and will change <see cref="PathToFileOrFolder"/> to be [PathToFileOrFolder]\Content
+        /// This will check if the folder path to a map has the 'Content' folder and returns path to the maps 'Content folder if so
         /// </summary>
-        private void EnsurePathToMapFilesIsCorrect()
+        /// <returns>
+        /// "pathToMapFiles\Content" if Content folder exists; otherwise original pathToMapFiles string is returned
+        /// </returns>
+        private string EnsurePathToMapFilesIsCorrect(string pathToMapFiles)
         {
-            if (Directory.Exists($"{PathToFileOrFolder}\\Content"))
+            if (Directory.Exists($"{pathToMapFiles}\\Content"))
             {
-                PathInput = $"{PathToFileOrFolder}\\Content";
+                return $"{pathToMapFiles}\\Content";
             }
+
+            return pathToMapFiles;
         }
 
         internal void ImportMapAsyncAndContinueWith(bool isReimport, Action<Task<BoolWithMessage>> continuationTask)
@@ -234,7 +238,7 @@ namespace SessionMapSwitcher.ViewModels
                         return new BoolWithMessage(false, $"Failed to extract zip: {didExtract.Message}.");
                     }
 
-                    sourceFolderToCopy = PathToTempUnzipFolder;
+                    sourceFolderToCopy = EnsurePathToMapFilesIsCorrect(PathToTempUnzipFolder);
                 }
                 else
                 {
