@@ -740,10 +740,19 @@ namespace SessionMapSwitcher.ViewModels
             foreach (string fileName in Directory.GetFiles(SessionPath.ToNYCFolder))
             {
                 // only delete custom map files, not NYC01 files
-                if (fileName.Contains("NYC01_") == false || fileName.Contains("NYC01_Persistent.umap"))
+                if (fileName.Contains("NYC01_") == false)
                 {
                     File.Delete(fileName);
                 }
+            }
+
+            // only delete the .umap file when the game is running, otherwise the default map will always load when you leave the apartment
+            // ... Some maps rely on the .umap file to stream other content to the custom map so the .umap file is NOT deleted while Session is not running allowing the custom map to use its assets.
+            string nycMapFilePath = $"{SessionPath.ToNYCFolder}\\NYC01_Persistent.umap";
+
+            if (IsSessionRunning() && File.Exists(nycMapFilePath))
+            {
+                File.Delete(nycMapFilePath);
             }
         }
 
