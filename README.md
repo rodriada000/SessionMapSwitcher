@@ -9,10 +9,12 @@ This is a Desktop Application to make switching between Session maps in-game eas
 * Import custom maps from the online community using the `Import Map > From Online ...` feature.
 * Easily replace textures with custom ones. Map Switcher will automatically find the correct texture files to replace for you.
 * Easily import your own custom maps from your Computer and be able to easily re-import the map after making changes to it. Just right click the map you're working on and click `Re-import Selected Map ...`.
+* Unreal Engine 4 Project Watcher for map creators that automatically re-imports the map you are working on after cooking the content.
 
 
 ## Notes Before Using
 * **NOTE:** You should start the game using Session Map Switcher's `Start Session` button. If Session is already running then close the game and start it from Session Map Switcher instead.
+* **NOTE:** You will have to load the custom map from map switcher when you enter the apartment in-game otherwise the original default map will load after you leave the apartment to go skate.
 * **NOTE:** This tool will make a backup of the original Session map so you can always switch back to playing the map that came with the game. The original map is the first map in the Available Maps list named "Session Default Map - Brooklyn Banks"
 
 
@@ -26,8 +28,11 @@ _Skip this if you already unpacked the game._
 4. Set the `Path To Session` by clicking the `...` button or pasting the path and pressing `Enter` key. **The path should be the top level folder of the game directory e.g. `C:\Program Files (x86)\Steam\steamapps\common\Session`.** ![](https://github.com/rodriada000/SessionMapSwitcher/blob/master/docs/images/app_after_path_select.png?raw=true "Set Session Path")
 5. Click `Unpack Game` or `Start Session` and you will be prompted to download the required files to unpack. ![](https://github.com/rodriada000/SessionMapSwitcher/blob/master/docs/images/app_pack_detected.png?raw=true "Game Not Unpacked Detected Screen")
 > Note: If the program is not running as Administrator then it will ask you to restart the program as administrator first to ensure the unpacking process completes succesfully.
+
+> Note: The download can fail sometimes because the file host is not good. Retry a couple of times if the download fails until it succeeds.  
 6. Let the unpacking process run. It can take anywhere from 5-10 minutes depending on download speeds and your computer speed. You should see a CMD window open while the process is happening.
 7. Map Switcher will output the status of the unpacking process so you know when it is complete. After that you can play custom maps and replace textures.
+> Note: The unpacking process can fail to run the downloaded .bat file if your PC security settings are set too high.
 
 
 ### Adding Custom Maps to Play
@@ -59,6 +64,7 @@ _This is the final way to add custom maps and is not recommended for beginners. 
 1. Select a modded map from the Available Maps list (_you can also double click the map in the list to load it._).
 2. Before starting the game, change any game settings like gravity _(default value is -980)_ or number of objects you can place down.  
 3. Click `Start Session` (_this will load the selected map and save your game settings before starting the game_).
+> NOTE: When you go to the apartment in-game you will have to open Map Switcher and load the custom map again (even if you are not switching to a new map). This is to ensure the custom map is loaded instead of the original Brooklyn Banks map when you leave the apartment. 
 
 
 ### Switching Maps In-game
@@ -70,7 +76,7 @@ _This assumes you have already Session Map Switcher open and Session running. To
 5. After the map has loaded `Alt + Tab` to switch back to Session. Then 'Go Skate'. The new map you selected should now load.
 
 
-### Switch BackTo Original Default Session Map
+### Switch Back To Original Default Session Map
 _This assumes you have already Session Map Switcher open and Session running. To restore the original NYC Brooklyn Banks level for Session follow these steps._
 1. Pause Session and return to your apartment.
 2. `Alt + Tab` to switch back to Session Map Switcher.
@@ -83,7 +89,8 @@ _This assumes you have already Session Map Switcher open and Session running. To
 ### Replacing Textures
 _This assumes you already unpacked the game and have Session Map Switcher open._
 1. Download the texture files you want to use. There is usually 2-3 files for a texture: the `.uexp`, `.uasset`, and sometimes the `.ubulk` file. All three files are needed to replace the texture.
-2. In Map Switcher click the `...` button inside the `Texture Replacer` section. In the file browse window that opens select the `.uasset` file you downloaded. ![](https://github.com/rodriada000/SessionMapSwitcher/blob/master/docs/images/app_replace_texture.png?raw=true "Replace Textures Example")
+> Note: The Texture Replacer also supports .zip files
+2. In Map Switcher click the `...` button inside the `Texture Replacer` section. In the file browse window that opens select the `.uasset` or `.zip` file you downloaded. ![](https://github.com/rodriada000/SessionMapSwitcher/blob/master/docs/images/app_replace_texture.png?raw=true "Replace Textures Example")
 > NOTE: You only need to select the one `.uasset` file. Map Switcher will know to copy the other required files.
 3. Click `Replace` and the texture will be replaced.
 > NOTE: Map Switcher relies on the file name to find the correct texture to replace. If the filename of the texture does not match a texture name in the game then you will get an error saying it could not find the texture to replace.
