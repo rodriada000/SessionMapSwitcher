@@ -361,7 +361,11 @@ namespace SessionMapSwitcher
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+#if DEBUG
+            Debug.WriteLine("Skipping check for updates in debug mode ...");
+#else
             CheckForNewVersionInBackground();
+#endif
             ctrlTextureReplacer.ViewModel.MessageChanged += TextureReplacer_MessageChanged;
             ctrlProjectWatcher.ViewModel.MapImported += ProjectWatcher_MapImported;
         }
