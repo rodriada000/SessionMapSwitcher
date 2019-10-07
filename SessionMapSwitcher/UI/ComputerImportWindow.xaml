@@ -53,7 +53,9 @@
         </StackPanel>
 
 
-        <TextBox Grid.Row="1" Grid.Column="0" Height="20" Margin="10,0,00,0" Text="{Binding PathInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBox Grid.Row="1" Grid.Column="0" Height="20" Margin="10,0,00,0" 
+                 Text="{Binding PathInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 AllowDrop="True" PreviewDragOver="TextBox_PreviewDragOver" PreviewDrop="TextBox_PreviewDrop" />
 
         <Button x:Name="btnBrowse" 
                 Click="BtnBrowse_Click" 

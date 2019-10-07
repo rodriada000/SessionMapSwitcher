@@ -51,7 +51,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>switcher.ico</ApplicationIcon>
+    <ApplicationIcon>new_switcher.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ini.Net, Version=1.0.5531.18665, Culture=neutral, processorArchitecture=MSIL">
@@ -184,9 +184,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\sessionmapswitchericon.png" />
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
       <Visible>False</Visible>
       <ProductName>Microsoft .NET Framework 4.7.2 %28x86 and x64%29</ProductName>
@@ -201,6 +198,17 @@
   <ItemGroup>
     <Resource Include="switcher.ico" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\SessionMapsIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\SessionMapsIcon_alt.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\new_switcher.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="new_switcher.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

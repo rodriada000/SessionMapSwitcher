@@ -501,5 +501,24 @@ namespace SessionMapSwitcher
             MapListItem selectedItem = lstMaps.SelectedItem as MapListItem;
             ViewModel.ToggleVisiblityOfMap(selectedItem);
         }
+
+        private void TxtSessionPath_PreviewDragOver(object sender, System.Windows.DragEventArgs e)
+        {
+            e.Handled = true;
+
+            if (e.Data.GetDataPresent(System.Windows.DataFormats.FileDrop, false) == true)
+            {
+                e.Effects = System.Windows.DragDropEffects.All;
+            }
+        }
+
+        private void TxtSessionPath_PreviewDrop(object sender, System.Windows.DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(System.Windows.DataFormats.FileDrop);
+            if (files != null && files.Length != 0)
+            {
+                ViewModel.SessionPathTextInput = files[0];
+            }
+        }
     }
 }

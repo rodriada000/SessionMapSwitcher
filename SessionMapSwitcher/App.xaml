@@ -8,7 +8,7 @@
 
         <Style x:Key="WindowStyle" TargetType="Window">
             <Setter Property="Background" Value="#CFD8DC"/>
-            <Setter Property="Icon" Value="Resources/sessionmapswitchericon.png"/>
+            <Setter Property="Icon" Value="Resources/new_switcher.ico"/>
         </Style>
 
         <Style x:Key="MainButtonStyle" TargetType="{x:Type Button}">
