@@ -186,7 +186,7 @@ namespace SessionMapSwitcher
                 return;
             }
 
-            if (ViewModel.IsOriginalMapFileBackedUp() == false)
+            if (ViewModel.IsOriginalMapFilesBackedUp() == false)
             {
                 System.Windows.MessageBox.Show("The original Session game map files have not been backed up yet. Click OK to backup the files then click 'Load Map' again",
                                                 "Notice!",
