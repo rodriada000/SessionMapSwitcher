@@ -98,8 +98,10 @@ namespace SessionMapSwitcher.ViewModels
                 textureFileInfo = new FileInfo(PathToFile);
             }
 
+            string textureFileName = textureFileInfo.NameWithoutExtension();
+
             // find which folder to copy to based on file name
-            string targetFolder = GetFolderPathToTexture(textureFileInfo.NameWithoutExtension());
+            string targetFolder = GetFolderPathToTexture(textureFileName);
 
             if (targetFolder == "")
             {
@@ -109,18 +111,10 @@ namespace SessionMapSwitcher.ViewModels
 
             try
             {
-                // find and copy files that match the .uasset name
-                string textureDirectory = Path.GetDirectoryName(textureFileInfo.FullName);
+                DeleteCurrentTextureFiles(textureFileName, targetFolder);
 
-                foreach (string file in Directory.GetFiles(textureDirectory))
-                {
-                    if (file.Contains(textureFileInfo.NameWithoutExtension()))
-                    {
-                        FileInfo foundFile = new FileInfo(file);
-                        string targetPath = Path.Combine(targetFolder, foundFile.Name);
-                        File.Copy(file, targetPath, overwrite: true);
-                    }
-                }
+                // find and copy files in source dir that match the .uasset name
+                CopyNewTextureFilesToGame(textureFileInfo, targetFolder);
 
                 // delete temp folder with unzipped files
                 if (IsPathToZip)
@@ -138,6 +132,42 @@ namespace SessionMapSwitcher.ViewModels
             }
 
             MessageChanged?.Invoke($"Successfully replaced textures for {textureFileInfo.Name}!");
+        }
+
+        /// <summary>
+        /// Loop over all files in the folder that contains the <paramref name="newTexture"/> .uasset file and copy all other files related to texture (.uexp and .ubulk files) to the <paramref name="targetFolder"/>
+        /// </summary>
+        private static void CopyNewTextureFilesToGame(FileInfo newTexture, string targetFolder)
+        {
+            string textureSourceDir = Path.GetDirectoryName(newTexture.FullName);
+            string textureFileName = newTexture.NameWithoutExtension();
+
+            foreach (string file in Directory.GetFiles(textureSourceDir))
+            {
+                FileInfo info = new FileInfo(file);
+
+                if (info.NameWithoutExtension() == textureFileName)
+                {
+                    string targetPath = Path.Combine(targetFolder, info.Name);
+                    File.Copy(file, targetPath, overwrite: true);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Delete files in <paramref name="targetFolder"/> that contain the string <paramref name="textureFileName"/>
+        /// </summary>
+        /// <param name="textureFileName"> name of texture to delete (without file extension) </param>
+        /// <param name="targetFolder"> folder to search in </param>
+        private static void DeleteCurrentTextureFiles(string textureFileName, string targetFolder)
+        {
+            foreach (string existingFile in Directory.GetFiles(targetFolder))
+            {
+                if (existingFile.Contains(textureFileName))
+                {
+                    File.Delete(existingFile);
+                }
+            }
         }
 
         private bool IsPathValid()

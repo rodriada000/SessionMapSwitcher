@@ -361,7 +361,11 @@ namespace SessionMapSwitcher
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+#if DEBUG
+            Debug.WriteLine("Skipping check for updates in debug mode ...");
+#else
             CheckForNewVersionInBackground();
+#endif
             ctrlTextureReplacer.ViewModel.MessageChanged += TextureReplacer_MessageChanged;
             ctrlProjectWatcher.ViewModel.MapImported += ProjectWatcher_MapImported;
         }
@@ -500,6 +504,25 @@ namespace SessionMapSwitcher
 
             MapListItem selectedItem = lstMaps.SelectedItem as MapListItem;
             ViewModel.ToggleVisiblityOfMap(selectedItem);
+        }
+
+        private void TxtSessionPath_PreviewDragOver(object sender, System.Windows.DragEventArgs e)
+        {
+            e.Handled = true;
+
+            if (e.Data.GetDataPresent(System.Windows.DataFormats.FileDrop, false) == true)
+            {
+                e.Effects = System.Windows.DragDropEffects.All;
+            }
+        }
+
+        private void TxtSessionPath_PreviewDrop(object sender, System.Windows.DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(System.Windows.DataFormats.FileDrop);
+            if (files != null && files.Length != 0)
+            {
+                ViewModel.SessionPathTextInput = files[0];
+            }
         }
     }
 }

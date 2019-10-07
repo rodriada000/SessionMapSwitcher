@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              x:Name="ctrlTextureReplacer"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"              
              d:DesignHeight="125" d:DesignWidth="350">
     <Grid>
         <Grid.RowDefinitions>
@@ -19,7 +19,7 @@
         
         <TextBlock Text="Choose a texture file or .zip file containing textures and click 'Replace' to easily copy new textures into the game." TextWrapping="Wrap" Margin="10,6,0,10"/>
 
-        <TextBox Grid.Row="1" Margin="10,0,2,0" Height="20" Text="{Binding PathToFile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        <TextBox Grid.Row="1" Margin="10,0,2,0" Height="20" Text="{Binding PathToFile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AllowDrop="True" PreviewDragOver="TextBox_PreviewDragOver" PreviewDrop="TextBox_PreviewDrop"/>
 
         <Button x:Name="btnBrowse" 
                 Click="BtnBrowse_Click" 

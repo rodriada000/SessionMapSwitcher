@@ -44,5 +44,24 @@ namespace SessionMapSwitcher
         {
             ViewModel.BeginImportMapAsync();
         }
+
+        private void TextBox_PreviewDragOver(object sender, DragEventArgs e)
+        {
+            e.Handled = true;
+
+            if (e.Data.GetDataPresent(DataFormats.FileDrop, false) == true)
+            {
+                e.Effects = DragDropEffects.All;
+            }
+        }
+
+        private void TextBox_PreviewDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            if (files != null && files.Length != 0)
+            {
+                ViewModel.PathInput = files[0];
+            }
+        }
     }
 }
