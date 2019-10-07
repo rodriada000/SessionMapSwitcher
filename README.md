@@ -1,4 +1,4 @@
-# ![](https://github.com/rodriada000/SessionMapSwitcher/blob/master/docs/images/SessionMapsIcon.png?raw=true) Session Map Switcher
+# <img src="https://github.com/rodriada000/SessionMapSwitcher/blob/master/docs/images/SessionMapsIcon.png?raw=true" width="10%"> Session Map Switcher
 
 This is a Desktop Application to make switching between Session maps in-game easier without having to restart the game.
 ![](https://github.com/rodriada000/SessionMapSwitcher/blob/master/docs/images/app_screenshot.png?raw=true "App Screenshot")
