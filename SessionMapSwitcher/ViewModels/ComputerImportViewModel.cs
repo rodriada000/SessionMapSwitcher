@@ -14,7 +14,7 @@ namespace SessionMapSwitcher.ViewModels
     public class ComputerImportViewModel : ViewModelBase
     {
         private readonly List<string> FilesToExclude = new List<string>() { "DefaultEngine.ini", "DefaultGame.ini" };
-        private readonly List<string> FoldersToExclude = new List<string>() { "Data" };
+        private readonly List<string> AllStockFoldersToExclude = new List<string> { "Animation", "Art", "Audio", "Challenges", "Character", "Cinematics", "Customization", "Data", "FilmerMode", "KickStarter", "Localization", "MainHUB", "Menus", "Mixer", "Movies", "ObjectPlacement", "Paks", "PartyGames", "Skateboard", "Skeletons", "Splash", "TEMP", "Transit", "Tutorial", "VideoEditor" };
 
 
         private bool _isZipFileImport;
@@ -251,7 +251,8 @@ namespace SessionMapSwitcher.ViewModels
                     sourceFolderToCopy = PathToFileOrFolder;
                 }
 
-                FileUtils.CopyDirectoryRecursively(sourceFolderToCopy, SessionPath.ToContent, FilesToExclude, FoldersToExclude);
+
+                FileUtils.CopyDirectoryRecursively(sourceFolderToCopy, SessionPath.ToContent, FilesToExclude, AllStockFoldersToExclude);
 
                 if (IsZipFileImport && Directory.Exists(PathToTempUnzipFolder))
                 {
