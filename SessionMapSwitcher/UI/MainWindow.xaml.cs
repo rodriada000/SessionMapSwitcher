@@ -11,6 +11,8 @@ using System.Reflection;
 using SessionMapSwitcher.Classes;
 using SessionMapSwitcher.Utils;
 using SessionMapSwitcher.Classes.Events;
+using SessionMapSwitcher.UI;
+using System.Windows.Threading;
 
 namespace SessionMapSwitcher
 {
@@ -20,6 +22,15 @@ namespace SessionMapSwitcher
     public partial class MainWindow : Window
     {
         private readonly MainWindowViewModel ViewModel;
+
+        private bool IsNewVersionAvailable = false;
+
+        /// <summary>
+        /// Timer to trigger the update window to open after a second
+        /// if there is an update avaialble. This is used so the Window
+        /// is created on the main UI thread
+        /// </summary>
+        private DispatcherTimer updateTimer;
 
         public MainWindow()
         {
@@ -382,43 +393,48 @@ namespace SessionMapSwitcher
 
         private void CheckForNewVersionInBackground()
         {
-            bool isNewVersionAvailable = false;
-
             ViewModel.UserMessage = "Checking for updates ...";
             Task task = Task.Factory.StartNew(() => 
             {
-                isNewVersionAvailable = VersionChecker.CheckForUpdates();
+                IsNewVersionAvailable = VersionChecker.CheckForUpdates();
             });
+
 
             task.ContinueWith((antecedent) =>
             {
                 ViewModel.UserMessage = "";
 
-                if (isNewVersionAvailable)
+                if (IsNewVersionAvailable)
                 {
-                    MessageBoxResult result = System.Windows.MessageBox.Show("There is a new version available. Click 'Yes' to download the latest version (the program will close and re-open).", 
-                                                   "Update Available!",
-                                                   MessageBoxButton.YesNo,
-                                                   MessageBoxImage.Question,
-                                                   MessageBoxResult.Yes);
-
-                    if (result == MessageBoxResult.Yes)
-                    {
-                        ViewModel.UserMessage = "Updating app ...";
-                        VersionChecker.AppUpdater.ReportProgress += AppUpdater_ReportProgress;
-
-                        Task updateTask = Task.Factory.StartNew(() =>
-                        {
-                            VersionChecker.UpdateApplication();
-                        });
-
-                        updateTask.ContinueWith((updateAntecedent) => 
-                        {
-                            VersionChecker.AppUpdater.ReportProgress -= AppUpdater_ReportProgress;
-                        });
-                    }
+                    StartUpdateTimerToOpenWindow();
                 }
-            });
+            }, TaskScheduler.FromCurrentSynchronizationContext());
+        }
+
+        /// <summary>
+        /// Creates and starts a timer to open the <see cref="UpdateWindow"/> after a few milliseconds
+        /// </summary>
+        private void StartUpdateTimerToOpenWindow()
+        {
+            updateTimer = new DispatcherTimer();
+            updateTimer.Tick += UpdateTimer_Tick;
+            updateTimer.Interval = new TimeSpan(days: 0, hours: 0, minutes: 0, seconds: 0, milliseconds: 250);
+            updateTimer.Start();
+        }
+
+        /// <summary>
+        /// Stops the timer and shows the <see cref="UpdateWindow"/>
+        /// </summary>
+        private void UpdateTimer_Tick(object sender, EventArgs e)
+        {
+            if (updateTimer != null)
+            {
+                updateTimer.Stop();
+                updateTimer.Tick -= UpdateTimer_Tick;
+            }
+
+            UpdateWindow updateWindow = new UpdateWindow();
+            updateWindow.ShowDialog();
         }
 
         private void AppUpdater_ReportProgress(NAppUpdate.Framework.Common.UpdateProgressInfo currentStatus)

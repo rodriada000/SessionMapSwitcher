@@ -113,6 +113,9 @@
     <Compile Include="UI\TextureReplacerUserControl.xaml.cs">
       <DependentUpon>TextureReplacerUserControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\UpdateWindow.xaml.cs">
+      <DependentUpon>UpdateWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utils\AppSettingsUtil.cs" />
     <Compile Include="Utils\DownloadUtils.cs" />
     <Compile Include="Utils\FileUtils.cs" />
@@ -125,6 +128,7 @@
     <Compile Include="ViewModels\RenameMapViewModel.cs" />
     <Compile Include="ViewModels\ProjectWatcherViewModel.cs" />
     <Compile Include="ViewModels\TextureReplacerViewModel.cs" />
+    <Compile Include="ViewModels\UpdateViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Page Include="UI\ComputerImportWindow.xaml">
       <SubType>Designer</SubType>
@@ -155,6 +159,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\TextureReplacerUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UI\UpdateWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
