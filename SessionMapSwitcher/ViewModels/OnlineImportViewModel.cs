@@ -258,7 +258,7 @@ namespace SessionMapSwitcher.ViewModels
                 }
 
                 HeaderMessage = "Extracting downloaded .zip ...";
-                didExtract = FileUtils.ExtractZipFile(pathToZip, SessionPath.ToContent);
+                didExtract = FileUtils.ExtractCompressedFile(pathToZip, SessionPath.ToContent);
             });
 
 

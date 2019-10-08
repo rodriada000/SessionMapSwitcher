@@ -1,17 +1,19 @@
 ﻿using NAppUpdate.Framework;
 using NAppUpdate.Framework.Tasks;
+using SessionMapSwitcher.Utils;
 using System;
 using System.Diagnostics;
 using System.IO.Pipes;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace SessionMapSwitcher.Classes
 {
     class VersionChecker
     {
-        private const string LatestReleaseUrl = "https://github.com/rodriada000/SessionMapSwitcher/releases/latest";
+        public const string LatestReleaseUrl = "https://github.com/rodriada000/SessionMapSwitcher/releases/latest";
 
         private const string UpdateFeedUrl = "https://raw.githubusercontent.com/rodriada000/SessionMapSwitcher/release_updates/latest_release/updatefeed.xml";
 
@@ -96,5 +98,91 @@ namespace SessionMapSwitcher.Classes
                 }
             }
         }
+
+
+        #region Methods related to getting version notes
+
+        /// <summary>
+        /// Scrapes the latest release git hub page for version notes by looking for the div tag
+        /// with the class "markdown-body"
+        /// </summary>
+        /// <returns> Scraped html from Github if found </returns>
+        public static string ScrapeLatestVersionNotesFromGitHub()
+        {
+            string pageHtml = DownloadUtils.GetTxtDocumentFromGitHubRepo(LatestReleaseUrl);
+            HtmlDocument doc = GetHtmlDocument(pageHtml);
+
+            string fullHtml = "";
+            bool foundHeader = false;
+            bool foundbody = false;
+
+            // append css style to the scraped html so it the document does not load with default Arial font
+            fullHtml += "<style type=\"text/css\"> * { font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji; background: #CFD8DC } a { pointer-events: none; cursor: default; } </style>";
+
+            // loop over html elements and find the 'release-header' div and 'markdown-body' div
+            foreach (HtmlElement element in doc.Body.All)
+            {
+                if (element.GetAttribute("className").Contains("release-header"))
+                {
+                    foreach (HtmlElement child in element.Children)
+                    {
+                        // skip the unordered list that is hidden in header that has commit hash
+                        if (child.TagName.Equals("ul", StringComparison.OrdinalIgnoreCase) == false)
+                        {
+                            DisableHyperLinksInHtml(child);
+
+                            fullHtml += child.InnerHtml;
+                            fullHtml += "<br/>";
+                        }
+                    }
+                    foundHeader = true;
+                }
+
+                if (element.GetAttribute("className").Contains("markdown-body"))
+                {
+                    fullHtml += element.InnerHtml;
+                    foundbody = true;
+                }
+
+                if (foundbody && foundHeader)
+                {
+                    return fullHtml;
+                }
+            }
+
+            return "Could not locate version notes";
+        }
+
+        /// <summary>
+        /// sets the 'onclick' attribute to 'return false' so the hyperlink is disabled
+        /// </summary>
+        /// <param name="child"></param>
+        private static void DisableHyperLinksInHtml(HtmlElement child)
+        {
+            foreach (HtmlElement link in child.GetElementsByTagName("a"))
+            {
+                link.SetAttribute("onClick", "return false;");
+            }
+        }
+
+        /// <summary>
+        /// Uses a WebBrowser control to get an HtmlDocument from a html string
+        /// </summary>
+        public static HtmlDocument GetHtmlDocument(string html)
+        {
+            using (WebBrowser browser = new WebBrowser())
+            {
+                browser.ScriptErrorsSuppressed = true;
+                browser.DocumentText = html;
+                browser.Document.OpenNew(true);
+                browser.Document.Write(html);
+                browser.Refresh();
+
+                return browser.Document;
+            }
+        }
+
+        #endregion
+
     }
 }

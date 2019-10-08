@@ -17,7 +17,7 @@
             <ColumnDefinition Width="auto"/>
         </Grid.ColumnDefinitions>
         
-        <TextBlock Text="Choose a texture file or .zip file containing textures and click 'Replace' to easily copy new textures into the game." TextWrapping="Wrap" Margin="10,6,0,10"/>
+        <TextBlock Text="Drag in a texture file, .zip, or .rar file containing textures and click 'Replace' to easily copy new textures into the game." TextWrapping="Wrap" Margin="10,6,0,10"/>
 
         <TextBox Grid.Row="1" Margin="10,0,2,0" Height="20" Text="{Binding PathToFile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AllowDrop="True" PreviewDragOver="TextBox_PreviewDragOver" PreviewDrop="TextBox_PreviewDrop"/>
 

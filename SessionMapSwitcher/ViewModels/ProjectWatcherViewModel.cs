@@ -13,7 +13,7 @@ namespace SessionMapSwitcher.ViewModels
 {
     public class ProjectWatcherViewModel : ViewModelBase
     {
-        private const int burstDuration = 2000;
+        private const int burstDuration = 3000;
 
         private ComputerImportViewModel _importViewModel;
 
@@ -131,14 +131,7 @@ namespace SessionMapSwitcher.ViewModels
             };
             PathToProject = AppSettingsUtil.GetAppSetting(SettingKey.ProjectWatcherPath);
 
-            if (IsValidProjectPath)
-            {
-                WatchProject();
-            }
-            else
-            {
-                SetDefaultStatus();
-            }
+            UnwatchProject();
         }
 
         internal void BrowseForProject()
@@ -177,6 +170,11 @@ namespace SessionMapSwitcher.ViewModels
             StatusColor = Brushes.Green;
 
             _importViewModel.PathInput = PathToCookedContent;
+
+            if (!Directory.Exists(PathToCookedContent))
+            {
+                Directory.CreateDirectory(PathToCookedContent);
+            }
 
             _projectWatcher = new FileSystemWatcher()
             {

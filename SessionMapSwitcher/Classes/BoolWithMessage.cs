@@ -9,7 +9,7 @@ namespace SessionMapSwitcher.Classes
     /// <summary>
     /// Used to return true or false and a string like an exception message.
     /// </summary>
-    class BoolWithMessage
+    public class BoolWithMessage
     {
         public bool Result { get; set; }
         public string Message { get; set; }

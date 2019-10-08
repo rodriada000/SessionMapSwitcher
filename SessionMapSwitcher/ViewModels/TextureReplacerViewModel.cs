@@ -37,14 +37,14 @@ namespace SessionMapSwitcher.ViewModels
             }
         }
 
-        public bool IsPathToZip
+        public bool IsPathToCompressedFile
         {
             get
             {
                 if (PathToFile == null)
                     return false;
 
-                return PathToFile.EndsWith(".zip");
+                return PathToFile.EndsWith(".zip") || PathToFile.EndsWith(".rar");
             }
         }
 
@@ -52,8 +52,8 @@ namespace SessionMapSwitcher.ViewModels
         {
             using (OpenFileDialog fileBrowserDialog = new OpenFileDialog())
             {
-                fileBrowserDialog.Filter = "uasset file (*.uasset)|*.uasset|Zip files (*.zip)|*.zip|All files (*.*)|*.*";
-                fileBrowserDialog.Title = "Select .uasset Texture File or .zip File Containing Texture Files";
+                fileBrowserDialog.Filter = "uasset file (*.uasset)|*.uasset|Zip files (*.zip)|*.zip|Rar files (*.rar)|*.rar|All files (*.*)|*.*";
+                fileBrowserDialog.Title = "Select .uasset Texture File, .zip, or .rar File Containing Texture Files";
                 DialogResult result = fileBrowserDialog.ShowDialog();
                 if (result == DialogResult.OK)
                 {
@@ -71,15 +71,15 @@ namespace SessionMapSwitcher.ViewModels
 
             FileInfo textureFileInfo = null;
 
-            if (IsPathToZip)
+            if (IsPathToCompressedFile)
             {
                 Directory.CreateDirectory(PathToTempFolder);
 
                 // extract to temp location
-                BoolWithMessage didExtract = FileUtils.ExtractZipFile(PathToFile, PathToTempFolder);
+                BoolWithMessage didExtract = FileUtils.ExtractCompressedFile(PathToFile, PathToTempFolder);
                 if (didExtract.Result == false)
                 {
-                    MessageChanged?.Invoke($"Failed to extract .zip file: {didExtract.Message}");
+                    MessageChanged?.Invoke($"Failed to extract file: {didExtract.Message}");
                     return;
                 }
 
@@ -87,7 +87,7 @@ namespace SessionMapSwitcher.ViewModels
 
                 if (foundTextureName == "")
                 {
-                    MessageChanged?.Invoke($"Failed to find a .uasset file inside the .zip");
+                    MessageChanged?.Invoke($"Failed to find a .uasset file inside the extracted folders.");
                     return;
                 }
 
@@ -117,7 +117,7 @@ namespace SessionMapSwitcher.ViewModels
                 CopyNewTextureFilesToGame(textureFileInfo, targetFolder);
 
                 // delete temp folder with unzipped files
-                if (IsPathToZip)
+                if (IsPathToCompressedFile)
                 {
                     if (Directory.Exists(PathToTempFolder))
                     {
@@ -184,9 +184,9 @@ namespace SessionMapSwitcher.ViewModels
                 return false;
             }
 
-            if (PathToFile.EndsWith(".zip") == false && PathToFile.EndsWith(".uasset") == false)
+            if (!PathToFile.EndsWith(".zip") && !PathToFile.EndsWith(".uasset") && !PathToFile.EndsWith(".rar"))
             {
-                MessageChanged?.Invoke("The selected file is invalid. You must choose a .zip or .uasset file.");
+                MessageChanged?.Invoke("The selected file is invalid. You must choose a .rar, .zip or .uasset file.");
                 return false;
             }
 

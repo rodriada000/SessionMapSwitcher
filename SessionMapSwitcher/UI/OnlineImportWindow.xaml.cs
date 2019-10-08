@@ -105,15 +105,25 @@ namespace SessionMapSwitcher
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            try
+            LoadMapsInBackground();
+        }
+
+        private void LoadMapsInBackground()
+        {
+            ViewModel.HeaderMessage = "Getting list of downloadable maps ...";
+
+            Task downloadTask = Task.Factory.StartNew(() =>
             {
-                // start checking for downloadable maps or load cached list
-                ViewModel.LoadDownloadableMaps();
-            }
-            catch (Exception ex)
-            {
-                ViewModel.HeaderMessage = $"Failed to load list of downloadable maps: {ex.Message}";
-            }
+                try
+                {
+                    // start checking for downloadable maps or load cached list
+                    ViewModel.LoadDownloadableMaps();
+                }
+                catch (Exception ex)
+                {
+                    ViewModel.HeaderMessage = $"Failed to load list of downloadable maps: {ex.Message}";
+                }
+            });
         }
 
         private void MenuDownloadFromBrowser_Click(object sender, RoutedEventArgs e)
