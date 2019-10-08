@@ -67,7 +67,7 @@ namespace SessionMapSwitcher.ViewModels
             {
                 if (IsZipFileImport)
                 {
-                    return "Path To Zip File:";
+                    return "Path To Zip/Rar File:";
                 }
                 else
                 {
@@ -139,8 +139,8 @@ namespace SessionMapSwitcher.ViewModels
             {
                 using (OpenFileDialog fileBrowserDialog = new OpenFileDialog())
                 {
-                    fileBrowserDialog.Filter = "Zip files (*.zip)|*.zip|All files (*.*)|*.*";
-                    fileBrowserDialog.Title = "Select .zip File Containing Session Map";
+                    fileBrowserDialog.Filter = "Zip files (*.zip)|*.zip|Rar files (*.rar)|*.rar|All files (*.*)|*.*";
+                    fileBrowserDialog.Title = "Select .zip or .rar File Containing Session Map";
                     DialogResult result = fileBrowserDialog.ShowDialog();
                     if (result == DialogResult.OK)
                     {
@@ -230,12 +230,12 @@ namespace SessionMapSwitcher.ViewModels
 
                     // extract files first before copying
                     Directory.CreateDirectory(PathToTempUnzipFolder);
-                    BoolWithMessage didExtract = FileUtils.ExtractZipFile(PathToFileOrFolder, PathToTempUnzipFolder);
+                    BoolWithMessage didExtract = FileUtils.ExtractCompressedFile(PathToFileOrFolder, PathToTempUnzipFolder);
 
                     if (didExtract.Result == false)
                     {
-                        UserMessage = $"Failed to extract .zip file: {didExtract.Message}";
-                        return new BoolWithMessage(false, $"Failed to extract zip: {didExtract.Message}.");
+                        UserMessage = $"Failed to extract file: {didExtract.Message}";
+                        return new BoolWithMessage(false, $"Failed to extract: {didExtract.Message}.");
                     }
 
                     sourceFolderToCopy = EnsurePathToMapFilesIsCorrect(PathToTempUnzipFolder);

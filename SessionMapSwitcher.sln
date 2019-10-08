@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.29215.179
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SessionMapSwitcher", "SessionMapSwitcher\SessionMapSwitcher.csproj", "{F7200046-CC2D-4B4F-B6E6-60C3FB0A7A61}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapSwitcherUnitTests", "MapSwitcherUnitTests\MapSwitcherUnitTests.csproj", "{84FBB181-B647-43A6-BEB2-6B1F44DB7ACB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{F7200046-CC2D-4B4F-B6E6-60C3FB0A7A61}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F7200046-CC2D-4B4F-B6E6-60C3FB0A7A61}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F7200046-CC2D-4B4F-B6E6-60C3FB0A7A61}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84FBB181-B647-43A6-BEB2-6B1F44DB7ACB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84FBB181-B647-43A6-BEB2-6B1F44DB7ACB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84FBB181-B647-43A6-BEB2-6B1F44DB7ACB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84FBB181-B647-43A6-BEB2-6B1F44DB7ACB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

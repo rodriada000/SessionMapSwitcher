@@ -1,4 +1,7 @@
 ﻿using SessionMapSwitcher.Classes;
+using SharpCompress.Archives;
+using SharpCompress.Archives.Rar;
+using SharpCompress.Common;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace SessionMapSwitcher.Utils
 {
-    class FileUtils
+    public class FileUtils
     {
         internal static void CopyDirectoryRecursively(string sourceDirName, string destDirName, List<string> filesToExclude, List<string> foldersToInclude)
         {
@@ -166,6 +169,44 @@ namespace SessionMapSwitcher.Utils
             }
 
             return new BoolWithMessage(true);
+        }
+
+        public static BoolWithMessage ExtractRarFile(string pathToRar, string extractPath)
+        {
+            try
+            {
+                using (RarArchive archive = RarArchive.Open(pathToRar))
+                {
+                    foreach (RarArchiveEntry entry in archive.Entries.Where(entry => !entry.IsDirectory))
+                    {
+                        entry.WriteToDirectory(extractPath, new ExtractionOptions()
+                        {
+                            ExtractFullPath = true,
+                            Overwrite = true
+                        });
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                return new BoolWithMessage(false, e.Message);
+            }
+
+            return new BoolWithMessage(true);
+        }
+
+        public static BoolWithMessage ExtractCompressedFile(string pathToFile, string extractPath)
+        {
+            if (pathToFile.EndsWith(".zip"))
+            {
+                return ExtractZipFile(pathToFile, extractPath);
+            }
+            else if (pathToFile.EndsWith(".rar"))
+            {
+                return ExtractRarFile(pathToFile, extractPath);
+            }
+
+            return new BoolWithMessage(false, "Unsupported file type.");
         }
     }
 

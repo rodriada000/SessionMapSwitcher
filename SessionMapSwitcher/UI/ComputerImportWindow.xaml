@@ -35,16 +35,16 @@
             <TextBlock TextWrapping="Wrap" Margin="0,0,0,5">
                 <TextBlock.Text>
                     This will copy the contents of the selected folder to the Session\SessionGame\Content folder...
-                    You can also import a map from .zip file which will extract the .zip to the Content folder.
+                    You can also import a map from .zip or .rar files which will extract the files into the Content folder.
                 </TextBlock.Text>
             </TextBlock>
 
-            <CheckBox Content="Import .zip File" 
+            <CheckBox Content="Import .zip/.rar File" 
                       Margin="0,10,0,0" 
                       HorizontalAlignment="Left" VerticalAlignment="Top"
                       IsChecked="{Binding IsZipFileImport, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                       IsEnabled="{Binding IsNotImporting}"
-                      ToolTip="Check this if the map you are importing is in a .zip file format. This will extract the files for you and copy them correctly."/>
+                      ToolTip="Check this if the map you are importing is in a .zip/.rar file format. This will extract the files for you and copy them correctly."/>
 
 
             <Label Content="{Binding PathLabel, FallbackValue='Folder Path To Map Files:'}" Padding="0"
