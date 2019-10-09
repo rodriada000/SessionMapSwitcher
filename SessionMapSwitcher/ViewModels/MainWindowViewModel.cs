@@ -1120,6 +1120,15 @@ namespace SessionMapSwitcher.ViewModels
                 }
             }
 
+            // rename the .bak file back to .pak so the user can easily force the game to be unpacked again
+            // ... if a .bak file and a .pak file exist together then the .pak file will be used for unpacking and .bak file will be deleted at the end
+            string bakFileName = SessionPath.ToPakFile.Replace(".pak", ".bak");
+
+            if (File.Exists(bakFileName) && File.Exists(SessionPath.ToPakFile) == false)
+            {
+                File.Move(bakFileName, SessionPath.ToPakFile);
+            }
+
             _unpackUtils = new UnpackUtils();
 
             _unpackUtils.ProgressChanged += UnpackUtils_ProgressChanged;
