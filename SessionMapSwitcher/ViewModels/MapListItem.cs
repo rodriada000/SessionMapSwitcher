@@ -86,7 +86,13 @@ public class MapListItem : ViewModelBase
 
     public string Tooltip
     {
-        get { return _tooltip; }
+        get
+        {
+            if (_tooltip == null)
+                _tooltip = DirectoryPath;
+
+            return _tooltip;
+        }
         set
         {
             _tooltip = value;

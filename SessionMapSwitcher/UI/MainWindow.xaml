@@ -30,6 +30,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="ListBoxItem">
                         <Border x:Name="border" IsEnabled="{Binding IsEnabled}" Background="{TemplateBinding Background}"
+                                ToolTipService.InitialShowDelay="750" ToolTipService.ShowDuration="3000"
                                 ToolTipService.ShowOnDisabled="True" ToolTip="{Binding Tooltip}">
                             <WrapPanel>
                                 <TextBlock x:Name="mapText" Text="{Binding DisplayName, FallbackValue='Test Map Name'}"
@@ -184,8 +185,8 @@
                 <ListBox x:Name="lstMaps"
                          Grid.Row="1"
                          HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                         ToolTip="Righ-click a map for additional options"
                          MinWidth="300" MaxWidth="350"
-                         
                          ScrollViewer.CanContentScroll="False"
                          Margin="2,1,2,5"
                          ItemsSource="{Binding FilteredAvailableMaps}"

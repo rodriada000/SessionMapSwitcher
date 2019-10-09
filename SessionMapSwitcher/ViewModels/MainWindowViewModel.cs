@@ -350,7 +350,7 @@ namespace SessionMapSwitcher.ViewModels
 
                 lock (collectionLock)
                 {
-                    if (IsMapAdded(mapItem.MapName) == false)
+                    if (IsMapAdded(mapItem) == false)
                     {
                         AvailableMaps.Add(mapItem);
                     }
@@ -473,9 +473,9 @@ namespace SessionMapSwitcher.ViewModels
             }
         }
 
-        private bool IsMapAdded(string mapName)
+        private bool IsMapAdded(MapListItem map)
         {
-            return AvailableMaps.Any(m => m.MapName == mapName);
+            return AvailableMaps.Any(m => m.MapName == map.MapName && m.DirectoryPath == map.DirectoryPath);
         }
 
         internal bool BackupOriginalMapFiles()
