@@ -208,6 +208,24 @@ namespace SessionMapSwitcher.Utils
 
             return new BoolWithMessage(false, "Unsupported file type.");
         }
+
+        /// <summary>
+        /// Finds first .bat file from given directory and returns name of .bat file
+        /// </summary>
+        public static string GetBatFileName(string directory)
+        {
+            foreach (string fileName in Directory.GetFiles(directory))
+            {
+                if (fileName.EndsWith(".bat"))
+                {
+                    int slashIndex = fileName.LastIndexOf('\\');
+                    string batFile = fileName.Substring(slashIndex + 1);
+                    return batFile;
+                }
+            }
+
+            return "";
+        }
     }
 
 }

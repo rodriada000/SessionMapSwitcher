@@ -350,7 +350,7 @@ namespace SessionMapSwitcher.ViewModels
 
                 lock (collectionLock)
                 {
-                    if (IsMapAdded(mapItem.MapName) == false)
+                    if (IsMapAdded(mapItem) == false)
                     {
                         AvailableMaps.Add(mapItem);
                     }
@@ -473,9 +473,9 @@ namespace SessionMapSwitcher.ViewModels
             }
         }
 
-        private bool IsMapAdded(string mapName)
+        private bool IsMapAdded(MapListItem map)
         {
-            return AvailableMaps.Any(m => m.MapName == mapName);
+            return AvailableMaps.Any(m => m.MapName == map.MapName && m.DirectoryPath == map.DirectoryPath);
         }
 
         internal bool BackupOriginalMapFiles()
@@ -1120,6 +1120,15 @@ namespace SessionMapSwitcher.ViewModels
                 }
             }
 
+            // rename the .bak file back to .pak so the user can easily force the game to be unpacked again
+            // ... if a .bak file and a .pak file exist together then the .pak file will be used for unpacking and .bak file will be deleted at the end
+            string bakFileName = SessionPath.ToPakFile.Replace(".pak", ".bak");
+
+            if (File.Exists(bakFileName) && File.Exists(SessionPath.ToPakFile) == false)
+            {
+                File.Move(bakFileName, SessionPath.ToPakFile);
+            }
+
             _unpackUtils = new UnpackUtils();
 
             _unpackUtils.ProgressChanged += UnpackUtils_ProgressChanged;
@@ -1159,6 +1168,20 @@ namespace SessionMapSwitcher.ViewModels
             }, System.Windows.Threading.DispatcherPriority.Background);
         }
 
+
+        internal void PromptToUnpack()
+        {
+            MessageBoxResult result = MessageBox.Show("This will download the required files to auto-unpack Session (overwriting any existing custom textures). This is needed after updating Session to a new version.\n\nAre you sure you want to continue?",
+                                                      "Notice!",
+                                                      MessageBoxButton.YesNo,
+                                                      MessageBoxImage.Warning,
+                                                      MessageBoxResult.Yes);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                StartUnpacking();
+            }
+        }
     }
 
 }
