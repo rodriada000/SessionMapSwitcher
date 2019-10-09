@@ -1159,6 +1159,20 @@ namespace SessionMapSwitcher.ViewModels
             }, System.Windows.Threading.DispatcherPriority.Background);
         }
 
+
+        internal void PromptToUnpack()
+        {
+            MessageBoxResult result = MessageBox.Show("This will download the required files to auto-unpack Session (overwriting any existing custom textures). This is needed after updating Session to a new version.\n\nAre you sure you want to continue?",
+                                                      "Notice!",
+                                                      MessageBoxButton.YesNo,
+                                                      MessageBoxImage.Warning,
+                                                      MessageBoxResult.Yes);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                StartUnpacking();
+            }
+        }
     }
 
 }

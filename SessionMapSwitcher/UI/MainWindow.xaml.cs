@@ -391,6 +391,8 @@ namespace SessionMapSwitcher
             ViewModel.LoadMap(e.MapName);
         }
 
+        #region Update Related Methods
+
         private void CheckForNewVersionInBackground()
         {
             ViewModel.UserMessage = "Checking for updates ...";
@@ -437,10 +439,7 @@ namespace SessionMapSwitcher
             updateWindow.ShowDialog();
         }
 
-        private void AppUpdater_ReportProgress(NAppUpdate.Framework.Common.UpdateProgressInfo currentStatus)
-        {
-            ViewModel.UserMessage = $"Updating app: {currentStatus.Message} | {currentStatus.Percentage}%";
-        }
+        #endregion
 
         private void MenuReimporSelectedMap_Click(object sender, RoutedEventArgs e)
         {
@@ -539,6 +538,11 @@ namespace SessionMapSwitcher
             {
                 ViewModel.SessionPathTextInput = files[0];
             }
+        }
+
+        private void BtnUnpack_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.PromptToUnpack();
         }
     }
 }

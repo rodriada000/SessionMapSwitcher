@@ -83,7 +83,7 @@ namespace SessionMapSwitcher.Utils
                 {
                     try
                     {
-                        RunUnrealPakBatFile(); // this will wait for UnrealPak to finish
+                        RunUnrealPakExe(); // this will wait for UnrealPak to finish
                     }
                     catch (Exception e)
                     {
@@ -98,6 +98,14 @@ namespace SessionMapSwitcher.Utils
                     {
                         UnpackCompleted(false);
                         return;
+                    }
+
+                    bool didRename = RenamePakFile();
+
+                    if (didRename == false)
+                    {
+                        ProgressChanged("Unpacking complete, but failed to rename the .pak file.");
+                        UnpackCompleted(false);
                     }
 
                     // validate files were unpacked by checking subset of expected folders
@@ -169,14 +177,15 @@ namespace SessionMapSwitcher.Utils
             ProgressChanged($"Downloading .zip file -  {(double)totalBytesDownloaded / 1000000:0.00} / {(double)totalFileSize / 1000000:0.00} MB | {progressPercentage:0.00}% Complete");
         }
 
-        internal void RunUnrealPakBatFile()
+        internal void RunUnrealPakExe()
         {
-            ProgressChanged("Starting UnrealPak.exe bat file ...");
+            ProgressChanged("Starting UnrealPak.exe ...");
 
             using (Process proc = new Process())
             {
                 proc.StartInfo.WorkingDirectory = this.PathToPakFolder;
-                proc.StartInfo.FileName = GetBatFileName(this.PathToPakFolder);
+                proc.StartInfo.FileName = $"{this.PathToPakFolder}\\UnrealPak.exe";
+                proc.StartInfo.Arguments = $"-cryptokeys=\"Crypto.json\" -Extract \"{SessionPath.ToPakFile}\" \"..\\..\\..\"";
                 proc.StartInfo.CreateNoWindow = false;
                 proc.Start();
 
@@ -197,50 +206,6 @@ namespace SessionMapSwitcher.Utils
             }
         }
 
-        /// <summary>
-        /// Finds .bat file from given directory and returns name of .bat file
-        /// </summary>
-        private string GetBatFileName(string directory)
-        {
-            foreach (string fileName in Directory.GetFiles(directory))
-            {
-                if (fileName.EndsWith(".bat"))
-                {
-                    int slashIndex = fileName.LastIndexOf('\\');
-                    string batFile = fileName.Substring(slashIndex + 1);
-                    return batFile;
-                }
-            }
-
-            return "";
-        }
-
-        internal bool CopyUnpackedFilesToSession()
-        {
-            string outFolderPath = $"{PathToPakFolder}\\out";
-
-            ProgressChanged("Copying unpacked files to Session game directory, this may take a few minutes. You should see files being copied to the Content folder that opens ...");
-            Process.Start($"{PathToSession}\\SessionGame\\Content");
-
-            try
-            {
-                FileUtils.MoveDirectoryRecursively(outFolderPath, PathToSession);
-
-                System.Threading.Thread.Sleep(500);
-
-                // delete out file since empty now
-                if (Directory.Exists(outFolderPath))
-                {
-                    Directory.Delete(outFolderPath, true);
-                }
-                return true;
-            }
-            catch(Exception e)
-            {
-                ProgressChanged($"Failed to copy files to Session game directory: {e.Message}. Unpacking failed.");
-                return false;
-            }
-        }
 
         /// <summary>
         /// Determines if Session is properly unpacked by checking for specific directories
