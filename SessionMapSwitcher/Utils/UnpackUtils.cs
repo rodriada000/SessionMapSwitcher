@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SessionMapSwitcher.Utils
 {
-    class UnpackUtils
+    public class UnpackUtils
     {
         public delegate void SendMessageDelegate(string message);
         public delegate void UnpackCompleteDelegate(bool wasSuccessful);
@@ -120,10 +120,21 @@ namespace SessionMapSwitcher.Utils
                         }
                     }
 
+                    // delete the original backed up map files so new unpacked files are backedup
+                    DeleteOriginalMapFileBackup();
+
                     UnpackCompleted(true);
                 });
 
             });
+        }
+
+        public static void DeleteOriginalMapFileBackup()
+        {
+            if (Directory.Exists(SessionPath.ToOriginalSessionMapFiles))
+            {
+                Directory.Delete(SessionPath.ToOriginalSessionMapFiles, true);
+            }
         }
 
         internal bool DownloadZipFile()
