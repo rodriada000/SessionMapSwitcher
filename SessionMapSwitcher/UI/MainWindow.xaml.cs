@@ -540,9 +540,9 @@ namespace SessionMapSwitcher
             }
         }
 
-        private void BtnUnpack_Click(object sender, RoutedEventArgs e)
+        private void BtnPatch_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.PromptToUnpack();
+            ViewModel.PromptToPatch();
         }
     }
 }

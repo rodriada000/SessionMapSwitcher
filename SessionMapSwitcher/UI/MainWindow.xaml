@@ -338,11 +338,11 @@
                 Padding="0"
                 Click="BtnStartGame_Click" Height="33" Width="102"/>
 
-        <Button x:Name="btnUnpack"
-                Click="BtnUnpack_Click"
+        <Button x:Name="btnPatch"
+                Click="BtnPatch_Click"
                 Grid.Row="2" Grid.ColumnSpan="2"
-                Content="Unpack Game"
-                ToolTip="Use this after updating Session to a new version or to force unpack the game again."
+                Content="Patch With EzPz"
+                ToolTip="Use this after updating Session to a new version or to patch the game again."
                 IsEnabled="{Binding InputControlsEnabled}"
                 Style="{StaticResource HyperlinkButtonStyle}"
                 HorizontalAlignment="Right"

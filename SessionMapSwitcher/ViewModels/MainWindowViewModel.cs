@@ -32,6 +32,7 @@ namespace SessionMapSwitcher.ViewModels
         private string _objectCountText;
         private bool _skipMovieIsChecked;
         private UnpackUtils _unpackUtils;
+        private EzPzPatcher _patcher;
         private OnlineImportViewModel ImportViewModel;
 
 
@@ -181,11 +182,7 @@ namespace SessionMapSwitcher.ViewModels
         {
             get
             {
-                if (UnpackUtils.IsSessionUnpacked())
-                {
-                    return "Load Map";
-                }
-                return "Unpack Game";
+                return "Load Map";
             }
         }
 
@@ -1131,7 +1128,7 @@ namespace SessionMapSwitcher.ViewModels
 
             _unpackUtils = new UnpackUtils();
 
-            _unpackUtils.ProgressChanged += UnpackUtils_ProgressChanged;
+            _unpackUtils.ProgressChanged += UnpackOrPatch_ProgressChanged;
             _unpackUtils.UnpackCompleted += UnpackUtils_UnpackCompleted;
 
             InputControlsEnabled = false;
@@ -1140,7 +1137,7 @@ namespace SessionMapSwitcher.ViewModels
 
         private void UnpackUtils_UnpackCompleted(bool wasSuccessful)
         {
-            _unpackUtils.ProgressChanged -= UnpackUtils_ProgressChanged;
+            _unpackUtils.ProgressChanged -= UnpackOrPatch_ProgressChanged;
             _unpackUtils.UnpackCompleted -= UnpackUtils_UnpackCompleted;
             _unpackUtils = null;
 
@@ -1160,7 +1157,7 @@ namespace SessionMapSwitcher.ViewModels
             NotifyPropertyChanged(nameof(IsImportMapButtonEnabled));
         }
 
-        private void UnpackUtils_ProgressChanged(string message)
+        private void UnpackOrPatch_ProgressChanged(string message)
         {
             System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke(() =>
             {
@@ -1169,9 +1166,9 @@ namespace SessionMapSwitcher.ViewModels
         }
 
 
-        internal void PromptToUnpack()
+        internal void PromptToPatch()
         {
-            MessageBoxResult result = MessageBox.Show("This will download the required files to auto-unpack Session (overwriting any existing custom textures). This is needed after updating Session to a new version.\n\nAre you sure you want to continue?",
+            MessageBoxResult result = MessageBox.Show("This will download the required files to patch Session. This is needed after updating Session to a new version.\n\nAre you sure you want to continue?",
                                                       "Notice!",
                                                       MessageBoxButton.YesNo,
                                                       MessageBoxImage.Warning,
@@ -1179,8 +1176,58 @@ namespace SessionMapSwitcher.ViewModels
 
             if (result == MessageBoxResult.Yes)
             {
-                StartUnpacking();
+                StartPatching();
             }
+        }
+
+        internal void StartPatching()
+        {
+            if (SessionPath.IsSessionPathValid() == false)
+            {
+                UserMessage = "Cannot patch: Set Path to Session before patching game.";
+                return;
+            }
+
+            if (App.IsRunningAppAsAdministrator() == false)
+            {
+                MessageBoxResult result = MessageBox.Show($"{App.GetAppName()} is not running as Administrator. This can lead to the patching process failing to copy files.\n\nDo you want to restart the program as Administrator?",
+                                                           "Warning!",
+                                                           MessageBoxButton.YesNo,
+                                                           MessageBoxImage.Warning,
+                                                           MessageBoxResult.Yes);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    App.RestartAsAdminstrator();
+                    return;
+                }
+            }
+
+            _patcher = new EzPzPatcher();
+
+            _patcher.ProgressChanged += UnpackOrPatch_ProgressChanged;
+            _patcher.PatchCompleted += EzPzPatcher_PatchCompleted;
+
+            InputControlsEnabled = false;
+            _patcher.StartPatchingAsync(SessionPath.ToSession);
+        }
+
+        private void EzPzPatcher_PatchCompleted(bool wasSuccessful)
+        {
+            _patcher.ProgressChanged -= UnpackOrPatch_ProgressChanged;
+            _patcher.PatchCompleted -= EzPzPatcher_PatchCompleted;
+            _patcher = null;
+
+            if (wasSuccessful)
+            {
+                BackupOriginalMapFiles();
+
+                UserMessage = "Patching complete! You should now be able to play custom maps and replace textures.";
+            }
+
+            InputControlsEnabled = true;
+            NotifyPropertyChanged(nameof(LoadMapButtonText));
+            NotifyPropertyChanged(nameof(IsImportMapButtonEnabled));
         }
     }
 
