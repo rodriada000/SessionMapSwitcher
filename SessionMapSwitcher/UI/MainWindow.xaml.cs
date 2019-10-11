@@ -78,17 +78,22 @@ namespace SessionMapSwitcher
 
             LoadMapInBackgroundAndContinueWith((antecedent) =>
             {
+                ViewModel.InputControlsEnabled = true;
+
                 // validate and set game settings
                 bool didSet = ViewModel.UpdateGameSettings();
 
                 if (didSet == false)
                 {
+                    // do not start game with invalid settings
                     ViewModel.UserMessage = "Cannot start game: " + ViewModel.UserMessage;
-                    return; // do not start game with invalid settings
                 }
-
-                Process.Start(SessionPath.ToSessionExe);
-                ViewModel.InputControlsEnabled = true;
+                else
+                {
+                    ViewModel.InputControlsEnabled = false;
+                    Process.Start(SessionPath.ToSessionExe);
+                    ViewModel.InputControlsEnabled = true;
+                }
             });
         }
 

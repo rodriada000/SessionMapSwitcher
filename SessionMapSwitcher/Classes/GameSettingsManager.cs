@@ -17,6 +17,14 @@ namespace SessionMapSwitcher.Classes
 
         public static int ObjectCount { get; set; }
 
+        public static string PathToObjectPlacementFile
+        {
+            get
+            {
+                return $"{SessionPath.ToContent}\\ObjectPlacement\\Blueprints\\PBP_ObjectPlacementInventory.uexp";
+            }
+        }
+
         public static BoolWithMessage RefreshGameSettingsFromIniFiles()
         {
             if (SessionPath.IsSessionPathValid() == false)
@@ -148,8 +156,7 @@ namespace SessionMapSwitcher.Classes
 
             try
             {
-                string objectFilePath = $"{SessionPath.ToContent}\\ObjectPlacement\\Blueprints\\PBP_ObjectPlacementInventory.uexp";
-                using (var stream = new FileStream(objectFilePath, FileMode.Open, FileAccess.Read))
+                using (var stream = new FileStream(PathToObjectPlacementFile, FileMode.Open, FileAccess.Read))
                 {
                     stream.Position = 351;
                     int byte1 = stream.ReadByte();
@@ -194,15 +201,13 @@ namespace SessionMapSwitcher.Classes
                 return BoolWithMessage.False("Session Path invalid.");
             }
 
-            string objectFilePath = $"{SessionPath.ToContent}\\ObjectPlacement\\Blueprints\\PBP_ObjectPlacementInventory.uexp";
-
             // this is a list of addresses where the item count for placeable objects are stored in the .uexp file
             // ... if this file is modified then these addresses will NOT match so it is important to not mod/change the PBP_ObjectPlacementInventory file (until further notice...)
             List<int> addresses = new List<int>() { 351, 615, 681, 747, 879, 945, 1011, 1077, 1143, 1209, 1275, 1341, 1407, 1473, 1605 };
 
             try
             {
-                using (var stream = new FileStream(objectFilePath, FileMode.Open, FileAccess.ReadWrite))
+                using (var stream = new FileStream(PathToObjectPlacementFile, FileMode.Open, FileAccess.ReadWrite))
                 {
                     // convert the base 10 int into a hex string (e.g. 10 => 'A' or 65535 => 'FF')
                     string hexValue = int.Parse(objectCountText).ToString("X");
@@ -292,6 +297,11 @@ namespace SessionMapSwitcher.Classes
             {
                 return "";
             }
+        }
+
+        public static bool DoesSettingsFileExist()
+        {
+            return File.Exists(PathToObjectPlacementFile) && File.Exists(SessionPath.ToDefaultGameIniFile);
         }
     }
 }

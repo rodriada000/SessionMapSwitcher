@@ -245,6 +245,24 @@ namespace SessionMapSwitcher.ViewModels
 
         internal bool UpdateGameSettings()
         {
+            if (GameSettingsManager.DoesSettingsFileExist() == false)
+            {
+                MessageBoxResult promptResult = MessageBox.Show("The required files are missing and must be extracted before game settings can be modified. Click 'Yes' to download UnrealPak to extract the files.",
+                                                                "Warning - Cannot Continue!",
+                                                                MessageBoxButton.YesNo,
+                                                                MessageBoxImage.Information,
+                                                                MessageBoxResult.Yes);
+
+                if (promptResult == MessageBoxResult.Yes)
+                {
+                    StartPatching(skipPatching: true);
+                    return false;
+                }
+
+                UserMessage = "Cannot set game settings until files are extracted.";
+                return false;
+            }
+
             BoolWithMessage result = GameSettingsManager.WriteGameSettingsToFile(GravityText, ObjectCountText, SkipMovieIsChecked);
 
             if (result.Result)
@@ -750,7 +768,7 @@ namespace SessionMapSwitcher.ViewModels
             }
         }
 
-        internal void StartPatching()
+        internal void StartPatching(bool skipPatching = false)
         {
             if (SessionPath.IsSessionPathValid() == false)
             {
@@ -774,6 +792,7 @@ namespace SessionMapSwitcher.ViewModels
             }
 
             _patcher = new EzPzPatcher();
+            _patcher.SkipEzPzPatchStep = skipPatching;
 
             _patcher.ProgressChanged += Patch_ProgressChanged;
             _patcher.PatchCompleted += EzPzPatcher_PatchCompleted;
@@ -786,17 +805,29 @@ namespace SessionMapSwitcher.ViewModels
         {
             _patcher.ProgressChanged -= Patch_ProgressChanged;
             _patcher.PatchCompleted -= EzPzPatcher_PatchCompleted;
-            _patcher = null;
 
             if (wasSuccessful)
             {
-                UserMessage = "Patching complete! You should now be able to play custom maps and replace textures.";
+                if (_patcher.SkipEzPzPatchStep == false)
+                {
+                    UserMessage = "Patching complete! You should now be able to play custom maps and replace textures.";
+                }
+                else if (_patcher.SkipEzPzPatchStep)
+                {
+                    UserMessage = "Required game files extracted! You should now be able to set game settings and custom object count.";
+                }
+
+                RefreshGameSettings();
             }
             else
             {
-                UserMessage = "Patching failed. You should re-run the patching process.";
+                UserMessage = "Patching failed. You should re-run the patching process: " + UserMessage;
             }
 
+
+
+
+            _patcher = null;
             InputControlsEnabled = true;
         }
 
