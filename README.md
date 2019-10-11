@@ -23,8 +23,8 @@ _Skip this if you already patched the game._
 1. Download the [latest release here](https://github.com/rodriada000/SessionMapSwitcher/releases/latest).
 2. Unzip the program anywhere you like.
 3. Open SessionMapSwitcher.exe.
-4. Set the `Path To Session` by clicking the `...` button or pasting the path and pressing `Enter` key. **The path should be the top level folder of the game directory e.g. `C:\Program Files (x86)\Steam\steamapps\common\Session`.** ![](https://github.com/rodriada000/SessionMapSwitcher/blob/master/docs/images/app_after_path_select.png?raw=true "Set Session Path")
-5. Click `Patch With EzPz` and you will be prompted to download the required files to patch the game. ![](https://github.com/rodriada000/SessionMapSwitcher/blob/master/docs/images/app_pack_detected.png?raw=true "Game Not Unpacked Detected Screen")
+4. Set the `Path To Session` by clicking the `...` button or pasting the path and pressing `Enter` key. **The path should be the top level folder of the game directory e.g. `C:\Program Files (x86)\Steam\steamapps\common\Session`.**
+5. Click `Patch With EzPz` and you will be prompted to download the required files to patch the game.
 > Note: If the program is not running as Administrator then it will ask you to restart the program as administrator first to ensure the unpacking process completes succesfully.
 
 > Note: The download can fail sometimes because the file host is not good. Retry a couple of times if the download fails until it succeeds.  
