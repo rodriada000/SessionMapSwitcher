@@ -31,7 +31,7 @@ namespace SessionMapSwitcher.ViewModels
         private string _gravityText;
         private string _objectCountText;
         private bool _skipMovieIsChecked;
-        private UnpackUtils _unpackUtils;
+        private EzPzPatcher _patcher;
         private OnlineImportViewModel ImportViewModel;
 
 
@@ -46,7 +46,6 @@ namespace SessionMapSwitcher.ViewModels
                 _sessionPath = value;
                 NotifyPropertyChanged();
                 NotifyPropertyChanged(nameof(LoadMapButtonText));
-                NotifyPropertyChanged(nameof(IsImportMapButtonEnabled));
                 NotifyPropertyChanged(nameof(IsReplaceTextureControlEnabled));
                 NotifyPropertyChanged(nameof(IsProjectWatchControlEnabled));
             }
@@ -125,7 +124,6 @@ namespace SessionMapSwitcher.ViewModels
             {
                 _inputControlsEnabled = value;
                 NotifyPropertyChanged();
-                NotifyPropertyChanged(nameof(IsImportMapButtonEnabled));
                 NotifyPropertyChanged(nameof(IsReplaceTextureControlEnabled));
                 NotifyPropertyChanged(nameof(IsProjectWatchControlEnabled));
             }
@@ -181,23 +179,7 @@ namespace SessionMapSwitcher.ViewModels
         {
             get
             {
-                if (UnpackUtils.IsSessionUnpacked())
-                {
-                    return "Load Map";
-                }
-                return "Unpack Game";
-            }
-        }
-
-        public bool IsImportMapButtonEnabled
-        {
-            get
-            {
-                if (UnpackUtils.IsSessionUnpacked())
-                {
-                    return true && InputControlsEnabled;
-                }
-                return false;
+                return "Load Map";
             }
         }
 
@@ -300,9 +282,7 @@ namespace SessionMapSwitcher.ViewModels
                 BindingOperations.EnableCollectionSynchronization(AvailableMaps, collectionLock);
 
                 // add default session map to select (add last so it is always at top of list)
-                _defaultSessionMap.IsEnabled = IsOriginalMapFilesBackedUp();
                 _defaultSessionMap.FullPath = SessionPath.ToOriginalSessionMapFiles;
-                _defaultSessionMap.Tooltip = _defaultSessionMap.IsEnabled ? null : "The original Session game files have not been backed up to the custom Maps folder.";
                 AvailableMaps.Insert(0, _defaultSessionMap);
             }
 
@@ -478,103 +458,6 @@ namespace SessionMapSwitcher.ViewModels
             return AvailableMaps.Any(m => m.MapName == map.MapName && m.DirectoryPath == map.DirectoryPath);
         }
 
-        internal bool BackupOriginalMapFiles()
-        {
-            if (SessionPath.IsSessionPathValid() == false)
-            {
-                UserMessage = "Cannot backup: 'Path to Session' is invalid.";
-                return false;
-            }
-
-            if (IsOriginalMapFilesBackedUp())
-            {
-                // the files are already backed up
-                UserMessage = "Skipping backup: original files already backed up.";
-                return false;
-            }
-
-            if (DoesOriginalMapFileExistInGameDirectory() == false)
-            {
-                // the original files are missing from the Session directory
-                UserMessage = "Cannot backup: original map files for Session are missing from Session game directory.";
-                return false;
-            }
-
-            try
-            {
-                // create folder if it doesn't exist
-                Directory.CreateDirectory(SessionPath.ToOriginalSessionMapFiles);
-
-                string fileNamePrefix = "NYC01_Persistent";
-                string[] fileExtensionsToCheck = { ".umap", ".uexp", "_BuiltData.uasset", "_BuiltData.uexp", "_BuiltData.ubulk" };
-
-                // copy NYC01_Persistent files to backup folder
-                foreach (string fileExt in fileExtensionsToCheck)
-                {
-                    string fullPathToFile = $"{SessionPath.ToNYCFolder}\\{fileNamePrefix}{fileExt}";
-                    string destFilePath = $"{SessionPath.ToOriginalSessionMapFiles}\\{fileNamePrefix}{fileExt}";
-                    File.Copy(fullPathToFile, destFilePath, overwrite: true);
-                }
-
-
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show($"Failed to backup original map files: {e.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return false;
-            }
-
-            _defaultSessionMap.IsEnabled = IsOriginalMapFilesBackedUp();
-            _defaultSessionMap.Tooltip = _defaultSessionMap.IsEnabled ? null : "The original Session game files have not been backed up to the custom Maps folder.";
-            return true;
-        }
-
-        internal bool IsOriginalMapFilesBackedUp()
-        {
-            if (Directory.Exists(SessionPath.ToOriginalSessionMapFiles) == false)
-            {
-                return false;
-            }
-
-            string fileNamePrefix = "NYC01_Persistent";
-            string[] fileExtensionsToCheck = { ".umap", ".uexp", "_BuiltData.uasset", "_BuiltData.uexp", "_BuiltData.ubulk" };
-
-            // copy NYC01_Persistent files to backup folder
-            foreach (string fileExt in fileExtensionsToCheck)
-            {
-                string fullPath = $"{SessionPath.ToOriginalSessionMapFiles}\\{fileNamePrefix}{fileExt}";
-                if (File.Exists(fullPath) == false)
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        internal bool DoesOriginalMapFileExistInGameDirectory()
-        {
-            if (Directory.Exists(SessionPath.ToNYCFolder) == false)
-            {
-                return false;
-            }
-
-            string fileNamePrefix = "NYC01_Persistent";
-            string[] fileExtensionsToCheck = { ".umap", ".uexp", "_BuiltData.uasset", "_BuiltData.uexp", "_BuiltData.ubulk" };
-
-            // copy NYC01_Persistent files to backup folder
-            foreach (string fileExt in fileExtensionsToCheck)
-            {
-                string fullPath = $"{SessionPath.ToNYCFolder}\\{fileNamePrefix}{fileExt}";
-                if (File.Exists(fullPath) == false)
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
         internal bool IsSessionRunning()
         {
             var allProcs = Process.GetProcessesByName("SessionGame-Win64-Shipping");
@@ -598,18 +481,10 @@ namespace SessionMapSwitcher.ViewModels
                     string fullTargetFilePath = SessionPath.ToNYCFolder;
 
 
-                    if (IsSessionRunning() && FirstLoadedMap != null)
+                    if (IsSessionRunning())
                     {
-                        // while the game is running, the map being loaded must have the same name as the initial map that was loaded when the game first started.
-                        // ... thus we build the destination filename based on what was first loaded.
-                        if (FirstLoadedMap == _defaultSessionMap)
-                        {
-                            fullTargetFilePath += $"\\NYC01_Persistent"; // this is the name of the default map that is loaded
-                        }
-                        else
-                        {
-                            fullTargetFilePath += $"\\{FirstLoadedMap.MapName}";
-                        }
+                        // While Session is running the map files must be copied as NYC01_Persistent so when the user leaves the apartment the custom map is loaded
+                        fullTargetFilePath += $"\\NYC01_Persistent";
 
                         if (fileName.Contains("_BuiltData"))
                         {
@@ -622,12 +497,12 @@ namespace SessionMapSwitcher.ViewModels
                     }
                     else
                     {
-                        // if the game is not running then the files can be copied as-is (file names do not need to be changed)
-                        string targetFileName = fileName.Replace(map.DirectoryPath, "");
-                        fullTargetFilePath += targetFileName;
+                        fullTargetFilePath += $"\\{fi.Name}";
                     }
 
-                    File.Copy(fileName, fullTargetFilePath, true);
+                    
+
+                    File.Copy(fileName, fullTargetFilePath, overwrite: true);
                 }
             }
 
@@ -680,11 +555,12 @@ namespace SessionMapSwitcher.ViewModels
                 FirstLoadedMap = map;
             }
 
-            foreach (MapListItem availableMap in AvailableMaps)
+            SetIsSelectedForMapInList(map);
+
+            if (Directory.Exists(SessionPath.ToNYCFolder) == false)
             {
-                availableMap.IsSelected = false;
+                Directory.CreateDirectory(SessionPath.ToNYCFolder);
             }
-            map.IsSelected = true;
 
             if (map == _defaultSessionMap)
             {
@@ -695,12 +571,18 @@ namespace SessionMapSwitcher.ViewModels
             try
             {
                 // delete session map file / custom maps from game 
-                DeleteMapFilesFromNYCFolder();
+                DeleteAllMapFilesFromNYCFolder();
 
                 CopyMapFilesToNYCFolder(map);
 
                 // update the ini file with the new map path
-                string selectedMapPath = "/Game/Art/Env/NYC/" + map.MapName;
+                string selectedMapPath = "/Game/Art/Env/NYC/NYC01_Persistent";
+
+                if (IsSessionRunning() == false)
+                {
+                    selectedMapPath = $"/Game/Art/Env/NYC/{map.MapName}";
+                }
+
                 UpdateGameDefaultMapIniSetting(selectedMapPath);
 
                 SetCurrentlyLoadedMap();
@@ -713,24 +595,22 @@ namespace SessionMapSwitcher.ViewModels
             }
         }
 
+        private void SetIsSelectedForMapInList(MapListItem map)
+        {
+            foreach (MapListItem availableMap in AvailableMaps)
+            {
+                availableMap.IsSelected = false;
+            }
+            map.IsSelected = true;
+        }
+
         internal void LoadOriginalMap()
         {
             try
             {
-                DeleteMapFilesFromNYCFolder(forceDelete: true);
+                DeleteAllMapFilesFromNYCFolder();
 
-                string fileNamePrefix = "NYC01_Persistent";
-                string[] fileExtensions = { ".umap", ".uexp", "_BuiltData.uasset", "_BuiltData.uexp", "_BuiltData.ubulk" };
-
-                // copy NYC01_Persistent backup files back to original game location
-                foreach (string fileExt in fileExtensions)
-                {
-                    string fullPath = $"{SessionPath.ToOriginalSessionMapFiles}\\{fileNamePrefix}{fileExt}";
-                    string targetPath = $"{SessionPath.ToNYCFolder}\\{fileNamePrefix}{fileExt}";
-                    File.Copy(fullPath, targetPath, true);
-                }
-
-                UpdateGameDefaultMapIniSetting("/Game/Tutorial/Intro/MAP_EntryPoint.MAP_EntryPoint");
+                UpdateGameDefaultMapIniSetting("/Game/Tutorial/Intro/MAP_EntryPoint");
 
                 SetCurrentlyLoadedMap();
 
@@ -750,7 +630,7 @@ namespace SessionMapSwitcher.ViewModels
                 return false;
             }
 
-            IniFile iniFile = new IniFile(SessionPath.ToDefaultEngineIniFile);
+            IniFile iniFile = new IniFile(SessionPath.ToUserEngineIniFile);
             return iniFile.WriteString("/Script/EngineSettings.GameMapsSettings", "GameDefaultMap", defaultMapValue);
         }
 
@@ -774,14 +654,8 @@ namespace SessionMapSwitcher.ViewModels
 
         /// <summary>
         /// Deletes all files in the Content\Art\Env\NYC folder
-        /// that does not have NYC_01 prefix (original game files).
-        /// Also deletes NYC01_Persistent files
         /// </summary>
-        /// <remarks>
-        /// The NYC01_Persistent.umap file must be deleted so a custom map can be loaded when you leave the apartment in-game.
-        /// If this file is not deleted then the game loads the default map when you leave the apartment.
-        /// </remarks>
-        private void DeleteMapFilesFromNYCFolder(bool forceDelete = false)
+        private void DeleteAllMapFilesFromNYCFolder()
         {
             if (SessionPath.IsSessionPathValid() == false)
             {
@@ -790,20 +664,7 @@ namespace SessionMapSwitcher.ViewModels
 
             foreach (string fileName in Directory.GetFiles(SessionPath.ToNYCFolder))
             {
-                // only delete custom map files, not NYC01 files
-                if (fileName.Contains("NYC01_") == false)
-                {
-                    File.Delete(fileName);
-                }
-            }
-
-            // only delete the .umap file when the game is running, otherwise the default map will always load when you leave the apartment
-            // ... Some maps rely on the .umap file to stream other content to the custom map so the .umap file is NOT deleted while Session is not running allowing the custom map to use its assets.
-            string nycMapFilePath = $"{SessionPath.ToNYCFolder}\\NYC01_Persistent.umap";
-
-            if ((IsSessionRunning() || forceDelete) && File.Exists(nycMapFilePath))
-            {
-                File.Delete(nycMapFilePath);
+                File.Delete(fileName);
             }
         }
 
@@ -1097,17 +958,39 @@ namespace SessionMapSwitcher.ViewModels
             return bytes;
         }
 
-        internal void StartUnpacking()
+        private void Patch_ProgressChanged(string message)
+        {
+            System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke(() =>
+            {
+                UserMessage = message;
+            }, System.Windows.Threading.DispatcherPriority.Background);
+        }
+
+        internal void PromptToPatch()
+        {
+            MessageBoxResult result = MessageBox.Show("This will download the required files to patch Session. This is needed after updating Session to a new version.\n\nAre you sure you want to continue?",
+                                                      "Notice!",
+                                                      MessageBoxButton.YesNo,
+                                                      MessageBoxImage.Warning,
+                                                      MessageBoxResult.Yes);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                StartPatching();
+            }
+        }
+
+        internal void StartPatching()
         {
             if (SessionPath.IsSessionPathValid() == false)
             {
-                UserMessage = "Cannot unpack: Set Path to Session before unpacking game.";
+                UserMessage = "Cannot patch: Set Path to Session before patching game.";
                 return;
             }
 
             if (App.IsRunningAppAsAdministrator() == false)
             {
-                MessageBoxResult result = MessageBox.Show($"{App.GetAppName()} is not running as Administrator. This can lead to the unpacking process failing to copy files.\n\nDo you want to restart the program as Administrator?",
+                MessageBoxResult result = MessageBox.Show($"{App.GetAppName()} is not running as Administrator. This can lead to the patching process failing to copy files.\n\nDo you want to restart the program as Administrator?",
                                                            "Warning!",
                                                            MessageBoxButton.YesNo,
                                                            MessageBoxImage.Warning,
@@ -1120,67 +1003,31 @@ namespace SessionMapSwitcher.ViewModels
                 }
             }
 
-            // rename the .bak file back to .pak so the user can easily force the game to be unpacked again
-            // ... if a .bak file and a .pak file exist together then the .pak file will be used for unpacking and .bak file will be deleted at the end
-            string bakFileName = SessionPath.ToPakFile.Replace(".pak", ".bak");
+            _patcher = new EzPzPatcher();
 
-            if (File.Exists(bakFileName) && File.Exists(SessionPath.ToPakFile) == false)
-            {
-                File.Move(bakFileName, SessionPath.ToPakFile);
-            }
-
-            _unpackUtils = new UnpackUtils();
-
-            _unpackUtils.ProgressChanged += UnpackUtils_ProgressChanged;
-            _unpackUtils.UnpackCompleted += UnpackUtils_UnpackCompleted;
+            _patcher.ProgressChanged += Patch_ProgressChanged;
+            _patcher.PatchCompleted += EzPzPatcher_PatchCompleted;
 
             InputControlsEnabled = false;
-            _unpackUtils.StartUnpackingAsync(SessionPath.ToSession);
+            _patcher.StartPatchingAsync(SessionPath.ToSession);
         }
 
-        private void UnpackUtils_UnpackCompleted(bool wasSuccessful)
+        private void EzPzPatcher_PatchCompleted(bool wasSuccessful)
         {
-            _unpackUtils.ProgressChanged -= UnpackUtils_ProgressChanged;
-            _unpackUtils.UnpackCompleted -= UnpackUtils_UnpackCompleted;
-            _unpackUtils = null;
+            _patcher.ProgressChanged -= Patch_ProgressChanged;
+            _patcher.PatchCompleted -= EzPzPatcher_PatchCompleted;
+            _patcher = null;
 
             if (wasSuccessful)
             {
-                // confirm game unpacked
-                if (UnpackUtils.IsSessionUnpacked())
-                {
-                    BackupOriginalMapFiles();
-                }
-
-                UserMessage = "Unpacking complete! You should now be able to play custom maps. Click 'Reload Available Maps' to see list of available maps (some maps were left by the devs of Session).";
+                UserMessage = "Patching complete! You should now be able to play custom maps and replace textures.";
+            }
+            else
+            {
+                UserMessage = "Patching failed. You should re-run the patching process.";
             }
 
             InputControlsEnabled = true;
-            NotifyPropertyChanged(nameof(LoadMapButtonText));
-            NotifyPropertyChanged(nameof(IsImportMapButtonEnabled));
-        }
-
-        private void UnpackUtils_ProgressChanged(string message)
-        {
-            System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke(() =>
-            {
-                UserMessage = message;
-            }, System.Windows.Threading.DispatcherPriority.Background);
-        }
-
-
-        internal void PromptToUnpack()
-        {
-            MessageBoxResult result = MessageBox.Show("This will download the required files to auto-unpack Session (overwriting any existing custom textures). This is needed after updating Session to a new version.\n\nAre you sure you want to continue?",
-                                                      "Notice!",
-                                                      MessageBoxButton.YesNo,
-                                                      MessageBoxImage.Warning,
-                                                      MessageBoxResult.Yes);
-
-            if (result == MessageBoxResult.Yes)
-            {
-                StartUnpacking();
-            }
         }
     }
 

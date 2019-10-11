@@ -93,6 +93,7 @@
     <Compile Include="Classes\BoolWithMessage.cs" />
     <Compile Include="Classes\CopySettings.cs" />
     <Compile Include="Classes\Events\MapImportedEventArgs.cs" />
+    <Compile Include="Classes\EzPzPatcher.cs" />
     <Compile Include="Classes\FileInfoExtensionMethods.cs" />
     <Compile Include="Classes\MetaDataManager.cs" />
     <Compile Include="Classes\SessionPath.cs" />

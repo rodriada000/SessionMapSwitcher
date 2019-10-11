@@ -101,7 +101,9 @@ namespace SessionMapSwitcher.ViewModels
             string textureFileName = textureFileInfo.NameWithoutExtension();
 
             // find which folder to copy to based on file name
-            string targetFolder = GetFolderPathToTexture(textureFileName);
+            string targetFolder = GetFolderPathToTextureFromFile(textureFileInfo);
+
+            string originalTextureName = GetTextureNameFromFile(textureFileInfo);
 
             if (targetFolder == "")
             {
@@ -111,10 +113,10 @@ namespace SessionMapSwitcher.ViewModels
 
             try
             {
-                DeleteCurrentTextureFiles(textureFileName, targetFolder);
+                DeleteCurrentTextureFiles(originalTextureName, targetFolder);
 
                 // find and copy files in source dir that match the .uasset name
-                CopyNewTextureFilesToGame(textureFileInfo, targetFolder);
+                CopyNewTextureFilesToGame(textureFileInfo, targetFolder, originalTextureName);
 
                 // delete temp folder with unzipped files
                 if (IsPathToCompressedFile)
@@ -134,13 +136,94 @@ namespace SessionMapSwitcher.ViewModels
             MessageChanged?.Invoke($"Successfully replaced textures for {textureFileInfo.Name}!");
         }
 
+        private string GetTextureNameFromFile(FileInfo textureFile)
+        {
+            try
+            {
+                string pathInFile = GetPathFromTextureFile(textureFile);
+
+                int index = pathInFile.LastIndexOf("\\");
+                if (index < 0)
+                {
+                    return "";
+                }
+
+                return pathInFile.Substring(index+1);
+            }
+            catch (Exception)
+            {
+                return "";
+            }
+        }
+
+        private string GetFolderPathToTextureFromFile(FileInfo textureFile)
+        {
+            string foundPath = "";
+
+            try
+            {
+                string pathInFile = GetPathFromTextureFile(textureFile);
+
+                int index = pathInFile.LastIndexOf("\\");
+                if (index < 0)
+                {
+                    return "";
+                }
+                pathInFile = pathInFile.Substring(0, index);
+
+
+                foundPath = $"{SessionPath.ToContent}{pathInFile}";
+                return foundPath;
+            }
+            catch (Exception)
+            {
+                return "";
+            }
+        }
+
+        private string GetPathFromTextureFile(FileInfo textureFile)
+        {
+            try
+            {
+                string fileContents = File.ReadAllText(textureFile.FullName);
+
+                int index = fileContents.IndexOf("/Game");
+
+                if (index < 0)
+                {
+                    return "";
+                }
+                fileContents = fileContents.Substring("/Game".Length + index);
+
+
+                index = fileContents.IndexOf('\0');
+                if (index < 0)
+                {
+                    return "";
+                }
+                string relativeFolderPath = fileContents.Substring(0, index);
+
+
+                return relativeFolderPath.Replace("/", "\\");
+            }
+            catch (Exception)
+            {
+                return "";
+            }
+        }
+
         /// <summary>
         /// Loop over all files in the folder that contains the <paramref name="newTexture"/> .uasset file and copy all other files related to texture (.uexp and .ubulk files) to the <paramref name="targetFolder"/>
         /// </summary>
-        private static void CopyNewTextureFilesToGame(FileInfo newTexture, string targetFolder)
+        private static void CopyNewTextureFilesToGame(FileInfo newTexture, string targetFolder, string textureName)
         {
             string textureSourceDir = Path.GetDirectoryName(newTexture.FullName);
             string textureFileName = newTexture.NameWithoutExtension();
+
+            if (Directory.Exists(targetFolder) == false)
+            {
+                Directory.CreateDirectory(targetFolder);
+            }
 
             foreach (string file in Directory.GetFiles(textureSourceDir))
             {
@@ -148,7 +231,7 @@ namespace SessionMapSwitcher.ViewModels
 
                 if (info.NameWithoutExtension() == textureFileName)
                 {
-                    string targetPath = Path.Combine(targetFolder, info.Name);
+                    string targetPath = Path.Combine(targetFolder, $"{textureName}{info.Extension}");
                     File.Copy(file, targetPath, overwrite: true);
                 }
             }
@@ -161,6 +244,11 @@ namespace SessionMapSwitcher.ViewModels
         /// <param name="targetFolder"> folder to search in </param>
         private static void DeleteCurrentTextureFiles(string textureFileName, string targetFolder)
         {
+            if (Directory.Exists(targetFolder) == false)
+            {
+                return;
+            }
+
             foreach (string existingFile in Directory.GetFiles(targetFolder))
             {
                 if (existingFile.Contains(textureFileName))

@@ -55,28 +55,6 @@ namespace SessionMapSwitcher
             }
         }
 
-        private void BackupMapFilesInBackground()
-        {
-            ViewModel.UserMessage = "Backing Up Original Session Map ...";
-            ViewModel.InputControlsEnabled = false;
-
-            bool didBackup = false;
-
-            Task t = Task.Run(() =>
-            {
-                didBackup = ViewModel.BackupOriginalMapFiles();
-            });
-
-            t.ContinueWith((antecedent) =>
-            {
-                if (didBackup)
-                {
-                    ViewModel.UserMessage = "";
-                }
-                ViewModel.InputControlsEnabled = true;
-            });
-        }
-
         private void BtnStartGame_Click(object sender, RoutedEventArgs e)
         {
             if (ViewModel.IsSessionRunning())
@@ -90,7 +68,7 @@ namespace SessionMapSwitcher
                 else
                 {
                     // kill the process
-                    System.Diagnostics.Process[] procs = System.Diagnostics.Process.GetProcessesByName("SessionGame-Win64-Shipping");
+                    Process[] procs = System.Diagnostics.Process.GetProcessesByName("SessionGame-Win64-Shipping");
                     if (procs.Length > 0)
                     {
                         procs[0].Kill();
@@ -98,71 +76,20 @@ namespace SessionMapSwitcher
                 }
             }
 
-            if (SessionPath.IsSessionPathValid() == false)
-            {
-                System.Windows.MessageBox.Show("You have selected an incorrect path to Session. Make sure the directory you choose has the folders 'Engine' and 'SessionGame'.", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-            if (UnpackUtils.IsSessionUnpacked() == false)
-            {
-                MessageBoxResult result = System.Windows.MessageBox.Show("It seems the Session game has not been unpacked. This is required before using Map Switcher.\n\nWould you like to download the required files to auto-unpack?", 
-                                                "Notice!", 
-                                                MessageBoxButton.YesNo, 
-                                                MessageBoxImage.Warning, 
-                                                MessageBoxResult.Yes);
-
-                if (result == MessageBoxResult.Yes)
-                {
-                    BeginUnpackingProcess();
-                }
-
-                return;
-            }
-
-            if (UnpackUtils.IsSessionPakFileRenamed() == false)
-            {
-                MessageBoxResult result = System.Windows.MessageBox.Show("It seems the .pak file has not been renamed yet. This is required before using custom maps and the Map Switcher.\n\nClick 'Yes' to auto rename the .pak file.",
-                                                "Notice!",
-                                                MessageBoxButton.YesNo,
-                                                MessageBoxImage.Information,
-                                                MessageBoxResult.Yes);
-
-                if (result == MessageBoxResult.Yes)
-                {
-                    bool didRename = UnpackUtils.RenamePakFile();
-
-                    if (didRename == false)
-                    {
-                        System.Windows.MessageBox.Show("The .pak file could not be renamed. Make sure the game is unpacked correctly and try again.", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
-                        return;
-                    }
-                }
-                else
-                {
-                    return;
-                }
-            }
-
-            // validate and set game settings
-            bool didSet = ViewModel.WriteGameSettingsToFile();
-
-            if (didSet == false)
-            {
-                ViewModel.UserMessage = "Cannot start game: " + ViewModel.UserMessage;
-                return; // do not start game with invalid settings
-            }
-
             LoadMapInBackgroundAndContinueWith((antecedent) =>
             {
-                System.Diagnostics.Process.Start(SessionPath.ToSessionExe);
+                // validate and set game settings
+                bool didSet = ViewModel.WriteGameSettingsToFile();
+
+                if (didSet == false)
+                {
+                    ViewModel.UserMessage = "Cannot start game: " + ViewModel.UserMessage;
+                    return; // do not start game with invalid settings
+                }
+
+                Process.Start(SessionPath.ToSessionExe);
                 ViewModel.InputControlsEnabled = true;
             });
-        }
-
-        private void BeginUnpackingProcess()
-        {
-            ViewModel.StartUnpacking();
         }
 
         private void BtnLoadMap_Click(object sender, RoutedEventArgs e)
@@ -181,29 +108,15 @@ namespace SessionMapSwitcher
 
         private void LoadMapInBackgroundAndContinueWith(Action<Task> continuationTask)
         {
-            if (UnpackUtils.IsSessionUnpacked() == false)
+            if (SessionPath.IsSessionPathValid() == false)
             {
-                MessageBoxResult result = System.Windows.MessageBox.Show("It seems the Session game has not been unpacked. This is required before using Map Switcher.\n\nWould you like to download the required files to auto-unpack?",
-                                                "Notice!",
-                                                MessageBoxButton.YesNo,
-                                                MessageBoxImage.Warning,
-                                                MessageBoxResult.Yes);
-
-                if (result == MessageBoxResult.Yes)
-                {
-                    BeginUnpackingProcess();
-                }
-
+                System.Windows.MessageBox.Show("You have selected an incorrect path to Session. Make sure the directory you choose has the folders 'Engine' and 'SessionGame'.", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            if (ViewModel.IsOriginalMapFilesBackedUp() == false)
+            if (EzPzPatcher.IsGamePatched() == false)
             {
-                System.Windows.MessageBox.Show("The original Session game map files have not been backed up yet. Click OK to backup the files then click 'Load Map' again",
-                                                "Notice!",
-                                                MessageBoxButton.OK,
-                                                MessageBoxImage.Information);
-                BackupMapFilesInBackground();
+                MessageBoxResult result = System.Windows.MessageBox.Show("Session has not been patched yet. Click 'Patch With EzPz' to patch the game.", "Notice!", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -281,7 +194,6 @@ namespace SessionMapSwitcher
                 ViewModel.RefreshGameSettingsFromIniFiles();
                 ViewModel.GetObjectCountFromFile();
                 ReloadAvailableMapsInBackground();
-                BackupMapFilesInBackground();
             }
             else
             {
@@ -540,9 +452,9 @@ namespace SessionMapSwitcher
             }
         }
 
-        private void BtnUnpack_Click(object sender, RoutedEventArgs e)
+        private void BtnPatch_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.PromptToUnpack();
+            ViewModel.PromptToPatch();
         }
     }
 }
