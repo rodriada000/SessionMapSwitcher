@@ -91,3 +91,7 @@ _This assumes you already unpacked the game and have Session Map Switcher open._
 > NOTE: You only need to select the one `.uasset` file. Map Switcher will know to copy the other required files.
 3. Click `Replace` and the texture will be replaced.
 > NOTE: Map Switcher relies on the texture files to be cooked with the correct folder path to find the correct texture to replace. If the texture is not cooked with the correct path then the texture may be copied to the incorrect location.
+
+## Credits
+* Thanks to dga711 for the EzPz Mod
+* Thanks to [Session modding community](https://discord.gg/YT2z5DU)
