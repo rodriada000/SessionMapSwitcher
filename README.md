@@ -4,7 +4,7 @@ This is a Desktop Application to make switching between Session maps in-game eas
 ![](https://github.com/rodriada000/SessionMapSwitcher/blob/master/docs/images/app_screenshot.png?raw=true "App Screenshot")
 
 ### Features
-* Map Switcher can automatically unpack your Session game for you so you can play custom modded maps and have custom textures within minutes.
+* Map Switcher can download the required patch (thanks to dga711) for Session to play custom modded maps and have custom textures within minutes.
 * Easily load custom maps and switch between maps in-game without having to restart the game everytime you want to play a new map.
 * Import custom maps from the online community using the `Import Map > From Online ...` feature.
 * Easily replace textures with custom ones. Map Switcher will automatically find the correct texture files to replace for you.
@@ -15,24 +15,21 @@ This is a Desktop Application to make switching between Session maps in-game eas
 ## Notes Before Using
 * **NOTE:** You should start the game using Session Map Switcher's `Start Session` button. If Session is already running then close the game and start it from Session Map Switcher instead.
 * **NOTE:** You will have to load the custom map from map switcher when you enter the apartment in-game otherwise the original default map will load after you leave the apartment to go skate.
-* **NOTE:** This tool will make a backup of the original Session map so you can always switch back to playing the map that came with the game. The original map is the first map in the Available Maps list named "Session Default Map - Brooklyn Banks"
-
 
 ## How To Use
 
-### Unpacking The Game
-_Skip this if you already unpacked the game._
+### Patching The Game
+_Skip this if you already patched the game._
 1. Download the [latest release here](https://github.com/rodriada000/SessionMapSwitcher/releases/latest).
 2. Unzip the program anywhere you like.
 3. Open SessionMapSwitcher.exe.
 4. Set the `Path To Session` by clicking the `...` button or pasting the path and pressing `Enter` key. **The path should be the top level folder of the game directory e.g. `C:\Program Files (x86)\Steam\steamapps\common\Session`.** ![](https://github.com/rodriada000/SessionMapSwitcher/blob/master/docs/images/app_after_path_select.png?raw=true "Set Session Path")
-5. Click `Unpack Game` or `Start Session` and you will be prompted to download the required files to unpack. ![](https://github.com/rodriada000/SessionMapSwitcher/blob/master/docs/images/app_pack_detected.png?raw=true "Game Not Unpacked Detected Screen")
+5. Click `Patch With EzPz` and you will be prompted to download the required files to patch the game. ![](https://github.com/rodriada000/SessionMapSwitcher/blob/master/docs/images/app_pack_detected.png?raw=true "Game Not Unpacked Detected Screen")
 > Note: If the program is not running as Administrator then it will ask you to restart the program as administrator first to ensure the unpacking process completes succesfully.
 
 > Note: The download can fail sometimes because the file host is not good. Retry a couple of times if the download fails until it succeeds.  
-6. Let the unpacking process run. It can take anywhere from 5-10 minutes depending on download speeds and your computer speed. You should see a CMD window open while the process is happening.
-7. Map Switcher will output the status of the unpacking process so you know when it is complete. After that you can play custom maps and replace textures.
-> Note: The unpacking process can fail to run the downloaded .bat file if your PC security settings are set too high.
+6. Map Switcher will extract a few files from the game and then open Session EzPz Mod. When this window opens click `Patch` and close the window. 
+7. Map Switcher will output the status of the patching process so you know when it is complete. After that you can play custom maps and replace textures.
 
 
 ### Adding Custom Maps to Play
@@ -93,4 +90,4 @@ _This assumes you already unpacked the game and have Session Map Switcher open._
 2. In Map Switcher click the `...` button inside the `Texture Replacer` section. In the file browse window that opens select the `.uasset` or `.zip` file you downloaded. ![](https://github.com/rodriada000/SessionMapSwitcher/blob/master/docs/images/app_replace_texture.png?raw=true "Replace Textures Example")
 > NOTE: You only need to select the one `.uasset` file. Map Switcher will know to copy the other required files.
 3. Click `Replace` and the texture will be replaced.
-> NOTE: Map Switcher relies on the file name to find the correct texture to replace. If the filename of the texture does not match a texture name in the game then you will get an error saying it could not find the texture to replace.
+> NOTE: Map Switcher relies on the texture files to be cooked with the correct folder path to find the correct texture to replace. If the texture is not cooked with the correct path then the texture may be copied to the incorrect location.
