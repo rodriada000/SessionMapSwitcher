@@ -181,7 +181,7 @@ namespace SessionMapSwitcher.Classes
             ProgressChanged("Starting UnrealPak.exe ...");
 
             List<string> filesToExtract = new List<string>() { "SessionGame/Content/ObjectPlacement/Blueprints/PBP_ObjectPlacementInventory.uexp", "SessionGame/Config/DefaultEngine.ini",
-                                                                "SessionGame/Config/DefaultGame.ini", "SessionGame/Content/Art/Env/NYC/NYC01_Persistent*" };
+                                                                "SessionGame/Config/DefaultGame.ini" };
 
             foreach (string file in filesToExtract)
             {
@@ -268,11 +268,11 @@ namespace SessionMapSwitcher.Classes
                 DownloadUtils.ProgressChanged += DownloadUtils_ProgressChanged; ;
 
                 // visit github to get current anon file download link
-                ProgressChanged("Downloading .zip file - getting download url from git ...");
+                ProgressChanged("Downloading UnrealPak .zip file - getting download url from git ...");
                 string downloadUrl = DownloadUtils.GetTxtDocumentFromGitHubRepo(UnpackGitHubUrl);
 
                 // visit anon file to get direct file download link from html page
-                ProgressChanged("Downloading .zip file -  scraping direct download link download page ...");
+                ProgressChanged("Downloading UnrealPak .zip file -  scraping direct download link download page ...");
                 string directLinkToZip = DownloadUtils.GetDirectDownloadLinkFromAnonPage(downloadUrl);
 
                 if (directLinkToZip == "")
@@ -282,8 +282,7 @@ namespace SessionMapSwitcher.Classes
                 }
 
                 // download to Paks folder
-                ProgressChanged("Downloading .zip file -  downloading actual file ...");
-
+                ProgressChanged("Downloading UnrealPak .zip file -  downloading actual file ...");
                 var downloadTask = DownloadUtils.DownloadFileToFolderAsync(directLinkToZip, $"{PathToPakFolder}\\{DownloadedZipFileName}", System.Threading.CancellationToken.None);
                 downloadTask.Wait();
             }

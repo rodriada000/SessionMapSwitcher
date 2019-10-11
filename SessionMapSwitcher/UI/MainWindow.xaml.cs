@@ -55,28 +55,6 @@ namespace SessionMapSwitcher
             }
         }
 
-        private void BackupMapFilesInBackground()
-        {
-            ViewModel.UserMessage = "Backing Up Original Session Map ...";
-            ViewModel.InputControlsEnabled = false;
-
-            bool didBackup = false;
-
-            Task t = Task.Run(() =>
-            {
-                didBackup = ViewModel.BackupOriginalMapFiles();
-            });
-
-            t.ContinueWith((antecedent) =>
-            {
-                if (didBackup)
-                {
-                    ViewModel.UserMessage = "";
-                }
-                ViewModel.InputControlsEnabled = true;
-            });
-        }
-
         private void BtnStartGame_Click(object sender, RoutedEventArgs e)
         {
             if (ViewModel.IsSessionRunning())
@@ -114,7 +92,6 @@ namespace SessionMapSwitcher
             });
         }
 
-
         private void BtnLoadMap_Click(object sender, RoutedEventArgs e)
         {
             // double check the controls are disabled and should not load (e.g. when double clicking map in list)
@@ -140,16 +117,6 @@ namespace SessionMapSwitcher
             if (EzPzPatcher.IsGamePatched() == false)
             {
                 MessageBoxResult result = System.Windows.MessageBox.Show("Session has not been patched yet. Click 'Patch With EzPz' to patch the game.", "Notice!", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            if (ViewModel.IsOriginalMapFilesBackedUp() == false)
-            {
-                System.Windows.MessageBox.Show("The original Session game map files have not been backed up yet. Click OK to backup the files then click 'Load Map' again",
-                                                "Notice!",
-                                                MessageBoxButton.OK,
-                                                MessageBoxImage.Information);
-                BackupMapFilesInBackground();
                 return;
             }
 
@@ -227,7 +194,6 @@ namespace SessionMapSwitcher
                 ViewModel.RefreshGameSettingsFromIniFiles();
                 ViewModel.GetObjectCountFromFile();
                 ReloadAvailableMapsInBackground();
-                BackupMapFilesInBackground();
             }
             else
             {
