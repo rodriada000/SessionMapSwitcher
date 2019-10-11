@@ -212,7 +212,7 @@ namespace SessionMapSwitcher.ViewModels
 
         public MainWindowViewModel()
         {
-            SessionPathTextInput = AppSettingsUtil.GetAppSetting(SettingKey.PathToSession);
+            SessionPathTextInput = SessionPath.ToSession;
             ShowInvalidMapsIsChecked = AppSettingsUtil.GetAppSetting(SettingKey.ShowInvalidMaps).Equals("true", StringComparison.OrdinalIgnoreCase);
             UserMessage = "";
             InputControlsEnabled = true;
