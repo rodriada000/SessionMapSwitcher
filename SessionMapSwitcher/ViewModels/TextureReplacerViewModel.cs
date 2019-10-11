@@ -84,34 +84,16 @@ namespace SessionMapSwitcher.ViewModels
                 return;
             }
 
-            FileInfo textureFileInfo = null;
 
             if (IsPathToCompressedFile)
             {
-                Directory.CreateDirectory(PathToTempFolder);
-
-                // extract to temp location
-                BoolWithMessage didExtract = FileUtils.ExtractCompressedFile(PathToFile, PathToTempFolder);
-                if (didExtract.Result == false)
-                {
-                    MessageChanged?.Invoke($"Failed to extract file: {didExtract.Message}");
-                    return;
-                }
-
-                string foundTextureName = FindTextureFileInUnzippedTempFolder();
-
-                if (foundTextureName == "")
-                {
-                    MessageChanged?.Invoke($"Failed to find a .uasset file inside the extracted folders.");
-                    return;
-                }
-
-                textureFileInfo = new FileInfo(foundTextureName);
+                ReplaceTexturesFromCompressedFile();
+                return;
             }
-            else
-            {
-                textureFileInfo = new FileInfo(PathToFile);
-            }
+
+
+            FileInfo textureFileInfo = null;
+            textureFileInfo = new FileInfo(PathToFile);
 
             string textureFileName = textureFileInfo.NameWithoutExtension();
 
@@ -141,15 +123,6 @@ namespace SessionMapSwitcher.ViewModels
 
                 // find and copy files in source dir that match the .uasset name
                 CopyNewTextureFilesToGame(textureFileInfo, targetFolder, originalTextureName);
-
-                // delete temp folder with unzipped files
-                if (IsPathToCompressedFile)
-                {
-                    if (Directory.Exists(PathToTempFolder))
-                    {
-                        Directory.Delete(PathToTempFolder, true);
-                    }
-                }
             }
             catch (Exception e)
             {
@@ -158,6 +131,147 @@ namespace SessionMapSwitcher.ViewModels
             }
 
             MessageChanged?.Invoke($"Successfully replaced textures for {textureFileInfo.Name}!");
+        }
+
+        private void ReplaceTexturesFromCompressedFile()
+        {
+            FileInfo textureFileInfo = null;
+            DeleteTempZipFolder();
+            Directory.CreateDirectory(PathToTempFolder);
+
+
+            // extract to temp location
+            BoolWithMessage didExtract = FileUtils.ExtractCompressedFile(PathToFile, PathToTempFolder);
+            if (didExtract.Result == false)
+            {
+                MessageChanged?.Invoke($"Failed to extract file: {didExtract.Message}");
+                return;
+            }
+
+            List<string> foundTextures = new List<string>();
+
+            string foundTextureName = FindTextureFileInUnzippedTempFolder(dirToSearch: PathToTempFolder, filesToExclude: foundTextures);
+
+            // validate at least one texture file is in the zip
+            if (foundTextureName == "")
+            {
+                MessageChanged?.Invoke($"Failed to find a .uasset file inside the extracted folders.");
+                return;
+            }
+
+            do
+            {
+                foundTextures.Add(foundTextureName);
+
+                textureFileInfo = new FileInfo(foundTextureName);
+                string textureFileName = textureFileInfo.NameWithoutExtension();
+
+
+                // find which folder to copy to based on file name
+                string originalTextureName = GetTextureNameFromFile(textureFileInfo);
+
+                string targetFolder = TexturePaths.Where(t => t.TextureName == originalTextureName).Select(t => t.RelativePath).FirstOrDefault();
+
+                if (String.IsNullOrEmpty(targetFolder))
+                {
+                    // could not find folder path based on name in cooked asset file so look up based on file name
+                    targetFolder = TexturePaths.Where(t => t.TextureName == textureFileName).Select(t => t.RelativePath).FirstOrDefault();
+                }
+
+                if (String.IsNullOrEmpty(targetFolder))
+                {
+                    foundTextureName = FindTextureFileInUnzippedTempFolder(dirToSearch: PathToTempFolder, filesToExclude: foundTextures);
+                    break;
+                }
+
+
+                targetFolder = $"{SessionPath.ToContent}\\{targetFolder}";
+
+                try
+                {
+                    DeleteCurrentTextureFiles(originalTextureName, targetFolder);
+
+                    // find and copy files in source dir that match the .uasset name
+                    CopyNewTextureFilesToGame(textureFileInfo, targetFolder, originalTextureName);
+                }
+                catch (Exception e)
+                {
+                    MessageChanged?.Invoke($"Failed to copy texture files: {e.Message}");
+                    return;
+                }
+
+                MessageChanged?.Invoke($"Successfully replaced textures for {textureFileInfo.Name}!");
+
+
+                foundTextureName = FindTextureFileInUnzippedTempFolder(dirToSearch: PathToTempFolder, filesToExclude: foundTextures);
+            } while (foundTextureName != "");
+
+
+            try
+            {
+                // copy other files to Content
+                if (UnzippedTempFolderHasOtherFolders())
+                {
+                    CopyOtherSubfoldersInTempDir(filesToExclude: foundTextures);
+                }
+
+                DeleteTempZipFolder();
+            }
+            catch (Exception e)
+            {
+                MessageChanged?.Invoke($"Failed to copy texture files: {e.Message}");
+                return;
+            }
+        }
+
+        private void DeleteTempZipFolder()
+        {
+            // delete temp folder with unzipped files
+            if (Directory.Exists(PathToTempFolder))
+            {
+                Directory.Delete(PathToTempFolder, true);
+            }
+        }
+
+        /// <summary>
+        /// Copies other folders (not stock game folders) from unzipped temp folder into games Content folder
+        /// </summary>
+        private void CopyOtherSubfoldersInTempDir(List<string> filesToExclude)
+        {
+            foreach (string folder in Directory.GetDirectories(PathToTempFolder))
+            {
+                DirectoryInfo folderInfo = new DirectoryInfo(folder);
+
+                if (ComputerImportViewModel.AllStockFoldersToExclude.Contains(folderInfo.Name) == false)
+                {
+                    List<string> fileNames = filesToExclude.Select(s =>
+                    {
+                        int index = s.LastIndexOf('\\');
+                        return s.Substring(index + 1).Replace(".uasset" , "");
+                    }).ToList();
+
+
+                    FileUtils.CopyDirectoryRecursively(folder, $"{SessionPath.ToContent}\\{folderInfo.Name}", filesToExclude: fileNames, foldersToExclude: null, doContainsSearch: true);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Return true if unzipped temp folder has subfolders other than the games stock folders e.g. 'Customization' folder
+        /// </summary>
+        private bool UnzippedTempFolderHasOtherFolders()
+        {
+            foreach (string folder in Directory.GetDirectories(PathToTempFolder))
+            {
+                DirectoryInfo folderInfo = new DirectoryInfo(folder);
+
+                if (ComputerImportViewModel.AllStockFoldersToExclude.Contains(folderInfo.Name) == false)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private string GetTextureNameFromFile(FileInfo textureFile)
@@ -172,7 +286,7 @@ namespace SessionMapSwitcher.ViewModels
                     return "";
                 }
 
-                return pathInFile.Substring(index+1);
+                return pathInFile.Substring(index + 1);
             }
             catch (Exception)
             {
@@ -305,8 +419,13 @@ namespace SessionMapSwitcher.ViewModels
             return true;
         }
 
-        private string FindTextureFileInUnzippedTempFolder(string dirToSearch = null)
+        private string FindTextureFileInUnzippedTempFolder(string dirToSearch = null, List<string> filesToExclude = null)
         {
+            if (filesToExclude == null)
+            {
+                filesToExclude = new List<string>();
+            }
+
             if (dirToSearch == null)
             {
                 dirToSearch = PathToTempFolder;
@@ -314,7 +433,7 @@ namespace SessionMapSwitcher.ViewModels
 
             foreach (string fileName in Directory.GetFiles(dirToSearch))
             {
-                if (fileName.EndsWith(".uasset"))
+                if (fileName.EndsWith(".uasset") && filesToExclude.Contains(fileName) == false)
                 {
                     return fileName;
                 }
@@ -322,7 +441,7 @@ namespace SessionMapSwitcher.ViewModels
 
             foreach (string folder in Directory.GetDirectories(dirToSearch))
             {
-                string fileName = FindTextureFileInUnzippedTempFolder(folder);
+                string fileName = FindTextureFileInUnzippedTempFolder(folder, filesToExclude);
                 if (fileName != "")
                 {
                     return fileName;
