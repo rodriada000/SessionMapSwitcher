@@ -2,8 +2,10 @@
 using SessionMapSwitcher.Utils;
 using System;
 using System.Diagnostics;
+using System.Reflection;
 using System.Security.Principal;
 using System.Windows;
+using System.Windows.Input;
 
 namespace SessionMapSwitcher
 {
@@ -61,7 +63,15 @@ namespace SessionMapSwitcher
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            SessionPath.ToSession = AppSettingsUtil.GetAppSetting(SettingKey.PathToSession);
+            string sessionPath = AppSettingsUtil.GetAppSetting(SettingKey.PathToSession);
+
+            if (string.IsNullOrEmpty(sessionPath))
+            {
+                sessionPath = SessionPath.GetPathFromRegistry();
+            }
+
+            SessionPath.ToSession = sessionPath;
         }
+
     }
 }
