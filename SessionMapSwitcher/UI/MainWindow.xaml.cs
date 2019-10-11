@@ -79,7 +79,7 @@ namespace SessionMapSwitcher
             LoadMapInBackgroundAndContinueWith((antecedent) =>
             {
                 // validate and set game settings
-                bool didSet = ViewModel.WriteGameSettingsToFile();
+                bool didSet = ViewModel.UpdateGameSettings();
 
                 if (didSet == false)
                 {
@@ -191,8 +191,7 @@ namespace SessionMapSwitcher
 
             if (SessionPath.IsSessionPathValid())
             {
-                ViewModel.RefreshGameSettingsFromIniFiles();
-                ViewModel.GetObjectCountFromFile();
+                ViewModel.RefreshGameSettings();
                 ReloadAvailableMapsInBackground();
             }
             else
@@ -237,7 +236,7 @@ namespace SessionMapSwitcher
 
             ViewModel.InputControlsEnabled = false;
 
-            bool didSet = ViewModel.WriteGameSettingsToFile();
+            bool didSet = ViewModel.UpdateGameSettings();
 
             ViewModel.InputControlsEnabled = true;
 

@@ -25,5 +25,20 @@ namespace SessionMapSwitcher.Classes
             Result = result;
             Message = "";
         }
+
+        public static BoolWithMessage False(string message)
+        {
+            return new BoolWithMessage(false, message);
+        }
+
+        public static BoolWithMessage True(string message)
+        {
+            return new BoolWithMessage(true, message);
+        }
+
+        public static BoolWithMessage True()
+        {
+            return new BoolWithMessage(true);
+        }
     }
 }

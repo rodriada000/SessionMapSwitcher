@@ -225,11 +225,38 @@ namespace SessionMapSwitcher.ViewModels
                 MapName = "Session Default Map - Brooklyn Banks"
             };
 
-            RefreshGameSettingsFromIniFiles();
-
+            RefreshGameSettings();
             SetCurrentlyLoadedMap();
+        }
 
-            GetObjectCountFromFile();
+        internal void RefreshGameSettings()
+        {
+            BoolWithMessage result = GameSettingsManager.RefreshGameSettingsFromIniFiles();
+
+            if (result.Result == false)
+            {
+                UserMessage = result.Message;
+            }
+
+            ObjectCountText = GameSettingsManager.ObjectCount.ToString();
+            GravityText = GameSettingsManager.Gravity.ToString();
+            SkipMovieIsChecked = GameSettingsManager.SkipIntroMovie;
+        }
+
+        internal bool UpdateGameSettings()
+        {
+            BoolWithMessage result = GameSettingsManager.WriteGameSettingsToFile(GravityText, ObjectCountText, SkipMovieIsChecked);
+
+            if (result.Result)
+            {
+                RefreshGameSettings();
+            }
+            else
+            {
+                UserMessage = result.Message;
+            }
+
+            return result.Result;
         }
 
         /// <summary>
@@ -500,7 +527,7 @@ namespace SessionMapSwitcher.ViewModels
                         fullTargetFilePath += $"\\{fi.Name}";
                     }
 
-                    
+
 
                     File.Copy(fileName, fullTargetFilePath, overwrite: true);
                 }
@@ -583,7 +610,7 @@ namespace SessionMapSwitcher.ViewModels
                     selectedMapPath = $"/Game/Art/Env/NYC/{map.MapName}";
                 }
 
-                UpdateGameDefaultMapIniSetting(selectedMapPath);
+                GameSettingsManager.UpdateGameDefaultMapIniSetting(selectedMapPath);
 
                 SetCurrentlyLoadedMap();
 
@@ -610,7 +637,7 @@ namespace SessionMapSwitcher.ViewModels
             {
                 DeleteAllMapFilesFromNYCFolder();
 
-                UpdateGameDefaultMapIniSetting("/Game/Tutorial/Intro/MAP_EntryPoint");
+                GameSettingsManager.UpdateGameDefaultMapIniSetting("/Game/Tutorial/Intro/MAP_EntryPoint");
 
                 SetCurrentlyLoadedMap();
 
@@ -620,35 +647,6 @@ namespace SessionMapSwitcher.ViewModels
             catch (Exception e)
             {
                 UserMessage = $"Failed to load Original Session Game Map : {e.Message}";
-            }
-        }
-
-        private bool UpdateGameDefaultMapIniSetting(string defaultMapValue)
-        {
-            if (SessionPath.IsSessionPathValid() == false)
-            {
-                return false;
-            }
-
-            IniFile iniFile = new IniFile(SessionPath.ToUserEngineIniFile);
-            return iniFile.WriteString("/Script/EngineSettings.GameMapsSettings", "GameDefaultMap", defaultMapValue);
-        }
-
-        private string GetGameDefaultMapIniSetting()
-        {
-            if (SessionPath.IsSessionPathValid() == false)
-            {
-                return "";
-            }
-
-            try
-            {
-                IniFile iniFile = new IniFile(SessionPath.ToDefaultEngineIniFile);
-                return iniFile.ReadString("/Script/EngineSettings.GameMapsSettings", "GameDefaultMap");
-            }
-            catch (Exception)
-            {
-                return "";
             }
         }
 
@@ -670,9 +668,9 @@ namespace SessionMapSwitcher.ViewModels
 
         internal void SetCurrentlyLoadedMap()
         {
-            string iniValue = GetGameDefaultMapIniSetting();
+            string iniValue = GameSettingsManager.GetGameDefaultMapIniSetting();
 
-            if (iniValue == "/Game/Tutorial/Intro/MAP_EntryPoint.MAP_EntryPoint")
+            if (iniValue == "/Game/Tutorial/Intro/MAP_EntryPoint")
             {
                 CurrentlyLoadedMapName = _defaultSessionMap.MapName;
             }
@@ -727,236 +725,8 @@ namespace SessionMapSwitcher.ViewModels
             }
         }
 
-        public void RefreshGameSettingsFromIniFiles()
-        {
-            if (SessionPath.IsSessionPathValid() == false)
-            {
-                return;
-            }
 
-            try
-            {
-                IniFile engineFile = new IniFile(SessionPath.ToDefaultEngineIniFile);
-                GravityText = engineFile.ReadString("/Script/Engine.PhysicsSettings", "DefaultGravityZ");
-
-                if (String.IsNullOrWhiteSpace(GravityText))
-                {
-                    GravityText = "-980";
-                }
-
-                IniFile gameFile = new IniFile(SessionPath.ToDefaultGameIniFile);
-                SkipMovieIsChecked = gameFile.ReadBoolean("/Script/UnrealEd.ProjectPackagingSettings", "bSkipMovies");
-            }
-            catch (Exception e)
-            {
-                UserMessage = $"Failed to get game settings: {e.Message}";
-                GravityText = "-980";
-                SkipMovieIsChecked = true;
-            }
-        }
-
-        /// <summary>
-        /// writes the game settings to the correct files.
-        /// </summary>
-        /// <returns> true if settings updated; false otherwise. </returns>
-        public bool WriteGameSettingsToFile()
-        {
-            if (SessionPath.IsSessionPathValid() == false)
-            {
-                return false;
-            }
-
-            // remove trailing 0's from float value for it to parse correctly
-            int indexOfDot = GravityText.IndexOf(".");
-            if (indexOfDot >= 0)
-            {
-                GravityText = GravityText.Substring(0, indexOfDot);
-            }
-
-            if (float.TryParse(GravityText, out _) == false)
-            {
-                UserMessage = "Invalid Gravity setting.";
-                return false;
-            }
-
-            if (int.TryParse(ObjectCountText, out int parsedObjCount) == false)
-            {
-                UserMessage = "Invalid Object Count setting.";
-                return false;
-            }
-
-            if (parsedObjCount <= 0 || parsedObjCount > 65535)
-            {
-                UserMessage = "Object Count must be between 0 and 65535.";
-                return false;
-            }
-
-            SetObjectCountInFile();
-
-            try
-            {
-                IniFile engineFile = new IniFile(SessionPath.ToDefaultEngineIniFile);
-                engineFile.WriteString("/Script/Engine.PhysicsSettings", "DefaultGravityZ", GravityText);
-
-                IniFile gameFile = new IniFile(SessionPath.ToDefaultGameIniFile);
-
-                if (SkipMovieIsChecked)
-                {
-                    // delete the two StartupMovies from .ini
-                    if (gameFile.KeyExists("/Script/MoviePlayer.MoviePlayerSettings", "+StartupMovies"))
-                    {
-                        gameFile.DeleteKey("/Script/MoviePlayer.MoviePlayerSettings", "+StartupMovies");
-                    }
-                    if (gameFile.KeyExists("/Script/MoviePlayer.MoviePlayerSettings", "+StartupMovies"))
-                    {
-                        gameFile.DeleteKey("/Script/MoviePlayer.MoviePlayerSettings", "+StartupMovies");
-                    }
-                }
-                else
-                {
-                    if (gameFile.KeyExists("/Script/MoviePlayer.MoviePlayerSettings", "+StartupMovies") == false)
-                    {
-                        gameFile.WriteString("/Script/MoviePlayer.MoviePlayerSettings", "+StartupMovies", "UE4_Moving_Logo_720\n+StartupMovies=IntroLOGO_720_30");
-                    }
-                }
-
-                gameFile.WriteString("/Script/UnrealEd.ProjectPackagingSettings", "bSkipMovies", SkipMovieIsChecked.ToString());
-            }
-            catch (Exception e)
-            {
-                UserMessage = $"Failed to update game settings: {e.Message}";
-                return false;
-            }
-
-
-
-            return true;
-        }
-
-
-        /// <summary>
-        /// Get the Object Placement count from the file (only reads the first address) and set <see cref="ObjectCountText"/>
-        /// </summary>
-        internal void GetObjectCountFromFile()
-        {
-            if (SessionPath.IsSessionPathValid() == false)
-            {
-                return;
-            }
-
-            try
-            {
-                string objectFilePath = $"{SessionPath.ToSession}\\SessionGame\\Content\\ObjectPlacement\\Blueprints\\PBP_ObjectPlacementInventory.uexp";
-                using (var stream = new FileStream(objectFilePath, FileMode.Open, FileAccess.Read))
-                {
-                    stream.Position = 351;
-                    int byte1 = stream.ReadByte();
-                    int byte2 = stream.ReadByte();
-                    byte[] byteArray;
-
-                    // convert two bytes to a hex string. if the second byte is less than 16 than swap the bytes due to reasons....
-                    if (byte2 == 0)
-                    {
-                        byteArray = new byte[] { 0x00, Byte.Parse(byte1.ToString()) };
-                    }
-                    else if (byte2 < 16)
-                    {
-                        byteArray = new byte[] { Byte.Parse(byte2.ToString()), Byte.Parse(byte1.ToString()) };
-                    }
-                    else
-                    {
-                        byteArray = new byte[] { Byte.Parse(byte1.ToString()), Byte.Parse(byte2.ToString()) };
-                    }
-                    string hexString = BitConverter.ToString(byteArray).Replace("-", "");
-
-                    // convert the hex string to base 10 int value
-                    int intAgain = int.Parse(hexString, System.Globalization.NumberStyles.HexNumber);
-                    ObjectCountText = intAgain.ToString();
-                }
-            }
-            catch (Exception e)
-            {
-                UserMessage = $"Failed to get object count: {e.Message}";
-            }
-        }
-
-        /// <summary>
-        /// Updates the PBP_ObjectPlacementInventory.uexp file with the new object count value (every placeable object is updated with new count).
-        /// This works by converting <see cref="ObjectCountText"/> to bytes and writing the bytes to specific addresses in the file.
-        /// </summary>
-        internal void SetObjectCountInFile()
-        {
-            if (SessionPath.IsSessionPathValid() == false)
-            {
-                return;
-            }
-
-            string objectFilePath = $"{SessionPath.ToSession}\\SessionGame\\Content\\ObjectPlacement\\Blueprints\\PBP_ObjectPlacementInventory.uexp";
-
-            // this is a list of addresses where the item count for placeable objects are stored in the .uexp file
-            // ... if this file is modified then these addresses will NOT match so it is important to not mod/change the PBP_ObjectPlacementInventory file (until further notice...)
-            List<int> addresses = new List<int>() { 351, 615, 681, 747, 879, 945, 1011, 1077, 1143, 1209, 1275, 1341, 1407, 1473, 1605 };
-
-            try
-            {
-                using (var stream = new FileStream(objectFilePath, FileMode.Open, FileAccess.ReadWrite))
-                {
-                    // convert the base 10 int into a hex string (e.g. 10 => 'A' or 65535 => 'FF')
-                    string hexValue = int.Parse(ObjectCountText).ToString("X");
-
-                    // convert the hext string into a byte array that will be written to the file
-                    byte[] bytes = StringToByteArray(hexValue);
-
-                    if (hexValue.Length == 3)
-                    {
-                        // swap bytes around for some reason when the hex string is only 3 characters long... big-endian little-endian??
-                        byte temp = bytes[1];
-                        bytes[1] = bytes[0];
-                        bytes[0] = temp;
-                    }
-
-                    // loop over every address so every placeable object is updated with new item count
-                    foreach (int fileAddress in addresses)
-                    {
-                        stream.Position = fileAddress;
-                        stream.WriteByte(bytes[0]);
-
-                        // when object count is less than 16 than the byte array will only have 1 byte so write null in next byte position
-                        if (bytes.Length > 1)
-                        {
-                            stream.WriteByte(bytes[1]);
-                        }
-                        else
-                        {
-                            stream.WriteByte(0x00);
-                        }
-                    }
-
-                    stream.Flush(); // ensure file is written to
-                }
-            }
-            catch (Exception e)
-            {
-                UserMessage = $"Failed to set object count: {e.Message}";
-            }
-        }
-
-        private static byte[] StringToByteArray(String hex)
-        {
-            // reference: https://stackoverflow.com/questions/311165/how-do-you-convert-a-byte-array-to-a-hexadecimal-string-and-vice-versa
-
-            if (hex.Length % 2 != 0)
-            {
-                // pad with '0' for odd length strings like 'A' so it becomes '0A' or '1A4' => '01A4'
-                hex = '0' + hex;
-            }
-
-            int numChars = hex.Length;
-            byte[] bytes = new byte[numChars / 2];
-            for (int i = 0; i < numChars; i += 2)
-                bytes[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
-            return bytes;
-        }
+        #region Methods related to EzPz Patching
 
         private void Patch_ProgressChanged(string message)
         {
@@ -1029,6 +799,8 @@ namespace SessionMapSwitcher.ViewModels
 
             InputControlsEnabled = true;
         }
+
+        #endregion
     }
 
 }
