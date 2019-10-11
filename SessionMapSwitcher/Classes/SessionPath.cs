@@ -68,6 +68,14 @@ namespace SessionMapSwitcher.Classes
             }
         }
 
+        public static string ToUserEngineIniFile
+        {
+            get
+            {
+                return $"{ToConfig}\\UserEngine.ini";
+            }
+        }
+
         public static string ToDefaultGameIniFile
         {
             get
@@ -107,7 +115,7 @@ namespace SessionMapSwitcher.Classes
         {
             get
             {
-                return $"{ToSessionGame}\\Binaries\\Win64\\SessionGame-Win64-Shipping.exe";
+                return $"{ToSession}\\SessionGame.exe";
             }
         }
 

@@ -165,10 +165,12 @@ namespace SessionMapSwitcher.Classes
 
             using (Process proc = new Process())
             {
-                proc.StartInfo.WorkingDirectory = this.PathToPakFolder;
-                proc.StartInfo.FileName = $"{this.PathToPakFolder}\\{EzPzExeName}";
-                proc.StartInfo.Arguments = $"{this.PathToSession}";
-                proc.StartInfo.CreateNoWindow = false;
+                proc.StartInfo.UseShellExecute = true;
+                proc.StartInfo.WorkingDirectory = @"C:\Windows\System32";
+                proc.StartInfo.FileName = @"C:\Windows\System32\cmd.exe";
+                proc.StartInfo.Arguments = $"/C \"\"{this.PathToPakFolder}\\{EzPzExeName}\" \"{this.PathToSession}\"\"";
+                proc.StartInfo.CreateNoWindow = true;
+                proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
                 proc.Start();
                 proc.WaitForExit();
             }
@@ -306,6 +308,14 @@ namespace SessionMapSwitcher.Classes
         private void DownloadUtils_ProgressChanged(long? totalFileSize, long totalBytesDownloaded, double? progressPercentage)
         {
             ProgressChanged($"Downloading .zip file -  {(double)totalBytesDownloaded / 1000000:0.00} / {(double)totalFileSize / 1000000:0.00} MB | {progressPercentage:0.00}% Complete");
+        }
+
+        /// <summary>
+        /// Checks if EzPz has been ran by looking for the UserEngine.ini file
+        /// </summary>
+        public static bool IsGamePatched()
+        {
+            return File.Exists($"{SessionPath.ToConfig}\\UserEngine.ini");
         }
     }
 }
