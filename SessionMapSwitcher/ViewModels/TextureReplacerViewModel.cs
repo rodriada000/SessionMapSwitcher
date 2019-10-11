@@ -65,7 +65,7 @@ namespace SessionMapSwitcher.ViewModels
         {
             using (OpenFileDialog fileBrowserDialog = new OpenFileDialog())
             {
-                fileBrowserDialog.Filter = "uasset file (*.uasset)|*.uasset|Zip files (*.zip)|*.zip|Rar files (*.rar)|*.rar|All files (*.*)|*.*";
+                fileBrowserDialog.Filter = "All files (*.*)|*.*|uasset file (*.uasset)|*.uasset|Zip files (*.zip)|*.zip|Rar files (*.rar)|*.rar";
                 fileBrowserDialog.Title = "Select .uasset Texture File, .zip, or .rar File Containing Texture Files";
                 DialogResult result = fileBrowserDialog.ShowDialog();
                 if (result == DialogResult.OK)
