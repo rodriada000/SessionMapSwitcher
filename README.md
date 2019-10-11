@@ -94,4 +94,4 @@ _This assumes you already unpacked the game and have Session Map Switcher open._
 
 ## Credits
 * Thanks to dga711 for the EzPz Mod
-* Thanks to [Session modding community](https://discord.gg/YT2z5DU)
+* Thanks to [Session modding community](https://discord.gg/XBz5s7) & [Illusory Modding](https://discord.gg/3JAe2K)
