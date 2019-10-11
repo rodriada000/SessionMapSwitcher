@@ -95,6 +95,7 @@
     <Compile Include="Classes\Events\MapImportedEventArgs.cs" />
     <Compile Include="Classes\EzPzPatcher.cs" />
     <Compile Include="Classes\FileInfoExtensionMethods.cs" />
+    <Compile Include="Classes\GameSettingsManager.cs" />
     <Compile Include="Classes\MetaDataManager.cs" />
     <Compile Include="Classes\SessionPath.cs" />
     <Compile Include="Classes\ThreadFriendlyObservableCollection.cs" />

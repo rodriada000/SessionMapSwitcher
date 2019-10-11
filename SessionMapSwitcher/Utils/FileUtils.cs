@@ -14,14 +14,25 @@ namespace SessionMapSwitcher.Utils
 {
     public class FileUtils
     {
-        internal static void CopyDirectoryRecursively(string sourceDirName, string destDirName, List<string> filesToExclude, List<string> foldersToInclude)
+        internal static void CopyDirectoryRecursively(string sourceDirName, string destDirName, List<string> filesToExclude, List<string> foldersToExclude, bool doContainsSearch)
         {
+            if (filesToExclude == null)
+            {
+                filesToExclude = new List<string>();
+            }
+
+            if (foldersToExclude == null)
+            {
+                foldersToExclude = new List<string>();
+            }
+
             CopySettings settings = new CopySettings()
             {
                 IsMovingFiles = false,
                 CopySubFolders = true,
                 ExcludeFiles = filesToExclude,
-                ExcludeFolders = foldersToInclude
+                ExcludeFolders = foldersToExclude,
+                ContainsSearchForFiles = doContainsSearch
             };
 
             CopyOrMoveDirectoryRecursively(sourceDirName, destDirName, settings);
@@ -33,6 +44,7 @@ namespace SessionMapSwitcher.Utils
             {
                 IsMovingFiles = false,
                 CopySubFolders = true,
+                ContainsSearchForFiles = false
             };
 
             CopyOrMoveDirectoryRecursively(sourceDirName, destDirName, settings);
@@ -45,7 +57,8 @@ namespace SessionMapSwitcher.Utils
                 IsMovingFiles = true,
                 CopySubFolders = true,
                 ExcludeFiles = filesToExclude,
-                ExcludeFolders = foldersToInclude
+                ExcludeFolders = foldersToInclude,
+                ContainsSearchForFiles = false
             };
 
             CopyOrMoveDirectoryRecursively(sourceDirName, destDirName, settings);
@@ -57,6 +70,7 @@ namespace SessionMapSwitcher.Utils
             {
                 IsMovingFiles = true,
                 CopySubFolders = true,
+                ContainsSearchForFiles = false
             };
 
             CopyOrMoveDirectoryRecursively(sourceDirName, destDirName, settings);
@@ -85,19 +99,19 @@ namespace SessionMapSwitcher.Utils
                     + sourceDirName);
             }
 
-            // If the destination directory doesn't exist, create it.
-            if (!Directory.Exists(destDirName))
-            {
-                Directory.CreateDirectory(destDirName);
-            }
-
             // Get the files in the directory and copy them to the new location.
             FileInfo[] files = dir.GetFiles();
             foreach (FileInfo file in files)
             {
-                if (settings.ExcludeFiles.Contains(file.Name))
+                if (settings.ExcludeFile(file))
                 {
                     continue; // skip file as it is excluded
+                }
+
+                // If the destination directory doesn't exist, create it.
+                if (!Directory.Exists(destDirName))
+                {
+                    Directory.CreateDirectory(destDirName);
                 }
 
                 string temppath = Path.Combine(destDirName, file.Name);

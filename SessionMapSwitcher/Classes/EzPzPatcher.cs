@@ -21,6 +21,10 @@ namespace SessionMapSwitcher.Classes
 
         public event PatchCompleteDelegate PatchCompleted;
 
+        public bool SkipEzPzPatchStep = false;
+
+        public bool SkipUnrealPakStep = false;
+
         public string PathToSession;
 
         public string PathToPakFolder
@@ -34,6 +38,11 @@ namespace SessionMapSwitcher.Classes
 
                 return $"{PathToSession}\\SessionGame\\Content\\Paks";
             }
+        }
+
+        public string PathToDownloadedZip
+        {
+            get => $"{PathToPakFolder}\\{DownloadedZipFileName}";
         }
 
         /// <summary>
@@ -76,7 +85,7 @@ namespace SessionMapSwitcher.Classes
             // download the zip file in the background
             Task t = Task.Factory.StartNew(() =>
             {
-                if (IsEzPzExeDownloaded() == false)
+                if (IsEzPzExeDownloaded() == false && SkipEzPzPatchStep == false)
                 {
                     didEzPzDownload = DownloadEzPzModZip();
                 }
@@ -85,7 +94,7 @@ namespace SessionMapSwitcher.Classes
                     didEzPzDownload = true;
                 }
 
-                if (IsUnpackZipDownloaded() == false)
+                if (IsUnpackZipDownloaded() == false && SkipUnrealPakStep == false)
                 {
                     didUnrealPakDownload = DownloadUnrealPackZip();
                 }
@@ -103,18 +112,29 @@ namespace SessionMapSwitcher.Classes
                     return;
                 }
 
+
                 ProgressChanged("Extracting .zip files ...");
 
-                BoolWithMessage isUnrealPakExtracted = FileUtils.ExtractZipFile($"{PathToPakFolder}\\{DownloadedZipFileName}", PathToPakFolder);
+                BoolWithMessage isUnrealPakExtracted = BoolWithMessage.True();
+                if (SkipUnrealPakStep == false)
+                {
+                    isUnrealPakExtracted = FileUtils.ExtractZipFile(PathToDownloadedZip, PathToPakFolder);
+                }
 
-                BoolWithMessage isEzPzExtracted = new BoolWithMessage(true);
-                if (IsEzPzExeDownloaded() == false)
+
+
+                BoolWithMessage isEzPzExtracted = BoolWithMessage.True();
+                if (IsEzPzExeDownloaded() == false && SkipEzPzPatchStep == false)
                 {
                     isEzPzExtracted = FileUtils.ExtractZipFile($"{PathToPakFolder}\\{DownloadedPatchFileName}", PathToPakFolder);
                 }
 
                 if (isUnrealPakExtracted.Result == false)
                 {
+                    if (IsUnpackZipDownloaded())
+                    {
+                        File.Delete(PathToDownloadedZip);
+                    }
                     ProgressChanged($"Failed to unzip file: {isUnrealPakExtracted.Message}. Cannot continue.");
                     PatchCompleted(false);
                     return;
@@ -133,9 +153,15 @@ namespace SessionMapSwitcher.Classes
                 {
                     try
                     {
-                        ExtractGameFilesFromPak(); // this will wait for UnrealPak to finish
+                        if (SkipUnrealPakStep == false)
+                        {
+                            ExtractGameFilesFromPak(); // this will wait for UnrealPak to finish
+                        }
 
-                        LaunchEzPzMod();
+                        if (SkipEzPzPatchStep == false)
+                        {
+                            LaunchEzPzMod();
+                        }
                     }
                     catch (Exception e)
                     {
@@ -152,7 +178,6 @@ namespace SessionMapSwitcher.Classes
                         return;
                     }
 
-                    UnpackUtils.DeleteOriginalMapFileBackup();
                     DeleteDownloadedFilesInPakFolder();
                     PatchCompleted(true);
                 });
@@ -180,8 +205,7 @@ namespace SessionMapSwitcher.Classes
         {
             ProgressChanged("Starting UnrealPak.exe ...");
 
-            List<string> filesToExtract = new List<string>() { "SessionGame/Content/ObjectPlacement/Blueprints/PBP_ObjectPlacementInventory.uexp", "SessionGame/Config/DefaultEngine.ini",
-                                                                "SessionGame/Config/DefaultGame.ini" };
+            List<string> filesToExtract = new List<string>() { "SessionGame/Content/ObjectPlacement/Blueprints/PBP_ObjectPlacementInventory.uexp", "SessionGame/Config/DefaultGame.ini" };
 
             foreach (string file in filesToExtract)
             {
@@ -223,7 +247,7 @@ namespace SessionMapSwitcher.Classes
 
         private bool IsUnpackZipDownloaded()
         {
-            return File.Exists($"{this.PathToPakFolder}\\{DownloadedZipFileName}");
+            return File.Exists(PathToDownloadedZip);
         }
 
         internal bool DownloadEzPzModZip()
