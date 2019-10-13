@@ -53,6 +53,14 @@ namespace SessionMapSwitcher.Classes
             }
         }
 
+        public static string ToPaks
+        {
+            get
+            {
+                return $"{ToContent}\\Paks";
+            }
+        }
+
         public static string ToPakFile
         {
             get
@@ -60,6 +68,15 @@ namespace SessionMapSwitcher.Classes
                 return $"{ToContent}\\Paks\\SessionGame-WindowsNoEditor.pak";
             }
         }
+
+        public static string ToCryptoJsonFile
+        {
+            get
+            {
+                return $"{ToContent}\\Paks\\crypto.json";
+            }
+        }
+
 
         public static string ToDefaultEngineIniFile
         {

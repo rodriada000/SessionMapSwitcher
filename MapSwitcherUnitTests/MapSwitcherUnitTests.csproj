@@ -49,6 +49,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EzPzPatcherUnitTests.cs" />
     <Compile Include="UnpackUtilsUnitTests.cs" />
     <Compile Include="FileUtilsUnitTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

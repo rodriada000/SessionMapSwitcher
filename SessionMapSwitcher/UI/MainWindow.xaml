@@ -12,7 +12,8 @@
         Unloaded="MainWindow_Unloaded"
         MinHeight="415" MinWidth="510"
         MaxWidth="1600"
-        Height="575" Width="775"
+        Height="580" Width="775"
+        SizeChanged="mainWindow_SizeChanged"
         Style="{StaticResource WindowStyle}">
     <Window.Resources>
 

@@ -290,7 +290,7 @@ namespace SessionMapSwitcher.Classes
 
             try
             {
-                IniFile iniFile = new IniFile(SessionPath.ToDefaultEngineIniFile);
+                IniFile iniFile = new IniFile(SessionPath.ToUserEngineIniFile);
                 return iniFile.ReadString("/Script/EngineSettings.GameMapsSettings", "GameDefaultMap");
             }
             catch (Exception)

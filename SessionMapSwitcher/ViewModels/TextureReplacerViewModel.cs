@@ -180,8 +180,9 @@ namespace SessionMapSwitcher.ViewModels
 
                 if (String.IsNullOrEmpty(targetFolder))
                 {
-                    foundTextureName = FindTextureFileInUnzippedTempFolder(dirToSearch: PathToTempFolder, filesToExclude: foundTextures);
-                    break;
+                    // texture/material is custom so copy to game directory with same folder structure as zip
+                    int index = textureFileInfo.DirectoryName.IndexOf(_tempZipFolder) + 1;
+                    targetFolder = textureFileInfo.DirectoryName.Substring(index + _tempZipFolder.Length);
                 }
 
 
