@@ -4,3 +4,4 @@ Session Community Alpha Map (By Roober) | DIRECT:https://github.com/rodriada000/
 Community Park v3 (By Roober) | | https://drive.google.com/file/d/1wdKm3YFB9qk4w3xRZGYL8V_voVk9Jlrz/view | 
 Skatestreet Ventura v3 (By Hippyman) | DIRECT:https://github.com/rodriada000/SessionCustomMapReleases/releases/download/SkatestreetVentura/SkatestreetVentura.v3.-rails-.zip | https://github.com/rodriada000/SessionCustomMapReleases/releases/tag/SkatestreetVentura | 
 LowLife Parking Garage Beta 4 (By Khelldon) | DIRECT:https://github.com/rodriada000/SessionCustomMapReleases/releases/download/lowlife_v3/LowLife_Parking_Garage_b4_By_Khelldon.zip | https://github.com/rodriada000/SessionCustomMapReleases/releases/tag/lowlife_v3 | 
+814 Park (By Osker814) | DIRECT:https://github.com/rodriada000/SessionCustomMapReleases/releases/download/814Park/814.Park.zip | https://github.com/rodriada000/SessionCustomMapReleases/releases/tag/814Park | 
