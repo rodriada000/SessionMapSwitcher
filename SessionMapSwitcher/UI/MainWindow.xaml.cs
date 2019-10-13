@@ -58,6 +58,7 @@ namespace SessionMapSwitcher
 
             if (String.IsNullOrEmpty(customSize))
             {
+                IsSettingWindowSize = false;
                 return;
             }
 
