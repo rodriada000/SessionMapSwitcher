@@ -22,7 +22,7 @@
     <FileUpdateTask localPath="SessionMapSwitcher.exe" updateTo="https://github.com/rodriada000/SessionMapSwitcher/raw/release_updates/latest_release/SessionMapSwitcher.exe" lastModified="132145933315494295" fileSize="96256" version="1.4.0.0">
       <Conditions>
         <FileExistsCondition type="or-not" />
-        <FileVersionCondition type="or" what="below" version="2.0.1.0" />
+        <FileVersionCondition type="or" what="below" version="2.0.2.0" />
       </Conditions>
     </FileUpdateTask>
     <FileUpdateTask localPath="System.IO.Compression.dll" updateTo="https://github.com/rodriada000/SessionMapSwitcher/raw/release_updates/latest_release/System.IO.Compression.dll" lastModified="131228205680000000" fileSize="111984" version="4.6.24705.1">
