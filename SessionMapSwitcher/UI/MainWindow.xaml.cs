@@ -26,6 +26,11 @@ namespace SessionMapSwitcher
         private bool IsNewVersionAvailable = false;
 
         /// <summary>
+        /// used to prevent the window size to be saved to app config when setting it
+        /// </summary>
+        private bool IsSettingWindowSize = false;
+
+        /// <summary>
         /// Timer to trigger the update window to open after a second
         /// if there is an update avaialble. This is used so the Window
         /// is created on the main UI thread
@@ -36,11 +41,39 @@ namespace SessionMapSwitcher
         {
             InitializeComponent();
 
+            SetCustomWindowSizeFromAppSettings();
+
             ViewModel = new MainWindowViewModel();
             ReloadAvailableMapsInBackground();
 
             this.DataContext = ViewModel;
             this.Title = $"{App.GetAppName()} - v{App.GetAppVersion()}";
+        }
+
+        private void SetCustomWindowSizeFromAppSettings()
+        {
+            IsSettingWindowSize = true;
+
+            string customSize = AppSettingsUtil.GetAppSetting(SettingKey.CustomWindowSize);
+
+            if (String.IsNullOrEmpty(customSize))
+            {
+                return;
+            }
+
+            string[] dimensions = customSize.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+
+            bool didParseWidth = double.TryParse(dimensions[0], out double newWidth);
+            bool didParseHeight = double.TryParse(dimensions[1], out double newHeight);
+
+            if (didParseWidth && didParseHeight)
+            {
+                this.Width = newWidth;
+                this.Height = newHeight;
+            }
+
+            IsSettingWindowSize = false;
         }
 
         private void BtnBrowseSessionPath_Click(object sender, RoutedEventArgs e)
@@ -457,6 +490,17 @@ namespace SessionMapSwitcher
         private void BtnPatch_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.PromptToPatch();
+        }
+
+        private void mainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (IsSettingWindowSize || IsLoaded == false)
+            {
+                return;
+            }
+
+            string newSize = $"{this.ActualWidth},{this.ActualHeight}";
+            AppSettingsUtil.AddOrUpdateAppSettings(SettingKey.CustomWindowSize, newSize);
         }
     }
 }

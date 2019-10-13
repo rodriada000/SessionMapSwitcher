@@ -11,7 +11,8 @@ namespace SessionMapSwitcher.Utils
     {
         PathToSession,
         ShowInvalidMaps,
-        ProjectWatcherPath
+        ProjectWatcherPath,
+        CustomWindowSize
     }
 
     class AppSettingsUtil
