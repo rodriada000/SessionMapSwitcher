@@ -86,14 +86,12 @@ namespace SessionMapSwitcher
                 if (didSet == false)
                 {
                     // do not start game with invalid settings
-                    ViewModel.UserMessage = "Cannot start game: " + ViewModel.UserMessage;
+                    ViewModel.UserMessage = $"NOTE: Cannot apply custom game settings - {ViewModel.UserMessage}";
                 }
-                else
-                {
-                    ViewModel.InputControlsEnabled = false;
-                    Process.Start(SessionPath.ToSessionExe);
-                    ViewModel.InputControlsEnabled = true;
-                }
+
+                ViewModel.InputControlsEnabled = false;
+                Process.Start(SessionPath.ToSessionExe);
+                ViewModel.InputControlsEnabled = true;
             });
         }
 

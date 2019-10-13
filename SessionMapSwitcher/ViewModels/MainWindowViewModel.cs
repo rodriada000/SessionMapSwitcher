@@ -247,7 +247,7 @@ namespace SessionMapSwitcher.ViewModels
         {
             if (GameSettingsManager.DoesSettingsFileExist() == false)
             {
-                MessageBoxResult promptResult = MessageBox.Show("The required files are missing and must be extracted before game settings can be modified. Click 'Yes' to download UnrealPak to extract the files.",
+                MessageBoxResult promptResult = MessageBox.Show("The required files are missing and must be extracted before game settings can be modified.\n\nClick 'Yes' to extract the files (UnrealPak and crypto.json will be downloaded if it is not installed locally).",
                                                                 "Warning - Cannot Continue!",
                                                                 MessageBoxButton.YesNo,
                                                                 MessageBoxImage.Information,
@@ -259,7 +259,7 @@ namespace SessionMapSwitcher.ViewModels
                     return false;
                 }
 
-                UserMessage = "Cannot set game settings until files are extracted.";
+                UserMessage = "Custom gravity and object count will not be applied until required files are extracted.";
                 return false;
             }
 
