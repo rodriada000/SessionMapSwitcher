@@ -245,7 +245,8 @@ namespace SessionMapSwitcher.ViewModels
 
         internal bool UpdateGameSettings(bool promptToDownloadIfMissing)
         {
-            if (GameSettingsManager.DoesSettingsFileExist() == false)
+
+            if (GameSettingsManager.DoesObjectPlacementFileExist() == false)
             {
                 if (promptToDownloadIfMissing)
                 {
@@ -266,6 +267,8 @@ namespace SessionMapSwitcher.ViewModels
                 return false;
             }
 
+            InputControlsEnabled = false;
+
             BoolWithMessage result = GameSettingsManager.WriteGameSettingsToFile(GravityText, ObjectCountText, SkipMovieIsChecked);
 
             if (result.Result)
@@ -276,6 +279,8 @@ namespace SessionMapSwitcher.ViewModels
             {
                 UserMessage = result.Message;
             }
+
+            InputControlsEnabled = true;
 
             return result.Result;
         }

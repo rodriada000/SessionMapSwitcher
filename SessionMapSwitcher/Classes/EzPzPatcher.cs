@@ -279,7 +279,7 @@ namespace SessionMapSwitcher.Classes
         {
             ProgressChanged("Starting UnrealPak.exe ...");
 
-            List<string> filesToExtract = new List<string>() { "SessionGame/Content/ObjectPlacement/Blueprints/PBP_ObjectPlacementInventory.uexp", "SessionGame/Config/DefaultGame.ini" };
+            List<string> filesToExtract = new List<string>() { "SessionGame/Content/ObjectPlacement/Blueprints/PBP_ObjectPlacementInventory.uexp" };
 
             foreach (string file in filesToExtract)
             {

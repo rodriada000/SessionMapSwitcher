@@ -61,6 +61,14 @@ namespace SessionMapSwitcher.Classes
             }
         }
 
+        public static string ToMovies
+        {
+            get
+            {
+                return $"{ToContent}\\Movies";
+            }
+        }
+
         public static string ToPakFile
         {
             get

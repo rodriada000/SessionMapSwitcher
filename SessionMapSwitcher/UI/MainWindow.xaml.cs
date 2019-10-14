@@ -271,11 +271,9 @@ namespace SessionMapSwitcher
                 return;
             }
 
-            ViewModel.InputControlsEnabled = false;
 
             bool didSet = ViewModel.UpdateGameSettings(promptToDownloadIfMissing: true);
 
-            ViewModel.InputControlsEnabled = true;
 
             if (didSet)
             {
