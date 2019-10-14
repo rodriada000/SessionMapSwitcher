@@ -44,8 +44,7 @@ namespace SessionMapSwitcher.Classes
 
                 double.TryParse(gravitySetting, out _gravity);
 
-                IniFile gameFile = new IniFile(SessionPath.ToDefaultGameIniFile);
-                SkipIntroMovie = gameFile.ReadBoolean("/Script/UnrealEd.ProjectPackagingSettings", "bSkipMovies");
+                SkipIntroMovie = IsSkippingMovies();
 
                 GetObjectCountFromFile();
 
@@ -61,10 +60,38 @@ namespace SessionMapSwitcher.Classes
         }
 
         /// <summary>
-        /// writes the game settings to the correct files.
+        /// validates the object count and then writes to the correct file to update object count.
         /// </summary>
-        /// <returns> true if settings updated; false otherwise. </returns>
-        public static BoolWithMessage WriteGameSettingsToFile(string gravityText, string objectCountText, bool skipMovie)
+        public static BoolWithMessage ValidateAndUpdateObjectCount(string objectCountText)
+        {
+            if (SessionPath.IsSessionPathValid() == false)
+            {
+                return BoolWithMessage.False("Session Path invalid.");
+            }
+
+            if (int.TryParse(objectCountText, out int parsedObjCount) == false)
+            {
+                return BoolWithMessage.False("Invalid Object Count setting.");
+            }
+
+            if (parsedObjCount <= 0 || parsedObjCount > 65535)
+            {
+                return BoolWithMessage.False("Object Count must be between 0 and 65535.");
+            }
+
+
+            try
+            {
+                BoolWithMessage didSetCount = SetObjectCountInFile(objectCountText);
+                return didSetCount;
+            }
+            catch (Exception e)
+            {
+                return BoolWithMessage.False($"Failed to update object count: {e.Message}");
+            }
+        }
+
+        public static BoolWithMessage ValidateAndUpdateGravityAndSkipMoviesSettings(string gravityText, bool skipMovie)
         {
             if (SessionPath.IsSessionPathValid() == false)
             {
@@ -83,62 +110,20 @@ namespace SessionMapSwitcher.Classes
                 return BoolWithMessage.False("Invalid Gravity setting.");
             }
 
-            if (int.TryParse(objectCountText, out int parsedObjCount) == false)
-            {
-                return BoolWithMessage.False("Invalid Object Count setting.");
-            }
-
-            if (parsedObjCount <= 0 || parsedObjCount > 65535)
-            {
-                return BoolWithMessage.False("Object Count must be between 0 and 65535.");
-            }
-
-
             try
             {
-                BoolWithMessage didSetCount = SetObjectCountInFile(objectCountText);
-
-                if (didSetCount.Result == false)
-                {
-                    return didSetCount;
-                }
-
                 IniFile engineFile = new IniFile(SessionPath.ToUserEngineIniFile);
                 engineFile.WriteString("/Script/Engine.PhysicsSettings", "DefaultGravityZ", gravityText);
 
-                IniFile gameFile = new IniFile(SessionPath.ToDefaultGameIniFile);
-
-                if (skipMovie)
-                {
-                    // delete the two StartupMovies from .ini
-                    if (gameFile.KeyExists("/Script/MoviePlayer.MoviePlayerSettings", "+StartupMovies"))
-                    {
-                        gameFile.DeleteKey("/Script/MoviePlayer.MoviePlayerSettings", "+StartupMovies");
-                    }
-                    if (gameFile.KeyExists("/Script/MoviePlayer.MoviePlayerSettings", "+StartupMovies"))
-                    {
-                        gameFile.DeleteKey("/Script/MoviePlayer.MoviePlayerSettings", "+StartupMovies");
-                    }
-                }
-                else
-                {
-                    if (gameFile.KeyExists("/Script/MoviePlayer.MoviePlayerSettings", "+StartupMovies") == false)
-                    {
-                        gameFile.WriteString("/Script/MoviePlayer.MoviePlayerSettings", "+StartupMovies", "UE4_Moving_Logo_720\n+StartupMovies=IntroLOGO_720_30");
-                    }
-                }
-
-                gameFile.WriteString("/Script/UnrealEd.ProjectPackagingSettings", "bSkipMovies", skipMovie.ToString());
+                RenameMoviesFolderToSkipMovies(skipMovie);
 
                 Gravity = gravityFloat;
                 SkipIntroMovie = skipMovie;
             }
             catch (Exception e)
             {
-                return BoolWithMessage.False($"Failed to update game settings: {e.Message}");
+                return BoolWithMessage.False($"Failed to update gravity and/or skip movie: {e.Message}");
             }
-
-
 
             return BoolWithMessage.True();
         }
@@ -299,9 +284,48 @@ namespace SessionMapSwitcher.Classes
             }
         }
 
-        public static bool DoesSettingsFileExist()
+        public static bool DoesObjectPlacementFileExist()
         {
-            return File.Exists(PathToObjectPlacementFile) && File.Exists(SessionPath.ToDefaultGameIniFile);
+            return File.Exists(PathToObjectPlacementFile);
+        }
+
+        /// <summary>
+        /// If skipping movies then renames 'Movies' folder to 'Movies_SKIP'.
+        /// If not skipping then renames folder to 'Movies'
+        /// </summary>
+        public static BoolWithMessage RenameMoviesFolderToSkipMovies(bool skipMovies)
+        {
+            try
+            {
+                string movieSkipFolderPath = SessionPath.ToMovies.Replace("Movies", "Movies_SKIP");
+
+                if (skipMovies)
+                {
+                    if (Directory.Exists(SessionPath.ToMovies))
+                    {
+                        Directory.Move(SessionPath.ToMovies, movieSkipFolderPath);
+                    }
+                }
+                else
+                {
+                    if (Directory.Exists(movieSkipFolderPath))
+                    {
+                        Directory.Move(movieSkipFolderPath, SessionPath.ToMovies);
+                    }
+                }
+
+                return BoolWithMessage.True();
+            }
+            catch (Exception e)
+            {
+                return BoolWithMessage.False($"Failed to rename Movies folder: {e.Message}");
+            }
+
+        }
+
+        public static bool IsSkippingMovies()
+        {
+            return Directory.Exists(SessionPath.ToMovies.Replace("Movies", "Movies_SKIP"));
         }
     }
 }

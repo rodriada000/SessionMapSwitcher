@@ -243,38 +243,58 @@ namespace SessionMapSwitcher.ViewModels
             SkipMovieIsChecked = GameSettingsManager.SkipIntroMovie;
         }
 
-        internal bool UpdateGameSettings()
+        internal bool UpdateGameSettings(bool promptToDownloadIfMissing)
         {
-            if (GameSettingsManager.DoesSettingsFileExist() == false)
-            {
-                MessageBoxResult promptResult = MessageBox.Show("The required files are missing and must be extracted before game settings can be modified.\n\nClick 'Yes' to extract the files (UnrealPak and crypto.json will be downloaded if it is not installed locally).",
-                                                                "Warning - Cannot Continue!",
-                                                                MessageBoxButton.YesNo,
-                                                                MessageBoxImage.Information,
-                                                                MessageBoxResult.Yes);
+            string concatenatedErrorMsg = "";
 
-                if (promptResult == MessageBoxResult.Yes)
+            if (GameSettingsManager.DoesObjectPlacementFileExist() == false)
+            {
+                if (promptToDownloadIfMissing)
                 {
-                    StartPatching(skipPatching: true);
-                    return false;
+                    MessageBoxResult promptResult = MessageBox.Show("The required file is missing and must be extracted before object count can be modified.\n\nClick 'Yes' to extract the file (UnrealPak and crypto.json will be downloaded if it is not installed locally).",
+                                                                    "Warning - Cannot Modify Object Count!",
+                                                                    MessageBoxButton.YesNo,
+                                                                    MessageBoxImage.Information,
+                                                                    MessageBoxResult.Yes);
+
+                    if (promptResult == MessageBoxResult.Yes)
+                    {
+                        StartPatching(skipPatching: true, skipUnpacking: false);
+                        return false;
+                    }
                 }
 
-                UserMessage = "Custom gravity and object count will not be applied until required files are extracted.";
-                return false;
+                concatenatedErrorMsg = "Custom object count will not be applied until required file is extracted; ";
             }
 
-            BoolWithMessage result = GameSettingsManager.WriteGameSettingsToFile(GravityText, ObjectCountText, SkipMovieIsChecked);
+            InputControlsEnabled = false;
 
-            if (result.Result)
+            BoolWithMessage didSetSettings = GameSettingsManager.ValidateAndUpdateGravityAndSkipMoviesSettings(GravityText, SkipMovieIsChecked);
+            BoolWithMessage didSetObjCount = BoolWithMessage.True(); // set to true by default in case the user does not have the file to modify
+
+
+            if (GameSettingsManager.DoesObjectPlacementFileExist())
             {
-                RefreshGameSettings();
-            }
-            else
-            {
-                UserMessage = result.Message;
+                didSetObjCount = GameSettingsManager.ValidateAndUpdateObjectCount(ObjectCountText);
+
+                if (didSetObjCount.Result == false)
+                {
+                    concatenatedErrorMsg += didSetObjCount.Message;
+                }
             }
 
-            return result.Result;
+            if (didSetSettings.Result == false)
+            {
+                concatenatedErrorMsg += didSetSettings.Message;
+            }
+
+            if (String.IsNullOrEmpty(concatenatedErrorMsg) == false)
+            {
+                UserMessage = concatenatedErrorMsg;
+            }
+
+            InputControlsEnabled = true;
+            return didSetSettings.Result || didSetObjCount.Result;
         }
 
         /// <summary>
@@ -764,11 +784,11 @@ namespace SessionMapSwitcher.ViewModels
 
             if (result == MessageBoxResult.Yes)
             {
-                StartPatching();
+                StartPatching(skipPatching: false, skipUnpacking: true);
             }
         }
 
-        internal void StartPatching(bool skipPatching = false)
+        internal void StartPatching(bool skipPatching = false, bool skipUnpacking = false)
         {
             if (SessionPath.IsSessionPathValid() == false)
             {
@@ -793,6 +813,7 @@ namespace SessionMapSwitcher.ViewModels
 
             _patcher = new EzPzPatcher();
             _patcher.SkipEzPzPatchStep = skipPatching;
+            _patcher.SkipUnrealPakStep = skipUnpacking;
 
             _patcher.ProgressChanged += Patch_ProgressChanged;
             _patcher.PatchCompleted += EzPzPatcher_PatchCompleted;

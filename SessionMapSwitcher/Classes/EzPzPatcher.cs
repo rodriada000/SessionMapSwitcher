@@ -24,7 +24,7 @@ namespace SessionMapSwitcher.Classes
 
         public bool SkipEzPzPatchStep = false;
 
-        public bool SkipUnrealPakStep = false;
+        public bool SkipUnrealPakStep = true;
 
         public string PathToSession;
 
@@ -179,14 +179,14 @@ namespace SessionMapSwitcher.Classes
                 {
                     try
                     {
-                        if (SkipUnrealPakStep == false)
-                        {
-                            ExtractGameFilesFromPak(); // this will wait for UnrealPak to finish
-                        }
-
                         if (SkipEzPzPatchStep == false)
                         {
                             LaunchEzPzMod();
+                        }
+
+                        if (SkipUnrealPakStep == false)
+                        {
+                            ExtractGameFilesFromPak(); // this will wait for UnrealPak to finish
                         }
                     }
                     catch (Exception e)
@@ -279,7 +279,7 @@ namespace SessionMapSwitcher.Classes
         {
             ProgressChanged("Starting UnrealPak.exe ...");
 
-            List<string> filesToExtract = new List<string>() { "SessionGame/Content/ObjectPlacement/Blueprints/PBP_ObjectPlacementInventory.uexp", "SessionGame/Config/DefaultGame.ini" };
+            List<string> filesToExtract = new List<string>() { "SessionGame/Content/ObjectPlacement/Blueprints/PBP_ObjectPlacementInventory.uexp" };
 
             foreach (string file in filesToExtract)
             {
