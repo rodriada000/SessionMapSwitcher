@@ -60,10 +60,38 @@ namespace SessionMapSwitcher.Classes
         }
 
         /// <summary>
-        /// writes the game settings to the correct files.
+        /// validates the object count and then writes to the correct file to update object count.
         /// </summary>
-        /// <returns> true if settings updated; false otherwise. </returns>
-        public static BoolWithMessage WriteGameSettingsToFile(string gravityText, string objectCountText, bool skipMovie)
+        public static BoolWithMessage ValidateAndUpdateObjectCount(string objectCountText)
+        {
+            if (SessionPath.IsSessionPathValid() == false)
+            {
+                return BoolWithMessage.False("Session Path invalid.");
+            }
+
+            if (int.TryParse(objectCountText, out int parsedObjCount) == false)
+            {
+                return BoolWithMessage.False("Invalid Object Count setting.");
+            }
+
+            if (parsedObjCount <= 0 || parsedObjCount > 65535)
+            {
+                return BoolWithMessage.False("Object Count must be between 0 and 65535.");
+            }
+
+
+            try
+            {
+                BoolWithMessage didSetCount = SetObjectCountInFile(objectCountText);
+                return didSetCount;
+            }
+            catch (Exception e)
+            {
+                return BoolWithMessage.False($"Failed to update object count: {e.Message}");
+            }
+        }
+
+        public static BoolWithMessage ValidateAndUpdateGravityAndSkipMoviesSettings(string gravityText, bool skipMovie)
         {
             if (SessionPath.IsSessionPathValid() == false)
             {
@@ -82,26 +110,8 @@ namespace SessionMapSwitcher.Classes
                 return BoolWithMessage.False("Invalid Gravity setting.");
             }
 
-            if (int.TryParse(objectCountText, out int parsedObjCount) == false)
-            {
-                return BoolWithMessage.False("Invalid Object Count setting.");
-            }
-
-            if (parsedObjCount <= 0 || parsedObjCount > 65535)
-            {
-                return BoolWithMessage.False("Object Count must be between 0 and 65535.");
-            }
-
-
             try
             {
-                BoolWithMessage didSetCount = SetObjectCountInFile(objectCountText);
-
-                if (didSetCount.Result == false)
-                {
-                    return didSetCount;
-                }
-
                 IniFile engineFile = new IniFile(SessionPath.ToUserEngineIniFile);
                 engineFile.WriteString("/Script/Engine.PhysicsSettings", "DefaultGravityZ", gravityText);
 
@@ -112,10 +122,8 @@ namespace SessionMapSwitcher.Classes
             }
             catch (Exception e)
             {
-                return BoolWithMessage.False($"Failed to update game settings: {e.Message}");
+                return BoolWithMessage.False($"Failed to update gravity and/or skip movie: {e.Message}");
             }
-
-
 
             return BoolWithMessage.True();
         }

@@ -245,13 +245,14 @@ namespace SessionMapSwitcher.ViewModels
 
         internal bool UpdateGameSettings(bool promptToDownloadIfMissing)
         {
+            string concatenatedErrorMsg = "";
 
             if (GameSettingsManager.DoesObjectPlacementFileExist() == false)
             {
                 if (promptToDownloadIfMissing)
                 {
-                    MessageBoxResult promptResult = MessageBox.Show("The required files are missing and must be extracted before game settings can be modified.\n\nClick 'Yes' to extract the files (UnrealPak and crypto.json will be downloaded if it is not installed locally).",
-                                                                    "Warning - Cannot Continue!",
+                    MessageBoxResult promptResult = MessageBox.Show("The required file is missing and must be extracted before object count can be modified.\n\nClick 'Yes' to extract the file (UnrealPak and crypto.json will be downloaded if it is not installed locally).",
+                                                                    "Warning - Cannot Modify Object Count!",
                                                                     MessageBoxButton.YesNo,
                                                                     MessageBoxImage.Information,
                                                                     MessageBoxResult.Yes);
@@ -263,26 +264,37 @@ namespace SessionMapSwitcher.ViewModels
                     }
                 }
 
-                UserMessage = "Custom gravity and object count will not be applied until required files are extracted.";
-                return false;
+                concatenatedErrorMsg = "Custom object count will not be applied until required file is extracted; ";
             }
 
             InputControlsEnabled = false;
 
-            BoolWithMessage result = GameSettingsManager.WriteGameSettingsToFile(GravityText, ObjectCountText, SkipMovieIsChecked);
+            BoolWithMessage didSetSettings = GameSettingsManager.ValidateAndUpdateGravityAndSkipMoviesSettings(GravityText, SkipMovieIsChecked);
+            BoolWithMessage didSetObjCount = BoolWithMessage.True(); // set to true by default in case the user does not have the file to modify
 
-            if (result.Result)
+
+            if (GameSettingsManager.DoesObjectPlacementFileExist())
             {
-                RefreshGameSettings();
+                didSetObjCount = GameSettingsManager.ValidateAndUpdateObjectCount(ObjectCountText);
+
+                if (didSetObjCount.Result == false)
+                {
+                    concatenatedErrorMsg += didSetObjCount.Message;
+                }
             }
-            else
+
+            if (didSetSettings.Result == false)
             {
-                UserMessage = result.Message;
+                concatenatedErrorMsg += didSetSettings.Message;
+            }
+
+            if (String.IsNullOrEmpty(concatenatedErrorMsg) == false)
+            {
+                UserMessage = concatenatedErrorMsg;
             }
 
             InputControlsEnabled = true;
-
-            return result.Result;
+            return didSetSettings.Result || didSetObjCount.Result;
         }
 
         /// <summary>
