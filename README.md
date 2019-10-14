@@ -4,7 +4,7 @@ This is a Desktop Application to make switching between Session maps in-game eas
 ![](https://github.com/rodriada000/SessionMapSwitcher/blob/master/docs/images/app_screenshot.png?raw=true "App Screenshot")
 
 
-### **If you are having any issues please see [this FAQ Wiki provided here thanks to dga711 & others.](https://github.com/dga711/SessionEzPzMod/wiki)**
+### **If you are having any issues please see [this FAQ Wiki provided here thanks to dga711 & others.](https://github.com/rodriada000/SessionMapSwitcher/wiki/Issues-FAQ)**
 
 ### Features
 * Map Switcher can download the required patch (thanks to dga711) for Session to play custom modded maps and have custom textures within minutes.
