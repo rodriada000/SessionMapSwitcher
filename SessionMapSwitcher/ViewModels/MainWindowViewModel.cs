@@ -243,20 +243,23 @@ namespace SessionMapSwitcher.ViewModels
             SkipMovieIsChecked = GameSettingsManager.SkipIntroMovie;
         }
 
-        internal bool UpdateGameSettings()
+        internal bool UpdateGameSettings(bool promptToDownloadIfMissing)
         {
             if (GameSettingsManager.DoesSettingsFileExist() == false)
             {
-                MessageBoxResult promptResult = MessageBox.Show("The required files are missing and must be extracted before game settings can be modified.\n\nClick 'Yes' to extract the files (UnrealPak and crypto.json will be downloaded if it is not installed locally).",
-                                                                "Warning - Cannot Continue!",
-                                                                MessageBoxButton.YesNo,
-                                                                MessageBoxImage.Information,
-                                                                MessageBoxResult.Yes);
-
-                if (promptResult == MessageBoxResult.Yes)
+                if (promptToDownloadIfMissing)
                 {
-                    StartPatching(skipPatching: true);
-                    return false;
+                    MessageBoxResult promptResult = MessageBox.Show("The required files are missing and must be extracted before game settings can be modified.\n\nClick 'Yes' to extract the files (UnrealPak and crypto.json will be downloaded if it is not installed locally).",
+                                                                    "Warning - Cannot Continue!",
+                                                                    MessageBoxButton.YesNo,
+                                                                    MessageBoxImage.Information,
+                                                                    MessageBoxResult.Yes);
+
+                    if (promptResult == MessageBoxResult.Yes)
+                    {
+                        StartPatching(skipPatching: true, skipUnpacking: false);
+                        return false;
+                    }
                 }
 
                 UserMessage = "Custom gravity and object count will not be applied until required files are extracted.";
@@ -764,11 +767,11 @@ namespace SessionMapSwitcher.ViewModels
 
             if (result == MessageBoxResult.Yes)
             {
-                StartPatching();
+                StartPatching(skipPatching: false, skipUnpacking: true);
             }
         }
 
-        internal void StartPatching(bool skipPatching = false)
+        internal void StartPatching(bool skipPatching = false, bool skipUnpacking = false)
         {
             if (SessionPath.IsSessionPathValid() == false)
             {
@@ -793,6 +796,7 @@ namespace SessionMapSwitcher.ViewModels
 
             _patcher = new EzPzPatcher();
             _patcher.SkipEzPzPatchStep = skipPatching;
+            _patcher.SkipUnrealPakStep = skipUnpacking;
 
             _patcher.ProgressChanged += Patch_ProgressChanged;
             _patcher.PatchCompleted += EzPzPatcher_PatchCompleted;
