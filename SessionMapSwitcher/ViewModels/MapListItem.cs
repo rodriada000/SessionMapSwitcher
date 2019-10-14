@@ -179,7 +179,7 @@ public class MapListItem : ViewModelBase
         {
             string umapContents = File.ReadAllText(fullPath);
 
-            return umapContents.Contains("/Game/Data/PBP_InGameSessionGameMode");
+            return umapContents.IndexOf("/Game/Data/PBP_InGameSessionGameMode", StringComparison.OrdinalIgnoreCase) >= 0;
         }
         catch (Exception)
         {
