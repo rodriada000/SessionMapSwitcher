@@ -22,18 +22,18 @@ This is a Desktop Application to make switching between Session maps in-game eas
 ## How To Use
 
 ### Patching The Game
-_Skip this if you already patched the game._
+_Skip this if you already patched/unpacked the game._
 1. Download the [latest release here](https://github.com/rodriada000/SessionMapSwitcher/releases/latest).
 2. Unzip the program anywhere you like.
 3. Open SessionMapSwitcher.exe.
 4. Set the `Path To Session` by clicking the `...` button or pasting the path and pressing `Enter` key. **The path should be the top level folder of the game directory e.g. `C:\Program Files (x86)\Steam\steamapps\common\Session`.**
 5. Click `Patch With EzPz` and you will be prompted to download the required files to patch the game.
-> Note: If the program is not running as Administrator then it will ask you to restart the program as administrator first to ensure the unpacking process completes succesfully.
+> Note: If the program is not running as Administrator then it will ask you to restart the program as administrator first to ensure the patching process completes succesfully.
 
-> Note: The download can fail sometimes because the file host is not good. Retry a couple of times if the download fails until it succeeds.  
-6. Map Switcher will extract a few files from the game and then open Session EzPz Mod. When this window opens click `Patch` and close the window. 
+6. Map Switcher will download and then open Session EzPz Mod. When this window opens click `Patch` and close the window. 
 7. Map Switcher will output the status of the patching process so you know when it is complete. After that you can play custom maps and replace textures.
-
+8. (Optional) Click `Apply` under Game Settings in Map Switcher to download the required files for modifying the object count. If unreal engine is already installed on your computer then it will only have to download the `crypto.json` file to unpack a specific file from the game
+> Note: The download can fail sometimes because the file host is not good. Retry a couple of times if the download fails until it succeeds.  
 
 ### Adding Custom Maps to Play
 Map Switcher provides the ability to download custom maps and import them from online or to import them directly from your computer (either a folder or .zip file).
@@ -87,13 +87,15 @@ _This assumes you have already Session Map Switcher open and Session running. To
 
 
 ### Replacing Textures
-_This assumes you already unpacked the game and have Session Map Switcher open._
+_This assumes you already patched/unpacked the game and have Session Map Switcher open._
 1. Download the texture files you want to use. There is usually 2-3 files for a texture: the `.uexp`, `.uasset`, and sometimes the `.ubulk` file. All three files are needed to replace the texture.
 > Note: The Texture Replacer also supports .zip files
 2. In Map Switcher click the `...` button inside the `Texture Replacer` section. In the file browse window that opens select the `.uasset` or `.zip` file you downloaded. ![](https://github.com/rodriada000/SessionMapSwitcher/blob/master/docs/images/app_replace_texture.png?raw=true "Replace Textures Example")
 > NOTE: You only need to select the one `.uasset` file. Map Switcher will know to copy the other required files.
+
+> NOTE: You can also drag & drop .zip, .rar, or .uasset files into the Texture Replacer
 3. Click `Replace` and the texture will be replaced.
-> NOTE: Map Switcher relies on the texture files to be cooked with the correct folder path to find the correct texture to replace. If the texture is not cooked with the correct path then the texture may be copied to the incorrect location.
+> NOTE: Map Switcher relies on the selected texture file to be cooked with the correct texture name or for the file to be named the same as the texture being replaced so Map Switcher can find the correct path for the texture.
 
 ## Credits
 * Thanks to dga711 for the EzPz Mod
