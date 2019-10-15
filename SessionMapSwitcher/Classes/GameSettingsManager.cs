@@ -139,6 +139,11 @@ namespace SessionMapSwitcher.Classes
                 return BoolWithMessage.False("Session Path invalid.");
             }
 
+            if (DoesObjectPlacementFileExist() == false)
+            {
+                return BoolWithMessage.False("Object Count file does not exist.");
+            }
+
             try
             {
                 using (var stream = new FileStream(PathToObjectPlacementFile, FileMode.Open, FileAccess.Read))
@@ -184,6 +189,11 @@ namespace SessionMapSwitcher.Classes
             if (SessionPath.IsSessionPathValid() == false)
             {
                 return BoolWithMessage.False("Session Path invalid.");
+            }
+
+            if (DoesObjectPlacementFileExist() == false)
+            {
+                return BoolWithMessage.False("Object Count file does not exist.");
             }
 
             // this is a list of addresses where the item count for placeable objects are stored in the .uexp file
@@ -252,36 +262,6 @@ namespace SessionMapSwitcher.Classes
             for (int i = 0; i < numChars; i += 2)
                 bytes[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
             return bytes;
-        }
-
-
-        public static bool UpdateGameDefaultMapIniSetting(string defaultMapValue)
-        {
-            if (SessionPath.IsSessionPathValid() == false)
-            {
-                return false;
-            }
-
-            IniFile iniFile = new IniFile(SessionPath.ToUserEngineIniFile);
-            return iniFile.WriteString("/Script/EngineSettings.GameMapsSettings", "GameDefaultMap", defaultMapValue);
-        }
-
-        public static string GetGameDefaultMapIniSetting()
-        {
-            if (SessionPath.IsSessionPathValid() == false)
-            {
-                return "";
-            }
-
-            try
-            {
-                IniFile iniFile = new IniFile(SessionPath.ToUserEngineIniFile);
-                return iniFile.ReadString("/Script/EngineSettings.GameMapsSettings", "GameDefaultMap");
-            }
-            catch (Exception)
-            {
-                return "";
-            }
         }
 
         public static bool DoesObjectPlacementFileExist()

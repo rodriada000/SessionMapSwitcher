@@ -96,6 +96,8 @@
     <Compile Include="Classes\EzPzPatcher.cs" />
     <Compile Include="Classes\FileInfoExtensionMethods.cs" />
     <Compile Include="Classes\GameSettingsManager.cs" />
+    <Compile Include="Classes\EzPzMapSwitcher.cs" />
+    <Compile Include="Classes\Interfaces\IMapSwitcher.cs" />
     <Compile Include="Classes\MetaDataManager.cs" />
     <Compile Include="Classes\SessionPath.cs" />
     <Compile Include="Classes\ThreadFriendlyObservableCollection.cs" />

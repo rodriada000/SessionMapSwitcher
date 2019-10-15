@@ -91,7 +91,7 @@ namespace SessionMapSwitcher
 
         private void BtnStartGame_Click(object sender, RoutedEventArgs e)
         {
-            if (ViewModel.IsSessionRunning())
+            if (SessionPath.IsSessionRunning())
             {
                 MessageBoxResult result = System.Windows.MessageBox.Show("Session is already running! Click 'Yes' if you want to restart the game.", "Notice!", MessageBoxButton.YesNo, MessageBoxImage.Information, MessageBoxResult.No);
 
@@ -181,7 +181,7 @@ namespace SessionMapSwitcher
             ViewModel.UserMessage = $"Loading {selectedItem.MapName} ...";
             ViewModel.InputControlsEnabled = false;
 
-            Task t = Task.Run(() => ViewModel.LoadMap(selectedItem));
+            Task t = Task.Run(() => ViewModel.LoadSelectedMap(selectedItem));
 
             t.ContinueWith(continuationTask);
         }
@@ -279,7 +279,7 @@ namespace SessionMapSwitcher
             {
                 ViewModel.UserMessage = "Game settings updated!";
 
-                if (ViewModel.IsSessionRunning())
+                if (SessionPath.IsSessionRunning())
                 {
                     ViewModel.UserMessage += " Restart the game for changes to take effect.";
                 }
