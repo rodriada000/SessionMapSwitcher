@@ -96,9 +96,12 @@
     <Compile Include="Classes\EzPzPatcher.cs" />
     <Compile Include="Classes\FileInfoExtensionMethods.cs" />
     <Compile Include="Classes\GameSettingsManager.cs" />
+    <Compile Include="Classes\EzPzMapSwitcher.cs" />
+    <Compile Include="Classes\Interfaces\IMapSwitcher.cs" />
     <Compile Include="Classes\MetaDataManager.cs" />
     <Compile Include="Classes\SessionPath.cs" />
     <Compile Include="Classes\ThreadFriendlyObservableCollection.cs" />
+    <Compile Include="Classes\UnpackedMapSwitcher.cs" />
     <Compile Include="Classes\VersionChecker.cs" />
     <Compile Include="UI\ComputerImportWindow.xaml.cs">
       <DependentUpon>ComputerImportWindow.xaml</DependentUpon>

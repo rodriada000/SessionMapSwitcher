@@ -1,6 +1,7 @@
 ﻿
 using Ini.Net;
 using SessionMapSwitcher.Classes;
+using SessionMapSwitcher.Classes.Interfaces;
 using SessionMapSwitcher.UI;
 using SessionMapSwitcher.Utils;
 using System;
@@ -24,8 +25,6 @@ namespace SessionMapSwitcher.ViewModels
         private string _currentlyLoadedMapName;
         private ThreadFriendlyObservableCollection<MapListItem> _availableMaps;
         private object collectionLock = new object();
-        private MapListItem _firstLoadedMap;
-        private readonly MapListItem _defaultSessionMap;
         private bool _inputControlsEnabled;
         private bool _showInvalidMaps;
         private string _gravityText;
@@ -33,9 +32,10 @@ namespace SessionMapSwitcher.ViewModels
         private bool _skipMovieIsChecked;
         private EzPzPatcher _patcher;
         private OnlineImportViewModel ImportViewModel;
+        private IMapSwitcher MapSwitcher { get; set; }
 
 
-        public String SessionPathTextInput
+        public string SessionPathTextInput
         {
             get
             {
@@ -48,6 +48,8 @@ namespace SessionMapSwitcher.ViewModels
                 NotifyPropertyChanged(nameof(LoadMapButtonText));
                 NotifyPropertyChanged(nameof(IsReplaceTextureControlEnabled));
                 NotifyPropertyChanged(nameof(IsProjectWatchControlEnabled));
+                NotifyPropertyChanged(nameof(IsPatchButtonEnabled));
+                NotifyPropertyChanged(nameof(PatchButtonToolTip));
             }
         }
 
@@ -126,6 +128,7 @@ namespace SessionMapSwitcher.ViewModels
                 NotifyPropertyChanged();
                 NotifyPropertyChanged(nameof(IsReplaceTextureControlEnabled));
                 NotifyPropertyChanged(nameof(IsProjectWatchControlEnabled));
+                NotifyPropertyChanged(nameof(IsPatchButtonEnabled));
             }
         }
 
@@ -142,8 +145,6 @@ namespace SessionMapSwitcher.ViewModels
                 }
             }
         }
-
-        internal MapListItem FirstLoadedMap { get => _firstLoadedMap; set => _firstLoadedMap = value; }
 
         public string GravityText
         {
@@ -207,6 +208,36 @@ namespace SessionMapSwitcher.ViewModels
             }
         }
 
+        public bool IsPatchButtonEnabled
+        {
+            get
+            {
+                if (SessionPath.IsSessionPathValid() == false || UnpackUtils.IsSessionUnpacked())
+                {
+                    return false;
+                }
+
+                return InputControlsEnabled;
+            }
+        }
+
+        public string PatchButtonToolTip
+        {
+            get
+            {
+                if (SessionPath.IsSessionPathValid() == false)
+                {
+                    return "Enter a valid path to Session.";
+                }
+                else if (UnpackUtils.IsSessionUnpacked())
+                {
+                    return "Game is already unpacked. You can not apply the patch for an unpacked game.";
+                }
+
+                return "Use this after updating Session to a new version or to patch the game again.";
+            }
+        }
+
         #endregion
 
 
@@ -219,14 +250,21 @@ namespace SessionMapSwitcher.ViewModels
             GravityText = "-980";
             ObjectCountText = "1000";
 
-            _defaultSessionMap = new MapListItem()
+            if (EzPzPatcher.IsGamePatched())
             {
-                FullPath = SessionPath.ToOriginalSessionMapFiles,
-                MapName = "Session Default Map - Brooklyn Banks"
-            };
+                MapSwitcher = new EzPzMapSwitcher();
+            }
+            else if (UnpackUtils.IsSessionUnpacked())
+            {
+                MapSwitcher = new UnpackedMapSwitcher();
+            }
 
-            RefreshGameSettings();
-            SetCurrentlyLoadedMap();
+            if (MapSwitcher != null)
+            {
+                RefreshGameSettings();
+                SetCurrentlyLoadedMap();
+            }
+
         }
 
         internal void RefreshGameSettings()
@@ -305,6 +343,19 @@ namespace SessionMapSwitcher.ViewModels
             SessionPath.ToSession = pathToSession;
             SessionPathTextInput = pathToSession;
             AppSettingsUtil.AddOrUpdateAppSettings(SettingKey.PathToSession, SessionPath.ToSession);
+
+            if (UnpackUtils.IsSessionUnpacked())
+            {
+                MapSwitcher = new UnpackedMapSwitcher();
+            }
+            else if (EzPzPatcher.IsGamePatched())
+            {
+                MapSwitcher = new EzPzMapSwitcher();
+            }
+            else
+            {
+                MapSwitcher = null;
+            }
         }
 
         public bool LoadAvailableMaps()
@@ -347,8 +398,8 @@ namespace SessionMapSwitcher.ViewModels
                 BindingOperations.EnableCollectionSynchronization(AvailableMaps, collectionLock);
 
                 // add default session map to select (add last so it is always at top of list)
-                _defaultSessionMap.FullPath = SessionPath.ToOriginalSessionMapFiles;
-                AvailableMaps.Insert(0, _defaultSessionMap);
+                MapSwitcher.GetDefaultSessionMap().FullPath = SessionPath.ToOriginalSessionMapFiles;
+                AvailableMaps.Insert(0, MapSwitcher.GetDefaultSessionMap());
             }
 
 
@@ -523,57 +574,6 @@ namespace SessionMapSwitcher.ViewModels
             return AvailableMaps.Any(m => m.MapName == map.MapName && m.DirectoryPath == map.DirectoryPath);
         }
 
-        internal bool IsSessionRunning()
-        {
-            var allProcs = Process.GetProcessesByName("SessionGame-Win64-Shipping");
-
-            return allProcs.Length > 0;
-        }
-
-        private bool CopyMapFilesToNYCFolder(MapListItem map)
-        {
-            if (SessionPath.IsSessionPathValid() == false)
-            {
-                return false;
-            }
-
-            // copy all files related to map to game directory
-            foreach (string fileName in Directory.GetFiles(map.DirectoryPath))
-            {
-                if (fileName.Contains(map.MapName))
-                {
-                    FileInfo fi = new FileInfo(fileName);
-                    string fullTargetFilePath = SessionPath.ToNYCFolder;
-
-
-                    if (IsSessionRunning())
-                    {
-                        // While Session is running the map files must be copied as NYC01_Persistent so when the user leaves the apartment the custom map is loaded
-                        fullTargetFilePath += $"\\NYC01_Persistent";
-
-                        if (fileName.Contains("_BuiltData"))
-                        {
-                            fullTargetFilePath += $"_BuiltData{fi.Extension}";
-                        }
-                        else
-                        {
-                            fullTargetFilePath += fi.Extension;
-                        }
-                    }
-                    else
-                    {
-                        fullTargetFilePath += $"\\{fi.Name}";
-                    }
-
-
-
-                    File.Copy(fileName, fullTargetFilePath, overwrite: true);
-                }
-            }
-
-            return true;
-        }
-
         internal void LoadMap(string mapName)
         {
             LoadAvailableMaps();
@@ -582,7 +582,7 @@ namespace SessionMapSwitcher.ViewModels
             {
                 if (map.MapName == mapName)
                 {
-                    LoadMap(map);
+                    LoadSelectedMap(map);
                     return;
                 }
             }
@@ -607,59 +607,6 @@ namespace SessionMapSwitcher.ViewModels
             UserMessage = $"{map.DisplayName} is now {word}!";
         }
 
-        internal void LoadMap(MapListItem map)
-        {
-            if (SessionPath.IsSessionPathValid() == false)
-            {
-                UserMessage = "Cannot Load: 'Path to Session' is invalid.";
-                return;
-            }
-
-            if (IsSessionRunning() == false || FirstLoadedMap == null)
-            {
-                FirstLoadedMap = map;
-            }
-
-            SetIsSelectedForMapInList(map);
-
-            if (Directory.Exists(SessionPath.ToNYCFolder) == false)
-            {
-                Directory.CreateDirectory(SessionPath.ToNYCFolder);
-            }
-
-            if (map == _defaultSessionMap)
-            {
-                LoadOriginalMap();
-                return;
-            }
-
-            try
-            {
-                // delete session map file / custom maps from game 
-                DeleteAllMapFilesFromNYCFolder();
-
-                CopyMapFilesToNYCFolder(map);
-
-                // update the ini file with the new map path
-                string selectedMapPath = "/Game/Art/Env/NYC/NYC01_Persistent";
-
-                if (IsSessionRunning() == false)
-                {
-                    selectedMapPath = $"/Game/Art/Env/NYC/{map.MapName}";
-                }
-
-                GameSettingsManager.UpdateGameDefaultMapIniSetting(selectedMapPath);
-
-                SetCurrentlyLoadedMap();
-
-                UserMessage = $"{map.MapName} Loaded!";
-            }
-            catch (Exception e)
-            {
-                UserMessage = $"Failed to load {map.MapName}: {e.Message}";
-            }
-        }
-
         private void SetIsSelectedForMapInList(MapListItem map)
         {
             foreach (MapListItem availableMap in AvailableMaps)
@@ -669,48 +616,62 @@ namespace SessionMapSwitcher.ViewModels
             map.IsSelected = true;
         }
 
-        internal void LoadOriginalMap()
-        {
-            try
-            {
-                DeleteAllMapFilesFromNYCFolder();
-
-                GameSettingsManager.UpdateGameDefaultMapIniSetting("/Game/Tutorial/Intro/MAP_EntryPoint");
-
-                SetCurrentlyLoadedMap();
-
-                UserMessage = $"{_defaultSessionMap.MapName} Loaded!";
-
-            }
-            catch (Exception e)
-            {
-                UserMessage = $"Failed to load Original Session Game Map : {e.Message}";
-            }
-        }
-
-        /// <summary>
-        /// Deletes all files in the Content\Art\Env\NYC folder
-        /// </summary>
-        private void DeleteAllMapFilesFromNYCFolder()
+        internal void LoadSelectedMap(MapListItem map)
         {
             if (SessionPath.IsSessionPathValid() == false)
             {
+                UserMessage = "Path To Session is not valid";
                 return;
             }
 
-            foreach (string fileName in Directory.GetFiles(SessionPath.ToNYCFolder))
+            if (UnpackUtils.IsSessionUnpacked())
             {
-                File.Delete(fileName);
+                if ((MapSwitcher as UnpackedMapSwitcher).IsOriginalMapFilesBackedUp() == false)
+                {
+                    MessageBox.Show("The original Session game map files have not been backed up yet. Click OK to backup the files then click 'Load Map' again.",
+                                    "Notice!",
+                                    MessageBoxButton.OK,
+                                    MessageBoxImage.Information);
+
+                    BoolWithMessage backupResult = (MapSwitcher as UnpackedMapSwitcher).BackupOriginalMapFiles();
+
+                    if (backupResult.Result)
+                    {
+                        UserMessage = $"Original map files backed up to {SessionPath.ToOriginalSessionMapFiles}";
+                    }
+                    else
+                    {
+                        UserMessage = backupResult.Message;
+                    }
+
+                    return;
+                }
             }
+
+            BoolWithMessage loadResult = MapSwitcher.LoadMap(map);
+
+            if (loadResult.Result)
+            {
+                SetIsSelectedForMapInList(map);
+                SetCurrentlyLoadedMap();
+            }
+
+            UserMessage = loadResult.Message;
         }
 
         internal void SetCurrentlyLoadedMap()
         {
-            string iniValue = GameSettingsManager.GetGameDefaultMapIniSetting();
-
-            if (iniValue == "/Game/Tutorial/Intro/MAP_EntryPoint")
+            if (MapSwitcher == null)
             {
-                CurrentlyLoadedMapName = _defaultSessionMap.MapName;
+                CurrentlyLoadedMapName = "";
+                return;
+            }
+
+            string iniValue = MapSwitcher.GetGameDefaultMapSetting();
+
+            if (iniValue.Contains("/Game/Tutorial/Intro/MAP_EntryPoint"))
+            {
+                CurrentlyLoadedMapName = MapSwitcher.GetDefaultSessionMap().MapName;
             }
             else if (String.IsNullOrEmpty(iniValue) == false)
             {
@@ -838,15 +799,17 @@ namespace SessionMapSwitcher.ViewModels
                     UserMessage = "Required game files extracted! You should now be able to set game settings and custom object count.";
                 }
 
+                if (MapSwitcher == null && EzPzPatcher.IsGamePatched())
+                {
+                    MapSwitcher = new EzPzMapSwitcher();
+                }
+
                 RefreshGameSettings();
             }
             else
             {
                 UserMessage = "Patching failed. You should re-run the patching process: " + UserMessage;
             }
-
-
-
 
             _patcher = null;
             InputControlsEnabled = true;

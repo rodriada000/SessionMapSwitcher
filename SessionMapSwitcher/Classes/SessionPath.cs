@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -200,6 +201,13 @@ namespace SessionMapSwitcher.Classes
             }
 
             return sessionPath;
+        }
+
+        public static bool IsSessionRunning()
+        {
+            var allProcs = Process.GetProcessesByName("SessionGame-Win64-Shipping");
+
+            return allProcs.Length > 0;
         }
     }
 }
