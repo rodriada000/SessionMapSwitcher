@@ -10,8 +10,7 @@ using System.Threading.Tasks;
 namespace SessionMapSwitcher.Classes
 {
     /// <summary>
-    /// Class to handle loading maps for Unpacked or EzPz patched games.
-    /// Also has helper methods for backing up original map files (for unpacked versions)
+    /// Class to handle loading maps for EzPz patched games.
     /// </summary>
     class EzPzMapSwitcher : IMapSwitcher
     {

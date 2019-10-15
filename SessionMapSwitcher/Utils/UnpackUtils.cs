@@ -228,7 +228,7 @@ namespace SessionMapSwitcher.Utils
                 return false;
             }
 
-            List<string> expectedDirectories = new List<string>() { "Animation", "Art", "Character", "Customization", "ObjectPlacement", "MainHUB", "Skateboard", "VideoEditor" };
+            List<string> expectedDirectories = new List<string>() { "Animation", "Art", "Audio", "Challenges", "Character", "Cinematics", "Customization", "Data", "FilmerMode", "MainHUB", "Menus", "Mixer", "ObjectPlacement", "Skateboard", "Skeletons", "Transit", "Tutorial", "VideoEditor" };
             foreach (string expectedDir in expectedDirectories)
             {
                 if (Directory.Exists($"{SessionPath.ToContent}\\{expectedDir}") == false)

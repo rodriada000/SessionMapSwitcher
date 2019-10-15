@@ -48,6 +48,8 @@ namespace SessionMapSwitcher.ViewModels
                 NotifyPropertyChanged(nameof(LoadMapButtonText));
                 NotifyPropertyChanged(nameof(IsReplaceTextureControlEnabled));
                 NotifyPropertyChanged(nameof(IsProjectWatchControlEnabled));
+                NotifyPropertyChanged(nameof(IsPatchButtonEnabled));
+                NotifyPropertyChanged(nameof(PatchButtonToolTip));
             }
         }
 
@@ -126,6 +128,7 @@ namespace SessionMapSwitcher.ViewModels
                 NotifyPropertyChanged();
                 NotifyPropertyChanged(nameof(IsReplaceTextureControlEnabled));
                 NotifyPropertyChanged(nameof(IsProjectWatchControlEnabled));
+                NotifyPropertyChanged(nameof(IsPatchButtonEnabled));
             }
         }
 
@@ -205,6 +208,36 @@ namespace SessionMapSwitcher.ViewModels
             }
         }
 
+        public bool IsPatchButtonEnabled
+        {
+            get
+            {
+                if (SessionPath.IsSessionPathValid() == false || UnpackUtils.IsSessionUnpacked())
+                {
+                    return false;
+                }
+
+                return InputControlsEnabled;
+            }
+        }
+
+        public string PatchButtonToolTip
+        {
+            get
+            {
+                if (SessionPath.IsSessionPathValid() == false)
+                {
+                    return "Enter a valid path to Session.";
+                }
+                else if (UnpackUtils.IsSessionUnpacked())
+                {
+                    return "Game is already unpacked. You can not apply the patch for an unpacked game.";
+                }
+
+                return "Use this after updating Session to a new version or to patch the game again.";
+            }
+        }
+
         #endregion
 
 
@@ -223,7 +256,7 @@ namespace SessionMapSwitcher.ViewModels
             }
             else if (UnpackUtils.IsSessionUnpacked())
             {
-                //MapSwitcher = new UnpackedMapSwitcher();
+                MapSwitcher = new UnpackedMapSwitcher();
             }
 
             if (MapSwitcher != null)
@@ -310,6 +343,19 @@ namespace SessionMapSwitcher.ViewModels
             SessionPath.ToSession = pathToSession;
             SessionPathTextInput = pathToSession;
             AppSettingsUtil.AddOrUpdateAppSettings(SettingKey.PathToSession, SessionPath.ToSession);
+
+            if (UnpackUtils.IsSessionUnpacked())
+            {
+                MapSwitcher = new UnpackedMapSwitcher();
+            }
+            else if (EzPzPatcher.IsGamePatched())
+            {
+                MapSwitcher = new EzPzMapSwitcher();
+            }
+            else
+            {
+                MapSwitcher = null;
+            }
         }
 
         public bool LoadAvailableMaps()
@@ -572,6 +618,36 @@ namespace SessionMapSwitcher.ViewModels
 
         internal void LoadSelectedMap(MapListItem map)
         {
+            if (SessionPath.IsSessionPathValid() == false)
+            {
+                UserMessage = "Path To Session is not valid";
+                return;
+            }
+
+            if (UnpackUtils.IsSessionUnpacked())
+            {
+                if ((MapSwitcher as UnpackedMapSwitcher).IsOriginalMapFilesBackedUp() == false)
+                {
+                    MessageBox.Show("The original Session game map files have not been backed up yet. Click OK to backup the files then click 'Load Map' again.",
+                                    "Notice!",
+                                    MessageBoxButton.OK,
+                                    MessageBoxImage.Information);
+
+                    BoolWithMessage backupResult = (MapSwitcher as UnpackedMapSwitcher).BackupOriginalMapFiles();
+
+                    if (backupResult.Result)
+                    {
+                        UserMessage = $"Original map files backed up to {SessionPath.ToOriginalSessionMapFiles}";
+                    }
+                    else
+                    {
+                        UserMessage = backupResult.Message;
+                    }
+
+                    return;
+                }
+            }
+
             BoolWithMessage loadResult = MapSwitcher.LoadMap(map);
 
             if (loadResult.Result)
@@ -585,9 +661,15 @@ namespace SessionMapSwitcher.ViewModels
 
         internal void SetCurrentlyLoadedMap()
         {
+            if (MapSwitcher == null)
+            {
+                CurrentlyLoadedMapName = "";
+                return;
+            }
+
             string iniValue = MapSwitcher.GetGameDefaultMapSetting();
 
-            if (iniValue == "/Game/Tutorial/Intro/MAP_EntryPoint")
+            if (iniValue.Contains("/Game/Tutorial/Intro/MAP_EntryPoint"))
             {
                 CurrentlyLoadedMapName = MapSwitcher.GetDefaultSessionMap().MapName;
             }
@@ -717,15 +799,17 @@ namespace SessionMapSwitcher.ViewModels
                     UserMessage = "Required game files extracted! You should now be able to set game settings and custom object count.";
                 }
 
+                if (MapSwitcher == null && EzPzPatcher.IsGamePatched())
+                {
+                    MapSwitcher = new EzPzMapSwitcher();
+                }
+
                 RefreshGameSettings();
             }
             else
             {
                 UserMessage = "Patching failed. You should re-run the patching process: " + UserMessage;
             }
-
-
-
 
             _patcher = null;
             InputControlsEnabled = true;

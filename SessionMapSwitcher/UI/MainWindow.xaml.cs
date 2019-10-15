@@ -151,7 +151,7 @@ namespace SessionMapSwitcher
                 return;
             }
 
-            if (EzPzPatcher.IsGamePatched() == false)
+            if (EzPzPatcher.IsGamePatched() == false && UnpackUtils.IsSessionUnpacked() == false)
             {
                 MessageBoxResult result = System.Windows.MessageBox.Show("Session has not been patched yet. Click 'Patch With EzPz' to patch the game.", "Notice!", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;

@@ -341,10 +341,11 @@
 
         <Button x:Name="btnPatch"
                 Click="BtnPatch_Click"
+                IsEnabled="{Binding IsPatchButtonEnabled}"
                 Grid.Row="2" Grid.ColumnSpan="2"
                 Content="Patch With EzPz"
-                ToolTip="Use this after updating Session to a new version or to patch the game again."
-                IsEnabled="{Binding InputControlsEnabled}"
+                ToolTip="{Binding PatchButtonToolTip}"
+                ToolTipService.ShowOnDisabled="True"
                 Style="{StaticResource HyperlinkButtonStyle}"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"

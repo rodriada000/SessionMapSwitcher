@@ -1,4 +1,5 @@
 ﻿using Ini.Net;
+using SessionMapSwitcher.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -34,8 +35,18 @@ namespace SessionMapSwitcher.Classes
 
             try
             {
-                IniFile engineFile = new IniFile(SessionPath.ToUserEngineIniFile);
-                string gravitySetting = engineFile.ReadString("/Script/Engine.PhysicsSettings", "DefaultGravityZ");
+                IniFile engineFile = null;
+
+                if (UnpackUtils.IsSessionUnpacked())
+                {
+                    engineFile = new IniFile(SessionPath.ToDefaultEngineIniFile);
+                }
+                else if (EzPzPatcher.IsGamePatched())
+                {
+                    engineFile = new IniFile(SessionPath.ToUserEngineIniFile);
+                }
+
+                string gravitySetting = engineFile?.ReadString("/Script/Engine.PhysicsSettings", "DefaultGravityZ");
 
                 if (String.IsNullOrWhiteSpace(gravitySetting))
                 {
@@ -112,8 +123,18 @@ namespace SessionMapSwitcher.Classes
 
             try
             {
-                IniFile engineFile = new IniFile(SessionPath.ToUserEngineIniFile);
-                engineFile.WriteString("/Script/Engine.PhysicsSettings", "DefaultGravityZ", gravityText);
+                IniFile engineFile = null;
+
+                if (UnpackUtils.IsSessionUnpacked())
+                {
+                    engineFile = new IniFile(SessionPath.ToDefaultEngineIniFile);
+                }
+                else if (EzPzPatcher.IsGamePatched())
+                {
+                    engineFile = new IniFile(SessionPath.ToUserEngineIniFile);
+                }
+                
+                engineFile?.WriteString("/Script/Engine.PhysicsSettings", "DefaultGravityZ", gravityText);
 
                 RenameMoviesFolderToSkipMovies(skipMovie);
 
