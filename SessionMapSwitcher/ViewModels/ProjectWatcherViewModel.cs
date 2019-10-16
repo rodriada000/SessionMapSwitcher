@@ -1,4 +1,5 @@
-﻿using Ini.Net;
+﻿using IniParser;
+using IniParser.Model;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
@@ -112,8 +113,9 @@ namespace SessionMapSwitcher.ViewModels
         {
             get
             {
-                IniFile engineFile = new IniFile(PathToDefaultEngineIni);
-                var fullPath = engineFile.ReadString("/Script/EngineSettings.GameMapsSettings", "GameDefaultMap");
+                var parser = new FileIniDataParser();
+                IniData engineFile = parser.ReadFile(PathToDefaultEngineIni);
+                var fullPath = engineFile["/Script/EngineSettings.GameMapsSettings"]["GameDefaultMap"];
                 // Get everything after the last slash
                 var slashIndex = fullPath.LastIndexOf("/") + 1;
                 fullPath = fullPath.Substring(slashIndex);
