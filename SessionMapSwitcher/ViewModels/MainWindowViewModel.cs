@@ -22,6 +22,7 @@ namespace SessionMapSwitcher.ViewModels
 
         private string _sessionPath;
         private string _userMessage;
+        private string _hintMessage;
         private string _currentlyLoadedMapName;
         private ThreadFriendlyObservableCollection<MapListItem> _availableMaps;
         private object collectionLock = new object();
@@ -33,6 +34,14 @@ namespace SessionMapSwitcher.ViewModels
         private EzPzPatcher _patcher;
         private OnlineImportViewModel ImportViewModel;
         private IMapSwitcher MapSwitcher { get; set; }
+
+        private readonly string[] _hintMessages = new string[] { "Right-click list of maps and click 'Open Content Folder ...' to get to the Content folder easily",
+                                                                 "Download maps from online by clicking 'Import Map > From Online ...'",
+                                                                 "Hide maps in the list by right-clicking the map and clicking 'Hide Selected Map ...'",
+                                                                 "Rename maps in the list by right-clicking the map and clicking 'Rename Selected Map ...'",
+                                                                 "Right-click anywhere and click 'View Help ...' to open the readme",
+                                                                 "Use Project Watcher to auto-import your map after you cooked it in Unreal Engine",
+                                                               };
 
 
         public string SessionPathTextInput
@@ -99,6 +108,16 @@ namespace SessionMapSwitcher.ViewModels
             set
             {
                 _userMessage = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public string HintMessage
+        {
+            get { return _hintMessage; }
+            set
+            {
+                _hintMessage = value;
                 NotifyPropertyChanged();
             }
         }
@@ -249,6 +268,8 @@ namespace SessionMapSwitcher.ViewModels
             InputControlsEnabled = true;
             GravityText = "-980";
             ObjectCountText = "1000";
+
+            SetRandomHintMessage();
 
             if (EzPzPatcher.IsGamePatched())
             {
@@ -722,6 +743,13 @@ namespace SessionMapSwitcher.ViewModels
             {
                 UserMessage = $"Cannot open folder: {ex.Message}";
             }
+        }
+
+        private void SetRandomHintMessage()
+        {
+            Random random = new Random();
+            int randIndex = random.Next(0, _hintMessages.Length);
+            HintMessage = $"Hint: {_hintMessages[randIndex]}";
         }
 
 

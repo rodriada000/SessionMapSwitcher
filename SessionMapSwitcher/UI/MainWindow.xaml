@@ -91,6 +91,12 @@
         </Style>
     </Window.Resources>
 
+    <Window.ContextMenu>
+        <ContextMenu>
+            <MenuItem Header="View Help ..." Click="MenuOpenReadme_Click"/>
+        </ContextMenu>
+    </Window.ContextMenu>
+    
     <Grid Style="{StaticResource mainGridStyle}">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -267,7 +273,7 @@
 
                         <Button x:Name="btnApplySettings"
                                 Content="Apply"
-                                ToolTip="Update the .ini files with new setting values."
+                                ToolTip="Update the game with new settings."
                                 Click="BtnApplySettings_Click"
                                 Style="{StaticResource MainButtonStyle}"
                                 IsEnabled="{Binding InputControlsEnabled}"
@@ -313,6 +319,17 @@
                    MaxWidth="600"
                    FontSize="14"/>
 
+        <TextBlock x:Name="lblHintMessage"
+                   Grid.Row="2" Grid.ColumnSpan="2"
+                   Grid.RowSpan="2"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Bottom"
+                   Margin="10,0,0,4"
+                   Text="{Binding HintMessage, FallbackValue='Hint: This is a hint shown to the user that changes on app start every time.'}"
+                   TextWrapping="Wrap"
+                   MaxWidth="600"
+                   FontSize="11"/>
+
         <Button x:Name="btnLoadMap"
                 Grid.Row="2" Grid.ColumnSpan="2"
                 Content="{Binding LoadMapButtonText, FallbackValue='Load Map'}"
@@ -349,6 +366,6 @@
                 Style="{StaticResource HyperlinkButtonStyle}"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
-                Margin="0,0,10,5"/>
+                Margin="0,0,10,3"/>
     </Grid>
 </Window>
