@@ -1,6 +1,4 @@
-﻿
-using Ini.Net;
-using SessionMapSwitcher.Classes;
+﻿using SessionMapSwitcher.Classes;
 using SessionMapSwitcher.Classes.Interfaces;
 using SessionMapSwitcher.UI;
 using SessionMapSwitcher.Utils;

@@ -1,4 +1,5 @@
-﻿using Ini.Net;
+﻿using IniParser;
+using IniParser.Model;
 using SessionMapSwitcher.Utils;
 using System;
 using System.Collections.Generic;
@@ -35,18 +36,24 @@ namespace SessionMapSwitcher.Classes
 
             try
             {
-                IniFile engineFile = null;
+                IniData engineFile = null;
+                var parser = new FileIniDataParser();
 
                 if (UnpackUtils.IsSessionUnpacked())
                 {
-                    engineFile = new IniFile(SessionPath.ToDefaultEngineIniFile);
+                    engineFile = parser.ReadFile(SessionPath.ToDefaultEngineIniFile);
                 }
                 else if (EzPzPatcher.IsGamePatched())
                 {
-                    engineFile = new IniFile(SessionPath.ToUserEngineIniFile);
+                    engineFile = parser.ReadFile(SessionPath.ToUserEngineIniFile);
                 }
 
-                string gravitySetting = engineFile?.ReadString("/Script/Engine.PhysicsSettings", "DefaultGravityZ");
+                string gravitySetting = null;
+                try
+                {
+                    gravitySetting = engineFile["/Script/Engine.PhysicsSettings"]["DefaultGravityZ"];
+                }
+                catch (Exception) { };
 
                 if (String.IsNullOrWhiteSpace(gravitySetting))
                 {
@@ -123,18 +130,28 @@ namespace SessionMapSwitcher.Classes
 
             try
             {
-                IniFile engineFile = null;
+                var parser = new FileIniDataParser();
+                IniData engineFile = null;
 
                 if (UnpackUtils.IsSessionUnpacked())
                 {
-                    engineFile = new IniFile(SessionPath.ToDefaultEngineIniFile);
+                    engineFile = parser.ReadFile(SessionPath.ToDefaultEngineIniFile);
                 }
                 else if (EzPzPatcher.IsGamePatched())
                 {
-                    engineFile = new IniFile(SessionPath.ToUserEngineIniFile);
+                    engineFile = parser.ReadFile(SessionPath.ToUserEngineIniFile);
                 }
-                
-                engineFile?.WriteString("/Script/Engine.PhysicsSettings", "DefaultGravityZ", gravityText);
+
+                engineFile["/Script/Engine.PhysicsSettings"]["DefaultGravityZ"] = gravityText;
+
+                if (UnpackUtils.IsSessionUnpacked())
+                {
+                    parser.WriteFile(SessionPath.ToDefaultEngineIniFile, engineFile);
+                }
+                else if (EzPzPatcher.IsGamePatched())
+                {
+                    parser.WriteFile(SessionPath.ToUserEngineIniFile, engineFile);
+                }                
 
                 RenameMoviesFolderToSkipMovies(skipMovie);
 

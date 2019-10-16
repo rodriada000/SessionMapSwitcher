@@ -1,4 +1,5 @@
-﻿using Ini.Net;
+﻿using IniParser;
+using IniParser.Model;
 using SessionMapSwitcher.Classes.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -135,8 +136,9 @@ namespace SessionMapSwitcher.Classes
 
             try
             {
-                IniFile iniFile = new IniFile(SessionPath.ToDefaultEngineIniFile);
-                return iniFile.ReadString("/Script/EngineSettings.GameMapsSettings", "GameDefaultMap");
+                var parser = new FileIniDataParser();
+                IniData iniFile = parser.ReadFile(SessionPath.ToDefaultEngineIniFile);
+                return iniFile["/Script/EngineSettings.GameMapsSettings"]["GameDefaultMap"];
             }
             catch (Exception)
             {
@@ -214,8 +216,19 @@ namespace SessionMapSwitcher.Classes
                 return false;
             }
 
-            IniFile iniFile = new IniFile(SessionPath.ToDefaultEngineIniFile);
-            return iniFile.WriteString("/Script/EngineSettings.GameMapsSettings", "GameDefaultMap", defaultMapValue);
+            var parser = new FileIniDataParser();
+            IniData iniFile = parser.ReadFile(SessionPath.ToDefaultEngineIniFile);
+            iniFile["/Script/EngineSettings.GameMapsSettings"]["GameDefaultMap"] = defaultMapValue;
+
+            try
+            {
+                parser.WriteFile(SessionPath.ToDefaultEngineIniFile, iniFile);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public BoolWithMessage BackupOriginalMapFiles()
