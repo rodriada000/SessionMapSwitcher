@@ -669,15 +669,23 @@ namespace SessionMapSwitcher.ViewModels
                 }
             }
 
-            BoolWithMessage loadResult = MapSwitcher.LoadMap(map);
-
-            if (loadResult.Result)
+            try
             {
-                SetIsSelectedForMapInList(map);
-                SetCurrentlyLoadedMap();
+                BoolWithMessage loadResult = MapSwitcher.LoadMap(map);
+
+                if (loadResult.Result)
+                {
+                    SetIsSelectedForMapInList(map);
+                    SetCurrentlyLoadedMap();
+                }
+
+                UserMessage = loadResult.Message;
+            }
+            catch (Exception e)
+            {
+                UserMessage = $"Something went wrong while loading the map: {e.Message}";
             }
 
-            UserMessage = loadResult.Message;
         }
 
         internal void SetCurrentlyLoadedMap()
