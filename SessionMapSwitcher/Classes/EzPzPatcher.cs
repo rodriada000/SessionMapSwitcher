@@ -267,6 +267,12 @@ namespace SessionMapSwitcher.Classes
                 proc.StartInfo.Arguments = $"/C \"\"{SessionPath.ToPaks}\\{EzPzExeName}\" \"{this.PathToSession}\"\"";
                 proc.StartInfo.CreateNoWindow = true;
                 proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+
+                if (App.IsRunningAppAsAdministrator())
+                {
+                    proc.StartInfo.Verb = "runas";
+                }
+
                 proc.Start();
                 proc.WaitForExit();
             }
@@ -291,6 +297,12 @@ namespace SessionMapSwitcher.Classes
                     proc.StartInfo.FileName = $"{SessionPath.ToPaks}\\UnrealPak.exe";
                     proc.StartInfo.Arguments = $"-cryptokeys=\"crypto.json\" -Extract \"{SessionPath.ToPakFile}\" \"..\\..\\..\" -Filter=\"{file}\"";
                     proc.StartInfo.CreateNoWindow = false;
+
+                    if (App.IsRunningAppAsAdministrator())
+                    {
+                        proc.StartInfo.Verb = "runas";
+                    }
+
                     proc.Start();
 
 
