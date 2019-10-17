@@ -38,6 +38,7 @@ namespace SessionMapSwitcher.Classes
             {
                 IniData engineFile = null;
                 var parser = new FileIniDataParser();
+                parser.Parser.Configuration.AllowDuplicateKeys = true;
 
                 if (UnpackUtils.IsSessionUnpacked())
                 {
@@ -131,6 +132,7 @@ namespace SessionMapSwitcher.Classes
             try
             {
                 var parser = new FileIniDataParser();
+                parser.Parser.Configuration.AllowDuplicateKeys = true;
                 IniData engineFile = null;
 
                 if (UnpackUtils.IsSessionUnpacked())
