@@ -55,10 +55,10 @@ namespace SessionMapSwitcher.Classes
         /// <summary>
         /// Github link to .txt file that contains the latest download link to the files required for unpacking
         /// </summary>
-        private const string UnpackGitHubUrl = "https://raw.githubusercontent.com/rodriada000/SessionMapSwitcher/url_updates/docs/unpackDownloadLink.txt";
+        private const string UnpackGitHubUrl = "https://raw.githubusercontent.com/rodriada000/SessionMapSwitcher/url_updates/docs/direct_unpackDownloadLink.txt";
 
 
-        private const string CryptoJsonGitHubUrl = "https://raw.githubusercontent.com/rodriada000/SessionMapSwitcher/url_updates/docs/cryptojsonDownloadLink.txt";
+        private const string CryptoJsonGitHubUrl = "https://raw.githubusercontent.com/rodriada000/SessionMapSwitcher/url_updates/docs/direct_cryptojsonDownloadLink.txt";
 
         /// <summary>
         /// Handles the entire patching process
@@ -218,19 +218,11 @@ namespace SessionMapSwitcher.Classes
             {
                 DownloadUtils.ProgressChanged += DownloadUtils_ProgressChanged; ;
 
-                // visit github to get current anon file download link
+                // visit github to get current direct download link
                 ProgressChanged("Downloading crypto.json file - getting download url from git ...");
-                string downloadUrl = DownloadUtils.GetTxtDocumentFromGitHubRepo(CryptoJsonGitHubUrl);
+                string directLinkToZip = DownloadUtils.GetTxtDocumentFromGitHubRepo(CryptoJsonGitHubUrl);
 
-                // visit anon file to get direct file download link from html page
-                ProgressChanged("Downloading crypto.json file -  scraping direct download link download page ...");
-                string directLinkToZip = DownloadUtils.GetDirectDownloadLinkFromAnonPage(downloadUrl);
-
-                if (directLinkToZip == "")
-                {
-                    ProgressChanged("Failed to get download link from html page. Cannot continue.");
-                    return false;
-                }
+                directLinkToZip = directLinkToZip.TrimEnd(new char[] { ' ', '\n' });
 
                 // download to Paks folder
                 ProgressChanged("Downloading crypto.json file -  downloading actual file ...");
@@ -363,6 +355,8 @@ namespace SessionMapSwitcher.Classes
                 ProgressChanged("Downloading Session EzPz Mod .zip file - getting download url from git ...");
                 string downloadUrl = DownloadUtils.GetTxtDocumentFromGitHubRepo(EzPzGitHubUrl);
 
+                downloadUrl = downloadUrl.TrimEnd(new char[] { ' ', '\n' });
+
                 var downloadTask = DownloadUtils.DownloadFileToFolderAsync(downloadUrl, $"{SessionPath.ToPaks}\\{DownloadedPatchFileName}", System.Threading.CancellationToken.None);
                 downloadTask.Wait();
             }
@@ -396,19 +390,11 @@ namespace SessionMapSwitcher.Classes
             {
                 DownloadUtils.ProgressChanged += DownloadUtils_ProgressChanged; ;
 
-                // visit github to get current anon file download link
+                // visit github to get current direct download link
                 ProgressChanged("Downloading UnrealPak .zip file - getting download url from git ...");
-                string downloadUrl = DownloadUtils.GetTxtDocumentFromGitHubRepo(UnpackGitHubUrl);
+                string directLinkToZip = DownloadUtils.GetTxtDocumentFromGitHubRepo(UnpackGitHubUrl);
 
-                // visit anon file to get direct file download link from html page
-                ProgressChanged("Downloading UnrealPak .zip file -  scraping direct download link download page ...");
-                string directLinkToZip = DownloadUtils.GetDirectDownloadLinkFromAnonPage(downloadUrl);
-
-                if (directLinkToZip == "")
-                {
-                    ProgressChanged("Failed to get download link from html page. Cannot continue.");
-                    return false;
-                }
+                directLinkToZip = directLinkToZip.TrimEnd(new char[] { ' ', '\n' });
 
                 // download to Paks folder
                 ProgressChanged("Downloading UnrealPak .zip file -  downloading actual file ...");
