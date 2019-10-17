@@ -137,6 +137,7 @@ namespace SessionMapSwitcher.Classes
             try
             {
                 var parser = new FileIniDataParser();
+                parser.Parser.Configuration.AllowDuplicateKeys = true;
                 IniData iniFile = parser.ReadFile(SessionPath.ToDefaultEngineIniFile);
                 return iniFile["/Script/EngineSettings.GameMapsSettings"]["GameDefaultMap"];
             }
@@ -217,6 +218,7 @@ namespace SessionMapSwitcher.Classes
             }
 
             var parser = new FileIniDataParser();
+            parser.Parser.Configuration.AllowDuplicateKeys = true;
             IniData iniFile = parser.ReadFile(SessionPath.ToDefaultEngineIniFile);
             iniFile["/Script/EngineSettings.GameMapsSettings"]["GameDefaultMap"] = defaultMapValue;
 

@@ -114,6 +114,7 @@ namespace SessionMapSwitcher.ViewModels
             get
             {
                 var parser = new FileIniDataParser();
+                parser.Parser.Configuration.AllowDuplicateKeys = true;
                 IniData engineFile = parser.ReadFile(PathToDefaultEngineIni);
                 var fullPath = engineFile["/Script/EngineSettings.GameMapsSettings"]["GameDefaultMap"];
                 // Get everything after the last slash
