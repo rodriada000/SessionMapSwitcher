@@ -169,7 +169,14 @@ namespace SessionMapSwitcher.Utils
 
             double? progressPercentage = null;
             if (totalDownloadSize.HasValue)
+            {
                 progressPercentage = Math.Round((double)totalBytesRead / totalDownloadSize.Value * 100, 2);
+            }
+            else
+            {
+                totalDownloadSize = 0;
+                progressPercentage = 0;
+            }
 
             ProgressChanged(totalDownloadSize, totalBytesRead, progressPercentage);
         }
