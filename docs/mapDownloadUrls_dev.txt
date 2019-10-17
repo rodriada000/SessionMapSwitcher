@@ -1,5 +1,0 @@
-MapTitle | DownloadUrl | OriginalMapReleaseUrl | PreviewImageUrl
-School II Beta (By GHFear) | DIRECT:https://github.com/rodriada000/SessionCustomMapReleases/releases/download/School_II_v1-beta/School_II_By_GHFear.zip | https://youtu.be/xZBPvBc4DBM | 
-Session Alpha Map (By Roober) | DIRECT:https://github.com/rodriada000/SessionCustomMapReleases/releases/download/SessionAlphaMap_v1/SessionAlphaMap_By_Roober.zip | https://www68.zippyshare.com/v/CPmoTkzH/file.html | | 
-Community Park v2 (By Roober) | | https://drive.google.com/file/d/1LBLbCllcCdWLZ8sGDp1cIqVQAbyM4Zq1/view?usp=sharing | 
-The Skate District v2 (By Tifo) | | https://www.youtube.com/watch?v=pIbT3NDE5H0 | 
