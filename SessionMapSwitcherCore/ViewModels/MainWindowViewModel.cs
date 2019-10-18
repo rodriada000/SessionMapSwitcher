@@ -68,10 +68,17 @@ namespace SessionMapSwitcherCore.ViewModels
             set
             {
                 _availableMaps = value;
-                NotifyPropertyChanged();
+                RefreshFilteredMaps();
             }
         }
 
+        public List<MapListItem> FilteredAvailableMaps
+        {
+            get
+            {
+                return AvailableMaps.Where(m => Filter(m)).ToList();
+            }
+        }
 
         /// <summary>
         /// Filter to hide maps when invalid and the option is unchecked
@@ -138,8 +145,9 @@ namespace SessionMapSwitcherCore.ViewModels
                 if (value != _showInvalidMaps)
                 {
                     _showInvalidMaps = value;
-                    NotifyPropertyChanged();
                     AppSettingsUtil.AddOrUpdateAppSettings(SettingKey.ShowInvalidMaps, value.ToString());
+                    NotifyPropertyChanged();
+                    RefreshFilteredMaps();
                 }
             }
         }
@@ -600,7 +608,7 @@ namespace SessionMapSwitcherCore.ViewModels
                 return;
             }
 
-            LoadAvailableMaps();
+            RefreshFilteredMaps();
 
             string word = map.IsHiddenByUser ? "hidden" : "visible";
             UserMessage = $"{map.DisplayName} is now {word}!";
@@ -640,6 +648,14 @@ namespace SessionMapSwitcherCore.ViewModels
                 UserMessage = $"Something went wrong while loading the map: {e.Message}";
             }
 
+        }
+
+        public void RefreshFilteredMaps()
+        {
+            if (AvailableMaps != null)
+            {
+                NotifyPropertyChanged(nameof(FilteredAvailableMaps));
+            }
         }
 
         public bool IsSessionUnpacked()

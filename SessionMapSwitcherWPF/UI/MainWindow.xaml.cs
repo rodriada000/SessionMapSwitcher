@@ -595,7 +595,7 @@ namespace SessionMapSwitcher
                     return;
                 }
 
-                ReloadAvailableMapsInBackground();
+                ViewModel.RefreshFilteredMaps();
                 ViewModel.UserMessage = $"{selectedMap.MapName} renamed to {selectedMap.CustomName}!";
             }
         }

@@ -196,7 +196,7 @@
                          MinWidth="300" MaxWidth="350"
                          ScrollViewer.CanContentScroll="False"
                          Margin="2,1,2,5"
-                         ItemsSource="{Binding AvailableMaps}"
+                         ItemsSource="{Binding FilteredAvailableMaps}"
                          ItemContainerStyle="{StaticResource MapListItem}"
                          ContextMenuOpening="ContextMenu_ContextMenuOpening">
                     <ListBox.ContextMenu>
