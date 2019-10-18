@@ -1,8 +1,7 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SessionMapSwitcher.Classes;
-using SessionMapSwitcher.Utils;
+using SessionMapSwitcherCore.Classes;
+using SessionMapSwitcherCore.Utils;
 
 namespace MapSwitcherUnitTests
 {
