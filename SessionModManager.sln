@@ -3,13 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29215.179
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SessionMapSwitcher", "SessionMapSwitcher\SessionMapSwitcher.csproj", "{F7200046-CC2D-4B4F-B6E6-60C3FB0A7A61}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModManagerUnitTests", "MapSwitcherUnitTests\ModManagerUnitTests.csproj", "{84FBB181-B647-43A6-BEB2-6B1F44DB7ACB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapSwitcherUnitTests", "MapSwitcherUnitTests\MapSwitcherUnitTests.csproj", "{84FBB181-B647-43A6-BEB2-6B1F44DB7ACB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SessionModManagerWPF", "SessionMapSwitcherWPF\SessionModManagerWPF.csproj", "{4902CDB6-BEAE-4208-B674-38BCE8E37BE4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SessionMapSwitcherWPF", "SessionMapSwitcherWPF\SessionMapSwitcherWPF.csproj", "{4902CDB6-BEAE-4208-B674-38BCE8E37BE4}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SessionMapSwitcherCore", "SessionMapSwitcherCore\SessionMapSwitcherCore.csproj", "{EE8513B4-CA29-476F-8D64-8996CBB18D80}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SessionModManagerCore", "SessionMapSwitcherCore\SessionModManagerCore.csproj", "{EE8513B4-CA29-476F-8D64-8996CBB18D80}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +15,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F7200046-CC2D-4B4F-B6E6-60C3FB0A7A61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F7200046-CC2D-4B4F-B6E6-60C3FB0A7A61}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F7200046-CC2D-4B4F-B6E6-60C3FB0A7A61}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F7200046-CC2D-4B4F-B6E6-60C3FB0A7A61}.Release|Any CPU.Build.0 = Release|Any CPU
 		{84FBB181-B647-43A6-BEB2-6B1F44DB7ACB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{84FBB181-B647-43A6-BEB2-6B1F44DB7ACB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{84FBB181-B647-43A6-BEB2-6B1F44DB7ACB}.Release|Any CPU.ActiveCfg = Release|Any CPU

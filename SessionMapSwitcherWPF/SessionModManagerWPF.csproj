@@ -34,6 +34,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\new_switcher.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="INIFileParser, Version=2.5.2.0, Culture=neutral, PublicKeyToken=79af7b307b65cf3c, processorArchitecture=MSIL">
       <HintPath>..\packages\ini-parser.2.5.2\lib\net20\INIFileParser.dll</HintPath>
@@ -175,9 +178,9 @@
     <Resource Include="Resources\SessionMapsIcon_alt.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SessionMapSwitcherCore\SessionMapSwitcherCore.csproj">
+    <ProjectReference Include="..\SessionMapSwitcherCore\SessionModManagerCore.csproj">
       <Project>{ee8513b4-ca29-476f-8d64-8996cbb18d80}</Project>
-      <Name>SessionMapSwitcherCore</Name>
+      <Name>SessionModManagerCore</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

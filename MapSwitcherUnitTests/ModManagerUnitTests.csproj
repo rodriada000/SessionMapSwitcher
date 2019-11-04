@@ -58,13 +58,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SessionMapSwitcherCore\SessionMapSwitcherCore.csproj">
+    <ProjectReference Include="..\SessionMapSwitcherCore\SessionModManagerCore.csproj">
       <Project>{ee8513b4-ca29-476f-8d64-8996cbb18d80}</Project>
-      <Name>SessionMapSwitcherCore</Name>
+      <Name>SessionModManagerCore</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SessionMapSwitcherWPF\SessionMapSwitcherWPF.csproj">
+    <ProjectReference Include="..\SessionMapSwitcherWPF\SessionModManagerWPF.csproj">
       <Project>{4902cdb6-beae-4208-b674-38bce8e37be4}</Project>
-      <Name>SessionMapSwitcherWPF</Name>
+      <Name>SessionModManagerWPF</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

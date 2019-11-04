@@ -404,14 +404,28 @@ namespace SessionMapSwitcherCore.ViewModels
                 // sort the maps A -> Z
                 AvailableMaps = new List<MapListItem>(AvailableMaps.OrderBy(m => m.DisplayName));
 
-                // add default session map to select (add last so it is always at top of list)
-                MapSwitcher.GetDefaultSessionMap().FullPath = SessionPath.ToOriginalSessionMapFiles;
-                AvailableMaps.Insert(0, MapSwitcher.GetDefaultSessionMap());
+                AddDefaultMapToAvailableMaps();
             }
 
 
             UserMessage = "List of available maps loaded!";
             return true;
+        }
+
+        /// <summary>
+        /// adds the default session map to beginning of list of <see cref="AvailableMaps"/>
+        /// </summary>
+        private void AddDefaultMapToAvailableMaps()
+        {
+            if (MapSwitcher == null || AvailableMaps == null)
+            {
+                return;
+            }
+
+            MapSwitcher.GetDefaultSessionMap().FullPath = SessionPath.ToOriginalSessionMapFiles;
+            AvailableMaps.Insert(0, MapSwitcher.GetDefaultSessionMap());
+            NotifyPropertyChanged(nameof(AvailableMaps));
+            NotifyPropertyChanged(nameof(FilteredAvailableMaps));
         }
 
         private void SelectCurrentlyLoadedMapInList()
