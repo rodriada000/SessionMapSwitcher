@@ -1,0 +1,51 @@
+﻿<Window x:Class="SessionMapSwitcher.UI.UpdateWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SessionMapSwitcher.UI"
+        Loaded="Window_Loaded"
+        mc:Ignorable="d"
+        Style="{StaticResource WindowStyle}"
+        Title="Update Available!" Height="450" Width="625">
+    <Window.Resources>
+        <Style TargetType="Button" BasedOn="{StaticResource MainButtonStyle}">
+            <Setter Property="Padding" Value="5,1,5,1"/>
+            <Setter Property="FontSize" Value="15"/>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock x:Name="txtHeader" TextWrapping="Wrap" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,10,10,5"
+                   FontWeight="SemiBold"
+                   FontSize="15"
+                   Text="{Binding HeaderMessage, FallbackValue='A new version of Session Map Switcher is available to download. You can view whats changed below.'}"/>
+
+
+        <TextBlock Text="Getting Latest Version Notes ..." Grid.Row="1"
+                   VerticalAlignment="Center" HorizontalAlignment="Center"
+                   FontSize="15"
+                   Margin="0,0,0,0"/>
+        
+        <WebBrowser x:Name="browser" Grid.Row="1" Visibility="{Binding BrowserVisibility, FallbackValue='Hidden'}"/>
+
+        <Button x:Name="btnUpdate" 
+                Grid.Row="2" 
+                HorizontalAlignment="Center" VerticalAlignment="Bottom" 
+                Margin="0,5,100,5"
+                Content="Update Now"
+                Click="BtnUpdate_Click"/>
+
+        <Button x:Name="btnClose"
+                Grid.Row="2"
+                HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                Margin="90,5,0,5"
+                Click="BtnClose_Click"
+                Content="Not Now"/>
+    </Grid>
+</Window>
