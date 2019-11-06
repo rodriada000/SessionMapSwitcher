@@ -13,6 +13,7 @@ using SessionMapSwitcherCore.ViewModels;
 using SessionMapSwitcherCore.Utils;
 using System.Windows.Forms;
 using SessionMapSwitcherWPF.Classes;
+using SessionModManagerCore.Classes;
 
 namespace SessionMapSwitcher
 {
@@ -393,11 +394,7 @@ namespace SessionMapSwitcher
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-#if DEBUG
-            Debug.WriteLine("Skipping check for updates in debug mode ...");
-#else
             CheckForNewVersionInBackground();
-#endif
             ctrlTextureReplacer.ViewModel.MessageChanged += TextureReplacer_MessageChanged;
             ctrlProjectWatcher.ViewModel.MapImported += ProjectWatcher_MapImported;
         }
@@ -419,7 +416,7 @@ namespace SessionMapSwitcher
             ViewModel.UserMessage = "Checking for updates ...";
             Task task = Task.Factory.StartNew(() => 
             {
-                IsNewVersionAvailable = VersionChecker.CheckForUpdates();
+                IsNewVersionAvailable = VersionChecker.IsUpdateAvailable();
             });
 
 

@@ -24,7 +24,7 @@
         <TextBlock x:Name="txtHeader" TextWrapping="Wrap" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,10,10,5"
                    FontWeight="SemiBold"
                    FontSize="15"
-                   Text="{Binding HeaderMessage, FallbackValue='A new version of Session Map Switcher is available to download. You can view whats changed below.'}"/>
+                   Text="{Binding HeaderMessage, FallbackValue='A new version of Session Mod Manager is available to download. You can view whats changed below.'}"/>
 
 
         <TextBlock Text="Getting Latest Version Notes ..." Grid.Row="1"

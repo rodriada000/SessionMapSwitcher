@@ -2,6 +2,10 @@
 {
     public class UpdateViewModel : ViewModelBase
     {
+        /// <summary>
+        /// url to the latest github release of the application
+        /// </summary>
+        public const string LatestReleaseUrl = "https://github.com/rodriada000/SessionMapSwitcher/releases/latest";
 
         private string _headerMessage;
         private bool _isBrowserVisible;

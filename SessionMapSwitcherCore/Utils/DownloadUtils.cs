@@ -21,8 +21,9 @@ namespace SessionMapSwitcherCore.Utils
         {
             using (HttpClient client = new HttpClient())
             {
+                client.Timeout = new TimeSpan(0, 0, 10);
                 Task<HttpResponseMessage> task = client.GetAsync(githubUrl);
-                task.Wait();
+                task.Wait(10000);
 
                 HttpResponseMessage response = task.Result;
                 // Check that response was successful or throw exception

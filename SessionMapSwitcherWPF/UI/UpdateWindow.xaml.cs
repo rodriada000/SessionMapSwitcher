@@ -1,8 +1,13 @@
-﻿using SessionMapSwitcherCore.ViewModels;
+﻿using SessionMapSwitcherCore.Classes;
+using SessionMapSwitcherCore.Utils;
+using SessionMapSwitcherCore.ViewModels;
 using SessionMapSwitcherWPF.Classes;
+using SessionModManagerCore.Classes;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Forms;
 
 namespace SessionMapSwitcher.UI
 {
@@ -11,6 +16,7 @@ namespace SessionMapSwitcher.UI
     /// </summary>
     public partial class UpdateWindow : Window
     {
+
         private UpdateViewModel ViewModel { get; set; }
 
         public UpdateWindow()
@@ -35,7 +41,7 @@ namespace SessionMapSwitcher.UI
 
             Task scraperTask = Task.Factory.StartNew(() =>
             {
-                htmlVersionNotes = VersionChecker.ScrapeLatestVersionNotesFromGitHub();
+                htmlVersionNotes = ScrapeLatestVersionNotesFromGitHub();
             }, CancellationToken.None, TaskCreationOptions.LongRunning, scheduler);
 
             scraperTask.ContinueWith((antecedent) =>
@@ -55,22 +61,105 @@ namespace SessionMapSwitcher.UI
         private void BtnUpdate_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.HeaderMessage = "Updating app ...";
-            VersionChecker.AppUpdater.ReportProgress += AppUpdater_ReportProgress; ;
+            BoolWithMessage updateResult = null;
 
             Task updateTask = Task.Factory.StartNew(() =>
             {
-                VersionChecker.UpdateApplication();
+                updateResult = VersionChecker.UpdateApplication();
             });
 
             updateTask.ContinueWith((updateAntecedent) =>
             {
-                VersionChecker.AppUpdater.ReportProgress -= AppUpdater_ReportProgress;
+                if (updateResult?.Result == false)
+                {
+                    System.Windows.MessageBox.Show(updateResult.Message, "Error Updating!", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             });
         }
 
-        private void AppUpdater_ReportProgress(NAppUpdate.Framework.Common.UpdateProgressInfo currentStatus)
+        #region Methods related to getting version notes
+
+        /// <summary>
+        /// Scrapes the latest release git hub page for version notes by looking for the div tag
+        /// with the class "markdown-body"
+        /// </summary>
+        /// <returns> Scraped html from Github if found </returns>
+        public static string ScrapeLatestVersionNotesFromGitHub()
         {
-            ViewModel.HeaderMessage = $"Updating app: {currentStatus.Message} | {currentStatus.Percentage}%";
+            string pageHtml = DownloadUtils.GetTxtDocumentFromGitHubRepo(UpdateViewModel.LatestReleaseUrl);
+            HtmlDocument doc = GetHtmlDocument(pageHtml);
+
+            string fullHtml = "";
+            bool foundHeader = false;
+            bool foundbody = false;
+
+            // append css style to the scraped html so it the document does not load with default Arial font
+            fullHtml += "<style type=\"text/css\"> * { font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji; background: #CFD8DC } a { pointer-events: none; cursor: default; } </style>";
+
+            // loop over html elements and find the 'release-header' div and 'markdown-body' div
+            foreach (HtmlElement element in doc.Body.All)
+            {
+                if (element.GetAttribute("className").Contains("release-header"))
+                {
+                    foreach (HtmlElement child in element.Children)
+                    {
+                        // skip the unordered list that is hidden in header that has commit hash
+                        if (child.TagName.Equals("ul", StringComparison.OrdinalIgnoreCase) == false)
+                        {
+                            DisableHyperLinksInHtml(child);
+
+                            fullHtml += child.InnerHtml;
+                            fullHtml += "<br/>";
+                        }
+                    }
+                    foundHeader = true;
+                }
+
+                if (element.GetAttribute("className").Contains("markdown-body"))
+                {
+                    fullHtml += element.InnerHtml;
+                    foundbody = true;
+                }
+
+                if (foundbody && foundHeader)
+                {
+                    return fullHtml;
+                }
+            }
+
+            return "Could not locate version notes";
         }
+
+        /// <summary>
+        /// sets the 'onclick' attribute to 'return false' so the hyperlink is disabled
+        /// </summary>
+        /// <param name="child"></param>
+        private static void DisableHyperLinksInHtml(HtmlElement child)
+        {
+            foreach (HtmlElement link in child.GetElementsByTagName("a"))
+            {
+                link.SetAttribute("onClick", "return false;");
+            }
+        }
+
+        /// <summary>
+        /// Uses a WebBrowser control to get an HtmlDocument from a html string
+        /// </summary>
+        public static HtmlDocument GetHtmlDocument(string html)
+        {
+            using (WebBrowser browser = new WebBrowser())
+            {
+                browser.ScriptErrorsSuppressed = true;
+                browser.DocumentText = html;
+                browser.Document.OpenNew(true);
+                browser.Document.Write(html);
+                browser.Refresh();
+
+                return browser.Document;
+            }
+        }
+
+        #endregion
+
     }
 }
