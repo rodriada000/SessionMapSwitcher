@@ -67,7 +67,10 @@ namespace SessionMapSwitcherCore.ViewModels
             }
             set
             {
-                _availableMaps = value;
+                lock (collectionLock)
+                {
+                    _availableMaps = value;
+                }
                 RefreshFilteredMaps();
             }
         }
@@ -76,7 +79,10 @@ namespace SessionMapSwitcherCore.ViewModels
         {
             get
             {
-                return AvailableMaps.Where(m => Filter(m)).ToList();
+                lock (collectionLock)
+                {
+                    return AvailableMaps.Where(m => Filter(m)).ToList();
+                }
             }
         }
 
@@ -172,6 +178,16 @@ namespace SessionMapSwitcherCore.ViewModels
             }
         }
 
+        public bool IsOriginalMapFilesBackedUp()
+        {
+            if (IsSessionUnpacked() == false)
+            {
+                return false;
+            }
+
+            return (MapSwitcher as UnpackedMapSwitcher).IsOriginalMapFilesBackedUp();
+        }
+
         public bool SkipMovieIsChecked
         {
             get { return _skipMovieIsChecked; }
@@ -179,6 +195,25 @@ namespace SessionMapSwitcherCore.ViewModels
             {
                 _skipMovieIsChecked = value;
                 NotifyPropertyChanged();
+            }
+        }
+
+        public void BackupOriginalMapFiles()
+        {
+            if (IsSessionUnpacked() == false)
+            {
+                return;
+            }
+
+            BoolWithMessage backupResult = (MapSwitcher as UnpackedMapSwitcher).BackupOriginalMapFiles();
+
+            if (backupResult.Result)
+            {
+                UserMessage = $"Original map files backed up to {SessionPath.ToOriginalSessionMapFiles}";
+            }
+            else
+            {
+                UserMessage = backupResult.Message;
             }
         }
 
@@ -289,27 +324,12 @@ namespace SessionMapSwitcherCore.ViewModels
             SkipMovieIsChecked = GameSettingsManager.SkipIntroMovie;
         }
 
-        public bool UpdateGameSettings(bool promptToDownloadIfMissing)
+        public bool UpdateGameSettings()
         {
             string concatenatedErrorMsg = "";
 
             if (GameSettingsManager.DoesObjectPlacementFileExist() == false)
             {
-                //if (promptToDownloadIfMissing)
-                //{
-                //    MessageBoxResult promptResult = MessageBox.Show("The required file is missing and must be extracted before object count can be modified.\n\nClick 'Yes' to extract the file (UnrealPak and crypto.json will be downloaded if it is not installed locally).",
-                //                                                    "Warning - Cannot Modify Object Count!",
-                //                                                    MessageBoxButton.YesNo,
-                //                                                    MessageBoxImage.Information,
-                //                                                    MessageBoxResult.Yes);
-
-                //    if (promptResult == MessageBoxResult.Yes)
-                //    {
-                //        StartPatching(skipPatching: true, skipUnpacking: false);
-                //        return false;
-                //    }
-                //}
-
                 concatenatedErrorMsg = "Custom object count will not be applied until required file is extracted; ";
             }
 
@@ -488,50 +508,6 @@ namespace SessionMapSwitcherCore.ViewModels
             }
         }
 
-        //internal void OpenComputerImportWindow()
-        //{
-        //    if (SessionPath.IsSessionPathValid() == false)
-        //    {
-        //        UserMessage = "Cannot import: You must set your path to Session before importing maps.";
-        //        return;
-        //    }
-
-        //    ComputerImportViewModel importViewModel = new ComputerImportViewModel();
-
-        //    ComputerImportWindow importWindow = new ComputerImportWindow(importViewModel)
-        //    {
-        //        WindowStyle = WindowStyle.ToolWindow,
-        //        WindowStartupLocation = WindowStartupLocation.CenterScreen
-        //    };
-        //    importWindow.ShowDialog();
-
-        //    LoadAvailableMaps(); // reload list of available maps as it may have changed
-        //}
-
-        //internal void OpenOnlineImportWindow()
-        //{
-        //    if (SessionPath.IsSessionPathValid() == false)
-        //    {
-        //        UserMessage = "Cannot import: You must set your path to Session before importing maps.";
-        //        return;
-        //    }
-
-        //    if (ImportViewModel == null)
-        //    {
-        //        // keep view model in memory for entire app so list of downloadable maps is cached (until app restart)
-        //        ImportViewModel = new OnlineImportViewModel();
-        //    }
-
-        //    OnlineImportWindow importWindow = new OnlineImportWindow(ImportViewModel)
-        //    {
-        //        WindowStyle = WindowStyle.ToolWindow,
-        //        WindowStartupLocation = WindowStartupLocation.CenterScreen
-        //    };
-        //    importWindow.ShowDialog();
-
-        //    LoadAvailableMaps(); // reload list of available maps as it may have changed
-        //}
-
         public void ReimportMapFiles(MapListItem selectedItem)
         {
             if (SessionPath.IsSessionPathValid() == false)
@@ -562,35 +538,6 @@ namespace SessionMapSwitcherCore.ViewModels
                     }
                 });
         }
-
-        ///// <summary>
-        ///// Opens a window to enter a new name for a map.
-        ///// Writes to meta data file if user clicks 'Rename' in window.
-        ///// </summary>
-        ///// <param name="selectedMap"></param>
-        //internal void OpenRenameMapWindow(MapListItem selectedMap)
-        //{
-        //    RenameMapViewModel viewModel = new RenameMapViewModel(selectedMap);
-        //    RenameMapWindow window = new RenameMapWindow(viewModel)
-        //    {
-        //        WindowStartupLocation = WindowStartupLocation.CenterScreen
-        //    };
-        //    bool? result = window.ShowDialog();
-
-        //    if (result.GetValueOrDefault(false) == true)
-        //    {
-        //        bool didWrite = MetaDataManager.WriteCustomMapPropertiesToFile(AvailableMaps);
-
-        //        if (didWrite == false)
-        //        {
-        //            UserMessage = "Failed to update .meta file with new custom name. Your custom name may have not been saved and will be lost when the app restarts.";
-        //            return;
-        //        }
-
-        //        LoadAvailableMaps();
-        //        UserMessage = $"{selectedMap.MapName} renamed to {selectedMap.CustomName}!";
-        //    }
-        //}
 
         private bool IsMapAdded(MapListItem map)
         {
@@ -759,7 +706,7 @@ namespace SessionMapSwitcherCore.ViewModels
             UserMessage = message;
         }
 
-        public void StartPatching(bool skipPatching = false, bool skipUnpacking = false)
+        public void StartPatching(bool skipPatching = false, bool skipUnpacking = false, string unrealPathFromRegistry = "")
         {
             if (SessionPath.IsSessionPathValid() == false)
             {
@@ -770,7 +717,7 @@ namespace SessionMapSwitcherCore.ViewModels
             _patcher = new EzPzPatcher();
             _patcher.SkipEzPzPatchStep = skipPatching;
             _patcher.SkipUnrealPakStep = skipUnpacking;
-            _patcher.PathToUnrealEngine = "";
+            _patcher.PathToUnrealEngine = unrealPathFromRegistry;
 
             _patcher.ProgressChanged += Patch_ProgressChanged;
             _patcher.PatchCompleted += EzPzPatcher_PatchCompleted;

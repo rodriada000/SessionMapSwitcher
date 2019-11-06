@@ -121,36 +121,6 @@ namespace SessionMapSwitcherCore.ViewModels
             this.PathInput = "";
         }
 
-        //internal void BrowseForFolderOrFile()
-        //{
-        //    if (IsZipFileImport)
-        //    {
-        //        using (OpenFileDialog fileBrowserDialog = new OpenFileDialog())
-        //        {
-        //            fileBrowserDialog.Filter = "Zip files (*.zip)|*.zip|Rar files (*.rar)|*.rar|All files (*.*)|*.*";
-        //            fileBrowserDialog.Title = "Select .zip or .rar File Containing Session Map";
-        //            DialogResult result = fileBrowserDialog.ShowDialog();
-        //            if (result == DialogResult.OK)
-        //            {
-        //                PathInput = fileBrowserDialog.FileName;
-        //            }
-        //        }
-        //    }
-        //    else
-        //    {
-        //        using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
-        //        {
-        //            folderBrowserDialog.ShowNewFolderButton = false;
-        //            folderBrowserDialog.Description = "Select Folder Containing Session Map Files";
-        //            DialogResult result = folderBrowserDialog.ShowDialog();
-        //            if (result == DialogResult.OK)
-        //            {
-        //                PathInput = folderBrowserDialog.SelectedPath;
-        //            }
-        //        }
-        //    }
-        //}
-
         public void BeginImportMapAsync(bool isReimport = false)
         {
             UserMessage = "Importing Map ...";

@@ -10,7 +10,7 @@ namespace SessionMapSwitcherCore.Classes
     /// Class to handle loading maps for unpacked patched games.
     /// Also has helper methods for backing up original map files (for unpacked versions)
     /// </summary>
-    class UnpackedMapSwitcher : IMapSwitcher
+    public class UnpackedMapSwitcher : IMapSwitcher
     {
         public MapListItem DefaultSessionMap { get; }
         internal MapListItem FirstLoadedMap { get; set; }

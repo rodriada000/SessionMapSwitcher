@@ -115,7 +115,7 @@ namespace SessionMapSwitcher
                 ViewModel.InputControlsEnabled = true;
 
                 // validate and set game settings
-                bool didSet = ViewModel.UpdateGameSettings(promptToDownloadIfMissing: false);
+                bool didSet = ViewModel.UpdateGameSettings();
 
                 if (didSet == false)
                 {
@@ -157,30 +157,21 @@ namespace SessionMapSwitcher
                 return;
             }
 
-            // TODO: fix this
-            //if (ViewModel.IsSessionUnpacked())
-            //{
-            //    if ((MapSwitcher as UnpackedMapSwitcher).IsOriginalMapFilesBackedUp() == false)
-            //    {
-            //        MessageBox.Show("The original Session game map files have not been backed up yet. Click OK to backup the files then click 'Load Map' again.",
-            //                        "Notice!",
-            //                        MessageBoxButton.OK,
-            //                        MessageBoxImage.Information);
 
-            //        BoolWithMessage backupResult = (MapSwitcher as UnpackedMapSwitcher).BackupOriginalMapFiles();
 
-            //        if (backupResult.Result)
-            //        {
-            //            UserMessage = $"Original map files backed up to {SessionPath.ToOriginalSessionMapFiles}";
-            //        }
-            //        else
-            //        {
-            //            UserMessage = backupResult.Message;
-            //        }
+            if (ViewModel.IsSessionUnpacked())
+            {
+                if (ViewModel.IsOriginalMapFilesBackedUp() == false)
+                {
+                    System.Windows.MessageBox.Show("The original Session game map files have not been backed up yet. Click OK to backup the files then click 'Load Map' again.",
+                                                   "Notice!",
+                                                   MessageBoxButton.OK,
+                                                   MessageBoxImage.Information);
 
-            //        return;
-            //    }
-            //}
+                    ViewModel.BackupOriginalMapFiles();
+                    return;
+                }
+            }
 
             if (lstMaps.SelectedItem == null)
             {
@@ -221,7 +212,7 @@ namespace SessionMapSwitcher
             ViewModel.UserMessage = $"Reloading Available Maps ...";
             ViewModel.InputControlsEnabled = false;
 
-            Task t = Task.Factory.StartNew(() => ViewModel.LoadAvailableMaps(), CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.FromCurrentSynchronizationContext());
+            Task t = Task.Factory.StartNew(() => ViewModel.LoadAvailableMaps());
 
             t.ContinueWith((antecedent) =>
             {
@@ -296,8 +287,23 @@ namespace SessionMapSwitcher
                 return;
             }
 
+            if (GameSettingsManager.DoesObjectPlacementFileExist() == false)
+            {
+                MessageBoxResult promptResult = System.Windows.MessageBox.Show("The required file is missing and must be extracted before object count can be modified.\n\nClick 'Yes' to extract the file (UnrealPak and crypto.json will be downloaded if it is not installed locally).",
+                                                                               "Warning - Cannot Modify Object Count!",
+                                                                               MessageBoxButton.YesNo,
+                                                                               MessageBoxImage.Information,
+                                                                               MessageBoxResult.Yes);
 
-            bool didSet = ViewModel.UpdateGameSettings(promptToDownloadIfMissing: true);
+                if (promptResult == MessageBoxResult.Yes)
+                {
+                    ViewModel.StartPatching(skipPatching: true, skipUnpacking: false, unrealPathFromRegistry: RegistryHelper.GetPathToUnrealEngine());
+                    return;
+                }
+            }
+
+
+            bool didSet = ViewModel.UpdateGameSettings();
 
 
             if (didSet)
@@ -625,7 +631,7 @@ namespace SessionMapSwitcher
                     }
                 }
 
-                ViewModel.StartPatching(skipPatching: false, skipUnpacking: true);
+                ViewModel.StartPatching(skipPatching: false, skipUnpacking: true, unrealPathFromRegistry: RegistryHelper.GetPathToUnrealEngine());
             }
         }
     }
