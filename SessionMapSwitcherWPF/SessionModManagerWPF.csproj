@@ -168,8 +168,8 @@
     <Resource Include="Resources\SessionMapsIcon_alt.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SessionMapSwitcherCore\SessionModManagerCore.csproj">
-      <Project>{ee8513b4-ca29-476f-8d64-8996cbb18d80}</Project>
+    <ProjectReference Include="..\..\SessionModManagerCore\SessionModManagerCore\SessionModManagerCore.csproj">
+      <Project>{87d7d77a-f4a1-4598-8e53-0ad00a1f8ef8}</Project>
       <Name>SessionModManagerCore</Name>
     </ProjectReference>
   </ItemGroup>
