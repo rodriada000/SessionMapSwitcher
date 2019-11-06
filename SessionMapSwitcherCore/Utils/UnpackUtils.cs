@@ -22,12 +22,8 @@ namespace SessionMapSwitcherCore.Utils
         {
             get
             {
-                if (PathToSession.EndsWith("\\"))
-                {
-                    PathToSession = PathToSession.TrimEnd('\\');
-                }
-
-                return $"{PathToSession}\\SessionGame\\Content\\Paks";
+                PathToSession = PathToSession.TrimEnd(new char[] { '/', '\\' });
+                return Path.Combine(new string[] { PathToSession, "SessionGame", "Content", "Paks" });
             }
         }
 
@@ -68,7 +64,7 @@ namespace SessionMapSwitcherCore.Utils
                 }
 
                 ProgressChanged("Extracting .zip file ...");
-                BoolWithMessage isExtracted = FileUtils.ExtractZipFile($"{PathToPakFolder}\\{DownloadedZipFileName}", PathToPakFolder);
+                BoolWithMessage isExtracted = FileUtils.ExtractZipFile(Path.Combine(PathToPakFolder, DownloadedZipFileName), PathToPakFolder);
 
                 if (isExtracted.Result == false)
                 {
@@ -109,12 +105,12 @@ namespace SessionMapSwitcherCore.Utils
                     }
 
                     // validate files were unpacked by checking subset of expected folders
-                    List<string> expectedDirs = new List<string>() { "\\SessionGame\\Config", "\\SessionGame\\Content", "\\SessionGame\\Content\\Customization" };
+                    List<string> expectedDirs = new List<string>() { Path.Combine("SessionGame", "Config"), Path.Combine("SessionGame", "Content"), Path.Combine("SessionGame", "Content", "Customization") };
                     foreach (string dir in expectedDirs)
                     {
-                        if (Directory.Exists($"{PathToSession}{dir}") == false)
+                        if (Directory.Exists(Path.Combine(PathToSession, dir)) == false)
                         {
-                            ProgressChanged($"Failed to unpack files correctly. The expected folders were not found ({PathToSession}{dir}). Cannot continue.");
+                            ProgressChanged($"Failed to unpack files correctly. The expected folders were not found ({Path.Combine(PathToSession, dir)}). Cannot continue.");
                             UnpackCompleted(false);
                             return;
                         }
@@ -162,7 +158,7 @@ namespace SessionMapSwitcherCore.Utils
                 // download to Paks folder
                 ProgressChanged("Downloading .zip file -  downloading actual file ...");
 
-                var downloadTask = DownloadUtils.DownloadFileToFolderAsync(directLinkToZip, $"{PathToPakFolder}\\{DownloadedZipFileName}", System.Threading.CancellationToken.None);
+                var downloadTask = DownloadUtils.DownloadFileToFolderAsync(directLinkToZip, Path.Combine(PathToPakFolder, DownloadedZipFileName), System.Threading.CancellationToken.None);
                 downloadTask.Wait();   
             }
             catch (AggregateException e)
@@ -195,8 +191,8 @@ namespace SessionMapSwitcherCore.Utils
             using (Process proc = new Process())
             {
                 proc.StartInfo.WorkingDirectory = this.PathToPakFolder;
-                proc.StartInfo.FileName = $"{this.PathToPakFolder}\\UnrealPak.exe";
-                proc.StartInfo.Arguments = $"-cryptokeys=\"Crypto.json\" -Extract \"{SessionPath.ToPakFile}\" \"..\\..\\..\"";
+                proc.StartInfo.FileName = Path.Combine(PathToPakFolder, "UnrealPak.exe");
+                proc.StartInfo.Arguments = $"-cryptokeys=\"Crypto.json\" -Extract \"{PathToPakFolder}\" \"..\\..\\..\"";
                 proc.StartInfo.CreateNoWindow = false;
                 proc.Start();
 
@@ -231,7 +227,7 @@ namespace SessionMapSwitcherCore.Utils
             List<string> expectedDirectories = new List<string>() { "Animation", "Art", "Audio", "Challenges", "Character", "Cinematics", "Customization", "Data", "FilmerMode", "MainHUB", "Menus", "Mixer", "ObjectPlacement", "Skateboard", "Skeletons", "Transit", "Tutorial", "VideoEditor" };
             foreach (string expectedDir in expectedDirectories)
             {
-                if (Directory.Exists($"{SessionPath.ToContent}\\{expectedDir}") == false)
+                if (Directory.Exists(Path.Combine(SessionPath.ToContent, expectedDir)) == false)
                 {
                     return false;
                 }

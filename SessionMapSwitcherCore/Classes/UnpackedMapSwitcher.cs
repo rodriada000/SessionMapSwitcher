@@ -57,11 +57,11 @@ namespace SessionMapSwitcherCore.Classes
                         // ... thus we build the destination filename based on what was first loaded.
                         if (FirstLoadedMap == DefaultSessionMap)
                         {
-                            fullTargetFilePath += $"\\NYC01_Persistent"; // this is the name of the default map that is loaded
+                            fullTargetFilePath = Path.Combine(fullTargetFilePath, "NYC01_Persistent"); // this is the name of the default map that is loaded
                         }
                         else
                         {
-                            fullTargetFilePath += $"\\{FirstLoadedMap.MapName}";
+                            fullTargetFilePath = Path.Combine(fullTargetFilePath, FirstLoadedMap.MapName);
                         }
 
                         if (fileName.Contains("_BuiltData"))
@@ -88,7 +88,7 @@ namespace SessionMapSwitcherCore.Classes
         }
 
         /// <summary>
-        /// Deletes all files in the Content\Art\Env\NYC folder
+        /// Deletes all files in the Content/Art/Env/NYC folder
         /// that does not have NYC_01 prefix (original game files).
         /// Also deletes NYC01_Persistent files
         /// </summary>
@@ -114,7 +114,7 @@ namespace SessionMapSwitcherCore.Classes
 
             // only delete the .umap file when the game is running, otherwise the default map will always load when you leave the apartment
             // ... Some maps rely on the .umap file to stream other content to the custom map so the .umap file is NOT deleted while Session is not running allowing the custom map to use its assets.
-            string nycMapFilePath = $"{SessionPath.ToNYCFolder}\\NYC01_Persistent.umap";
+            string nycMapFilePath = Path.Combine(SessionPath.ToNYCFolder, "NYC01_Persistent.umap");
 
             if (SessionPath.IsSessionRunning() && File.Exists(nycMapFilePath))
             {
@@ -190,8 +190,8 @@ namespace SessionMapSwitcherCore.Classes
                 // copy NYC01_Persistent backup files back to original game location
                 foreach (string fileExt in fileExtensions)
                 {
-                    string fullPath = $"{SessionPath.ToOriginalSessionMapFiles}\\{fileNamePrefix}{fileExt}";
-                    string targetPath = $"{SessionPath.ToNYCFolder}\\{fileNamePrefix}{fileExt}";
+                    string fullPath = Path.Combine(SessionPath.ToOriginalSessionMapFiles, $"{fileNamePrefix}{fileExt}");
+                    string targetPath = Path.Combine(SessionPath.ToNYCFolder, $"{fileNamePrefix}{fileExt}");
                     File.Copy(fullPath, targetPath, true);
                 }
 
@@ -258,8 +258,8 @@ namespace SessionMapSwitcherCore.Classes
                 // copy NYC01_Persistent files to backup folder
                 foreach (string fileExt in fileExtensionsToCheck)
                 {
-                    string fullPathToFile = $"{SessionPath.ToNYCFolder}\\{fileNamePrefix}{fileExt}";
-                    string destFilePath = $"{SessionPath.ToOriginalSessionMapFiles}\\{fileNamePrefix}{fileExt}";
+                    string fullPathToFile = Path.Combine(SessionPath.ToNYCFolder, $"{fileNamePrefix}{fileExt}");
+                    string destFilePath = Path.Combine(SessionPath.ToOriginalSessionMapFiles, $"{fileNamePrefix}{fileExt}"); 
                     File.Copy(fullPathToFile, destFilePath, overwrite: true);
                 }
             }
@@ -288,7 +288,7 @@ namespace SessionMapSwitcherCore.Classes
             // copy NYC01_Persistent files to backup folder
             foreach (string fileExt in fileExtensionsToCheck)
             {
-                string fullPath = $"{SessionPath.ToOriginalSessionMapFiles}\\{fileNamePrefix}{fileExt}";
+                string fullPath = Path.Combine(SessionPath.ToOriginalSessionMapFiles, $"{fileNamePrefix}{fileExt}");
                 if (File.Exists(fullPath) == false)
                 {
                     return false;
@@ -311,7 +311,7 @@ namespace SessionMapSwitcherCore.Classes
             // copy NYC01_Persistent files to backup folder
             foreach (string fileExt in fileExtensionsToCheck)
             {
-                string fullPath = $"{SessionPath.ToNYCFolder}\\{fileNamePrefix}{fileExt}";
+                string fullPath = Path.Combine(SessionPath.ToNYCFolder, $"{fileNamePrefix}{fileExt}");
                 if (File.Exists(fullPath) == false)
                 {
                     return false;

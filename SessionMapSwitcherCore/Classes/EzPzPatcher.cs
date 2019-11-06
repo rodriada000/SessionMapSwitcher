@@ -32,7 +32,7 @@ namespace SessionMapSwitcherCore.Classes
 
         public string PathToDownloadedZip
         {
-            get => $"{SessionPath.ToPaks}\\{DownloadedZipFileName}";
+            get => Path.Combine(SessionPath.ToPaks, DownloadedZipFileName);
         }
 
         /// <summary>
@@ -160,7 +160,7 @@ namespace SessionMapSwitcherCore.Classes
                     if (IsEzPzExeDownloaded() == false)
                     {
                         ProgressChanged("Extracting EzPz .zip files ...");
-                        BoolWithMessage isEzPzExtracted = FileUtils.ExtractZipFile($"{SessionPath.ToPaks}\\{DownloadedPatchFileName}", SessionPath.ToPaks);
+                        BoolWithMessage isEzPzExtracted = FileUtils.ExtractZipFile(Path.Combine(SessionPath.ToPaks, DownloadedPatchFileName), SessionPath.ToPaks);
 
                         if (isEzPzExtracted.Result == false)
                         {
@@ -288,7 +288,7 @@ namespace SessionMapSwitcherCore.Classes
                     ProgressChanged($"Extracting file: {file} ...");
 
                     proc.StartInfo.WorkingDirectory = SessionPath.ToPaks;
-                    proc.StartInfo.FileName = $"{SessionPath.ToPaks}\\UnrealPak.exe";
+                    proc.StartInfo.FileName = Path.Combine(SessionPath.ToPaks, "UnrealPak.exe");
                     proc.StartInfo.Arguments = $"-cryptokeys=\"crypto.json\" -Extract \"{SessionPath.ToPakFile}\" \"..\\..\\..\" -Filter=\"{file}\"";
                     proc.StartInfo.CreateNoWindow = false;
 
@@ -329,7 +329,7 @@ namespace SessionMapSwitcherCore.Classes
         /// <returns></returns>
         private bool IsEzPzExeDownloaded()
         {
-            return File.Exists($"{SessionPath.ToPaks}\\{EzPzExeName}");
+            return File.Exists(Path.Combine(SessionPath.ToPaks, EzPzExeName));
         }
 
         /// <summary>
@@ -359,7 +359,7 @@ namespace SessionMapSwitcherCore.Classes
 
                 downloadUrl = downloadUrl.TrimEnd(new char[] { ' ', '\n' });
 
-                var downloadTask = DownloadUtils.DownloadFileToFolderAsync(downloadUrl, $"{SessionPath.ToPaks}\\{DownloadedPatchFileName}", System.Threading.CancellationToken.None);
+                var downloadTask = DownloadUtils.DownloadFileToFolderAsync(downloadUrl, Path.Combine(SessionPath.ToPaks, DownloadedPatchFileName), System.Threading.CancellationToken.None);
                 downloadTask.Wait();
             }
             catch (AggregateException e)
@@ -400,7 +400,7 @@ namespace SessionMapSwitcherCore.Classes
 
                 // download to Paks folder
                 ProgressChanged("Downloading UnrealPak .zip file -  downloading actual file ...");
-                var downloadTask = DownloadUtils.DownloadFileToFolderAsync(directLinkToZip, $"{SessionPath.ToPaks}\\{DownloadedZipFileName}", System.Threading.CancellationToken.None);
+                var downloadTask = DownloadUtils.DownloadFileToFolderAsync(directLinkToZip, Path.Combine(SessionPath.ToPaks, DownloadedZipFileName), System.Threading.CancellationToken.None);
                 downloadTask.Wait();
             }
             catch (AggregateException e)
@@ -431,7 +431,7 @@ namespace SessionMapSwitcherCore.Classes
         /// </summary>
         public static bool IsGamePatched()
         {
-            return File.Exists($"{SessionPath.ToConfig}\\UserEngine.ini");
+            return File.Exists(SessionPath.ToUserEngineIniFile);
         }
 
 
@@ -444,14 +444,14 @@ namespace SessionMapSwitcherCore.Classes
 
             try
             {
-                string pathToUnrealPak = $"{PathToUnrealEngine}\\Engine\\Binaries\\Win64";
+                string pathToUnrealPak = Path.Combine(new string[] { PathToUnrealEngine, "Engine", "Binaries", "Win64" });
 
                 foreach (string file in Directory.GetFiles(pathToUnrealPak))
                 {
                     if (file.Contains("UnrealPak"))
                     {
                         FileInfo info = new FileInfo(file);
-                        string targetPath = $"{SessionPath.ToPaks}\\{info.Name}";
+                        string targetPath = Path.Combine(SessionPath.ToPaks, info.Name);
 
                         File.Copy(file, targetPath, overwrite: true);
                     }
@@ -472,7 +472,7 @@ namespace SessionMapSwitcherCore.Classes
                 return false;
             }
 
-            return File.Exists($"{PathToUnrealEngine}\\Engine\\Binaries\\Win64\\UnrealPak.exe");
+            return File.Exists(Path.Combine(new string[] { PathToUnrealEngine, "Engine", "Binaries", "Win64", "UnrealPak.exe" }));
         }
 
 

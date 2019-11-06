@@ -21,5 +21,7 @@ $allFiles | Select-String '"SessionGame\/Content\/Customization.*.uasset.*"' -Al
                 $relativePath = $rawPath.Substring(0, $index).Replace("SessionGame/Content/", "")
                 $name = $rawPath.Substring($index + 1)
 
-                '_texturePaths.Add(new TexturePathInfo(){ TextureName = "' + $name.Replace(".uasset", "") + '", RelativePath = "' + $relativePath.Replace("/", "\\") + '" });'
+				## $"Customization{Path.DirectorySeparatorChar}UI{Path.DirectorySeparatorChar}Textures";
+
+                '_texturePaths.Add(new TexturePathInfo(){ TextureName = "' + $name.Replace(".uasset", "") + '", RelativePath = $"' + $relativePath.Replace("/", "{Path.DirectorySeparatorChar}") + '" });'
             }

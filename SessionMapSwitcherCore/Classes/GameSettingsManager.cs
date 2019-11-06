@@ -20,7 +20,7 @@ namespace SessionMapSwitcherCore.Classes
         {
             get
             {
-                return $"{SessionPath.ToContent}\\ObjectPlacement\\Blueprints\\PBP_ObjectPlacementInventory.uexp";
+                return Path.Combine(new string[] { SessionPath.ToContent, "ObjectPlacement", "Blueprints", "PBP_ObjectPlacementInventory.uexp" });
             }
         }
 

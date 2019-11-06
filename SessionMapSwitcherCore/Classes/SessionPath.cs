@@ -18,6 +18,12 @@ namespace SessionMapSwitcherCore.Classes
                 {
                     _toSession = _toSession.TrimEnd('\\');
                 }
+
+                if (_toSession.EndsWith("/"))
+                {
+                    _toSession = _toSession.TrimEnd('/');
+                }
+
                 return _toSession;
             }
             set
@@ -30,7 +36,7 @@ namespace SessionMapSwitcherCore.Classes
         {
             get
             {
-                return $"{ToSession}\\SessionGame";
+                return Path.Combine(ToSession, "SessionGame");
             }
         }
 
@@ -38,7 +44,7 @@ namespace SessionMapSwitcherCore.Classes
         {
             get
             {
-                return $"{ToSessionGame}\\Content";
+                return Path.Combine(ToSessionGame, "Content");
             }
         }
 
@@ -46,7 +52,7 @@ namespace SessionMapSwitcherCore.Classes
         {
             get
             {
-                return $"{ToSessionGame}\\Config";
+                return Path.Combine(ToSessionGame, "Config");
             }
         }
 
@@ -54,7 +60,7 @@ namespace SessionMapSwitcherCore.Classes
         {
             get
             {
-                return $"{ToContent}\\Paks";
+                return Path.Combine(ToContent, "Paks");
             }
         }
 
@@ -62,7 +68,7 @@ namespace SessionMapSwitcherCore.Classes
         {
             get
             {
-                return $"{ToContent}\\Movies";
+                return Path.Combine(ToContent, "Movies");
             }
         }
 
@@ -70,7 +76,7 @@ namespace SessionMapSwitcherCore.Classes
         {
             get
             {
-                return $"{ToContent}\\Paks\\SessionGame-WindowsNoEditor.pak";
+                return Path.Combine(ToPaks, "SessionGame-WindowsNoEditor.pak");
             }
         }
 
@@ -78,7 +84,7 @@ namespace SessionMapSwitcherCore.Classes
         {
             get
             {
-                return $"{ToContent}\\Paks\\crypto.json";
+                return Path.Combine(ToPaks, "crypto.json");
             }
         }
 
@@ -87,7 +93,7 @@ namespace SessionMapSwitcherCore.Classes
         {
             get
             {
-                return $"{ToConfig}\\DefaultEngine.ini";
+                return Path.Combine(ToConfig, "DefaultEngine.ini");
             }
         }
 
@@ -95,7 +101,7 @@ namespace SessionMapSwitcherCore.Classes
         {
             get
             {
-                return $"{ToConfig}\\UserEngine.ini";
+                return Path.Combine(ToConfig, "UserEngine.ini");
             }
         }
 
@@ -103,7 +109,7 @@ namespace SessionMapSwitcherCore.Classes
         {
             get
             {
-                return $"{ToConfig}\\DefaultGame.ini";
+                return Path.Combine(ToConfig, "DefaultGame.ini");
             }
         }
 
@@ -114,15 +120,7 @@ namespace SessionMapSwitcherCore.Classes
         {
             get
             {
-                return $"{ToContent}\\Art\\Env\\NYC";
-            }
-        }
-
-        public static string ToBrooklynFolder
-        {
-            get
-            {
-                return $"{ToNYCFolder}\\Brooklyn";
+                return Path.Combine(new string[] { ToContent, "Art", "Env", "NYC" });
             }
         }
 
@@ -130,7 +128,7 @@ namespace SessionMapSwitcherCore.Classes
         {
             get
             {
-                return $"{ToContent}\\{MapBackupFolderName}";
+                return Path.Combine(ToContent, MapBackupFolderName);
             }
         }
 
@@ -138,7 +136,7 @@ namespace SessionMapSwitcherCore.Classes
         {
             get
             {
-                return $"{ToSession}\\SessionGame.exe";
+                return Path.Combine(ToSession, "SessionGame.exe");
             }
         }
 
@@ -149,7 +147,7 @@ namespace SessionMapSwitcherCore.Classes
                 return false;
             }
 
-            if (Directory.Exists($"{ToSession}\\Engine") == false)
+            if (Directory.Exists(Path.Combine(ToSession, "Engine")) == false)
             {
                 return false;
             }

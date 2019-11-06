@@ -13,7 +13,7 @@ namespace SessionMapSwitcherCore.Classes
         {
             get
             {
-                return $"{SessionPath.ToContent}\\{MetaFolderName}";
+                return Path.Combine(SessionPath.ToContent, MetaFolderName);
             }
         }
 
@@ -73,8 +73,7 @@ namespace SessionMapSwitcherCore.Classes
         {
             try
             {
-                string fullMetaDataPath = $"{SessionPath.ToContent}\\{MetaFolderName}";
-                string trackingFileName = Path.Combine(fullMetaDataPath, $".meta_{mapName}");
+                string trackingFileName = Path.Combine(FullPathToMetaFolder, $".meta_{mapName}");
 
                 return File.ReadAllText(trackingFileName);
             }
@@ -115,7 +114,7 @@ namespace SessionMapSwitcherCore.Classes
                     }
                 }
 
-                string pathToMetaFile = $"{FullPathToMetaFolder}\\customNames.meta";
+                string pathToMetaFile = Path.Combine(FullPathToMetaFolder, "customNames.meta");
 
                 if (File.Exists(pathToMetaFile))
                 {
@@ -144,7 +143,7 @@ namespace SessionMapSwitcherCore.Classes
         {
             try
             {
-                string pathToMetaFile = $"{FullPathToMetaFolder}\\customNames.meta";
+                string pathToMetaFile = Path.Combine(FullPathToMetaFolder, "customNames.meta");
 
                 if (File.Exists(pathToMetaFile) == false)
                 {

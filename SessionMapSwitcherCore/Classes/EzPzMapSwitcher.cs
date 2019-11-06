@@ -9,7 +9,7 @@ namespace SessionMapSwitcherCore.Classes
     /// <summary>
     /// Class to handle loading maps for EzPz patched games.
     /// </summary>
-    class EzPzMapSwitcher : IMapSwitcher
+    public class EzPzMapSwitcher : IMapSwitcher
     {
         public MapListItem DefaultSessionMap { get; }
         internal MapListItem FirstLoadedMap { get; set; }
@@ -52,7 +52,7 @@ namespace SessionMapSwitcherCore.Classes
                     if (SessionPath.IsSessionRunning())
                     {
                         // While Session is running the map files must be copied as NYC01_Persistent so when the user leaves the apartment the custom map is loaded
-                        fullTargetFilePath += $"\\NYC01_Persistent";
+                        fullTargetFilePath = Path.Combine(fullTargetFilePath,  "NYC01_Persistent");
 
                         if (fileName.Contains("_BuiltData"))
                         {
@@ -65,7 +65,7 @@ namespace SessionMapSwitcherCore.Classes
                     }
                     else
                     {
-                        fullTargetFilePath += $"\\{fi.Name}";
+                        fullTargetFilePath = Path.Combine(fullTargetFilePath, fi.Name);
                     }
 
 
@@ -144,7 +144,7 @@ namespace SessionMapSwitcherCore.Classes
         }
 
         /// <summary>
-        /// Deletes all files in the Content\Art\Env\NYC folder
+        /// Deletes all files in the Content/Art/Env/NYC folder
         /// </summary>
         public void DeleteMapFilesFromNYCFolder()
         {

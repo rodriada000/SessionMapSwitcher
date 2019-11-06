@@ -452,10 +452,12 @@ namespace SessionMapSwitcherCore.ViewModels
                     continue;
                 }
 
+                FileInfo mapFileInfo = new FileInfo(file);
+
                 MapListItem mapItem = new MapListItem
                 {
                     FullPath = file,
-                    MapName = file.Replace(dirToSearch + "\\", "").Replace(".umap", "")
+                    MapName = mapFileInfo.NameWithoutExtension()
                 };
                 mapItem.Validate();
 

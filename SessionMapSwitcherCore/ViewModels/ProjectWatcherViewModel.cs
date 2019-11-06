@@ -60,6 +60,12 @@ namespace SessionMapSwitcherCore.ViewModels
             get
             {
                 var slashIndex = PathToProject.LastIndexOf(@"\") + 1;
+
+                if (slashIndex == -1)
+                {
+                    slashIndex = PathToProject.LastIndexOf(@"/") + 1;
+                }
+
                 var dotIndex = PathToProject.LastIndexOf(@".");
                 return PathToProject.Substring(slashIndex, dotIndex - slashIndex);
             }
@@ -69,7 +75,8 @@ namespace SessionMapSwitcherCore.ViewModels
         {
             get
             {
-                return PathToProject.Substring(0, PathToProject.LastIndexOf(@"\"));
+                FileInfo projectInfo = new FileInfo(PathToProject);
+                return projectInfo.DirectoryName;
             }
         }
 
@@ -77,7 +84,7 @@ namespace SessionMapSwitcherCore.ViewModels
         {
             get
             {
-                return $@"{BaseProjectFolder}\Saved\Cooked\";
+                return Path.Combine(BaseProjectFolder, "Saved", "Cooked");
             }
         }
 
@@ -85,7 +92,7 @@ namespace SessionMapSwitcherCore.ViewModels
         {
             get
             {
-                return $@"{PathToCooked}\WindowsNoEditor\{ProjectName}\Content\";
+                return Path.Combine(new string[] { PathToCooked, "WindowsNoEditor", ProjectName, "Content" });
             }
         }
 
@@ -101,7 +108,7 @@ namespace SessionMapSwitcherCore.ViewModels
         {
             get
             {
-                return $@"{BaseProjectFolder}\Config\DefaultEngine.ini";
+                return Path.Combine(BaseProjectFolder, "Config", "DefaultEngine.ini");
             }
         }
 

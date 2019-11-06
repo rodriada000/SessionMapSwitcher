@@ -46,7 +46,7 @@ namespace SessionMapSwitcherCore.ViewModels
         {
             get
             {
-                return $"{SessionPath.ToSessionGame}\\MapDownloads";
+                return Path.Combine(SessionPath.ToSessionGame, "MapDownloads");
             }
         }
 
@@ -217,7 +217,7 @@ namespace SessionMapSwitcherCore.ViewModels
             tokenSource = new System.Threading.CancellationTokenSource();
             cancelToken = tokenSource.Token;
 
-            string pathToZip = $"{PathToMapDownloads}\\{selectedMap.ZipFileName}";
+            string pathToZip = Path.Combine(PathToMapDownloads, selectedMap.ZipFileName);
 
             var downloadTask = Task.Factory.StartNew(() =>
             {

@@ -65,13 +65,9 @@ public class MapListItem : ViewModelBase
                 return "";
             }
 
-            int lastIndex = FullPath.LastIndexOf("\\");
-            if (lastIndex < 0)
-            {
-                return "";
-            }
+            FileInfo mapFileInfo = new FileInfo(FullPath);
 
-            return FullPath.Substring(0, lastIndex);
+            return mapFileInfo.DirectoryName;
         }
     }
 
@@ -153,7 +149,7 @@ public class MapListItem : ViewModelBase
         }
     }
 
-    internal void Validate()
+    public void Validate()
     {
         IsValid = true;
 
@@ -161,6 +157,7 @@ public class MapListItem : ViewModelBase
         {
             IsValid = false;
             ValidationHint = "(file missing)";
+            return;
         }
 
         if (MapListItem.HasGameMode(FullPath) == false)
@@ -174,7 +171,7 @@ public class MapListItem : ViewModelBase
     /// Reads the file and looks for the string '/Game/Data/PBP_InGameSessionGameMode'
     /// </summary>
     /// <param name="fullPath"> full path to file </param>
-    internal static bool HasGameMode(string fullPath)
+    public static bool HasGameMode(string fullPath)
     {
         try
         {

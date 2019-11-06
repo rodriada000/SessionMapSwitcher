@@ -5,7 +5,7 @@ using SessionMapSwitcherWPF.Classes;
 namespace MapSwitcherUnitTests
 {
     [TestClass]
-    public class PathToUnrealEngineUnitTests
+    public class PathToUnrealEngineUnitTest
     {
         [TestMethod]
         public void Test_GetPathToUnrealEngine()

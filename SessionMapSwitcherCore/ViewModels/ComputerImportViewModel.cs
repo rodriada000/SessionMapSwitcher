@@ -22,7 +22,7 @@ namespace SessionMapSwitcherCore.ViewModels
         {
             get
             {
-                return $"{SessionPath.ToSessionGame}\\Temp_Unzipped";
+                return Path.Combine(SessionPath.ToSessionGame, "Temp_Unzipped");
             }
         }
 
@@ -105,6 +105,11 @@ namespace SessionMapSwitcherCore.ViewModels
                     PathInput = PathInput.TrimEnd('\\');
                 }
 
+                if (PathInput.EndsWith("/"))
+                {
+                    PathInput = PathInput.TrimEnd('/');
+                }
+
                 return PathInput;
             }
         }
@@ -179,13 +184,15 @@ namespace SessionMapSwitcherCore.ViewModels
         /// This will check if the folder path to a map has the 'Content' folder and returns path to the maps 'Content folder if so
         /// </summary>
         /// <returns>
-        /// "pathToMapFiles\Content" if Content folder exists; otherwise original pathToMapFiles string is returned
+        /// "pathToMapFiles/Content" if Content folder exists; otherwise original pathToMapFiles string is returned
         /// </returns>
         private string EnsurePathToMapFilesIsCorrect(string pathToMapFiles)
         {
-            if (Directory.Exists($"{pathToMapFiles}\\Content"))
+            string pathToContent = Path.Combine(pathToMapFiles, "Content");
+
+            if (Directory.Exists(pathToContent))
             {
-                return $"{pathToMapFiles}\\Content";
+                return pathToContent;
             }
 
             return pathToMapFiles;
