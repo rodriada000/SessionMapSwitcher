@@ -1,5 +1,5 @@
 {
-    "TargetVersion": "2.2.1.0",
+    "TargetVersion": "2.2.0.0",
     "files": [
         {
             "source": "https://github.com/rodriada000/SessionMapSwitcher/raw/release_updates/latest_release/v2/INIFileParser.dll",
