@@ -43,7 +43,7 @@
         <FileVersionCondition type="or" what="below" version="1.0.0.0" />
       </Conditions>
     </FileUpdateTask>
-    <FileUpdateTask localPath="SessionModManager.exe" updateTo="https://github.com/rodriada000/SessionMapSwitcher/raw/release_updates/latest_release/v2/SessionModManager.exe" lastModified="132145933315494295" fileSize="368640" version="2.2.0.0">
+    <FileUpdateTask localPath="SessionMapSwitcher.exe" updateTo="https://github.com/rodriada000/SessionMapSwitcher/raw/release_updates/latest_release/v2/SessionModManager.exe" lastModified="132145933315494295" fileSize="368640" version="2.2.0.0">
       <Conditions>
         <FileExistsCondition type="or-not" />
         <FileVersionCondition type="or" what="below" version="2.2.0.0" />
