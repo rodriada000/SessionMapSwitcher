@@ -1,6 +1,5 @@
 MapTitle | DownloadUrl | OriginalMapReleaseUrl | PreviewImageUrl
 School II Beta (By GHFear) | DIRECT:https://github.com/rodriada000/SessionCustomMapReleases/releases/download/School_II_v1-beta/School_II_By_GHFear.zip | https://youtu.be/xZBPvBc4DBM | 
-Session Community Alpha Map (By Roober) | DIRECT:https://github.com/rodriada000/SessionCustomMapReleases/releases/download/SessionAlphaMap_v1/SessionAlphaMap_By_Roober.zip | https://www68.zippyshare.com/v/CPmoTkzH/file.html | | 
 Community Park v3 (By Roober) | | https://drive.google.com/file/d/1wdKm3YFB9qk4w3xRZGYL8V_voVk9Jlrz/view | 
 Skatestreet Ventura v3 (By Hippyman) | DIRECT:https://github.com/rodriada000/SessionCustomMapReleases/releases/download/SkatestreetVentura/SkatestreetVentura.v3.-rails-.zip | https://github.com/rodriada000/SessionCustomMapReleases/releases/tag/SkatestreetVentura | 
 LowLife Parking Garage Beta 4 (By Khelldon) | DIRECT:https://github.com/rodriada000/SessionCustomMapReleases/releases/download/lowlife_v3/LowLife_Parking_Garage_b4_By_Khelldon.zip | https://github.com/rodriada000/SessionCustomMapReleases/releases/tag/lowlife_v3 | 
