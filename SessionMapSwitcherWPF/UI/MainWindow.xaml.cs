@@ -243,6 +243,8 @@ namespace SessionMapSwitcher
             ViewModel.SetSessionPath(path); // this will save it to app settings
             ViewModel.SetCurrentlyLoadedMap();
 
+            ctrlTextureReplacer.ViewModel.TriggerPropertyChanged();
+
             if (SessionPath.IsSessionPathValid())
             {
                 ViewModel.RefreshGameSettings();
@@ -285,6 +287,12 @@ namespace SessionMapSwitcher
         {
             if (ViewModel.InputControlsEnabled == false)
             {
+                return;
+            }
+
+            if (EzPzPatcher.IsGamePatched() == false && UnpackUtils.IsSessionUnpacked() == false)
+            {
+                MessageBoxResult result = System.Windows.MessageBox.Show("Session has not been patched yet. Click 'Patch With EzPz' to patch the game.", "Notice!", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -335,6 +343,12 @@ namespace SessionMapSwitcher
 
         private void BtnImportMap_Click(object sender, RoutedEventArgs e)
         {
+            if (EzPzPatcher.IsGamePatched() == false && UnpackUtils.IsSessionUnpacked() == false)
+            {
+                MessageBoxResult result = System.Windows.MessageBox.Show("Session has not been patched yet. Click 'Patch With EzPz' to patch the game.", "Notice!", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             importContextMenu.IsOpen = true;
         }
 

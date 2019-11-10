@@ -32,6 +32,7 @@
                 Click="BtnReplace_Click"
                 Content="Replace"
                 Style="{StaticResource MainButtonStyle}"
+                IsEnabled="{Binding IsReplaceButtonEnabled}"
                 Grid.Row="2" Grid.ColumnSpan="2"
                 HorizontalAlignment="Right" VerticalAlignment="Top"
                 Padding="5,2,5,2"
