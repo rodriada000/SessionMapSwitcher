@@ -13,6 +13,8 @@ namespace SessionMapSwitcher
     /// </summary>
     public partial class App : Application
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         public static Version GetAppVersion()
         {
             return typeof(SessionMapSwitcher.App).Assembly.GetName().Version;
@@ -70,7 +72,25 @@ namespace SessionMapSwitcher
             }
 
             SessionPath.ToSession = sessionPath;
+
+
+#if DEBUG
+            NLog.LogManager.ThrowExceptions = true;
+#endif
+
+            LogAppNameAndVersion();
+
+
         }
 
+        private static void LogAppNameAndVersion()
+        {
+            string logLine = $"{GetAppName()} - {GetAppVersion()}";
+
+            logLine += IsRunningAppAsAdministrator() ? " (Running As Admin)" : " (Running As Normal User)";
+
+            Logger.Info("----------------------------------------------------------------------------------------------------");
+            Logger.Info(logLine);
+        }
     }
 }
