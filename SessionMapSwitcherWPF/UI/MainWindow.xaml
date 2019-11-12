@@ -204,6 +204,7 @@
                             <MenuItem x:Name="menuReimporSelectedMap" Header="Re-import Selected Map ..."  Click="MenuReimporSelectedMap_Click" ToolTipService.ShowOnDisabled="True" ToolTipService.ShowDuration="8000"/>
                             <MenuItem x:Name="menuRenameSelectedMap" Header="Rename Selected Map ..."  Click="MenuRenameSelectedMap_Click"  ToolTipService.ShowOnDisabled="True" ToolTipService.ShowDuration="8000"/>
                             <MenuItem x:Name="menuHideSelectedMap" Header="Hide Selected Map ..."  Click="MenuHideSelectedMap_Click"  ToolTipService.ShowOnDisabled="True" ToolTipService.ShowDuration="8000"/>
+                            <MenuItem x:Name="menuDeleteSelectedMap" Header="Delete Selected Map ..."  Click="menuDeleteSelectedMap_Click"  ToolTipService.ShowOnDisabled="True" ToolTipService.ShowDuration="8000"/>
                             <Separator/>
                             <MenuItem x:Name="menuOpenSessionFolder" Header="Open Session Folder ..."  Click="MenuOpenSessionFolder_Click"/>
                             <MenuItem x:Name="menuOpenMapsFolder" Header="Open Content Folder ..." Click="MenuOpenMapsFolder_Click"/>

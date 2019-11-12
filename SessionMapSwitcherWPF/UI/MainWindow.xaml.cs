@@ -45,7 +45,7 @@ namespace SessionMapSwitcher
             SetCustomWindowSizeFromAppSettings();
 
             ViewModel = new MainWindowViewModel();
-            ReloadAvailableMapsInBackground();
+            ViewModel.ReloadAvailableMapsInBackground();
 
             this.DataContext = ViewModel;
             this.Title = $"{App.GetAppName()} - v{App.GetAppVersion()}";
@@ -205,20 +205,7 @@ namespace SessionMapSwitcher
 
         private void BtnReloadMaps_Click(object sender, RoutedEventArgs e)
         {
-            ReloadAvailableMapsInBackground();
-        }
-
-        private void ReloadAvailableMapsInBackground()
-        {
-            ViewModel.UserMessage = $"Reloading Available Maps ...";
-            ViewModel.InputControlsEnabled = false;
-
-            Task t = Task.Factory.StartNew(() => ViewModel.LoadAvailableMaps());
-
-            t.ContinueWith((antecedent) =>
-            {
-                ViewModel.InputControlsEnabled = true;
-            });
+            ViewModel.ReloadAvailableMapsInBackground();
         }
 
         /// <summary>
@@ -248,7 +235,7 @@ namespace SessionMapSwitcher
             if (SessionPath.IsSessionPathValid())
             {
                 ViewModel.RefreshGameSettings();
-                ReloadAvailableMapsInBackground();
+                ViewModel.ReloadAvailableMapsInBackground();
             }
             else
             {
@@ -383,7 +370,7 @@ namespace SessionMapSwitcher
             };
             importWindow.ShowDialog();
 
-            ReloadAvailableMapsInBackground(); // reload list of available maps as it may have changed
+            ViewModel.ReloadAvailableMapsInBackground(); // reload list of available maps as it may have changed
         }
 
         internal void OpenComputerImportWindow()
@@ -403,7 +390,7 @@ namespace SessionMapSwitcher
             };
             importWindow.ShowDialog();
 
-            ReloadAvailableMapsInBackground(); // reload list of available maps as it may have changed
+            ViewModel.ReloadAvailableMapsInBackground(); // reload list of available maps as it may have changed
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -507,10 +494,14 @@ namespace SessionMapSwitcher
             if (isMapSelected)
             {
                 MapListItem selected = (lstMaps.SelectedItem as MapListItem);
-                bool hasImportLocation = MetaDataManager.IsImportLocationStored(selected.MapName);
+                bool hasImportLocation = MetaDataManager.IsImportLocationStored(selected);
                 menuReimporSelectedMap.IsEnabled = hasImportLocation;
                 menuReimporSelectedMap.ToolTip = hasImportLocation ? null : "You can only re-import if you imported the map from 'Import Map > From Computer ...' and imported a folder.\n(does not work with .zip files)";
                 menuHideSelectedMap.Header = selected.IsHiddenByUser ? "Show Selected Map ..." : "Hide Selected Map ...";
+
+                bool canBeDeleted = MetaDataManager.HasPathToMapFilesStored(selected);
+                menuDeleteSelectedMap.IsEnabled = canBeDeleted;
+                menuDeleteSelectedMap.ToolTip = canBeDeleted ? null : "You can only delete a map that has been imported via version 2.2.3 or greater.";
             }
         }
 
@@ -643,6 +634,31 @@ namespace SessionMapSwitcher
                 }
 
                 ViewModel.StartPatching(skipPatching: false, skipUnpacking: true, unrealPathFromRegistry: RegistryHelper.GetPathToUnrealEngine());
+            }
+        }
+
+        private void menuDeleteSelectedMap_Click(object sender, RoutedEventArgs e)
+        {
+            if (lstMaps.SelectedItem == null)
+            {
+                System.Windows.MessageBox.Show("Select a map to delete first!",
+                                                "Notice!",
+                                                MessageBoxButton.OK,
+                                                MessageBoxImage.Information);
+                return;
+            }
+
+            MapListItem selectedItem = lstMaps.SelectedItem as MapListItem;
+
+            MessageBoxResult result = System.Windows.MessageBox.Show($"Are you sure you want to delete {selectedItem.DisplayName}?"
+                                                                    , "Warning!"
+                                                                    , MessageBoxButton.YesNo
+                                                                    , MessageBoxImage.Warning
+                                                                    , MessageBoxResult.Yes);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                ViewModel.DeleteSelectedMap(selectedItem);
             }
         }
     }
