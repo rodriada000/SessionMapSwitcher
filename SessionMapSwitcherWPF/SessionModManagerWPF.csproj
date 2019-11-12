@@ -76,6 +76,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Classes\RegistryHelper.cs" />
+    <Compile Include="UI\AssetStoreUserControl.xaml.cs">
+      <DependentUpon>AssetStoreUserControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ThreadFriendlyObservableCollection.cs" />
     <Compile Include="UI\ComputerImportWindow.xaml.cs">
       <DependentUpon>ComputerImportWindow.xaml</DependentUpon>
@@ -102,6 +105,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="UI\AssetStoreUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UI\ComputerImportWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
