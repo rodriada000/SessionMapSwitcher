@@ -132,16 +132,34 @@ namespace SessionMapSwitcher
 
         private void BtnLoadMap_Click(object sender, RoutedEventArgs e)
         {
-            // double check the controls are disabled and should not load (e.g. when double clicking map in list)
-            if (ViewModel.InputControlsEnabled == false)
+            try
             {
-                return;
+                // double check the controls are disabled and should not load (e.g. when double clicking map in list)
+                if (ViewModel.InputControlsEnabled == false)
+                {
+                    return;
+                }
+
+                LoadMapInBackgroundAndContinueWith((antecedent) =>
+                {
+                    if (antecedent.IsFaulted)
+                    {
+                        ViewModel.UserMessage = $"failed to load map: {antecedent.Exception.InnerException?.Message}";
+                    }
+
+                    ViewModel.InputControlsEnabled = true;
+                });
+            }
+            catch (AggregateException ae)
+            {
+                ViewModel.UserMessage = $"failed to load: {ae.InnerException?.Message}";
+            }
+            catch (Exception ex)
+            {
+                ViewModel.UserMessage = $"failed to load: {ex.Message}";
             }
 
-            LoadMapInBackgroundAndContinueWith((antecedent) =>
-            {
-                ViewModel.InputControlsEnabled = true;
-            });
+
         }
 
         private void LoadMapInBackgroundAndContinueWith(Action<Task> continuationTask)
@@ -160,7 +178,7 @@ namespace SessionMapSwitcher
 
 
 
-            if (ViewModel.IsSessionUnpacked())
+            if (EzPzPatcher.IsGamePatched() == false && ViewModel.IsSessionUnpacked())
             {
                 if (ViewModel.IsOriginalMapFilesBackedUp() == false)
                 {
