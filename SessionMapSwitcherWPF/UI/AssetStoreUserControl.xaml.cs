@@ -66,8 +66,15 @@ namespace SessionModManagerWPF.UI
                 }
             }
 
-            string header = headerClicked.Column.Header as string;
-            Sort(header, direction);
+            Binding headerBinding = headerClicked.Column.DisplayMemberBinding.ProvideValue(null) as Binding;
+
+            if (headerBinding == null)
+            {
+                return;
+            }
+
+            string propertyNameToSortBy = headerBinding.Path?.Path;
+            Sort(propertyNameToSortBy, direction);
 
             _lastHeaderClicked = headerClicked;
             _lastDirection = direction;
@@ -111,6 +118,11 @@ namespace SessionModManagerWPF.UI
         private void btnRemove_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.RemoveSelectedAssetAsync();
+        }
+
+        private void btnRefresh_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.GetManifestsAsync(forceRefresh: true, getSelectedOnly: true);
         }
     }
 }

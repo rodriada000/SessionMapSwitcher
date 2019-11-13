@@ -66,9 +66,9 @@
                   Margin="5,10,0,10">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Name" Width="190" DisplayMemberBinding="{Binding Name}"/>
-                    <GridViewColumn Header="Author" Width="100" DisplayMemberBinding="{Binding Author}"/>
-                    <GridViewColumn Header="Category" Width="75" DisplayMemberBinding="{Binding AssetCategory}"/>
+                    <GridViewColumn Header="Name" Width="190" DisplayMemberBinding="{Binding Name}" ToolTipService.ToolTip="Click to sort by column"/>
+                    <GridViewColumn Header="Author" Width="100" DisplayMemberBinding="{Binding Author}" ToolTipService.ToolTip="Click to sort by column"/>
+                    <GridViewColumn Header="Category" Width="80" DisplayMemberBinding="{Binding AssetCategory}" ToolTipService.ToolTip="Click to sort by column"/>
                 </GridView>
             </ListView.View>
         </ListView>
@@ -145,10 +145,20 @@
             </Grid>
         </GroupBox>
 
+        <Button x:Name="btnRefresh"
+                Grid.Column="1"
+                Margin="0,10,5,0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Content="Force Refresh Assets"
+                ToolTip="Downloads the latest asset manifests and refreshes asset list."
+                Click="btnRefresh_Click"
+                Padding="5"/>
+
         <TextBlock Grid.Row="2" Grid.ColumnSpan="2"
                    VerticalAlignment="Bottom"
                    HorizontalAlignment="Left"
-                   FontSize="13"
+                   FontSize="16"
                    Margin="5,0,0,5"
                    TextWrapping="Wrap"
                    Text="{Binding UserMessage, FallbackValue='This is a message to the user ...'}"/>

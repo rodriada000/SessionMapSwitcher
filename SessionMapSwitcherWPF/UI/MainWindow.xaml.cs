@@ -674,7 +674,7 @@ namespace SessionMapSwitcher
 
                 if (tabAssetStore.IsSelected)
                 {
-                    controlAssetStore.ViewModel.GetManifestsAsync();
+                    controlAssetStore.ViewModel.GetManifestsAsync(forceRefresh: false, getSelectedOnly: true);
                 }
             }
 
