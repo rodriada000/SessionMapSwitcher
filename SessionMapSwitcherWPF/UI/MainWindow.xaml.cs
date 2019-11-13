@@ -38,6 +38,8 @@ namespace SessionMapSwitcher
         /// </summary>
         private DispatcherTimer updateTimer;
 
+        private int SelectedTabIndex;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -49,6 +51,8 @@ namespace SessionMapSwitcher
 
             this.DataContext = ViewModel;
             this.Title = $"{App.GetAppName()} - v{App.GetAppVersion()}";
+
+            SelectedTabIndex = tabControl.SelectedIndex;
         }
 
         private void SetCustomWindowSizeFromAppSettings()
@@ -660,6 +664,20 @@ namespace SessionMapSwitcher
             {
                 ViewModel.DeleteSelectedMap(selectedItem);
             }
+        }
+
+        private void tabControl_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if (tabControl.SelectedIndex != SelectedTabIndex)
+            {
+                SelectedTabIndex = tabControl.SelectedIndex;
+
+                if (tabAssetStore.IsSelected)
+                {
+                    controlAssetStore.ViewModel.GetManifestsAsync();
+                }
+            }
+
         }
     }
 }

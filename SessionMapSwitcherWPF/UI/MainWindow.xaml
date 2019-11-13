@@ -98,8 +98,8 @@
         </ContextMenu>
     </Window.ContextMenu>
 
-    <TabControl>
-        <TabItem Header="Main Window">
+    <TabControl x:Name="tabControl" SelectionChanged="tabControl_SelectionChanged">
+        <TabItem x:Name="tabMainWindow" Header="Main Window">
             <Grid Style="{StaticResource mainGridStyle}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
@@ -375,8 +375,9 @@
 
         </TabItem>
 
-        <TabItem Header="Asset Store">
-            <uii:AssetStoreUserControl />
+        <TabItem Header="Asset Store"
+                 x:Name="tabAssetStore">
+            <uii:AssetStoreUserControl x:Name="controlAssetStore" />
         </TabItem>
     </TabControl>
     

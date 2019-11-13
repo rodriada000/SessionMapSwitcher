@@ -12,9 +12,13 @@
         </Style>
 
         <Style TargetType="Button" BasedOn="{StaticResource MainButtonStyle}"/>
+
+        <Style TargetType="{x:Type ListViewItem}" x:Key="AssetListStyle">
+            <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        </Style>
     </UserControl.Resources>
-    
-    <Grid Background="LightGray">
+
+    <Grid Background="#CFD8DC">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
@@ -29,28 +33,44 @@
         <GroupBox Grid.Row="0" Grid.Column="0"
                   HorizontalAlignment="Stretch"
                   VerticalAlignment="Stretch"
-                  Margin="5,0,0,5"
+                  Margin="5,5,0,5"
                   Header="Categories" Padding="3,10,0,10">
-            <WrapPanel>
-                <CheckBox Content="All" Padding="05,0,35,5"/>
-                <CheckBox Content="Maps" Padding="5,0,10,0"/>
-                <CheckBox Content="Decks" Padding="5,0,10,0"/>
-                <CheckBox Content="Griptapes" Padding="5,0,7,0"/>
-                <CheckBox Content="Trucks" Padding="5,0,10,0"/>
-                <CheckBox Content="Wheels" Padding="5,0,10,0"/>
-                <CheckBox Content="Hats" Padding="5,0,15,0"/>
-                <CheckBox Content="Shirts" Padding="5,0,12,0"/>
-                <CheckBox Content="Pants" Padding="5,0,30,0"/>
-                <CheckBox Content="Shoes" Padding="5,0,10,0"/>
-            </WrapPanel>
+            <StackPanel>
+                <WrapPanel>
+                    <CheckBox Content="All" IsChecked="{Binding DisplayAll, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="5,0,35,5"/>
+                    <CheckBox Content="Maps" IsChecked="{Binding DisplayMaps, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="5,0,10,0"/>
+                    <CheckBox Content="Decks" IsChecked="{Binding DisplayDecks, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="5,0,10,0"/>
+                    <CheckBox Content="Griptapes" IsChecked="{Binding DisplayGriptapes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="5,0,7,0"/>
+                    <CheckBox Content="Trucks" IsChecked="{Binding DisplayTrucks, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="5,0,10,0"/>
+                </WrapPanel>
+                
+                <WrapPanel>
+                    <CheckBox Content="Wheels" IsChecked="{Binding DisplayWheels, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="5,0,10,0"/>
+                    <CheckBox Content="Hats" IsChecked="{Binding DisplayHats, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="5,0,15,0"/>
+                    <CheckBox Content="Shirts" IsChecked="{Binding DisplayShirts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="5,0,12,0"/>
+                    <CheckBox Content="Pants" IsChecked="{Binding DisplayPants, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="5,0,30,0"/>
+                    <CheckBox Content="Shoes" IsChecked="{Binding DisplayShoes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="5,0,10,0"/>
+                </WrapPanel>
+            </StackPanel>
         </GroupBox>
         
         
-        <ListView Grid.Row="1" Grid.Column="0"
+        <ListView x:Name="lstAssets"
+                  Grid.Row="1" Grid.Column="0"
+                  GridViewColumnHeader.Click="GridViewColumnHeaderClickedHandler"
                   HorizontalAlignment="Stretch"
                   VerticalAlignment="Stretch"
+                  ItemsSource="{Binding FilteredAssetList}"
+                  ItemContainerStyle="{StaticResource AssetListStyle}"
+                  SelectionChanged="lstAssets_SelectionChanged"
                   Margin="5,10,0,10">
-            
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Name" Width="190" DisplayMemberBinding="{Binding Name}"/>
+                    <GridViewColumn Header="Author" Width="100" DisplayMemberBinding="{Binding Author}"/>
+                    <GridViewColumn Header="Category" Width="75" DisplayMemberBinding="{Binding AssetCategory}"/>
+                </GridView>
+            </ListView.View>
         </ListView>
 
         <GroupBox Grid.Row="1" Grid.Column="1" 
@@ -70,7 +90,7 @@
                         <TextBlock Text="Author:"
                                    Margin="5,5,5,0"
                                    FontWeight="Bold"/>
-                        <TextBlock Text="rodriada000"
+                        <TextBlock Text="{Binding SelectedAuthor, FallbackValue='Author name'}"
                                    TextWrapping="Wrap"
                                    Margin="5,5,0,0"/>
                     </WrapPanel>
@@ -79,26 +99,49 @@
                         <TextBlock Text="Description:" 
                                    Margin="5,5,5,0"
                                    FontWeight="Bold"/>
-                        <TextBlock Text="This is a description of the asset enjoy this thing we have here with my long description"
+                        <TextBlock Text="{Binding SelectedDescription, FallbackValue='example description for a selected asset.'}"
                                    TextWrapping="Wrap"
                                    Margin="5,5,0,0"/>
                     </WrapPanel>
                 </StackPanel>
 
-                
-                
 
-                <Image Margin="5,0,5,5"
+
+
+                <Image Source="{Binding PreviewImageSource}" Margin="5,0,5,5"
                        HorizontalAlignment="Stretch"
                        VerticalAlignment="Stretch"
                        Grid.Row="1"
                        RenderOptions.BitmapScalingMode="HighQuality"/>
 
-                <Button Content="Install Asset"
-                        Padding="5"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Bottom"
-                        Grid.Row="2"/>
+                <WrapPanel Grid.Row="2" 
+                           HorizontalAlignment="Right" 
+                           VerticalAlignment="Bottom">
+                    <Button x:Name="btnRemove"
+                            Content="{Binding RemoveButtonText, FallbackValue='Remove Asset'}"
+                            IsEnabled="{Binding IsRemoveButtonEnabled}"
+                            Click="btnRemove_Click"
+                            Margin="0,0,10,0"
+                            Padding="5">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource MainButtonStyle}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsRemoveButtonEnabled}" Value="False">
+                                        <Setter Property="Visibility" Value="Hidden"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+
+                    <Button x:Name="btnInstall"
+                            Content="{Binding InstallButtonText, FallbackValue='Install Asset'}"
+                            IsEnabled="{Binding IsInstallButtonEnabled}"
+                            Click="btnInstall_Click"
+                            Padding="5"/>
+                </WrapPanel>
+                
+
             </Grid>
         </GroupBox>
 
@@ -108,6 +151,6 @@
                    FontSize="13"
                    Margin="5,0,0,5"
                    TextWrapping="Wrap"
-                   Text="This is a message to the user ..."/>
+                   Text="{Binding UserMessage, FallbackValue='This is a message to the user ...'}"/>
     </Grid>
 </UserControl>
