@@ -1,9 +1,9 @@
-# <img src="https://github.com/rodriada000/SessionMapSwitcher/blob/master/docs/images/SessionMapsIcon.png?raw=true" width="10%"> Session Mod Manager
+# <img src="https://github.com/rodriada000/SessionMapSwitcher/blob/master/docs/images/SessionMapsIcon.png?raw=true" width="10%"> Session Mod Manager [![GitHub release](https://img.shields.io/github/release/rodriada000/SessionMapSwitcher)](https://GitHub.com/rodriada000/SessionMapSwitcher/releases/)
 >... Previously known as Session Map Switcher
 
-[![Contributors][contributors-shield]][contributors-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![GitHub contributors](https://img.shields.io/github/contributors/rodriada000/SessionMapSwitcher)](https://GitHub.com/rodriada000/SessionMapSwitcher/graphs/contributors/)
+[![GitHub issues](https://img.shields.io/github/issues/rodriada000/SessionMapSwitcher)](https://GitHub.com/rodriada000/SessionMapSwitcher/issues/)
 
 This is a Desktop application to easily mod Session and install custom maps and textures all in one tool. Easily switch between maps in-game without having to restart and download custom textures directly in the app.
 ![](https://github.com/rodriada000/SessionMapSwitcher/blob/master/docs/images/app_screenshot.png?raw=true "App Screenshot")
