@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "sessionassetstore",
+  "private_key_id": "267d861decb4a2dcaff706eeba74be86da1e9fc8",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCkOYMtGAmQHQEC\nUkBrgyIcd24XvWq1OxbsrQVhgXX202lm2v1cYFXuzy0u1ftdU+05F9NjrvJjx/Fj\noILxKgu4NhbVcAWlhuBDnycQ6JkykyBcsEJjmidrL0PXJjU+TLLsTp6vUeCACdvL\nobE8Xkk6YVfzd+6CE+L6SDmWbWxjD+Air+4tlGlpnwoG7ClHbWVWgtEzu0re2cmF\nuG2FRb+ZBVpW16f2FUDXN+g2g2wrmtBViQDjlVQr/7XuDGlyddd9oknPBlF1SNsy\ndLq9PZUeSaKLmd4hsqSAlw8TzF0q7k3t95IGf0XitGGqjDfNhPkBXG7FQwZwGWUF\nFdPadel7AgMBAAECggEARBxqUFCQ3sl4uqq8dxq7Eg1ihswTrrikKGMWQTt9XnKO\nW49l12NJILOibLNo/mspjy1XihdsBoBNmGFhDX6/v5YHYFyGqwFGkCU5AaVGrJgi\nqu6bik3MHYNL4rbBDGapKqLs44/UyaXNGCamqH/+ZQ0sehj6vc5brCw6Xi5h7q9j\nw9rxHRgI9hV/jnk7+1wiFjfywjGxOdwHEL+AzORHHM8GdSKR76TkQcvxpNKb0AUj\nS1Egm454jCeGfaNFRh9uCEkjzjQXgFWL8blxUK+P6NNiqVRPutjDKEQrotnXnPId\nROfncfdr9u973o2LV1F6UISYi5WRUl2R6PR1UK33+QKBgQDS1RL16J0kPjXJQ+KU\nR/NBN1oyRH4QQwBmUkXLN2T3dIENLt5KTc+DUbvuigo4bmstnpt06me+eJOCyRPt\nGVDQUkBLk9BuGdtvnPhvrVSnrqg0R7WMplXHFHOLzaYeUN83SY0cQtgqYzbTeG7q\n2uYoNbFfLg/SILc3Epc4n/KzLwKBgQDHaEd9PLudJ5U9cmZIUU/gdP9D3gI/UBEZ\nA8keE4ytC5XMVJ3k6+qlo7JJZva0ePD0HO8cZa+h3Q0RhPbzjXAlsm5Ifd/fh37S\nnjjbhP2Otk2Vg53b7hemRLENdbK3OsmzlHWlTMQp5THmVQ/hZDxNne7+rG/0Gxpy\nYEChkNkLdQKBgEQnwWNheTs4KScRHPQWdlrEzBGn9qDHKB/rxMg29hrQvM9IMXAP\ny1+GUpyAX2FywI8U0OhwxmzaicUjv59MKcXOcR59gEm3biqcsetYOx+h5JpR/Cyl\nsOEUiW3OYz81oZM74bQbH8pEHHssWZ7ueKzS/q3oNBEXpmLVTbFuc4TdAoGAHyjz\nauWPp7okvwpeY1SZd8iwjullToFzeoY16kZByFS0Hs7mMXyQGTwgQwoc6QyxEmRn\nFPfq3w9M2Hz/ngVvDeT5CMjqr+JbdgwVdHAusxtXulJr2480EN5REHpg5/L+y9oa\nHC+Hw8g16PlH1v+z0KkqTI+jmvCVTGQwFU8uK3UCgYEAmQ7/relKSZHtjTasqBET\n7JyLrOnH+Kzb60lZnjfpZWCwEwPvDVSnr6YNrnEMPBg+2lDWRb5yO2srpnBJBcC3\n6WhRtOaHH16rRjgh9VpdG8PkwBU9wx0sO8ZosKj2J3PxZtsLTT/kahIpbdMPEUIt\nQrx6Nl8M4qrn+2Z4lgjDYVo=\n-----END PRIVATE KEY-----\n",
+  "client_email": "sessionmodmanager@sessionassetstore.iam.gserviceaccount.com",
+  "client_id": "117115147293434411505",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/sessionmodmanager%40sessionassetstore.iam.gserviceaccount.com"
+}
