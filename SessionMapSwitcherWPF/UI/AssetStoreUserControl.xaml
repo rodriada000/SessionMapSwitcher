@@ -68,7 +68,7 @@
                 <GridView>
                     <GridViewColumn Header="Name" Width="190" DisplayMemberBinding="{Binding Name}" ToolTipService.ToolTip="Click to sort by column"/>
                     <GridViewColumn Header="Author" Width="100" DisplayMemberBinding="{Binding Author}" ToolTipService.ToolTip="Click to sort by column"/>
-                    <GridViewColumn Header="Category" Width="80" DisplayMemberBinding="{Binding AssetCategory}" ToolTipService.ToolTip="Click to sort by column"/>
+                    <GridViewColumn Header="Category" Width="90" DisplayMemberBinding="{Binding AssetCategory}" ToolTipService.ToolTip="Click to sort by column"/>
                 </GridView>
             </ListView.View>
             <ListView.ContextMenu>
@@ -150,24 +150,31 @@
             </Grid>
         </GroupBox>
 
-        <WrapPanel Grid.Column="1"
-                   Margin="0,15,5,0"
-                   HorizontalAlignment="Right"
-                   VerticalAlignment="Top">
-            
-            <Button x:Name="btnRefresh"
+        <StackPanel Grid.Column="1"
+                    Margin="0,15,5,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top">
+            <WrapPanel Margin="0,0,0,10">
+
+                <Button x:Name="btnRefresh"
                     Margin="0,0,10,0"
                     Content="Force Refresh Assets"
                     ToolTip="Downloads the latest asset manifests and refreshes asset list."
                     Click="btnRefresh_Click"
                     Padding="5,2,5,2"/>
 
-            <Button x:Name="btnUpload"
+                <Button x:Name="btnUpload"
                     Content="Upload Asset"
                     ToolTip="Upload an asset to the Asset Store (requires modder credentials)."
                     Click="btnUpload_Click"
                     Padding="5,3,5,3"/>
-        </WrapPanel>
+            </WrapPanel>
+
+            <CheckBox x:Name="chkFetchAllImages" Content="Fetch All Preview Images" Margin="0,0,0,3" IsChecked="{Binding FetchAllPreviewImages, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <CheckBox x:Name="chkDeleteAfterDownload" Content="Delete Download After Install" IsChecked="{Binding DeleteDownloadAfterInstall, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        </StackPanel>
+        
+
         
 
 

@@ -6,7 +6,10 @@
         xmlns:local="clr-namespace:SessionModManagerWPF.UI"
         mc:Ignorable="d"
         Style="{StaticResource WindowStyle}"
-        Title="Upload Asset" Height="500" Width="450"
+        Title="Upload Asset" Height="500" Width="460"
+        MaxHeight="500"
+        MaxWidth="650"
+        WindowStyle="ToolWindow"
         Loaded="Window_Loaded">
     <Window.Resources>
         <Style TargetType="Button" BasedOn="{StaticResource MainButtonStyle}"/>
@@ -19,7 +22,7 @@
 
         <Style x:Key="inputStyle" TargetType="TextBox">
             <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Width" Value="225"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="IsEnabled" Value="{Binding IsNotUploadingAsset}"/>
         </Style>
     </Window.Resources>
@@ -38,14 +41,14 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10"/>
             <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
         <TextBlock Grid.Column="1" Text="Author:" Style="{StaticResource labelStyle}" HorizontalAlignment="Right" Margin="0,10,5,0"/>
-        <TextBox Grid.Column="2" HorizontalAlignment="Left" Text="{Binding Author, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource inputStyle}" Margin="0,10,50,0" MaxLength="250"/>
+        <TextBox x:Name="txtAuthor" Grid.Column="2" Text="{Binding Author, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource inputStyle}" Margin="0,10,50,0" MaxLength="250"/>
 
         <TextBlock Grid.Row="1" Grid.Column="1" Text="Name:" Style="{StaticResource labelStyle}" HorizontalAlignment="Right" Margin="0,10,5,0"/>
-        <TextBox  Grid.Row="1" HorizontalAlignment="Left" Grid.Column="2" Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource inputStyle}" Margin="0,10,50,0" MaxLength="250"/>
+        <TextBox  Grid.Row="1" Grid.Column="2" Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource inputStyle}" Margin="0,10,50,0" MaxLength="250"/>
 
 
         <TextBlock Grid.Row="2" Grid.Column="1" HorizontalAlignment="Right" Margin="0,10,5,0" Text="Category:" Style="{StaticResource labelStyle}"/>
@@ -62,24 +65,27 @@
 
         <TextBlock Grid.Row="3" Grid.Column="1" Text="Description:" Style="{StaticResource labelStyle}" HorizontalAlignment="Right" Margin="0,10,5,0"/>
         <TextBox  Grid.Row="3" Grid.Column="2" 
-                  HorizontalAlignment="Left"  
+                  HorizontalAlignment="Stretch"  
+                  TextWrapping="Wrap"
+                  AcceptsReturn="true"
+                  AcceptsTab="true"
                   Text="{Binding Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                   IsEnabled="{Binding IsNotUploadingAsset}"
-                  Margin="0,10,50,0" 
+                  Margin="0,10,10,0" 
                   MaxLines="10" 
-                  Width="340" Height="200"/>
+                  Height="200"/>
 
         
         <TextBlock Grid.Row="4" Grid.Column="1" Text="File:" Style="{StaticResource labelStyle}" HorizontalAlignment="Right" Margin="0,10,5,0"/>
-        <WrapPanel Grid.Row="4" Grid.Column="2" HorizontalAlignment="Left">
-            <TextBox HorizontalAlignment="Left" Text="{Binding PathToFile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource inputStyle}" Width="315" Margin="0,10,3,0"/>
+        <WrapPanel Grid.Row="4" Grid.Column="2" HorizontalAlignment="Stretch">
+            <TextBox Width="{Binding ElementName=txtAuthor, Path=ActualWidth}" Text="{Binding PathToFile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource inputStyle}" Margin="0,10,3,0"/>
             <Button x:Name="btnBrowseFile" Content="..." Click="btnBrowseFile_Click" VerticalAlignment="Bottom" Padding="5,1,5,1"/>
         </WrapPanel>
         
 
         <TextBlock Grid.Row="5" Grid.Column="1" Text="Thumbnail:" Style="{StaticResource labelStyle}" HorizontalAlignment="Right" Margin="0,10,5,0"/>
-        <WrapPanel Grid.Row="5" Grid.Column="2" HorizontalAlignment="Left">
-            <TextBox HorizontalAlignment="Left" Text="{Binding PathToThumbnail, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource inputStyle}" Width="315" Margin="0,10,3,0"/>
+        <WrapPanel Grid.Row="5" Grid.Column="2" HorizontalAlignment="Stretch">
+            <TextBox Width="{Binding ElementName=txtAuthor, Path=ActualWidth}" Text="{Binding PathToThumbnail, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource inputStyle}" Margin="0,10,3,0"/>
             <Button x:Name="btnBrowseThumbnail" Content="..." Click="btnBrowseThumbnail_Click"  VerticalAlignment="Bottom" Padding="5,1,5,1"/>
         </WrapPanel>
 

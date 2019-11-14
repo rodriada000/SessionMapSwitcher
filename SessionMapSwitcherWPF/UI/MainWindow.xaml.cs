@@ -350,31 +350,8 @@ namespace SessionMapSwitcher
 
         private void MenuOnlineImport_Click(object sender, RoutedEventArgs e)
         {
-            OpenOnlineImportWindow();
-        }
-
-        internal void OpenOnlineImportWindow()
-        {
-            if (SessionPath.IsSessionPathValid() == false)
-            {
-                ViewModel.UserMessage = "Cannot import: You must set your path to Session before importing maps.";
-                return;
-            }
-
-            if (ViewModel.ImportViewModel == null)
-            {
-                // keep view model in memory for entire app so list of downloadable maps is cached (until app restart)
-                ViewModel.ImportViewModel = new OnlineImportViewModel();
-            }
-
-            OnlineImportWindow importWindow = new OnlineImportWindow(ViewModel.ImportViewModel)
-            {
-                WindowStyle = WindowStyle.ToolWindow,
-                WindowStartupLocation = WindowStartupLocation.CenterScreen
-            };
-            importWindow.ShowDialog();
-
-            ViewModel.ReloadAvailableMapsInBackground(); // reload list of available maps as it may have changed
+            controlAssetStore.ViewModel.DisplayMaps = true; // check this in-case was unchecked previously
+            tabControl.SelectedIndex = 1;
         }
 
         internal void OpenComputerImportWindow()
@@ -675,6 +652,12 @@ namespace SessionMapSwitcher
                 if (tabAssetStore.IsSelected)
                 {
                     controlAssetStore.ViewModel.GetManifestsAsync(forceRefresh: false, getSelectedOnly: true);
+                }
+
+                if (tabMainWindow.IsSelected && controlAssetStore.ViewModel.HasDownloadedMap)
+                {
+                    controlAssetStore.ViewModel.HasDownloadedMap = false;
+                    ViewModel.ReloadAvailableMapsInBackground();
                 }
             }
 
