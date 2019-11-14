@@ -5,8 +5,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ui="clr-namespace:SessionMapSwitcher.UI"
+        xmlns:uii="clr-namespace:SessionModManagerWPF.UI"
         mc:Ignorable="d"
-        Title="Session Map Switcher"
+        Title="Session Mod Manager"
         AllowDrop="True"
         Loaded="MainWindow_Loaded"
         Unloaded="MainWindow_Unloaded"
@@ -96,24 +97,26 @@
             <MenuItem Header="View Help ..." Click="MenuOpenReadme_Click"/>
         </ContextMenu>
     </Window.ContextMenu>
-    
-    <Grid Style="{StaticResource mainGridStyle}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="auto"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="398*"/>
-        </Grid.ColumnDefinitions>
 
-        <!--PATH TO SESSION TEXTBOX AND BUTTONS-->
-        <Label Content="Path To Session:"
+    <TabControl x:Name="tabControl" SelectionChanged="tabControl_SelectionChanged" Background="Transparent">
+        <TabItem x:Name="tabMainWindow" Header="Main Window">
+            <Grid Style="{StaticResource mainGridStyle}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="398*"/>
+                </Grid.ColumnDefinitions>
+
+                <!--PATH TO SESSION TEXTBOX AND BUTTONS-->
+                <Label Content="Path To Session:"
                FontWeight="SemiBold"
                VerticalAlignment="Top" HorizontalAlignment="Left" Margin="5,10,0,0" Height="26" Width="97"/>
 
-        <TextBox x:Name="txtSessionPath" 
+                <TextBox x:Name="txtSessionPath" 
                  Grid.Column="0" Grid.ColumnSpan="2"
                  VerticalAlignment="Top" HorizontalAlignment="Stretch"
                  Text="{Binding SessionPathTextInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -128,7 +131,7 @@
                  ContextMenu="{Binding ElementName=mainContextMenu}"/>
 
 
-        <Button Name="btnBrowseSessionPath" 
+                <Button Name="btnBrowseSessionPath" 
                 Grid.Column="1"
                 Content="..." 
                 ToolTip="Browse for path to Session"
@@ -140,19 +143,19 @@
                 Click="BtnBrowseSessionPath_Click"/>
 
 
-        <!--AVAILABLE MAPS GROUPBOX-->
-        <GroupBox Grid.Row="1" Header="Available Maps" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,0,3" BorderBrush="#BDBDBD">
+                <!--AVAILABLE MAPS GROUPBOX-->
+                <GroupBox Grid.Row="1" Header="Available Maps" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,0,3" BorderBrush="#BDBDBD">
 
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="auto"/>
-                </Grid.RowDefinitions>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="auto"/>
+                        </Grid.RowDefinitions>
 
-                <WrapPanel HorizontalAlignment="Left" VerticalAlignment="Top" Margin="3,8,0,0" >
+                        <WrapPanel HorizontalAlignment="Left" VerticalAlignment="Top" Margin="3,8,0,0" >
 
-                    <Button x:Name="btnReloadMaps"
+                            <Button x:Name="btnReloadMaps"
                             Style="{StaticResource MainButtonStyle}"
                             Click="BtnReloadMaps_Click"
                             IsEnabled="{Binding InputControlsEnabled}"
@@ -162,7 +165,7 @@
                             FontSize="11"/>
 
 
-                    <Button x:Name="btnImportMap"
+                            <Button x:Name="btnImportMap"
                             Style="{StaticResource MainButtonStyle}"
                             IsEnabled="{Binding InputControlsEnabled}"
                             Content="Import Map"
@@ -170,15 +173,15 @@
                             Margin="10,0,0,0"
                             Padding="5,1,5,1"
                             FontSize="11">
-                        <Button.ContextMenu>
-                            <ContextMenu x:Name="importContextMenu">
-                                <MenuItem x:Name="menuComputerImport" Header="From Computer ..." Click="MenuComputerImport_Click"/>
-                                <MenuItem x:Name="menuOnlineImport" Header="From Online ..." Click="MenuOnlineImport_Click"/>
-                            </ContextMenu>
-                        </Button.ContextMenu>
-                    </Button>
+                                <Button.ContextMenu>
+                                    <ContextMenu x:Name="importContextMenu">
+                                        <MenuItem x:Name="menuComputerImport" Header="From Computer ..." Click="MenuComputerImport_Click"/>
+                                        <MenuItem x:Name="menuOnlineImport" Header="From Online ..." Click="MenuOnlineImport_Click"/>
+                                    </ContextMenu>
+                                </Button.ContextMenu>
+                            </Button>
 
-                    <CheckBox x:Name="chkShowInvalidMaps"
+                            <CheckBox x:Name="chkShowInvalidMaps"
                               Content="Show Invalid/Hidden Maps"
                               ToolTip="Show/hide maps that are invalid in the Maps folder (e.g. missing gamemode) or hidden by you."
                               IsChecked="{Binding ShowInvalidMapsIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='True'}"
@@ -186,10 +189,10 @@
                               FontSize="10"
                               Margin="10,5,0,0"
                               VerticalAlignment="Center"/>
-                </WrapPanel>
+                        </WrapPanel>
 
 
-                <ListBox x:Name="lstMaps"
+                        <ListBox x:Name="lstMaps"
                          Grid.Row="1"
                          HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                          ToolTip="Righ-click a map for additional options"
@@ -199,80 +202,80 @@
                          ItemsSource="{Binding FilteredAvailableMaps}"
                          ItemContainerStyle="{StaticResource MapListItem}"
                          ContextMenuOpening="ContextMenu_ContextMenuOpening">
-                    <ListBox.ContextMenu>
-                        <ContextMenu x:Name="mainContextMenu">
-                            <MenuItem x:Name="menuReimporSelectedMap" Header="Re-import Selected Map ..."  Click="MenuReimporSelectedMap_Click" ToolTipService.ShowOnDisabled="True" ToolTipService.ShowDuration="8000"/>
-                            <MenuItem x:Name="menuRenameSelectedMap" Header="Rename Selected Map ..."  Click="MenuRenameSelectedMap_Click"  ToolTipService.ShowOnDisabled="True" ToolTipService.ShowDuration="8000"/>
-                            <MenuItem x:Name="menuHideSelectedMap" Header="Hide Selected Map ..."  Click="MenuHideSelectedMap_Click"  ToolTipService.ShowOnDisabled="True" ToolTipService.ShowDuration="8000"/>
-                            <MenuItem x:Name="menuDeleteSelectedMap" Header="Delete Selected Map ..."  Click="menuDeleteSelectedMap_Click"  ToolTipService.ShowOnDisabled="True" ToolTipService.ShowDuration="8000"/>
-                            <Separator/>
-                            <MenuItem x:Name="menuOpenSessionFolder" Header="Open Session Folder ..."  Click="MenuOpenSessionFolder_Click"/>
-                            <MenuItem x:Name="menuOpenMapsFolder" Header="Open Content Folder ..." Click="MenuOpenMapsFolder_Click"/>
-                            <MenuItem x:Name="menuOpenSelectedMapFolder" Header="Open Selected Map Folder ..." Click="MenuOpenSelectedMapFolder_Click"/>
-                            <Separator/>
-                            <MenuItem x:Name="menuOpenReadme" Header="View Help ..." Click="MenuOpenReadme_Click"/>
-                        </ContextMenu>
-                    </ListBox.ContextMenu>
-                </ListBox>
+                            <ListBox.ContextMenu>
+                                <ContextMenu x:Name="mainContextMenu">
+                                    <MenuItem x:Name="menuReimporSelectedMap" Header="Re-import Selected Map ..."  Click="MenuReimporSelectedMap_Click" ToolTipService.ShowOnDisabled="True" ToolTipService.ShowDuration="8000"/>
+                                    <MenuItem x:Name="menuRenameSelectedMap" Header="Rename Selected Map ..."  Click="MenuRenameSelectedMap_Click"  ToolTipService.ShowOnDisabled="True" ToolTipService.ShowDuration="8000"/>
+                                    <MenuItem x:Name="menuHideSelectedMap" Header="Hide Selected Map ..."  Click="MenuHideSelectedMap_Click"  ToolTipService.ShowOnDisabled="True" ToolTipService.ShowDuration="8000"/>
+                                    <MenuItem x:Name="menuDeleteSelectedMap" Header="Delete Selected Map ..."  Click="menuDeleteSelectedMap_Click"  ToolTipService.ShowOnDisabled="True" ToolTipService.ShowDuration="8000"/>
+                                    <Separator/>
+                                    <MenuItem x:Name="menuOpenSessionFolder" Header="Open Session Folder ..."  Click="MenuOpenSessionFolder_Click"/>
+                                    <MenuItem x:Name="menuOpenMapsFolder" Header="Open Content Folder ..." Click="MenuOpenMapsFolder_Click"/>
+                                    <MenuItem x:Name="menuOpenSelectedMapFolder" Header="Open Selected Map Folder ..." Click="MenuOpenSelectedMapFolder_Click"/>
+                                    <Separator/>
+                                    <MenuItem x:Name="menuOpenReadme" Header="View Help ..." Click="MenuOpenReadme_Click"/>
+                                </ContextMenu>
+                            </ListBox.ContextMenu>
+                        </ListBox>
 
-                <WrapPanel Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,0,0,3">
-                    <Label Content="Currently Loaded Map:"
+                        <WrapPanel Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,0,0,3">
+                            <Label Content="Currently Loaded Map:"
                            Padding="3,0,0,0"
                            FontSize="12"
                            FontWeight="SemiBold"/>
 
-                    <TextBlock x:Name="txtLoadedMap"
+                            <TextBlock x:Name="txtLoadedMap"
                                Padding="5,0,0,0"
                                FontSize="12"
                                Text="{Binding CurrentlyLoadedMapName, FallbackValue='GrindCity_Yeah'}"/>
-                </WrapPanel>
-            </Grid>
+                        </WrapPanel>
+                    </Grid>
 
-        </GroupBox>
-
-
+                </GroupBox>
 
 
-        <!--GAME SETTING GROUP BOX-->
-        <ScrollViewer Grid.Row="1" Grid.Column="1" 
+
+
+                <!--GAME SETTING GROUP BOX-->
+                <ScrollViewer Grid.Row="1" Grid.Column="1" 
                       VerticalScrollBarVisibility="Auto"
                       Margin="0,10,0,0">
-            <StackPanel>
+                    <StackPanel>
 
-                <GroupBox x:Name="grpIniOptions"
+                        <GroupBox x:Name="grpIniOptions"
                           BorderBrush="#BDBDBD"
                           Header="Game Settings"
                           HorizontalAlignment="Stretch"
                           VerticalAlignment="Top"
                           Margin="10,0,10,0">
 
-                    <StackPanel>
-                        <WrapPanel Margin="10,10,0,0" HorizontalAlignment="Right">
-                            <Label Content="Gravity:" Padding="0,0,5,0"/>
-                            <TextBox x:Name="txtGravity"
+                            <StackPanel>
+                                <WrapPanel Margin="10,10,0,0" HorizontalAlignment="Right">
+                                    <Label Content="Gravity:" Padding="0,0,5,0"/>
+                                    <TextBox x:Name="txtGravity"
                                      ToolTip="Default value is -980"
                                      Width="150"
                                      Height="20"
                                      Text="{Binding GravityText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='-666.000000'}"
                                      Margin="0,0,10,0"/>
-                        </WrapPanel>
+                                </WrapPanel>
 
-                        <WrapPanel Margin="10,10,0,0" HorizontalAlignment="Right">
-                            <Label Content="Object Placement Count:" Padding="0,0,5,0"/>
-                            <TextBox x:Name="txtObjectCount"
+                                <WrapPanel Margin="10,10,0,0" HorizontalAlignment="Right">
+                                    <Label Content="Object Placement Count:" Padding="0,0,5,0"/>
+                                    <TextBox x:Name="txtObjectCount"
                                      MaxWidth="150"
                                      Width="150"
                                      Height="20"
                                      Text="{Binding ObjectCountText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='5'}"
                                      Margin="0,0,10,0"/>
-                        </WrapPanel>
+                                </WrapPanel>
 
-                        <CheckBox Content="Skip Intro Movie"
+                                <CheckBox Content="Skip Intro Movie"
                                   HorizontalAlignment="Right"
                                   IsChecked="{Binding SkipMovieIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='True'}"
                                   Margin="0,10,10,0"/>
 
-                        <Button x:Name="btnApplySettings"
+                                <Button x:Name="btnApplySettings"
                                 Content="Apply"
                                 ToolTip="Update the game with new settings."
                                 Click="BtnApplySettings_Click"
@@ -281,36 +284,36 @@
                                 HorizontalAlignment="Right"
                                 Margin="10,10,10,5"
                                 Padding="10,0,10,2"/>
-                    </StackPanel>
+                            </StackPanel>
 
-                </GroupBox>
+                        </GroupBox>
 
 
-                <GroupBox x:Name="grpTextureReplace"
+                        <GroupBox x:Name="grpTextureReplace"
                           BorderBrush="#BDBDBD"
                           Header="Texture Replacer"
                           HorizontalAlignment="Stretch"
                           VerticalAlignment="Top"
                           IsEnabled="{Binding IsReplaceTextureControlEnabled}"
                           Margin="10,10,10,0">
-                    <ui:TextureReplacerUserControl x:Name="ctrlTextureReplacer"/>
-                </GroupBox>
+                            <ui:TextureReplacerUserControl x:Name="ctrlTextureReplacer"/>
+                        </GroupBox>
 
-                <GroupBox x:Name="grpProjectWatch"
+                        <GroupBox x:Name="grpProjectWatch"
                           BorderBrush="#BDBDBD"
                           Header="Project Watcher"
                           HorizontalAlignment="Stretch"
                           VerticalAlignment="Top"
                           IsEnabled="{Binding IsProjectWatchControlEnabled}"
                           Margin="10,10,10,0">
-                    <ui:ProjectWatcherUserControl x:Name="ctrlProjectWatcher"/>
-                </GroupBox>
-            </StackPanel>
-        </ScrollViewer>
+                            <ui:ProjectWatcherUserControl x:Name="ctrlProjectWatcher"/>
+                        </GroupBox>
+                    </StackPanel>
+                </ScrollViewer>
 
 
-        <!--USER MESSAGE AND LOAD/START BUTTONS-->
-        <TextBlock x:Name="lblUserMessage"
+                <!--USER MESSAGE AND LOAD/START BUTTONS-->
+                <TextBlock x:Name="lblUserMessage"
                    Grid.Row="2" Grid.ColumnSpan="2"
                    HorizontalAlignment="Left"
                    VerticalAlignment="Bottom"
@@ -320,7 +323,7 @@
                    MaxWidth="600"
                    FontSize="14"/>
 
-        <TextBlock x:Name="lblHintMessage"
+                <TextBlock x:Name="lblHintMessage"
                    Grid.Row="2" Grid.ColumnSpan="2"
                    Grid.RowSpan="2"
                    HorizontalAlignment="Left"
@@ -331,7 +334,7 @@
                    MaxWidth="600"
                    FontSize="11"/>
 
-        <Button x:Name="btnLoadMap"
+                <Button x:Name="btnLoadMap"
                 Grid.Row="2" Grid.ColumnSpan="2"
                 Content="{Binding LoadMapButtonText, FallbackValue='Load Map'}"
                 ToolTip="Load selected map from the list"
@@ -344,7 +347,7 @@
                 Padding="5,0,5,0"
                 Click="BtnLoadMap_Click" Height="33"/>
 
-        <Button x:Name="btnStartGame"
+                <Button x:Name="btnStartGame"
                 Grid.Row="2" Grid.ColumnSpan="2"
                 Content="Start Session"
                 ToolTip="Load selected map and start the game. Restart game if already running."
@@ -357,7 +360,7 @@
                 Padding="0"
                 Click="BtnStartGame_Click" Height="33" Width="102"/>
 
-        <Button x:Name="btnPatch"
+                <Button x:Name="btnPatch"
                 Click="BtnPatch_Click"
                 IsEnabled="{Binding IsPatchButtonEnabled}"
                 Grid.Row="2" Grid.ColumnSpan="2"
@@ -368,5 +371,14 @@
                 HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
                 Margin="0,0,10,3"/>
-    </Grid>
+            </Grid>
+
+        </TabItem>
+
+        <TabItem Header="Asset Store"
+                 x:Name="tabAssetStore">
+            <uii:AssetStoreUserControl x:Name="controlAssetStore" />
+        </TabItem>
+    </TabControl>
+    
 </Window>
