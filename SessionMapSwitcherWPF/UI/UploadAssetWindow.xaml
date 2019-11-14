@@ -6,8 +6,8 @@
         xmlns:local="clr-namespace:SessionModManagerWPF.UI"
         mc:Ignorable="d"
         Style="{StaticResource WindowStyle}"
-        Title="Upload Asset" Height="500" Width="460"
-        MaxHeight="500"
+        Title="Upload Asset" d:DesignHeight="535" Width="460"
+        MaxHeight="600"
         MaxWidth="650"
         WindowStyle="ToolWindow"
         Loaded="Window_Loaded">
@@ -28,6 +28,7 @@
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
@@ -58,7 +59,7 @@
                   Margin="0,10,5,0" 
                   HorizontalAlignment="Left" 
                   ItemsSource="{Binding AvailableCategories}"
-                  SelectedValue="{Binding SelectedCategory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='Maps'}"
+                  SelectedValue="{Binding SelectedCategory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                   IsEnabled="{Binding IsNotUploadingAsset}"/>
 
 
@@ -89,25 +90,43 @@
             <Button x:Name="btnBrowseThumbnail" Content="..." Click="btnBrowseThumbnail_Click"  VerticalAlignment="Bottom" Padding="5,1,5,1"/>
         </WrapPanel>
 
+
+        <TextBlock Grid.Row="6" Grid.Column="1" HorizontalAlignment="Right" Margin="0,10,5,0" Text="Bucket:" Style="{StaticResource labelStyle}"/>
+        <ComboBox x:Name="cboBuckets" 
+                  ToolTip="Choose the bucket to upload your asset to. This is usually your username"
+                  Grid.Row="6" Grid.Column="2" 
+                  Width="125"
+                  Margin="0,10,5,0" 
+                  HorizontalAlignment="Left" 
+                  ItemsSource="{Binding AvailableBuckets}"
+                  SelectedValue="{Binding SelectedBucketName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                  IsEnabled="{Binding IsNotUploadingAsset}"/>
+
         <Button x:Name="btnUpload"
                 Content="Upload Asset"
                 IsEnabled="{Binding IsNotUploadingAsset}"
                 Click="btnUpload_Click"
                 Padding="5"
-                Grid.Row="6" Grid.ColumnSpan="3"
+                Grid.Row="7" Grid.ColumnSpan="3"
                 HorizontalAlignment="Center"
-                Margin="0,10,20,5"
+                Margin="0,15,20,5"
                 VerticalAlignment="Center"/>
 
-        <TextBlock Grid.Row="7"
-                   Grid.Column="0"
-                   Grid.ColumnSpan="3"
-                   HorizontalAlignment="Left"
-                   TextWrapping="Wrap"
-                   VerticalAlignment="Top"
-                   FontSize="13"
-                   Margin="10,0,0,0"
-                   MaxWidth="420"
-                   Text="{Binding StatusMessage, FallbackValue='This is a message to the user ...'}"/>
+        <ScrollViewer Grid.Row="8"
+                      Grid.Column="0"
+                      Grid.ColumnSpan="3"
+                      HorizontalAlignment="Stretch"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalAlignment="Top">
+            
+            <TextBlock HorizontalAlignment="Stretch"
+                       TextWrapping="Wrap"
+                       VerticalAlignment="Top"
+                       FontSize="13"
+                       Margin="10,0,0,0"
+                       MaxWidth="420"
+                       Text="{Binding StatusMessage, FallbackValue='This is a message to the user ...'}"/>
+        </ScrollViewer>
+
     </Grid>
 </Window>

@@ -132,7 +132,11 @@ namespace SessionModManagerWPF.UI
 
         private void OpenUploadAssetForm()
         {
-            UploadAssetViewModel viewModel = new UploadAssetViewModel();
+            UploadAssetViewModel viewModel = new UploadAssetViewModel()
+            {
+                AvailableBuckets = ViewModel.GetAvailableBuckets()
+            };
+
             UploadAssetWindow window = new UploadAssetWindow(viewModel)
             {
                 WindowStartupLocation = WindowStartupLocation.CenterScreen
