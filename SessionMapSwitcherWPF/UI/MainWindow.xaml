@@ -98,7 +98,7 @@
         </ContextMenu>
     </Window.ContextMenu>
 
-    <TabControl x:Name="tabControl" SelectionChanged="tabControl_SelectionChanged">
+    <TabControl x:Name="tabControl" SelectionChanged="tabControl_SelectionChanged" Background="Transparent">
         <TabItem x:Name="tabMainWindow" Header="Main Window">
             <Grid Style="{StaticResource mainGridStyle}">
                 <Grid.RowDefinitions>

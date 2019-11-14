@@ -124,5 +124,38 @@ namespace SessionModManagerWPF.UI
         {
             ViewModel.GetManifestsAsync(forceRefresh: true, getSelectedOnly: true);
         }
+
+        private void btnUpload_Click(object sender, RoutedEventArgs e)
+        {
+            OpenUploadAssetForm();
+        }
+
+        private void OpenUploadAssetForm()
+        {
+            UploadAssetViewModel viewModel = new UploadAssetViewModel();
+            UploadAssetWindow window = new UploadAssetWindow(viewModel)
+            {
+                WindowStartupLocation = WindowStartupLocation.CenterScreen
+            };
+            bool? result = window.ShowDialog();
+
+            ViewModel.UserMessage = "Force refresh list of assets to view uploaded asset.";
+        }
+
+        private void menuDeleteAsset_Click(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel.SelectedAsset == null)
+            {
+                MessageBox.Show("Select an asset to delete first.", "Notice", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            MessageBoxResult result = MessageBox.Show($"Are you sure you want to delete the selected asset {ViewModel.SelectedAsset.Name} ?", "Delete Warning!", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                ViewModel.DeleteSelectedAssetFromAssetStore();
+            }
+        }
     }
 }

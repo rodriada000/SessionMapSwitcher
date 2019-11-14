@@ -71,6 +71,11 @@
                     <GridViewColumn Header="Category" Width="80" DisplayMemberBinding="{Binding AssetCategory}" ToolTipService.ToolTip="Click to sort by column"/>
                 </GridView>
             </ListView.View>
+            <ListView.ContextMenu>
+                <ContextMenu x:Name="lstContextMenu">
+                    <MenuItem x:Name="menuDeleteAsset" Header="Delete Selected Asset ..." ToolTip="Delete the asset if you uploaded it." Click="menuDeleteAsset_Click"/>
+                </ContextMenu>
+            </ListView.ContextMenu>
         </ListView>
 
         <GroupBox Grid.Row="1" Grid.Column="1" 
@@ -145,15 +150,26 @@
             </Grid>
         </GroupBox>
 
-        <Button x:Name="btnRefresh"
-                Grid.Column="1"
-                Margin="0,10,5,0"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Top"
-                Content="Force Refresh Assets"
-                ToolTip="Downloads the latest asset manifests and refreshes asset list."
-                Click="btnRefresh_Click"
-                Padding="5"/>
+        <WrapPanel Grid.Column="1"
+                   Margin="0,15,5,0"
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Top">
+            
+            <Button x:Name="btnRefresh"
+                    Margin="0,0,10,0"
+                    Content="Force Refresh Assets"
+                    ToolTip="Downloads the latest asset manifests and refreshes asset list."
+                    Click="btnRefresh_Click"
+                    Padding="5,2,5,2"/>
+
+            <Button x:Name="btnUpload"
+                    Content="Upload Asset"
+                    ToolTip="Upload an asset to the Asset Store (requires modder credentials)."
+                    Click="btnUpload_Click"
+                    Padding="5,3,5,3"/>
+        </WrapPanel>
+        
+
 
         <TextBlock Grid.Row="2" Grid.ColumnSpan="2"
                    VerticalAlignment="Bottom"
