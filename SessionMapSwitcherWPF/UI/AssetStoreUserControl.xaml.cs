@@ -1,0 +1,161 @@
+﻿using SessionMapSwitcherCore.ViewModels;
+using SessionModManagerCore.ViewModels;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+
+namespace SessionModManagerWPF.UI
+{
+    /// <summary>
+    /// Interaction logic for AssetStoreUserControl.xaml
+    /// </summary>
+    public partial class AssetStoreUserControl : UserControl
+    {
+        public AssetStoreViewModel ViewModel { get; set; }
+        GridViewColumnHeader _lastHeaderClicked = null;
+        ListSortDirection _lastDirection = ListSortDirection.Ascending;
+
+        public AssetStoreUserControl()
+        {
+            InitializeComponent();
+
+            ViewModel = new AssetStoreViewModel();
+            this.DataContext = ViewModel;
+        }
+
+
+        /// <summary>
+        /// Sorts the ListView based on the clicked column
+        /// </summary>
+        void GridViewColumnHeaderClickedHandler(object sender, RoutedEventArgs e)
+        {
+            GridViewColumnHeader headerClicked = e.OriginalSource as GridViewColumnHeader;
+            ListSortDirection direction;
+
+            if (headerClicked == null || headerClicked?.Role == GridViewColumnHeaderRole.Padding)
+            {
+                return;
+            }
+
+
+            if (headerClicked != _lastHeaderClicked)
+            {
+                direction = ListSortDirection.Ascending;
+            }
+            else
+            {
+                if (_lastDirection == ListSortDirection.Ascending)
+                {
+                    direction = ListSortDirection.Descending;
+                }
+                else
+                {
+                    direction = ListSortDirection.Ascending;
+                }
+            }
+
+            Binding headerBinding = headerClicked.Column.DisplayMemberBinding.ProvideValue(null) as Binding;
+
+            if (headerBinding == null)
+            {
+                return;
+            }
+
+            string propertyNameToSortBy = headerBinding.Path?.Path;
+            Sort(propertyNameToSortBy, direction);
+
+            _lastHeaderClicked = headerClicked;
+            _lastDirection = direction;
+        }
+
+        private void Sort(string sortBy, ListSortDirection direction)
+        {
+            ICollectionView dataView = CollectionViewSource.GetDefaultView(lstAssets.ItemsSource);
+
+            if (dataView == null)
+            {
+                return;
+            }
+
+            dataView.SortDescriptions.Clear();
+            SortDescription sd = new SortDescription(sortBy, direction);
+            dataView.SortDescriptions.Add(sd);
+            dataView.Refresh();
+        }
+
+        private void lstAssets_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (lstAssets.SelectedItem == null)
+            {
+                return;
+            }
+
+            ViewModel.RefreshPreviewForSelected();
+        }
+        private void btnInstall_Click(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel.SelectedAsset == null)
+            {
+                MessageBox.Show("Select an asset to install first.", "Notice", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            ViewModel.DownloadSelectedAssetAsync();
+        }
+
+        private void btnRemove_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.RemoveSelectedAssetAsync();
+        }
+
+        private void btnRefresh_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.GetManifestsAsync(forceRefresh: true, getSelectedOnly: true);
+        }
+
+        private void btnUpload_Click(object sender, RoutedEventArgs e)
+        {
+            OpenUploadAssetForm();
+        }
+
+        private void OpenUploadAssetForm()
+        {
+            UploadAssetViewModel viewModel = new UploadAssetViewModel();
+            UploadAssetWindow window = new UploadAssetWindow(viewModel)
+            {
+                WindowStartupLocation = WindowStartupLocation.CenterScreen
+            };
+            bool? result = window.ShowDialog();
+
+            ViewModel.UserMessage = "Force refresh list of assets to view uploaded asset.";
+        }
+
+        private void menuDeleteAsset_Click(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel.SelectedAsset == null)
+            {
+                MessageBox.Show("Select an asset to delete first.", "Notice", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            MessageBoxResult result = MessageBox.Show($"Are you sure you want to delete the selected asset {ViewModel.SelectedAsset.Name} ?", "Delete Warning!", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                ViewModel.DeleteSelectedAssetFromAssetStore();
+            }
+        }
+    }
+}

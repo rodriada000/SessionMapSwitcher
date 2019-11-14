@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SessionModManagerCore", "..
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModManagerUnitTests", "..\SessionModManagerCore\MapSwitcherUnitTests\ModManagerUnitTests.csproj", "{84FBB181-B647-43A6-BEB2-6B1F44DB7ACB}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SessionAssetStore", "..\SessionAssetStore\SessionAssetStore\SessionAssetStore.csproj", "{904598FB-0B08-4634-976D-70A7B49D9270}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{84FBB181-B647-43A6-BEB2-6B1F44DB7ACB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{84FBB181-B647-43A6-BEB2-6B1F44DB7ACB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{84FBB181-B647-43A6-BEB2-6B1F44DB7ACB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{904598FB-0B08-4634-976D-70A7B49D9270}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{904598FB-0B08-4634-976D-70A7B49D9270}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{904598FB-0B08-4634-976D-70A7B49D9270}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{904598FB-0B08-4634-976D-70A7B49D9270}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
