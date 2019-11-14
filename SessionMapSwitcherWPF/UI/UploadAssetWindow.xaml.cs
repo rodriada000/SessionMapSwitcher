@@ -110,6 +110,7 @@ namespace SessionModManagerWPF.UI
             if (ViewModel.HasAuthenticated)
             {
                 ViewModel.StatusMessage = UploadAssetViewModel.DefaultStatusMesssage;
+                ViewModel.SetBucketBasedOnAuthor();
             }
             else
             {
