@@ -151,18 +151,18 @@
         </GroupBox>
 
         <StackPanel Grid.Column="1"
-                    Margin="10,15,5,10"
+                    Margin="10,15,0,10"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top">
             <Label Content="By Author:" Padding="0" FontSize="11"/>
-            <ComboBox Width="130" 
+            <ComboBox Width="140" 
                       Margin="0,0,0,3"
                       FontSize="11"
                       ItemsSource="{Binding AuthorList}"
                       SelectedValue="{Binding AuthorToFilterBy, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
             <Label Content="Install Status:" Padding="0" FontSize="11"/>
-            <ComboBox Width="130" 
+            <ComboBox Width="140" 
                       FontSize="11"
                       ItemsSource="{Binding InstallStatusList}"
                       SelectedValue="{Binding SelectedInstallStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
