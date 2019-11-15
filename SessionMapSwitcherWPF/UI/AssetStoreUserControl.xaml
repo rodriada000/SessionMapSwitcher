@@ -32,10 +32,10 @@
 
         <GroupBox Grid.Row="0" Grid.Column="0"
                   HorizontalAlignment="Stretch"
-                  VerticalAlignment="Stretch"
-                  Margin="5,5,0,5"
+                  VerticalAlignment="Bottom"
+                  Margin="5,5,0,10"
                   Header="Categories" Padding="3,10,0,10">
-            <StackPanel>
+            <StackPanel VerticalAlignment="Bottom">
                 <WrapPanel>
                     <CheckBox Content="All" IsChecked="{Binding DisplayAll, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="5,0,35,5"/>
                     <CheckBox Content="Maps" IsChecked="{Binding DisplayMaps, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="5,0,10,0"/>
@@ -151,7 +151,26 @@
         </GroupBox>
 
         <StackPanel Grid.Column="1"
-                    Margin="0,15,5,0"
+                    Margin="10,15,5,10"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top">
+            <Label Content="By Author:" Padding="0" FontSize="11"/>
+            <ComboBox Width="130" 
+                      Margin="0,0,0,3"
+                      FontSize="11"
+                      ItemsSource="{Binding AuthorList}"
+                      SelectedValue="{Binding AuthorToFilterBy, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <Label Content="Install Status:" Padding="0" FontSize="11"/>
+            <ComboBox Width="130" 
+                      FontSize="11"
+                      ItemsSource="{Binding InstallStatusList}"
+                      SelectedValue="{Binding SelectedInstallStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+        </StackPanel>
+
+        <StackPanel Grid.Column="1"
+                    Margin="0,18,5,0"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Top">
             <WrapPanel Margin="0,0,0,10">
@@ -170,8 +189,13 @@
                     Padding="5,3,5,3"/>
             </WrapPanel>
 
-            <CheckBox x:Name="chkFetchAllImages" Content="Fetch All Preview Images" Margin="0,0,0,3" IsChecked="{Binding FetchAllPreviewImages, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-            <CheckBox x:Name="chkDeleteAfterDownload" Content="Delete Download After Install" IsChecked="{Binding DeleteDownloadAfterInstall, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            <CheckBox x:Name="chkFetchAllImages" 
+                      Content="Fetch All Preview Images" 
+                      Margin="0,0,0,7" 
+                      IsChecked="{Binding FetchAllPreviewImages, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <CheckBox x:Name="chkDeleteAfterDownload" 
+                      Content="Delete Download After Install" 
+                      IsChecked="{Binding DeleteDownloadAfterInstall, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         </StackPanel>
         
 

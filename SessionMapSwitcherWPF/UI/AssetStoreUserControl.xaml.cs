@@ -117,7 +117,7 @@ namespace SessionModManagerWPF.UI
 
         private void btnRemove_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.RemoveSelectedAssetAsync();
+            ViewModel.RemoveSelectedAsset();
         }
 
         private void btnRefresh_Click(object sender, RoutedEventArgs e)
