@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:SessionModManagerWPF.UI"
              mc:Ignorable="d" 
-             d:DesignHeight="550" d:DesignWidth="750">
+             d:DesignHeight="550" d:DesignWidth="900">
     <UserControl.Resources>
         <Style TargetType="CheckBox">
             <Setter Property="Margin" Value="0,0,0,0"/>
@@ -25,13 +25,13 @@
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="1.25*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
 
         <GroupBox Grid.Row="0" Grid.Column="0"
-                  HorizontalAlignment="Stretch"
+                  HorizontalAlignment="Left"
                   VerticalAlignment="Bottom"
                   Margin="5,5,0,10"
                   Header="Categories" Padding="3,10,0,10">
@@ -66,9 +66,10 @@
                   Margin="5,10,0,10">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Name" Width="190" DisplayMemberBinding="{Binding Name}" ToolTipService.ToolTip="Click to sort by column"/>
-                    <GridViewColumn Header="Author" Width="100" DisplayMemberBinding="{Binding Author}" ToolTipService.ToolTip="Click to sort by column"/>
-                    <GridViewColumn Header="Category" Width="90" DisplayMemberBinding="{Binding AssetCategory}" ToolTipService.ToolTip="Click to sort by column"/>
+                    <GridViewColumn Header="Name" Width="190" DisplayMemberBinding="{Binding Name}"/>
+                    <GridViewColumn Header="Author" Width="100" DisplayMemberBinding="{Binding Author}"/>
+                    <GridViewColumn Header="Category" Width="95" DisplayMemberBinding="{Binding AssetCategory}"/>
+                    <GridViewColumn Header="Updated Date" Width="110" DisplayMemberBinding="{Binding UpdatedDate}"/>
                 </GridView>
             </ListView.View>
             <ListView.ContextMenu>
