@@ -13,7 +13,7 @@
         Unloaded="MainWindow_Unloaded"
         MinHeight="415" MinWidth="510"
         MaxWidth="1600"
-        Height="590" Width="800"
+        Height="590" Width="900"
         SizeChanged="mainWindow_SizeChanged"
         Style="{StaticResource WindowStyle}">
     <Window.Resources>
@@ -49,7 +49,7 @@
 
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#008080"/>
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource AppSelectedBrush}"/>
                                 <Setter TargetName="mapText" Property="Foreground" Value="White"/>
                                 <Setter TargetName="validationText" Property="Foreground" Value="White"/>
                             </Trigger>
@@ -60,7 +60,7 @@
                             </DataTrigger>
 
                             <Trigger SourceName="border" Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#008080"/>
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource AppSelectedBrush}"/>
                                 <Setter TargetName="mapText" Property="Foreground" Value="White"/>
                                 <Setter TargetName="validationText" Property="Foreground" Value="White"/>
                             </Trigger>
@@ -204,6 +204,7 @@
                          ContextMenuOpening="ContextMenu_ContextMenuOpening">
                             <ListBox.ContextMenu>
                                 <ContextMenu x:Name="mainContextMenu">
+                                    <MenuItem x:Name="menuSecondMapToLoad" Header="Set Selected Map To Load Next..."  Click="menuSecondMapToLoad_Click"  ToolTipService.ShowOnDisabled="True" ToolTipService.ShowDuration="8000"/>
                                     <MenuItem x:Name="menuReimporSelectedMap" Header="Re-import Selected Map ..."  Click="MenuReimporSelectedMap_Click" ToolTipService.ShowOnDisabled="True" ToolTipService.ShowDuration="8000"/>
                                     <MenuItem x:Name="menuRenameSelectedMap" Header="Rename Selected Map ..."  Click="MenuRenameSelectedMap_Click"  ToolTipService.ShowOnDisabled="True" ToolTipService.ShowDuration="8000"/>
                                     <MenuItem x:Name="menuHideSelectedMap" Header="Hide Selected Map ..."  Click="MenuHideSelectedMap_Click"  ToolTipService.ShowOnDisabled="True" ToolTipService.ShowDuration="8000"/>

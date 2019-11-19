@@ -119,18 +119,7 @@ namespace SessionMapSwitcher
             {
                 ViewModel.InputControlsEnabled = true;
 
-                // validate and set game settings
-                bool didSet = ViewModel.UpdateGameSettings();
-
-                if (didSet == false)
-                {
-                    // do not start game with invalid settings
-                    ViewModel.UserMessage = $"NOTE: Cannot apply custom game settings - {ViewModel.UserMessage}";
-                }
-
-                ViewModel.InputControlsEnabled = false;
-                Process.Start(SessionPath.ToSessionExe);
-                ViewModel.InputControlsEnabled = true;
+                ViewModel.StartGameAndLoadSecondMap();
             });
         }
 
@@ -414,7 +403,7 @@ namespace SessionMapSwitcher
         private void CheckForNewVersionInBackground()
         {
             ViewModel.UserMessage = "Checking for updates ...";
-            Task task = Task.Factory.StartNew(() => 
+            Task task = Task.Factory.StartNew(() =>
             {
                 IsNewVersionAvailable = VersionChecker.IsUpdateAvailable();
             });
@@ -497,6 +486,19 @@ namespace SessionMapSwitcher
                 menuReimporSelectedMap.IsEnabled = hasImportLocation;
                 menuReimporSelectedMap.ToolTip = hasImportLocation ? null : "You can only re-import if you imported the map from 'Import Map > From Computer ...' and imported a folder.\n(does not work with .zip files)";
                 menuHideSelectedMap.Header = selected.IsHiddenByUser ? "Show Selected Map ..." : "Hide Selected Map ...";
+
+
+                if (ViewModel.SecondMapToLoad == null || ViewModel.SecondMapToLoad?.FullPath != selected.FullPath)
+                {
+                    menuSecondMapToLoad.Header = "Set As Second Map To Load (When Leaving Apartment) ...";
+                    menuSecondMapToLoad.ToolTip = "Set the map to be loaded after you leave the apartment (before starting the game)";
+                }
+                else
+                {
+                    menuSecondMapToLoad.ToolTip = "This will clear the selected map to not load after you leave the apartment";
+                    menuSecondMapToLoad.Header = "Clear As Second Map To Load ...";
+                }
+
 
                 bool canBeDeleted = MetaDataManager.HasPathToMapFilesStored(selected);
                 menuDeleteSelectedMap.IsEnabled = canBeDeleted;
@@ -680,5 +682,22 @@ namespace SessionMapSwitcher
             }
 
         }
+
+        private void menuSecondMapToLoad_Click(object sender, RoutedEventArgs e)
+        {
+            if (lstMaps.SelectedItem == null)
+            {
+                System.Windows.MessageBox.Show("Select a map first!",
+                                                "Notice!",
+                                                MessageBoxButton.OK,
+                                                MessageBoxImage.Information);
+                return;
+            }
+
+
+            MapListItem selectedItem = lstMaps.SelectedItem as MapListItem;
+            ViewModel.SetOrClearSecondMapToLoad(selectedItem);
+        }
+
     }
 }

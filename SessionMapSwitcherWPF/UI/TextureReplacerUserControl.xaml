@@ -28,14 +28,26 @@
                 Style="{StaticResource MainButtonStyle}" 
                 Width="25" Margin="0,0,2,0"/>
 
-        <Button x:Name="btnReplace"
+        <WrapPanel Grid.Row="2" Grid.ColumnSpan="2"
+                   HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,2,0,0">
+            
+            <Button x:Name="btnManage"
+                Click="btnManage_Click"
+                Content="Manage Installed Textures"
+                Style="{StaticResource MainButtonStyle}"
+                IsEnabled="{Binding IsReplaceButtonEnabled}"
+                Padding="5,2,5,2"
+                Margin="0,5,10,0"/>
+
+            <Button x:Name="btnReplace"
                 Click="BtnReplace_Click"
                 Content="Replace"
                 Style="{StaticResource MainButtonStyle}"
                 IsEnabled="{Binding IsReplaceButtonEnabled}"
-                Grid.Row="2" Grid.ColumnSpan="2"
-                HorizontalAlignment="Right" VerticalAlignment="Top"
                 Padding="5,2,5,2"
                 Margin="0,5,2,0"/>
+        </WrapPanel>
+
+
     </Grid>
 </UserControl>
