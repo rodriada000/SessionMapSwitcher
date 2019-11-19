@@ -148,7 +148,7 @@
                     <GridViewColumn Header="Name" Width="190" DisplayMemberBinding="{Binding Name}"/>
                     <GridViewColumn Header="Author" Width="100" DisplayMemberBinding="{Binding Author}"/>
                     <GridViewColumn Header="Category" Width="95" DisplayMemberBinding="{Binding AssetCategory}"/>
-                    <GridViewColumn Header="Updated Date" Width="110" DisplayMemberBinding="{Binding UpdatedDate}"/>
+                    <GridViewColumn Header="Updated Date" Width="120" DisplayMemberBinding="{Binding UpdatedDate}"/>
                 </GridView>
             </ListView.View>
             <ListView.ContextMenu>
@@ -203,6 +203,7 @@
                            HorizontalAlignment="Right" 
                            VerticalAlignment="Bottom">
                     <Button x:Name="btnRemove"
+                            ToolTip="Delete the files related to this asset from your game."
                             Content="{Binding RemoveButtonText, FallbackValue='Remove Asset'}"
                             IsEnabled="{Binding IsRemoveButtonEnabled}"
                             Click="btnRemove_Click"
@@ -235,17 +236,19 @@
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top">
             <Label Content="By Author:" Padding="0" FontSize="11"/>
-            <ComboBox Width="140" 
+            <ComboBox Width="145" 
                       Margin="0,0,0,3"
                       FontSize="11"
+                      ToolTip="Choose an Author to filter by"
                       ItemsSource="{Binding AuthorList}"
                       Style="{StaticResource AuthorComboBoxStyle}"
                       SelectedValue="{Binding AuthorToFilterBy, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
             </ComboBox>
 
             <Label Content="Install Status:" Padding="0" FontSize="11"/>
-            <ComboBox Width="140" 
+            <ComboBox Width="145" 
                       FontSize="11"
+                      ToolTip="Filter the list of assets by installed or not installed"
                       ItemsSource="{Binding InstallStatusList}"
                       Style="{StaticResource InstallStatusComboBoxStyle}"
                       SelectedValue="{Binding SelectedInstallStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
@@ -259,11 +262,12 @@
             <WrapPanel Margin="0,0,0,10">
 
                 <Button x:Name="btnRefresh"
-                    Margin="0,0,10,0"
-                    Content="Force Refresh Assets"
-                    ToolTip="Downloads the latest asset manifests and refreshes asset list."
-                    Click="btnRefresh_Click"
-                    Padding="5,2,5,2"/>
+                        Margin="0,0,10,0"
+                        Content="Force Refresh Assets"
+                        IsEnabled="{Binding IsNotLoadingManifests}"
+                        ToolTip="Downloads the latest asset manifests and refreshes asset list."
+                        Click="btnRefresh_Click"
+                        Padding="5,2,5,2"/>
 
                 <Button x:Name="btnUpload"
                     Content="Upload Asset"
@@ -274,10 +278,12 @@
 
             <CheckBox x:Name="chkFetchAllImages" 
                       Content="Fetch All Preview Images" 
+                      ToolTip="Download all preview images for the assets."
                       Margin="0,0,0,7" 
                       IsChecked="{Binding FetchAllPreviewImages, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <CheckBox x:Name="chkDeleteAfterDownload" 
                       Content="Delete Download After Install" 
+                      ToolTip="When unchecked the downloaded assets will not be deleted from 'store_data/temp_downloads'"
                       IsChecked="{Binding DeleteDownloadAfterInstall, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         </StackPanel>
 
