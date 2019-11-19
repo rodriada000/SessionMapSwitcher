@@ -95,7 +95,7 @@ namespace SessionModManagerWPF.UI
             string messageToUser = "Unable to authenticate with the provided upload credentials.";
 
 
-            if (String.IsNullOrEmpty(ViewModel.PathToCredentialsJson))
+            if (String.IsNullOrEmpty(ViewModel.PathToCredentialsFile))
             {
                 // credentials have not been set so don't try to authenticate yet
                 messageToUser = "The upload credentials have not been set yet.";
@@ -114,14 +114,14 @@ namespace SessionModManagerWPF.UI
             }
             else
             {
-                MessageBoxResult result = MessageBox.Show($"{messageToUser}\n\nDo you want to set the credentials .json file?", "Warning!", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                MessageBoxResult result = MessageBox.Show($"{messageToUser}\n\nDo you want to set the credentials .csv file?", "Warning!", MessageBoxButton.YesNo, MessageBoxImage.Warning);
 
                 if (result == MessageBoxResult.Yes)
                 {
                     using (System.Windows.Forms.OpenFileDialog fileBrowserDialog = new System.Windows.Forms.OpenFileDialog())
                     {
-                        fileBrowserDialog.Filter = "json file (*.json)|*.json";
-                        fileBrowserDialog.Title = "Select .json File With Credentials";
+                        fileBrowserDialog.Filter = "csv file (*.csv)|*.csv";
+                        fileBrowserDialog.Title = "Select .csv File With Credentials";
                         System.Windows.Forms.DialogResult browseResult = fileBrowserDialog.ShowDialog();
 
                         if (browseResult == System.Windows.Forms.DialogResult.OK)
