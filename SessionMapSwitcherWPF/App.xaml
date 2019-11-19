@@ -35,8 +35,12 @@
         <SolidColorBrush x:Key="AppAccentBrush" Color="{StaticResource AppAccentColor}"/>
 
 
+        <Color x:Key="AppSelectedColor">#008080</Color>
+        <SolidColorBrush x:Key="AppSelectedBrush" Color="{StaticResource AppSelectedColor}"/>
 
-        
+
+
+
         <Style x:Key="WindowStyle" TargetType="Window">
             <Setter Property="Background" Value="{StaticResource AppPrimaryBackground}"/>
             <Setter Property="Icon" Value="Resources/new_switcher.ico"/>

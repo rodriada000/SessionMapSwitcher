@@ -148,7 +148,7 @@
                     <GridViewColumn Header="Name" Width="190" DisplayMemberBinding="{Binding Name}"/>
                     <GridViewColumn Header="Author" Width="100" DisplayMemberBinding="{Binding Author}"/>
                     <GridViewColumn Header="Category" Width="95" DisplayMemberBinding="{Binding AssetCategory}"/>
-                    <GridViewColumn Header="Updated Date" Width="120" DisplayMemberBinding="{Binding UpdatedDate}"/>
+                    <GridViewColumn Header="Updated Date" Width="130" DisplayMemberBinding="{Binding UpdatedDate}"/>
                 </GridView>
             </ListView.View>
             <ListView.ContextMenu>

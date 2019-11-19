@@ -86,6 +86,9 @@
     <Compile Include="UI\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\ManageTexturesWindow.xaml.cs">
+      <DependentUpon>ManageTexturesWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\OnlineImportWindow.xaml.cs">
       <DependentUpon>OnlineImportWindow.xaml</DependentUpon>
     </Compile>
@@ -119,6 +122,10 @@
     <Page Include="UI\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\ManageTexturesWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\OnlineImportWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -49,7 +49,7 @@
 
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#008080"/>
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource AppSelectedBrush}"/>
                                 <Setter TargetName="mapText" Property="Foreground" Value="White"/>
                                 <Setter TargetName="validationText" Property="Foreground" Value="White"/>
                             </Trigger>
@@ -60,7 +60,7 @@
                             </DataTrigger>
 
                             <Trigger SourceName="border" Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#008080"/>
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource AppSelectedBrush}"/>
                                 <Setter TargetName="mapText" Property="Foreground" Value="White"/>
                                 <Setter TargetName="validationText" Property="Foreground" Value="White"/>
                             </Trigger>

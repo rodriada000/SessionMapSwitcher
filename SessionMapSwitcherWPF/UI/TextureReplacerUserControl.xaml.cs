@@ -1,4 +1,5 @@
 ﻿using SessionMapSwitcherCore.ViewModels;
+using SessionModManagerWPF.UI;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -65,6 +66,12 @@ namespace SessionMapSwitcher.UI
                     ViewModel.PathToFile = ViewModel.PathToFile.Replace(".uexp", ".uasset").Replace(".ubulk", ".uasset");
                 }
             }
+        }
+
+        private void btnManage_Click(object sender, RoutedEventArgs e)
+        {
+            ManageTexturesWindow manageWindow = new ManageTexturesWindow();
+            manageWindow.ShowDialog();
         }
     }
 }
