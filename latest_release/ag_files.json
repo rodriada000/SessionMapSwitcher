@@ -1,5 +1,5 @@
 {
-  "TargetVersion": "2.3.2.0",
+  "TargetVersion": "2.4.0.0",
   "files": [
     {
       "source": "https://raw.githubusercontent.com/rodriada000/SessionMapSwitcher/release_updates/latest_release/v2/avantgarde.lib.dll",
@@ -34,8 +34,7 @@
     },
     {
       "source": "https://raw.githubusercontent.com/rodriada000/SessionMapSwitcher/release_updates/latest_release/v2/SessionModManager.exe.config",
-      "destination": "SessionModManager.exe.config",
-      "tags": [ "skipExisting" ]
+      "destination": "SessionModManager.exe.config"
     },
     {
       "source": "https://raw.githubusercontent.com/rodriada000/SessionMapSwitcher/release_updates/latest_release/v2/SharpCompress.dll",
@@ -58,53 +57,18 @@
       "destination": "NLog.config"
     },
     {
-      "source": "https://raw.githubusercontent.com/rodriada000/SessionMapSwitcher/release_updates/latest_release/v2/Google.Api.Gax.dll",
-      "destination": "Google.Api.Gax.dll",
+      "source": "https://raw.githubusercontent.com/rodriada000/SessionMapSwitcher/release_updates/latest_release/v2/AWSSDK.Core.dll",
+      "destination": "AWSSDK.Core.dll",
       "tags": [ "skipExisting" ]
     },
     {
-      "source": "https://raw.githubusercontent.com/rodriada000/SessionMapSwitcher/release_updates/latest_release/v2/Google.Api.Gax.Rest.dll",
-      "destination": "Google.Api.Gax.Rest.dll",
+      "source": "https://raw.githubusercontent.com/rodriada000/SessionMapSwitcher/release_updates/latest_release/v2/AWSSDK.S3.dll",
+      "destination": "AWSSDK.S3.dll",
       "tags": [ "skipExisting" ]
     },
     {
-      "source": "https://raw.githubusercontent.com/rodriada000/SessionMapSwitcher/release_updates/latest_release/v2/Google.Apis.Auth.dll",
-      "destination": "Google.Apis.Auth.dll",
-      "tags": [ "skipExisting" ]
-    },
-    {
-      "source": "https://raw.githubusercontent.com/rodriada000/SessionMapSwitcher/release_updates/latest_release/v2/Google.Apis.Auth.PlatformServices.dll",
-      "destination": "Google.Apis.Auth.PlatformServices.dll",
-      "tags": [ "skipExisting" ]
-    },
-    {
-      "source": "https://raw.githubusercontent.com/rodriada000/SessionMapSwitcher/release_updates/latest_release/v2/Google.Apis.Core.dll",
-      "destination": "Google.Apis.Core.dll",
-      "tags": [ "skipExisting" ]
-    },
-    {
-      "source": "https://raw.githubusercontent.com/rodriada000/SessionMapSwitcher/release_updates/latest_release/v2/Google.Apis.dll",
-      "destination": "Google.Apis.dll",
-      "tags": [ "skipExisting" ]
-    },
-    {
-      "source": "https://raw.githubusercontent.com/rodriada000/SessionMapSwitcher/release_updates/latest_release/v2/Google.Apis.PlatformServices.dll",
-      "destination": "Google.Apis.PlatformServices.dll",
-      "tags": [ "skipExisting" ]
-    },
-    {
-      "source": "https://raw.githubusercontent.com/rodriada000/SessionMapSwitcher/release_updates/latest_release/v2/Google.Apis.Storage.v1.dll",
-      "destination": "Google.Apis.Storage.v1.dll",
-      "tags": [ "skipExisting" ]
-    },
-    {
-      "source": "https://raw.githubusercontent.com/rodriada000/SessionMapSwitcher/release_updates/latest_release/v2/Google.Cloud.Storage.V1.dll",
-      "destination": "Google.Cloud.Storage.V1.dll",
-      "tags": [ "skipExisting" ]
-    },
-    {
-      "source": "https://raw.githubusercontent.com/rodriada000/SessionMapSwitcher/release_updates/latest_release/v2/modmanager.json",
-      "destination": "modmanager.json"
+      "source": "https://raw.githubusercontent.com/rodriada000/SessionMapSwitcher/release_updates/latest_release/v2/modmanager.csv",
+      "destination": "modmanager.csv"
     },
     {
       "source": "https://raw.githubusercontent.com/rodriada000/SessionMapSwitcher/release_updates/latest_release/v2/SessionAssetStore.dll",
