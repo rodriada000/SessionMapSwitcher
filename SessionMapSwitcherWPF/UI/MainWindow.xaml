@@ -204,6 +204,7 @@
                          ContextMenuOpening="ContextMenu_ContextMenuOpening">
                             <ListBox.ContextMenu>
                                 <ContextMenu x:Name="mainContextMenu">
+                                    <MenuItem x:Name="menuSecondMapToLoad" Header="Set Selected Map To Load Next..."  Click="menuSecondMapToLoad_Click"  ToolTipService.ShowOnDisabled="True" ToolTipService.ShowDuration="8000"/>
                                     <MenuItem x:Name="menuReimporSelectedMap" Header="Re-import Selected Map ..."  Click="MenuReimporSelectedMap_Click" ToolTipService.ShowOnDisabled="True" ToolTipService.ShowDuration="8000"/>
                                     <MenuItem x:Name="menuRenameSelectedMap" Header="Rename Selected Map ..."  Click="MenuRenameSelectedMap_Click"  ToolTipService.ShowOnDisabled="True" ToolTipService.ShowDuration="8000"/>
                                     <MenuItem x:Name="menuHideSelectedMap" Header="Hide Selected Map ..."  Click="MenuHideSelectedMap_Click"  ToolTipService.ShowOnDisabled="True" ToolTipService.ShowDuration="8000"/>
