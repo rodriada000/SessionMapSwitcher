@@ -1,5 +1,6 @@
 ﻿using SessionMapSwitcherCore.ViewModels;
 using SessionModManagerCore.ViewModels;
+using SessionModManagerWPF.Classes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -90,9 +91,22 @@ namespace SessionModManagerWPF.UI
             }
 
             dataView.SortDescriptions.Clear();
-            SortDescription sd = new SortDescription(sortBy, direction);
-            dataView.SortDescriptions.Add(sd);
-            dataView.Refresh();
+            (dataView as ListCollectionView).CustomSort = null;
+
+            if (sortBy == nameof(AssetViewModel.UpdatedDate))
+            {
+                DateTimeComparer sorter = new DateTimeComparer()
+                {
+                    SortDirection = direction
+                };
+                (dataView as ListCollectionView).CustomSort = sorter;
+            }
+            else
+            {
+                SortDescription sd = new SortDescription(sortBy, direction);
+                dataView.SortDescriptions.Add(sd);
+                dataView.Refresh();
+            }
         }
 
         private void lstAssets_SelectionChanged(object sender, SelectionChangedEventArgs e)

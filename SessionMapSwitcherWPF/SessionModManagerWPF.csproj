@@ -75,6 +75,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Classes\DateTimeComparer.cs" />
     <Compile Include="Classes\RegistryHelper.cs" />
     <Compile Include="UI\AssetStoreUserControl.xaml.cs">
       <DependentUpon>AssetStoreUserControl.xaml</DependentUpon>
