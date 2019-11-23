@@ -170,7 +170,7 @@
                             IsEnabled="{Binding InputControlsEnabled}"
                             Content="Import Map"
                             Click="BtnImportMap_Click"
-                            Margin="10,0,0,0"
+                            Margin="5,0,0,0"
                             Padding="5,1,5,1"
                             FontSize="11">
                                 <Button.ContextMenu>
@@ -193,15 +193,15 @@
 
 
                         <ListBox x:Name="lstMaps"
-                         Grid.Row="1"
-                         HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                         ToolTip="Righ-click a map for additional options"
-                         MinWidth="300" MaxWidth="350"
-                         ScrollViewer.CanContentScroll="False"
-                         Margin="2,1,2,5"
-                         ItemsSource="{Binding FilteredAvailableMaps}"
-                         ItemContainerStyle="{StaticResource MapListItem}"
-                         ContextMenuOpening="ContextMenu_ContextMenuOpening">
+                                 Grid.Row="1"
+                                 HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                 ToolTip="Righ-click a map for additional options"
+                                 MinWidth="300" MaxWidth="350"
+                                 ScrollViewer.CanContentScroll="False"
+                                 Margin="4,1,2,5"
+                                 ItemsSource="{Binding FilteredAvailableMaps}"
+                                 ItemContainerStyle="{StaticResource MapListItem}"
+                                 ContextMenuOpening="ContextMenu_ContextMenuOpening">
                             <ListBox.ContextMenu>
                                 <ContextMenu x:Name="mainContextMenu">
                                     <MenuItem x:Name="menuSecondMapToLoad" Header="Set Selected Map To Load Next..."  Click="menuSecondMapToLoad_Click"  ToolTipService.ShowOnDisabled="True" ToolTipService.ShowDuration="8000"/>
@@ -219,17 +219,33 @@
                             </ListBox.ContextMenu>
                         </ListBox>
 
-                        <WrapPanel Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,0,0,3">
-                            <Label Content="Currently Loaded Map:"
-                           Padding="3,0,0,0"
-                           FontSize="12"
-                           FontWeight="SemiBold"/>
+                        <StackPanel Grid.Row="2"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Bottom"
+                                    Margin="3,0,0,3">
+                            
+                            <WrapPanel>
+                                <Label Content="Currently Loaded Map:"
+                                       Padding="3,0,0,0"
+                                       FontSize="12"
+                                       FontWeight="SemiBold"/>
 
-                            <TextBlock x:Name="txtLoadedMap"
-                               Padding="5,0,0,0"
-                               FontSize="12"
-                               Text="{Binding CurrentlyLoadedMapName, FallbackValue='GrindCity_Yeah'}"/>
-                        </WrapPanel>
+                                <TextBlock x:Name="txtLoadedMap"
+                                           Padding="5,0,0,0"
+                                           FontSize="12"
+                                           Text="{Binding CurrentlyLoadedMapName, FallbackValue='GrindCity_Yeah'}"/>
+                            </WrapPanel>
+
+                            <CheckBox x:Name="chkLoadSecondMap"
+                                      Padding="3,0,0,0"
+                                      FontSize="11"
+                                      VerticalContentAlignment="Center"
+                                      Margin="1,5,0,0"
+                                      ToolTip="Check this to load a different map after the game starts so you can switch to other maps after leaving the apartment. Right-click a map to set the second map to load."
+                                      IsChecked="{Binding LoadSecondMapIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                      Content="{Binding SecondMapCheckboxText, FallbackValue='Load Second Map After Start (Map Name)'}"/>
+                        </StackPanel>
+
                     </Grid>
 
                 </GroupBox>
@@ -318,10 +334,9 @@
                    Grid.Row="2" Grid.ColumnSpan="2"
                    HorizontalAlignment="Left"
                    VerticalAlignment="Bottom"
-                   Margin="10,0,0,50"
+                   Margin="10,0,0,45"
                    Text="{Binding UserMessage, FallbackValue='Map Loaded!'}"
                    TextWrapping="Wrap"
-                   MaxWidth="600"
                    FontSize="14"/>
 
                 <TextBlock x:Name="lblHintMessage"
@@ -336,17 +351,17 @@
                    FontSize="11"/>
 
                 <Button x:Name="btnLoadMap"
-                Grid.Row="2" Grid.ColumnSpan="2"
-                Content="{Binding LoadMapButtonText, FallbackValue='Load Map'}"
-                ToolTip="Load selected map from the list"
-                Style="{StaticResource MainButtonStyle}"
-                IsEnabled="{Binding InputControlsEnabled}"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Bottom"
-                FontSize="16"
-                Margin="0,0,125,30"
-                Padding="5,0,5,0"
-                Click="BtnLoadMap_Click" Height="33"/>
+                        Grid.Row="2" Grid.ColumnSpan="2"
+                        Content="{Binding LoadMapButtonText, FallbackValue='Load Map'}"
+                        ToolTip="Load selected map from the list"
+                        Style="{StaticResource MainButtonStyle}"
+                        IsEnabled="{Binding InputControlsEnabled}"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        FontSize="16"
+                        Margin="0,0,125,30"
+                        Padding="5,0,5,0"
+                        Click="BtnLoadMap_Click" Height="33"/>
 
                 <Button x:Name="btnStartGame"
                 Grid.Row="2" Grid.ColumnSpan="2"
