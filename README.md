@@ -5,12 +5,14 @@
 [![GitHub contributors](https://img.shields.io/github/contributors/rodriada000/SessionMapSwitcher)](https://GitHub.com/rodriada000/SessionMapSwitcher/graphs/contributors/)
 [![GitHub issues](https://img.shields.io/github/issues/rodriada000/SessionMapSwitcher)](https://GitHub.com/rodriada000/SessionMapSwitcher/issues/)
 
+### Tutorial Video On How to Use All Features And Troubleshoot Session Mod Manager (Thanks to Redgouf)
+[![Video Preview](https://img.youtube.com/vi/EjqcErdS0jg/0.jpg)](https://www.youtube.com/watch?v=EjqcErdS0jg)
+
 This is a Desktop application to easily mod Session and install custom maps and textures all in one tool. Easily switch between maps in-game without having to restart and download custom textures directly in the app.
-![](https://github.com/rodriada000/SessionMapSwitcher/blob/master/docs/images/app_screenshot.png?raw=true "App Screenshot")
+<img src="https://github.com/rodriada000/SessionMapSwitcher/blob/master/docs/images/app_screenshot.png?raw=true" width="75%"> 
+<img src="https://github.com/rodriada000/SessionMapSwitcher/blob/master/docs/images/app_import_online.png?raw=true" width="75%"> 
 
-![](https://github.com/rodriada000/SessionMapSwitcher/blob/master/docs/images/app_import_online.png?raw=true "Asset Store Screenshot")
-
-### **If you are having any issues please see [this FAQ Wiki provided here thanks to dga711 & others.](https://github.com/rodriada000/SessionMapSwitcher/wiki/Issues-FAQ)**
+### **If you are having any issues please see [this FAQ Wiki provided here thanks to dga711 & others](https://github.com/rodriada000/SessionMapSwitcher/wiki/Issues-FAQ) or [view this tutorial video by Redgouf.](https://www.youtube.com/watch?v=EjqcErdS0jg)**
 
 ### Features
 * Mod Manager can download the required patch (thanks to dga711) for Session to play custom modded maps and have custom textures within minutes.
@@ -128,4 +130,5 @@ _This assumes you already patched/unpacked the game and have Session Mod Manager
 ## Credits
 * Thanks to @dga711 for the [EzPz Mod](https://github.com/dga711/SessionEzPzMod)
 * Thanks to @Gabisonfire for contributing to the [version updater](https://github.com/Gabisonfire/avantgarde-lib) and [asset store](https://github.com/Gabisonfire/SessionAssetStore) and also hosting the asset files.
+* Thanks to Redgouf for creating an in-depth tutorial video on the tool
 * Thanks to [Session modding community](https://discord.gg/XBz5s7) & [Illusory Modding](https://discord.gg/3JAe2K)
