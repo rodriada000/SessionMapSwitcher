@@ -121,6 +121,7 @@
                     <CheckBox Content="Decks" IsChecked="{Binding DisplayDecks, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="5,0,10,0"/>
                     <CheckBox Content="Griptapes" IsChecked="{Binding DisplayGriptapes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="5,0,7,0"/>
                     <CheckBox Content="Trucks" IsChecked="{Binding DisplayTrucks, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="5,0,10,0"/>
+                    <CheckBox Content="Meshes" IsChecked="{Binding DisplayMeshes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="5,0,10,0"/>
                 </WrapPanel>
 
                 <WrapPanel>
@@ -129,6 +130,7 @@
                     <CheckBox Content="Shirts" IsChecked="{Binding DisplayShirts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="5,0,12,0"/>
                     <CheckBox Content="Pants" IsChecked="{Binding DisplayPants, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="5,0,30,0"/>
                     <CheckBox Content="Shoes" IsChecked="{Binding DisplayShoes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="5,0,10,0"/>
+                    <CheckBox Content="Characters" IsChecked="{Binding DisplayCharacters, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="5,0,10,0"/>
                 </WrapPanel>
             </StackPanel>
         </GroupBox>
