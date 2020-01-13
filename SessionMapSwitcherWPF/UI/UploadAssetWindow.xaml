@@ -10,7 +10,7 @@
         Title="Upload Asset" d:DesignHeight="535" Width="460"
         MaxHeight="600"
         MaxWidth="650"
-        WindowStyle="ToolWindow"
+        ResizeMode="NoResize"
         Loaded="Window_Loaded">
     <Window.Resources>
         <Style TargetType="Button" BasedOn="{StaticResource MainButtonStyle}"/>

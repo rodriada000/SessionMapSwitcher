@@ -90,9 +90,6 @@
     <Compile Include="UI\ManageTexturesWindow.xaml.cs">
       <DependentUpon>ManageTexturesWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\OnlineImportWindow.xaml.cs">
-      <DependentUpon>OnlineImportWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UI\ProjectWatcherUserControl.xaml.cs">
       <DependentUpon>ProjectWatcherUserControl.xaml</DependentUpon>
     </Compile>
@@ -127,10 +124,6 @@
     <Page Include="UI\ManageTexturesWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\OnlineImportWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\ProjectWatcherUserControl.xaml">
       <Generator>MSBuild:Compile</Generator>
