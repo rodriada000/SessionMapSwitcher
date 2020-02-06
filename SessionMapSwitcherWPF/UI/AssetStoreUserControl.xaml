@@ -316,17 +316,17 @@
             <WrapPanel Margin="0,0,0,10">
 
                 <Button x:Name="btnRefresh"
-                        Margin="0,0,10,0"
-                        Content="Force Refresh Assets"
+                        Margin="0,0,0,0"
+                        Content="Refresh Assets"
                         IsEnabled="{Binding IsNotLoadingManifests}"
-                        ToolTip="Downloads the latest asset manifests and refreshes asset list."
+                        ToolTip="Downloads the latest asset catalogs and refreshes asset list."
                         Click="btnRefresh_Click"
                         Padding="5,2,5,2"/>
 
-                <Button x:Name="btnUpload"
-                    Content="Upload Asset"
+                <Button x:Name="btnManageCat"
+                    Content="Manage Catalogs"
                     ToolTip="Upload an asset to the Asset Store (requires modder credentials)."
-                    Click="btnUpload_Click"
+                    Click="btnManageCat_Click"
                     Padding="5,3,5,3"/>
             </WrapPanel>
 

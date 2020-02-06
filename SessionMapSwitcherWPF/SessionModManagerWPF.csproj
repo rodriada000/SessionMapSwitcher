@@ -87,6 +87,9 @@
     <Compile Include="UI\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\ManageCatalogWindow.xaml.cs">
+      <DependentUpon>ManageCatalogWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\ManageTexturesWindow.xaml.cs">
       <DependentUpon>ManageTexturesWindow.xaml</DependentUpon>
     </Compile>
@@ -120,6 +123,10 @@
     <Page Include="UI\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\ManageCatalogWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\ManageTexturesWindow.xaml">
       <SubType>Designer</SubType>

@@ -136,7 +136,7 @@ namespace SessionModManagerWPF.UI
 
         private void btnRefresh_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.GetManifestsAsync(forceRefresh: true, getSelectedOnly: true);
+            ViewModel.CheckForCatalogUpdatesAsync();
         }
 
         private void btnUpload_Click(object sender, RoutedEventArgs e)
@@ -170,6 +170,13 @@ namespace SessionModManagerWPF.UI
             }
 
             downloadItem.OnCancel?.Invoke();
+        }
+
+        private void btnManageCat_Click(object sender, RoutedEventArgs e)
+        {
+            ManageCatalogWindow catalogWindow = new ManageCatalogWindow();
+            catalogWindow.ShowDialog();
+            ViewModel.CheckForCatalogUpdatesAsync();
         }
     }
 }
