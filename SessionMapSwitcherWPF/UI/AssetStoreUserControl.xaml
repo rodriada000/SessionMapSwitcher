@@ -102,6 +102,7 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1.25*"/>
@@ -144,7 +145,7 @@
                   ItemsSource="{Binding FilteredAssetList}"
                   ItemContainerStyle="{StaticResource AssetListStyle}"
                   SelectionChanged="lstAssets_SelectionChanged"
-                  Margin="5,10,0,10">
+                  Margin="5,10,0,5">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Name" Width="190" DisplayMemberBinding="{Binding Name}"/>
@@ -153,14 +154,38 @@
                     <GridViewColumn Header="Updated Date" Width="130" DisplayMemberBinding="{Binding UpdatedDate}"/>
                 </GridView>
             </ListView.View>
-            <ListView.ContextMenu>
-                <ContextMenu x:Name="lstContextMenu">
-                    <MenuItem x:Name="menuDeleteAsset" Header="Delete Selected Asset ..." ToolTip="Delete the asset if you uploaded it." Click="menuDeleteAsset_Click"/>
-                </ContextMenu>
-            </ListView.ContextMenu>
         </ListView>
 
-        <GroupBox Grid.Row="1" Grid.Column="1" 
+
+        <ListView x:Name="lstDownloads" 
+                  Grid.Row="2" 
+                  Margin="5,0,0,10"
+                  ItemsSource="{Binding CurrentDownloads, UpdateSourceTrigger=PropertyChanged}"
+                  MinHeight="75"
+                  MaxHeight="100">
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem x:Name="menuItemCancelDownload" Header="Cancel selected download" Click="menuItemCancelDownload_Click"/>
+                </ContextMenu>
+            </ListView.ContextMenu>
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Item" Width="200" DisplayMemberBinding="{Binding ItemName, FallbackValue='item text'}"/>
+                    <GridViewColumn x:Name="colProgress" Header="Progress" Width="200">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ProgressBar Value="{Binding PercentComplete, FallbackValue='50'}" Width="{Binding ElementName=colProgress, Path=ActualWidth}" Height="10"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Speed" Width="100" DisplayMemberBinding="{Binding DownloadSpeed, FallbackValue='32.5 kb/s'}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+
+        <GroupBox Grid.Row="1" Grid.Column="1"
+                  Grid.RowSpan="2"
                   HorizontalAlignment="Stretch"
                   VerticalAlignment="Stretch"
                   Margin="5,0,5,10"
@@ -320,7 +345,7 @@
 
 
 
-        <TextBlock Grid.Row="2" Grid.ColumnSpan="2"
+        <TextBlock Grid.Row="3" Grid.ColumnSpan="2"
                    VerticalAlignment="Bottom"
                    HorizontalAlignment="Left"
                    FontSize="16"

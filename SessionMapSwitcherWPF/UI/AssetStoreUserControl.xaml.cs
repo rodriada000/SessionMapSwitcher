@@ -148,7 +148,7 @@ namespace SessionModManagerWPF.UI
         {
             UploadAssetViewModel viewModel = new UploadAssetViewModel()
             {
-                AvailableBuckets = ViewModel.GetAvailableBuckets()
+                AvailableBuckets = new List<string>()
             };
 
             UploadAssetWindow window = new UploadAssetWindow(viewModel)
@@ -160,20 +160,16 @@ namespace SessionModManagerWPF.UI
             ViewModel.UserMessage = "Force refresh list of assets to view uploaded asset.";
         }
 
-        private void menuDeleteAsset_Click(object sender, RoutedEventArgs e)
+        private void menuItemCancelDownload_Click(object sender, RoutedEventArgs e)
         {
-            if (ViewModel.SelectedAsset == null)
+            DownloadItemViewModel downloadItem = lstDownloads.SelectedItem as DownloadItemViewModel;
+
+            if (downloadItem == null)
             {
-                MessageBox.Show("Select an asset to delete first.", "Notice", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            MessageBoxResult result = MessageBox.Show($"Are you sure you want to delete the selected asset {ViewModel.SelectedAsset.Name} ?", "Delete Warning!", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
-
-            if (result == MessageBoxResult.Yes)
-            {
-                ViewModel.DeleteSelectedAssetFromAssetStore();
-            }
+            downloadItem.OnCancel?.Invoke();
         }
     }
 }
