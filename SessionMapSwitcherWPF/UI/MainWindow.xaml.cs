@@ -669,11 +669,6 @@ namespace SessionMapSwitcher
             {
                 SelectedTabIndex = tabControl.SelectedIndex;
 
-                if (tabAssetStore.IsSelected)
-                {
-                    controlAssetStore.ViewModel.GetManifestsAsync(forceRefresh: false, getSelectedOnly: true);
-                }
-
                 if (tabMainWindow.IsSelected && controlAssetStore.ViewModel.HasDownloadedMap)
                 {
                     controlAssetStore.ViewModel.HasDownloadedMap = false;
