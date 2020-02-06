@@ -55,6 +55,7 @@ namespace SessionModManagerWPF.UI
         private void btnAdd_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.IsAdding = true;
+            txtUrl.Focus();
         }
 
         private void btnClose_Click(object sender, RoutedEventArgs e)

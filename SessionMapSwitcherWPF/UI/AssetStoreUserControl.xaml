@@ -325,7 +325,7 @@
 
                 <Button x:Name="btnManageCat"
                     Content="Manage Catalogs"
-                    ToolTip="Upload an asset to the Asset Store (requires modder credentials)."
+                    ToolTip="Add or remove asset catalogs."
                     Click="btnManageCat_Click"
                     Padding="5,3,5,3"/>
             </WrapPanel>

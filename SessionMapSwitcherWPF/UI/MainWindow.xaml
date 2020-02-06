@@ -11,7 +11,7 @@
         AllowDrop="True"
         Loaded="MainWindow_Loaded"
         Unloaded="MainWindow_Unloaded"
-        MinHeight="415" MinWidth="510"
+        MinHeight="415" MinWidth="830"
         MaxWidth="1600"
         Height="590" Width="900"
         SizeChanged="mainWindow_SizeChanged"
