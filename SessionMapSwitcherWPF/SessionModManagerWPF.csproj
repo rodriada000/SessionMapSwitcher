@@ -87,6 +87,9 @@
     <Compile Include="UI\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\ManageCatalogWindow.xaml.cs">
+      <DependentUpon>ManageCatalogWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UI\ManageTexturesWindow.xaml.cs">
       <DependentUpon>ManageTexturesWindow.xaml</DependentUpon>
     </Compile>
@@ -106,9 +109,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="UI\UploadAssetWindow.xaml.cs">
-      <DependentUpon>UploadAssetWindow.xaml</DependentUpon>
-    </Compile>
     <Page Include="UI\AssetStoreUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -120,6 +120,10 @@
     <Page Include="UI\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\ManageCatalogWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UI\ManageTexturesWindow.xaml">
       <SubType>Designer</SubType>
@@ -140,10 +144,6 @@
     <Page Include="UI\UpdateWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UI\UploadAssetWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>

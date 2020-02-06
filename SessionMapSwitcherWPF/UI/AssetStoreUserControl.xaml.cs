@@ -136,44 +136,26 @@ namespace SessionModManagerWPF.UI
 
         private void btnRefresh_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.GetManifestsAsync(forceRefresh: true, getSelectedOnly: true);
+            ViewModel.CheckForCatalogUpdatesAsync();
         }
 
-        private void btnUpload_Click(object sender, RoutedEventArgs e)
+        private void menuItemCancelDownload_Click(object sender, RoutedEventArgs e)
         {
-            OpenUploadAssetForm();
-        }
+            DownloadItemViewModel downloadItem = lstDownloads.SelectedItem as DownloadItemViewModel;
 
-        private void OpenUploadAssetForm()
-        {
-            UploadAssetViewModel viewModel = new UploadAssetViewModel()
+            if (downloadItem == null)
             {
-                AvailableBuckets = ViewModel.GetAvailableBuckets()
-            };
-
-            UploadAssetWindow window = new UploadAssetWindow(viewModel)
-            {
-                WindowStartupLocation = WindowStartupLocation.CenterScreen
-            };
-            bool? result = window.ShowDialog();
-
-            ViewModel.UserMessage = "Force refresh list of assets to view uploaded asset.";
-        }
-
-        private void menuDeleteAsset_Click(object sender, RoutedEventArgs e)
-        {
-            if (ViewModel.SelectedAsset == null)
-            {
-                MessageBox.Show("Select an asset to delete first.", "Notice", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            MessageBoxResult result = MessageBox.Show($"Are you sure you want to delete the selected asset {ViewModel.SelectedAsset.Name} ?", "Delete Warning!", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
+            downloadItem.OnCancel?.Invoke();
+        }
 
-            if (result == MessageBoxResult.Yes)
-            {
-                ViewModel.DeleteSelectedAssetFromAssetStore();
-            }
+        private void btnManageCat_Click(object sender, RoutedEventArgs e)
+        {
+            ManageCatalogWindow catalogWindow = new ManageCatalogWindow();
+            catalogWindow.ShowDialog();
+            ViewModel.CheckForCatalogUpdatesAsync();
         }
     }
 }
