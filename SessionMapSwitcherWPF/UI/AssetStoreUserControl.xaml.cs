@@ -148,7 +148,7 @@ namespace SessionModManagerWPF.UI
                 return;
             }
 
-            downloadItem.OnCancel?.Invoke();
+            downloadItem.PerformCancel?.Invoke();
         }
 
         private void btnManageCat_Click(object sender, RoutedEventArgs e)

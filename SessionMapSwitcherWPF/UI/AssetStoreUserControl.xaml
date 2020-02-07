@@ -152,6 +152,8 @@
                     <GridViewColumn Header="Author" Width="100" DisplayMemberBinding="{Binding Author}"/>
                     <GridViewColumn Header="Category" Width="95" DisplayMemberBinding="{Binding AssetCategory}"/>
                     <GridViewColumn Header="Updated Date" Width="130" DisplayMemberBinding="{Binding UpdatedDate}"/>
+                    <GridViewColumn Header="Ver." Width="40" DisplayMemberBinding="{Binding Version}"/>
+
                 </GridView>
             </ListView.View>
         </ListView>
@@ -211,9 +213,11 @@
                         <TextBlock Text="Description:" 
                                    Margin="5,5,5,0"
                                    FontWeight="Bold"/>
-                        <TextBlock Text="{Binding SelectedDescription, FallbackValue='example description for a selected asset.'}"
-                                   TextWrapping="Wrap"
-                                   Margin="5,5,0,0"/>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="250">
+                            <TextBlock Text="{Binding SelectedDescription, FallbackValue='example description for a selected asset.'}"
+                                       TextWrapping="Wrap"
+                                       Margin="5,5,0,0"/>
+                        </ScrollViewer>
                     </WrapPanel>
                 </StackPanel>
 

@@ -8,7 +8,7 @@
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
         Title="Manage Catalogs" 
-        Width="425"
+        Width="450"
         Height="350" 
         Style="{StaticResource WindowStyle}">
     <Window.Resources>
@@ -81,8 +81,8 @@
                  HorizontalAlignment="Right"
                  VerticalAlignment="Bottom"
                  Margin="0,0,10,2"
-                 MinWidth="190"
-                 MaxWidth="190">
+                 MinWidth="212"
+                 MaxWidth="212">
             <TextBox.Style>
                 <Style TargetType="TextBox">
                     <Setter Property="Visibility" Value="Hidden"/>
@@ -104,7 +104,7 @@
                    HorizontalAlignment="Right"
                    VerticalAlignment="Bottom"
                    Margin="0,0,10,2"
-                   MinWidth="185">
+                   MinWidth="208">
             <TextBlock.Style>
                 <Style TargetType="TextBlock">
                     <Style.Triggers>
@@ -127,12 +127,19 @@
             </TextBlock.Style>
         </TextBlock>
 
-        <ListBox x:Name="lstUrls"
+        <ListView x:Name="lstUrls"
                  Grid.Row="1"
                  ScrollViewer.VerticalScrollBarVisibility="Auto"
                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
                  ItemsSource="{Binding CatalogList}"
-                 Margin="10,0,10,0"/>
+                 Margin="10,0,10,0">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Name" Width="Auto" DisplayMemberBinding="{Binding Name}"/>
+                    <GridViewColumn Header="Url" Width="Auto" DisplayMemberBinding="{Binding Url}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
 
         <Button x:Name="btnClose"
                 Click="btnClose_Click"
