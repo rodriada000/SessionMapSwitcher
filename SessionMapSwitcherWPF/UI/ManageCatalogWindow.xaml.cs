@@ -42,7 +42,7 @@ namespace SessionModManagerWPF.UI
                 return;
             }
 
-            ViewModel.RemoveUrl(lstUrls.SelectedItem as string);
+            ViewModel.RemoveUrl(lstUrls.SelectedItem as CatalogSubscriptionViewModel);
         }
 
         private void btnConfirm_Click(object sender, RoutedEventArgs e)

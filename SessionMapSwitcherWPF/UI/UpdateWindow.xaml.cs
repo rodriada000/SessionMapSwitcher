@@ -86,7 +86,7 @@ namespace SessionMapSwitcher.UI
         /// <returns> Scraped html from Github if found </returns>
         public static string ScrapeLatestVersionNotesFromGitHub()
         {
-            string pageHtml = DownloadUtils.GetTxtDocumentFromGitHubRepo(UpdateViewModel.LatestReleaseUrl);
+            string pageHtml = DownloadUtils.GetTextResponseFromUrl(UpdateViewModel.LatestReleaseUrl);
             HtmlDocument doc = GetHtmlDocument(pageHtml);
 
             string fullHtml = "";
