@@ -1,4 +1,4 @@
-﻿using SessionMapSwitcherCore.ViewModels;
+﻿using SessionModManagerCore.ViewModels;
 using System.Windows;
 
 namespace SessionMapSwitcher

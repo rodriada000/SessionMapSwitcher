@@ -1,4 +1,4 @@
-﻿using SessionMapSwitcherCore.ViewModels;
+﻿using SessionModManagerCore.ViewModels;
 using SessionModManagerWPF.UI;
 using System.Windows;
 using System.Windows.Controls;

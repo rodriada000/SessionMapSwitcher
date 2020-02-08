@@ -1,5 +1,5 @@
 ﻿using SessionMapSwitcherCore.Utils;
-using SessionMapSwitcherCore.ViewModels;
+using SessionModManagerCore.ViewModels;
 using System.Windows.Forms;
 
 namespace SessionMapSwitcher.UI

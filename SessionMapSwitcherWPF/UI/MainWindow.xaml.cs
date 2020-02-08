@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -9,11 +8,12 @@ using SessionMapSwitcherCore.Classes;
 using SessionMapSwitcher.Classes.Events;
 using SessionMapSwitcher.UI;
 using System.Windows.Threading;
-using SessionMapSwitcherCore.ViewModels;
 using SessionMapSwitcherCore.Utils;
 using System.Windows.Forms;
 using SessionMapSwitcherWPF.Classes;
 using SessionModManagerCore.Classes;
+using SessionModManagerCore.ViewModels;
+using SessionModManagerWPF.UI;
 
 namespace SessionMapSwitcher
 {

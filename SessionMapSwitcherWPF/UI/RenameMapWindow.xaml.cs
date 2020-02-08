@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using SessionMapSwitcherCore.Classes;
 using SessionMapSwitcherCore.ViewModels;
+using SessionModManagerCore.ViewModels;
 
 namespace SessionMapSwitcher.UI
 {

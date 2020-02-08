@@ -1,8 +1,7 @@
 ﻿using SessionMapSwitcherCore.Classes;
 using SessionMapSwitcherCore.Utils;
-using SessionMapSwitcherCore.ViewModels;
-using SessionMapSwitcherWPF.Classes;
 using SessionModManagerCore.Classes;
+using SessionModManagerCore.ViewModels;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
