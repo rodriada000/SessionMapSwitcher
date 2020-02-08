@@ -194,32 +194,33 @@
                   Header="Selected Asset Preview">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
 
-                <StackPanel Grid.Row="0" Margin="0,0,0,10">
-                    <WrapPanel Margin="0,0,0,0">
-                        <TextBlock Text="Author:"
-                                   Margin="5,5,5,0"
-                                   FontWeight="Bold"/>
-                        <TextBlock Text="{Binding SelectedAuthor, FallbackValue='Author name'}"
-                                   TextWrapping="Wrap"
-                                   Margin="5,5,0,0"/>
-                    </WrapPanel>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,0,0,10">
+                    <StackPanel>
+                        <WrapPanel Margin="0,0,0,0">
+                            <TextBlock Text="Author:"
+                                       Margin="5,5,5,0"
+                                       FontWeight="Bold"/>
+                            <TextBlock Text="{Binding SelectedAuthor, FallbackValue='Author name'}"
+                                       TextWrapping="Wrap"
+                                       Margin="5,5,0,0"/>
+                        </WrapPanel>
 
-                    <WrapPanel Margin="0,0,0,0">
-                        <TextBlock Text="Description:" 
-                                   Margin="5,5,5,0"
-                                   FontWeight="Bold"/>
-                        <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="250">
+                        <WrapPanel Margin="0,0,0,0">
+                            <TextBlock Text="Description:" 
+                                       Margin="5,5,5,0"
+                                       FontWeight="Bold"/>
                             <TextBlock Text="{Binding SelectedDescription, FallbackValue='example description for a selected asset.'}"
                                        TextWrapping="Wrap"
                                        Margin="5,5,0,0"/>
-                        </ScrollViewer>
-                    </WrapPanel>
-                </StackPanel>
+                        </WrapPanel>
+                    </StackPanel>
+                    
+                </ScrollViewer>
 
 
 

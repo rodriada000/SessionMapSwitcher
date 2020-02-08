@@ -11,7 +11,7 @@
         AllowDrop="True"
         Loaded="MainWindow_Loaded"
         Unloaded="MainWindow_Unloaded"
-        MinHeight="415" MinWidth="830"
+        MinHeight="500" MinWidth="830"
         MaxWidth="1600"
         Height="590" Width="900"
         SizeChanged="mainWindow_SizeChanged"
@@ -233,7 +233,9 @@
                                 <TextBlock x:Name="txtLoadedMap"
                                            Padding="5,0,0,0"
                                            FontSize="12"
-                                           Text="{Binding CurrentlyLoadedMapName, FallbackValue='GrindCity_Yeah'}"/>
+                                           MaxWidth="225"
+                                           TextTrimming="CharacterEllipsis"
+                                           Text="{Binding CurrentlyLoadedMapName, FallbackValue='This is a really long name that needs to be truncated'}"/>
                             </WrapPanel>
 
                             <CheckBox x:Name="chkLoadSecondMap"
