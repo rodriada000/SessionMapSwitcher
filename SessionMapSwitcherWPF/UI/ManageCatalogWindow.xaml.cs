@@ -62,5 +62,11 @@ namespace SessionModManagerWPF.UI
         {
             this.Close();
         }
+
+        private void btnCreate_Click(object sender, RoutedEventArgs e)
+        {
+            CreateCatalogWindow createCatalogWindow = new CreateCatalogWindow();
+            createCatalogWindow.Show();
+        }
     }
 }
