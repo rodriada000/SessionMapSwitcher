@@ -506,10 +506,6 @@ namespace SessionMapSwitcher
             }
         }
 
-        private void MainWindow_Unloaded(object sender, RoutedEventArgs e)
-        {
-            ctrlTextureReplacer.ViewModel.MessageChanged -= TextureReplacer_MessageChanged;
-        }
 
         /// <summary>
         /// Opens the window to rename a map. 
@@ -694,5 +690,10 @@ namespace SessionMapSwitcher
             ViewModel.SetOrClearSecondMapToLoad(selectedItem);
         }
 
+        private void mainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            ctrlTextureReplacer.ViewModel.MessageChanged -= TextureReplacer_MessageChanged;
+            ImageCache.WriteToFile();
+        }
     }
 }
