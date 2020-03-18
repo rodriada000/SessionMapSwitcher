@@ -68,5 +68,30 @@ namespace SessionModManagerWPF.UI
             CreateCatalogWindow createCatalogWindow = new CreateCatalogWindow();
             createCatalogWindow.Show();
         }
+
+        /// <summary>
+        /// Save catalog to catalog settings on window close
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            ViewModel.TrySaveCatalog();
+        }
+
+        private void menuItemActivate_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.ToggleActivationForAll(true);
+        }
+
+        private void menuItemDeactivate_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.ToggleActivationForAll(false);
+        }
+
+        private void menuItemRemove_Click(object sender, RoutedEventArgs e)
+        {
+            btnRemove_Click(sender, e);
+        }
     }
 }

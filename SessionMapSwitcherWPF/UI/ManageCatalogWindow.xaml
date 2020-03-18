@@ -7,9 +7,10 @@
         mc:Ignorable="d"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
+        Closing="Window_Closing"
         Title="Manage Catalogs" 
-        Width="450"
-        Height="350" 
+        Width="575"
+        Height="375" 
         Style="{StaticResource WindowStyle}">
     <Window.Resources>
 
@@ -39,6 +40,12 @@
     </Window.Resources>
     
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="auto"/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
@@ -60,29 +67,31 @@
                 HorizontalAlignment="Left"/>
 
         <Button x:Name="btnRemove"
+                Grid.Column="1"
                 Click="btnRemove_Click"
                 Content="Remove Catalog"
                 Style="{StaticResource ManageButtonsStyle}"
                 HorizontalAlignment="Left"
-                Margin="110,3,0,0"/>
+                Margin="0,3,0,0"/>
 
         <Button x:Name="btnCancel"
+                Grid.Column="1"
                 Click="btnCancel_Click"
                 Content="Cancel"
                 Style="{StaticResource AddButtonsStyle}"
                 HorizontalAlignment="Left"
-                Margin="110,3,0,0"/>
+                Margin="0,3,0,0"/>
 
         <TextBox x:Name="txtUrl"
+                 Grid.Column="2"
+                 Grid.ColumnSpan="2"
                  MaxLines="1"
                  Text="{Binding NewUrlText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue=''}"
                  Height="22"
                  VerticalContentAlignment="Center"
-                 HorizontalAlignment="Right"
+                 HorizontalAlignment="Stretch"
                  VerticalAlignment="Bottom"
-                 Margin="0,0,10,2"
-                 MinWidth="212"
-                 MaxWidth="212">
+                 Margin="0,0,10,2">
             <TextBox.Style>
                 <Style TargetType="TextBox">
                     <Setter Property="Visibility" Value="Hidden"/>
@@ -97,14 +106,14 @@
         </TextBox>
 
         <TextBlock x:Name="txtHint"
+                   Grid.Column="2"
                    IsHitTestVisible="False"
                    Foreground="Gray"
                    Text="Enter url and click 'Confirm'"
                    Height="19"
-                   HorizontalAlignment="Right"
+                   HorizontalAlignment="Left"
                    VerticalAlignment="Bottom"
-                   Margin="0,0,10,2"
-                   MinWidth="208">
+                   Margin="5,0,10,2">
             <TextBlock.Style>
                 <Style TargetType="TextBlock">
                     <Style.Triggers>
@@ -128,6 +137,7 @@
         </TextBlock>
 
         <Button x:Name="btnCreate"
+                Grid.Column="3"
                 Click="btnCreate_Click"
                 Content="Create Catalog"
                 Margin="0,3,10,0"
@@ -135,13 +145,35 @@
                 HorizontalAlignment="Right"/>
 
         <ListView x:Name="lstUrls"
+                  Grid.ColumnSpan="4"
                   Grid.Row="1"
                   ScrollViewer.VerticalScrollBarVisibility="Auto"
                   ScrollViewer.HorizontalScrollBarVisibility="Auto"
                   ItemsSource="{Binding CatalogList}"
                   Margin="10,0,10,0">
+            <ListView.ContextMenu>
+                <ContextMenu x:Name="menuCatalogCommands">
+                    <MenuItem x:Name="menuItemActivate" Header="Activate All" Click="menuItemActivate_Click"/>
+                    <MenuItem x:Name="menuItemDeactivate" Header="De-activate All" Click="menuItemDeactivate_Click"/>
+                    <MenuItem x:Name="menuItemRemove" Header="Remove Catalog" Click="menuItemRemove_Click"/>
+                </ContextMenu>
+            </ListView.ContextMenu>
             <ListView.View>
                 <GridView>
+                    <GridViewColumn Width="50">
+                        <GridViewColumnHeader IsEnabled="False" 
+                                              Content="Active" 
+                                              Foreground="Black" 
+                                              ToolTipService.ShowOnDisabled="True"
+                                              ToolTip="Only active catalogs will be shown in the asset store."/>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid Margin="10,0,0,0">
+                                    <CheckBox IsChecked="{Binding IsActive, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
                     <GridViewColumn Header="Name" Width="Auto" DisplayMemberBinding="{Binding Name}"/>
                     <GridViewColumn Header="Url" Width="Auto" DisplayMemberBinding="{Binding Url}"/>
                 </GridView>
@@ -151,6 +183,7 @@
         <Button x:Name="btnClose"
                 Click="btnClose_Click"
                 Grid.Row="2"
+                Grid.ColumnSpan="4"
                 Content="Close"
                 Width="100"
                 Height="26"
