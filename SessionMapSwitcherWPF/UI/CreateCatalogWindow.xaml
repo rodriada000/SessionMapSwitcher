@@ -97,11 +97,26 @@
                 <TextBlock Text="Asset ID:"
                            ToolTip="The unique name for an asset (usually the file name) which must include the file extension .zip or .rar"
                            Style="{StaticResource labelStyle}"/>
-                <TextBox x:Name="txtId"
-                         Grid.Column="1"
+                <Grid Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox x:Name="txtId"
+                         Grid.Column="0"
                          Text="{Binding SelectedAssetID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                         ToolTip="The unique name for an asset (usually the file name) which must include the file extension .zip or .rar"
+                         ToolTip="The unique name for an asset (usually the file name). The .zip or .rar extension is automatically appended"
                          Margin="5,5,5,0"/>
+
+                    <ComboBox Name="cboIDExtension"
+                              ItemsSource="{Binding IDExtensions}"
+                              SelectedItem="{Binding SelectedIDExtension, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              Grid.Column="1"
+                              Margin="0,5,5,0"
+                              MinWidth="75"
+                              MaxWidth="75"/>
+                </Grid>
 
 
                 <TextBlock Text="Author:"
