@@ -112,6 +112,7 @@
                     <ComboBox Name="cboIDExtension"
                               ItemsSource="{Binding IDExtensions}"
                               SelectedItem="{Binding SelectedIDExtension, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              ToolTip=".zip or .rar extension to append to Asset ID"
                               Grid.Column="1"
                               Margin="0,5,5,0"
                               MinWidth="75"
@@ -191,6 +192,25 @@
                          ToolTip="{Binding DownloadTooltip}"
                          Text="{Binding SelectedAssetDownloadUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                          Margin="5,5,5,0"/>
+                <TextBlock Text="{Binding DownloadTooltip, FallbackValue='Google Drive ID of file (found in the google drive url)'}"
+                           IsHitTestVisible="False"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           Grid.Row="7"
+                           Grid.Column="1"
+                           Foreground="Gray"
+                           Margin="10,7,0,0">
+                <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Hidden"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelectedAssetDownloadUrl}" Value="">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
 
 
                 <TextBlock Text="Description:"
@@ -214,9 +234,28 @@
                          Grid.Column="1"
                          Grid.Row="9"
                          VerticalAlignment="Center"
-                         ToolTip="Will be set to current date and time if left blank"
+                         ToolTip="Will be set to current date if left blank"
                          Text="{Binding SelectedAssetUpdatedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                          Margin="5,5,5,10"/>
+                <TextBlock Text="Leave blank to use current date"
+                           IsHitTestVisible="False"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           Grid.Row="9"
+                           Grid.Column="1"
+                           Foreground="Gray"
+                           Margin="10,7,0,0">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Hidden"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ElementName=txtUpdateDate, Path=Text}" Value="">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
 
                 <Button x:Name="btnAdd"
                         Click="btnAdd_Click"
