@@ -506,10 +506,6 @@ namespace SessionMapSwitcher
             }
         }
 
-        private void MainWindow_Unloaded(object sender, RoutedEventArgs e)
-        {
-            ctrlTextureReplacer.ViewModel.MessageChanged -= TextureReplacer_MessageChanged;
-        }
 
         /// <summary>
         /// Opens the window to rename a map. 
@@ -596,7 +592,7 @@ namespace SessionMapSwitcher
 
             if (result.GetValueOrDefault(false) == true)
             {
-                bool didWrite = MetaDataManager.WriteCustomMapPropertiesToFile(ViewModel.AvailableMaps);
+                bool didWrite = MetaDataManager.WriteCustomMapPropertiesToFile(selectedMap);
 
                 if (didWrite == false)
                 {
@@ -611,7 +607,7 @@ namespace SessionMapSwitcher
 
         public void PromptToPatch()
         {
-            MessageBoxResult result = System.Windows.MessageBox.Show("This will download the required files to patch Session. This is needed after updating Session to a new version.\n\nAre you sure you want to continue?",
+            MessageBoxResult result = System.Windows.MessageBox.Show("This will download the required files to patch Session. This is needed after updating Session to a new version.\n\nYou will need to click 'Apply' again to restore the object count after patching.\n\nAre you sure you want to continue?",
                                                                       "Notice!",
                                                                       MessageBoxButton.YesNo,
                                                                       MessageBoxImage.Warning,
@@ -694,5 +690,10 @@ namespace SessionMapSwitcher
             ViewModel.SetOrClearSecondMapToLoad(selectedItem);
         }
 
+        private void mainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            ctrlTextureReplacer.ViewModel.MessageChanged -= TextureReplacer_MessageChanged;
+            ImageCache.WriteToFile();
+        }
     }
 }
