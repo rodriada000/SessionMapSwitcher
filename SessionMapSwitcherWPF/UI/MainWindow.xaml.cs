@@ -163,15 +163,15 @@ namespace SessionMapSwitcher
                 return;
             }
 
-            if (EzPzPatcher.IsGamePatched() == false && UnpackUtils.IsSessionUnpacked() == false)
+            if (UeModUnlocker.IsGamePatched() == false && UnpackUtils.IsSessionUnpacked() == false)
             {
-                MessageBoxResult result = System.Windows.MessageBox.Show("Session has not been patched yet. Click 'Patch With EzPz' to patch the game.", "Notice!", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBoxResult result = System.Windows.MessageBox.Show("Session has not been patched yet. Click 'Patch With Illusory Mod Unlocker' to patch the game.", "Notice!", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
 
 
-            if (EzPzPatcher.IsGamePatched() == false && ViewModel.IsSessionUnpacked())
+            if (UeModUnlocker.IsGamePatched() == false && UnpackUtils.IsSessionUnpacked())
             {
                 if (ViewModel.IsOriginalMapFilesBackedUp() == false)
                 {
@@ -288,9 +288,9 @@ namespace SessionMapSwitcher
                 return;
             }
 
-            if (EzPzPatcher.IsGamePatched() == false && UnpackUtils.IsSessionUnpacked() == false)
+            if (UeModUnlocker.IsGamePatched() == false && UnpackUtils.IsSessionUnpacked() == false)
             {
-                MessageBoxResult result = System.Windows.MessageBox.Show("Session has not been patched yet. Click 'Patch With EzPz' to patch the game.", "Notice!", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBoxResult result = System.Windows.MessageBox.Show("Session has not been patched yet. Click 'Patch With Illusory Mod Unlocker' to patch the game.", "Notice!", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -341,9 +341,9 @@ namespace SessionMapSwitcher
 
         private void BtnImportMap_Click(object sender, RoutedEventArgs e)
         {
-            if (EzPzPatcher.IsGamePatched() == false && UnpackUtils.IsSessionUnpacked() == false)
+            if (UeModUnlocker.IsGamePatched() == false && UnpackUtils.IsSessionUnpacked() == false)
             {
-                MessageBoxResult result = System.Windows.MessageBox.Show("Session has not been patched yet. Click 'Patch With EzPz' to patch the game.", "Notice!", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBoxResult result = System.Windows.MessageBox.Show("Session has not been patched yet. Click 'Patch With Illusory Mod Unlocker' to patch the game.", "Notice!", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -605,32 +605,38 @@ namespace SessionMapSwitcher
             }
         }
 
+        /// <summary>
+        /// Prompts to download Illusory mod unlocker or opens it if already installed
+        /// </summary>
         public void PromptToPatch()
         {
-            MessageBoxResult result = System.Windows.MessageBox.Show("This will download the required files to patch Session. This is needed after updating Session to a new version.\n\nYou will need to click 'Apply' again to restore the object count after patching.\n\nAre you sure you want to continue?",
-                                                                      "Notice!",
-                                                                      MessageBoxButton.YesNo,
-                                                                      MessageBoxImage.Warning,
-                                                                      MessageBoxResult.Yes);
+            string displayName = "IllusoryUniversalModUnlocker";
 
-            if (result == MessageBoxResult.Yes)
+            if (!RegistryHelper.IsSoftwareInstalled(displayName, Microsoft.Win32.RegistryHive.CurrentUser, Microsoft.Win32.RegistryView.Registry32))
             {
-                if (App.IsRunningAppAsAdministrator() == false)
-                {
-                    MessageBoxResult Adminresult = System.Windows.MessageBox.Show($"{App.GetAppName()} is not running as Administrator. This can lead to the patching process failing to copy files.\n\nDo you want to restart the program as Administrator?",
-                                                               "Warning!",
-                                                               MessageBoxButton.YesNo,
-                                                               MessageBoxImage.Warning,
-                                                               MessageBoxResult.Yes);
+                ModUnlockerDownloadLink downloadInfo = UeModUnlocker.GetLatestDownloadLinkInfo();
 
-                    if (Adminresult == MessageBoxResult.Yes)
-                    {
-                        App.RestartAsAdminstrator();
-                        return;
-                    }
+                if (downloadInfo == null || string.IsNullOrEmpty(downloadInfo.Url))
+                {
+                    System.Windows.MessageBox.Show("Failed to get the latest download link. Check that you have internet and try again.", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
                 }
 
-                ViewModel.StartPatching(skipPatching: false, skipUnpacking: true, unrealPathFromRegistry: RegistryHelper.GetPathToUnrealEngine());
+                MessageBoxResult result = System.Windows.MessageBox.Show("This will open your browser to download the Illusory Universal Mod Unlocker.\n\nLaunch the unlocker installer after it downloads to patch Session.\n\nDo you want to continue?", 
+                                                                         "Notice!", 
+                                                                         MessageBoxButton.YesNo, 
+                                                                         MessageBoxImage.Warning, 
+                                                                         MessageBoxResult.Yes);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    Process.Start(new ProcessStartInfo(downloadInfo.Url));
+                }
+            }
+            else
+            {
+                string modUnlockerPath = RegistryHelper.GetExePathFromDisplayIcon(displayName, Microsoft.Win32.RegistryHive.CurrentUser, Microsoft.Win32.RegistryView.Registry32);
+                Process.Start(modUnlockerPath);
             }
         }
 
