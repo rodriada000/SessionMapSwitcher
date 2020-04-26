@@ -382,7 +382,7 @@
                 Click="BtnPatch_Click"
                 IsEnabled="{Binding IsPatchButtonEnabled}"
                 Grid.Row="2" Grid.ColumnSpan="2"
-                Content="Patch With EzPz"
+                Content="Patch With Illusory Mod Unlocker"
                 ToolTip="{Binding PatchButtonToolTip}"
                 ToolTipService.ShowOnDisabled="True"
                 Style="{StaticResource HyperlinkButtonStyle}"
