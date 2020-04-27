@@ -9,6 +9,8 @@
         Title="Catalog Creation Tool"
         Style="{StaticResource WindowStyle}"
         WindowStartupLocation="CenterScreen"
+        MinHeight="500"
+        MinWidth="800"
         Height="500" Width="900">
     <Window.Resources>
         <Style x:Key="labelStyle" TargetType="TextBlock">
@@ -37,21 +39,51 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <Button x:Name="btnImport"
-                Click="btnImport_Click"
-                Content="Import Catalog"
-                Margin="10,5,0,0"
-                HorizontalAlignment="Left"/>
+        <WrapPanel Margin="10,5,0,0"
+                   Grid.ColumnSpan="2">
+            <Button x:Name="btnImport"
+                    Click="btnImport_Click"
+                    Content="Import Catalog"
+                    HorizontalAlignment="Left"/>
 
-        <Button x:Name="btnExport"
-                Click="btnExport_Click"
-                Content="Export Catalog"
-                Margin="110,5,0,0"
-                HorizontalAlignment="Left"/>
+            <Button x:Name="btnExport"
+                    Click="btnExport_Click"
+                    Content="Export Catalog"
+                    Margin="10,0,0,0"
+                    HorizontalAlignment="Left"/>
+
+            <TextBox x:Name="txtCatalogName"
+                     Text="{Binding CatalogName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     Margin="10,0,0,0"
+                     MaxLength="100"
+                     VerticalContentAlignment="Center"
+                     VerticalAlignment="Center"
+                     Height="22"
+                     MinWidth="220"
+                     MaxWidth="220"/>
+            <TextBlock Text="Enter Catalog Name ..."
+                       IsHitTestVisible="False"
+                       Foreground="Gray"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Center"
+                       Margin="-215,0,0,0">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Visibility" Value="Hidden"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=txtCatalogName, Path=Text}" Value="">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+        </WrapPanel>
+
 
         <ListView x:Name="lstAssets"
                   Grid.Row="1"
-                  Margin="10,3,0,10"
+                  Margin="10,5,0,10"
                   SelectedItem="{Binding SelectedAsset, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                   ItemsSource="{Binding AssetList}">
             <ListView.View>
@@ -71,10 +103,10 @@
         </ListView>
 
         <GroupBox Header="Edit Selected Asset"
-                  Grid.Row="0"
+                  Grid.Row="1"
                   Grid.RowSpan="2"
                   Grid.Column="1"
-                  Margin="10,25,10,10">
+                  Margin="10,0,10,10">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
