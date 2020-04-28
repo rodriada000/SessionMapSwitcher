@@ -15,7 +15,7 @@ This is a Desktop application to easily mod Session and install custom maps and 
 ### **If you are having any issues please see [this FAQ Wiki provided here thanks to dga711 & others](https://github.com/rodriada000/SessionMapSwitcher/wiki/Issues-FAQ) or [view this tutorial video by Redgouf.](https://www.youtube.com/watch?v=EjqcErdS0jg)**
 
 ### Features
-* Mod Manager can download the required patch (thanks to dga711) for Session to play custom modded maps and have custom textures within minutes.
+* Mod Manager can download the required patch (thanks to dga711/GHFear) for Session to play custom modded maps and have custom textures within minutes. (`Patch With Illusory Mod Unlocker` button)
 * Easily load custom maps and switch between maps in-game without having to restart the game everytime you want to play a new map.
 * Use the Asset Store easily download dozens of maps and custom textues like decks, wheels, shirts, decks, etc. Mod Manager installs the downloaded assets in minutes for you, No more fiddling with copying & deleting files from folders.
 <img src="https://github.com/rodriada000/SessionMapSwitcher/blob/master/docs/images/asset_store_demo.gif?raw=true" width="90%">
@@ -38,13 +38,18 @@ _Skip this if you already patched/unpacked the game._
 4. Set the `Path To Session` by clicking the `...` button or pasting the path and pressing `Enter` key. **The path should be the top level folder of the game directory e.g. `C:\Program Files (x86)\Steam\steamapps\common\Session`.**
 
 > Note: The application will try to get the path to Session automatically if it has not been set.
-5. Click `Patch With EzPz` and you will be prompted to download the required files to patch the game.
+5. Click `Patch With Illusory Mod Unlocker` and you will be prompted to download the required file to patch the game.
+> Note: If you already have the mod unlocker program installed then SMM will open it instead.
 
-> Note: If the program is not running as Administrator then it will ask you to restart the program as administrator first to ensure the patching process completes succesfully.
+6. Mod Manager will open a web browser so you can download the Illusory Universal Mod Unlocker ([or you can download it from here](https://illusory.dev/#))
+7. After it finishes downloading, run the setup.exe and then the mod unlocker program will open.
+8. Set the path to be `...\Session\SessionGame\Binaries\Win64` and then click `patch`
+> Note: This path is slightly different from the one set in SMM. The game should now be patched and you can close the mod unlocker program.\
 
-6. Mod Manager will download and then open Session EzPz Mod. When this window opens click `Patch` and close the window. 
-7. Mod Manager will output the status of the patching process so you know when it is complete. After that you can play custom maps and replace textures.
-8. (Optional) Click `Apply` under Game Settings in Mod Manager to download the required files for modifying the object count. If unreal engine is already installed on your computer then it will only have to download the `crypto.json` file to unpack a specific file from the game
+### Modify Object Placement Count
+_This feature allows you to change how many objects you can place in-game_
+
+When you Click `Apply` under Game Settings in Mod Manager for the first time, it will prompt you to download the required files for modifying the object count. If unreal engine is already installed on your computer then it will only have to download the `crypto.json` file to unpack a specific file from the game
 
 
 ### Adding Custom Maps to Play
@@ -55,7 +60,7 @@ _This is the recommended way to import maps into Session._
 1. Inside Mod Manager click `Asset Store` or  `Import Map > From Online ...`.
 2. The Asset Store will open where you can choose what maps to download ![](https://github.com/rodriada000/SessionMapSwitcher/blob/master/docs/images/app_import_online.png?raw=true "Asset Store Window")
 3. Select a map and click `Install Map` to start downloading it. There will be download progress in the bottom left corner.
-> NOTE: You can browse other assets while a map is downloading/installing but you can only install one asset at a time.
+> NOTE: You can queue asset downloads but it will only download/install one at a time.
 
 #### From Computer
 _Use this option when downloading custom maps from your web browser or for map creators that are working on maps._
@@ -75,7 +80,8 @@ _This is the final way to add custom maps and is not recommended for beginners. 
 ### Loading a Custom Map To Play
 1. Select a modded map from the Available Maps list (_you can also double click the map in the list to load it._).
 2. Before starting the game, change any game settings like gravity _(default value is -980)_ or number of objects you can place down.  
-3. Click `Start Session` (_this will load the selected map and save your game settings before starting the game_).
+3. _(Optional)_ Check the `Load Second Map After Start` option so your selected map will be loaded if you go back to the apartment
+4. Click `Start Session` (_this will load the selected map and save your game settings before starting the game_).
 > NOTE: When you go to the apartment in-game you will have to open Mod Manager and load the custom map again (even if you are not switching to a new map). This is to ensure the custom map is loaded instead of the original Brooklyn Banks map when you leave the apartment. 
 
 
@@ -116,6 +122,7 @@ _This assumes you already patched/unpacked the game and have Session Mod Manager
 
 
 ### Using the Asset Store
+_The asset store is curated by the community. You can create a catalog that lists all your available mods to download and can share that catalog with others._
 1. Click `Asset Store` tab at the top to switch to the Asset Store window.
 2. Click the checkboxes to select which categories you want to view e.g. Decks, Wheels, etc.
 3. Select an asset in the list to see the description and preview image
@@ -125,10 +132,15 @@ _This assumes you already patched/unpacked the game and have Session Mod Manager
 4. Click `Install Asset` in bottom right corner to download/install the new texture _(depending on the asset selected the install button text will change e.g. `Install Deck`)_.
 <img src="https://github.com/rodriada000/SessionMapSwitcher/blob/master/docs/images/asset_store_demo.gif?raw=true" width="90%">
 
-
+#### Adding a Catalog
+_Use the `Manage Catalogs` button on the asset store tab to add and remove catalogs from the community._
+1. Click `Asset Store` tab at the top to switch to the Asset Store window.
+2. Click `Manage Catalogs` button to open the manage catalog window.
+3. Click `Add Catalog` and then paste the catalog url you found into the textbox that appears. Then click `Confirm`
+> NOTE: Here is an example of a catalog url: https://raw.githubusercontent.com/rodriada000/SessionCustomMapReleases/master/DefaultSMMCatalog.json 
 
 ## Credits
+* Thanks to [Illusory Modding](https://discord.gg/3JAe2K) for the [Universal Mod Unlocker](https://illusory.dev/)
 * Thanks to @dga711 for the [EzPz Mod](https://github.com/dga711/SessionEzPzMod)
-* Thanks to @Gabisonfire for contributing to the [version updater](https://github.com/Gabisonfire/avantgarde-lib) and [asset store](https://github.com/Gabisonfire/SessionAssetStore) and also hosting the asset files.
 * Thanks to Redgouf for creating an in-depth tutorial video on the tool
-* Thanks to [Session modding community](https://discord.gg/XBz5s7) & [Illusory Modding](https://discord.gg/3JAe2K)
+* @Gabisonfire for contributing to the [app version updater](https://github.com/Gabisonfire/avantgarde-lib)

@@ -149,13 +149,17 @@
                   Grid.Row="1"
                   ScrollViewer.VerticalScrollBarVisibility="Auto"
                   ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                  SelectionMode="Extended"
                   ItemsSource="{Binding CatalogList}"
                   Margin="10,0,10,0">
             <ListView.ContextMenu>
                 <ContextMenu x:Name="menuCatalogCommands">
+                    <MenuItem x:Name="menuItemRemove" Header="Remove Selected Catalog(s)" Click="menuItemRemove_Click"/>
+                    <Separator/>
                     <MenuItem x:Name="menuItemActivate" Header="Activate All" Click="menuItemActivate_Click"/>
                     <MenuItem x:Name="menuItemDeactivate" Header="De-activate All" Click="menuItemDeactivate_Click"/>
-                    <MenuItem x:Name="menuItemRemove" Header="Remove Catalog" Click="menuItemRemove_Click"/>
+                    <Separator/>
+                    <MenuItem x:Name="menuItemAddDefaults" Header="Add Default Catalogs" Click="menuItemAddDefaults_Click"/>
                 </ContextMenu>
             </ListView.ContextMenu>
             <ListView.View>
