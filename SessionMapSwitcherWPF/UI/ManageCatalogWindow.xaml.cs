@@ -1,17 +1,8 @@
 ﻿using SessionModManagerCore.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
+using System.Linq;
 using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using System.Collections.Generic;
 
 namespace SessionModManagerWPF.UI
 {
@@ -37,12 +28,19 @@ namespace SessionModManagerWPF.UI
 
         private void btnRemove_Click(object sender, RoutedEventArgs e)
         {
-            if (lstUrls.SelectedItem == null)
+            if (lstUrls.SelectedItems?.Count == 0)
             {
                 return;
             }
 
-            ViewModel.RemoveUrl(lstUrls.SelectedItem as CatalogSubscriptionViewModel);
+            List<CatalogSubscriptionViewModel> selectedUrls = new List<CatalogSubscriptionViewModel>();
+
+            for (int i = 0; i < lstUrls.SelectedItems.Count; i++)
+            {
+                selectedUrls.Add(lstUrls.SelectedItems[i] as CatalogSubscriptionViewModel);
+            }
+
+            ViewModel.RemoveUrls(selectedUrls);
         }
 
         private void btnConfirm_Click(object sender, RoutedEventArgs e)
@@ -92,6 +90,11 @@ namespace SessionModManagerWPF.UI
         private void menuItemRemove_Click(object sender, RoutedEventArgs e)
         {
             btnRemove_Click(sender, e);
+        }
+
+        private void menuItemAddDefaults_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.AddDefaultCatalogs();
         }
     }
 }
