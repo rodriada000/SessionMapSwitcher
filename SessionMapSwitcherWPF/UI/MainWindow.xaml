@@ -13,7 +13,7 @@
         Closing="mainWindow_Closing"
         MinHeight="500" MinWidth="830"
         MaxWidth="1600"
-        Height="590" Width="900"
+        Height="620" Width="900"
         SizeChanged="mainWindow_SizeChanged"
         Style="{StaticResource WindowStyle}">
     <Window.Resources>
