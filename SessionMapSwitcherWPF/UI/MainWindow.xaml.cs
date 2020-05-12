@@ -163,26 +163,10 @@ namespace SessionMapSwitcher
                 return;
             }
 
-            if (UeModUnlocker.IsGamePatched() == false && UnpackUtils.IsSessionUnpacked() == false)
+            if (UeModUnlocker.IsGamePatched() == false)
             {
                 MessageBoxResult result = System.Windows.MessageBox.Show("Session has not been patched yet. Click 'Patch With Illusory Mod Unlocker' to patch the game.", "Notice!", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
-            }
-
-
-
-            if (UeModUnlocker.IsGamePatched() == false && UnpackUtils.IsSessionUnpacked())
-            {
-                if (ViewModel.IsOriginalMapFilesBackedUp() == false)
-                {
-                    System.Windows.MessageBox.Show("The original Session game map files have not been backed up yet. Click OK to backup the files then click 'Load Map' again.",
-                                                   "Notice!",
-                                                   MessageBoxButton.OK,
-                                                   MessageBoxImage.Information);
-
-                    ViewModel.BackupOriginalMapFiles();
-                    return;
-                }
             }
 
             if (lstMaps.SelectedItem == null)
@@ -288,7 +272,7 @@ namespace SessionMapSwitcher
                 return;
             }
 
-            if (UeModUnlocker.IsGamePatched() == false && UnpackUtils.IsSessionUnpacked() == false)
+            if (UeModUnlocker.IsGamePatched() == false)
             {
                 MessageBoxResult result = System.Windows.MessageBox.Show("Session has not been patched yet. Click 'Patch With Illusory Mod Unlocker' to patch the game.", "Notice!", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
@@ -304,7 +288,7 @@ namespace SessionMapSwitcher
 
                 if (promptResult == MessageBoxResult.Yes)
                 {
-                    ViewModel.StartPatching(skipPatching: true, skipUnpacking: false, unrealPathFromRegistry: RegistryHelper.GetPathToUnrealEngine());
+                    ViewModel.StartUnrealPakProcess(RegistryHelper.GetPathToUnrealEngine());
                     return;
                 }
             }
@@ -312,11 +296,8 @@ namespace SessionMapSwitcher
 
             bool didSet = ViewModel.UpdateGameSettings();
 
-
             if (didSet)
             {
-                ViewModel.UserMessage = "Game settings updated!";
-
                 if (SessionPath.IsSessionRunning())
                 {
                     ViewModel.UserMessage += " Restart the game for changes to take effect.";
@@ -341,7 +322,7 @@ namespace SessionMapSwitcher
 
         private void BtnImportMap_Click(object sender, RoutedEventArgs e)
         {
-            if (UeModUnlocker.IsGamePatched() == false && UnpackUtils.IsSessionUnpacked() == false)
+            if (UeModUnlocker.IsGamePatched() == false)
             {
                 MessageBoxResult result = System.Windows.MessageBox.Show("Session has not been patched yet. Click 'Patch With Illusory Mod Unlocker' to patch the game.", "Notice!", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
