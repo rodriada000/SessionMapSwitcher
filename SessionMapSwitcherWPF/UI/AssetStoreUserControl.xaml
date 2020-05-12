@@ -100,6 +100,7 @@
     <Grid Background="#CFD8DC">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
@@ -136,16 +137,44 @@
             </StackPanel>
         </GroupBox>
 
+        <TextBox x:Name="txtSearch"
+                 Grid.Row="1"
+                 Height="25"
+                 VerticalContentAlignment="Center"
+                 Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 TextWrapping="NoWrap"
+                 Margin="5,9,0,0"/>
+
+        <TextBlock Text="Type to search by Name or Description (only searches checked Categories)..."
+                   Grid.Row="1"
+                   Foreground="Gray"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Center"
+                   IsHitTestVisible="False"
+                   TextWrapping="NoWrap"
+                   Margin="10,9,0,0">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Visibility" Value="Hidden"/>
+
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding SearchText}" Value="">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
 
         <ListView x:Name="lstAssets"
-                  Grid.Row="1" Grid.Column="0"
+                  Grid.Row="2" Grid.Column="0"
                   GridViewColumnHeader.Click="GridViewColumnHeaderClickedHandler"
                   HorizontalAlignment="Stretch"
                   VerticalAlignment="Stretch"
                   ItemsSource="{Binding FilteredAssetList}"
                   ItemContainerStyle="{StaticResource AssetListStyle}"
                   SelectionChanged="lstAssets_SelectionChanged"
-                  Margin="5,10,0,5">
+                  Margin="5,5,0,5">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Name" Width="190" DisplayMemberBinding="{Binding Name}"/>
@@ -160,7 +189,7 @@
 
 
         <ListView x:Name="lstDownloads" 
-                  Grid.Row="2" 
+                  Grid.Row="3" 
                   Margin="5,0,0,10"
                   ItemsSource="{Binding CurrentDownloads, UpdateSourceTrigger=PropertyChanged}"
                   MinHeight="75"
@@ -187,7 +216,7 @@
 
 
         <GroupBox Grid.Row="1" Grid.Column="1"
-                  Grid.RowSpan="2"
+                  Grid.RowSpan="3"
                   HorizontalAlignment="Stretch"
                   VerticalAlignment="Stretch"
                   Margin="5,0,5,10"
@@ -350,7 +379,7 @@
 
 
 
-        <TextBlock Grid.Row="3" Grid.ColumnSpan="2"
+        <TextBlock Grid.Row="4" Grid.ColumnSpan="2"
                    VerticalAlignment="Bottom"
                    HorizontalAlignment="Left"
                    FontSize="16"

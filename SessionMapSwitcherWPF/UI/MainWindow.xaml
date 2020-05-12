@@ -290,9 +290,24 @@
                                 </WrapPanel>
 
                                 <CheckBox Content="Skip Intro Movie"
-                                  HorizontalAlignment="Right"
-                                  IsChecked="{Binding SkipMovieIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='True'}"
-                                  Margin="0,10,10,0"/>
+                                          x:Name="chkSkipMovie"
+                                          HorizontalAlignment="Right"
+                                          IsChecked="{Binding SkipMovieIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='True'}"
+                                          Margin="0,10,10,0"/>
+
+                                <CheckBox Content="Enable DBuffer"
+                                          ToolTip="Sets [/Script/Engine.RendererSettings] r.DBuffer in UserEngine.ini (defaults to 'true' to fix some decals for Session 0.0.0.5+)"
+                                          HorizontalAlignment="Right"
+                                          Width="{Binding ElementName=chkSkipMovie, Path=ActualWidth}"
+                                          IsChecked="{Binding DBufferIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='True'}"
+                                          Margin="0,5,10,0"/>
+                                
+                                <CheckBox Content="Enable Light Propagation Volume"
+                                          ToolTip="Sets [/Script/Engine.RendererSettings] r.LightPropagationVolume in UserEngine.ini (defaults to 'false' to work for Session 0.0.0.5+)"
+                                          HorizontalAlignment="Right"
+                                          IsChecked="{Binding LightPropagationVolumeIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='False'}"
+                                          Margin="0,5,10,0"/>
+
 
                                 <Button x:Name="btnApplySettings"
                                 Content="Apply"
