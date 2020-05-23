@@ -7,6 +7,8 @@
         x:Name="mainWindow"
         mc:Ignorable="d"
         Style="{StaticResource WindowStyle}"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
         MinWidth="300" MinHeight="230" MaxHeight="230" MaxWidth="800"
         Title="Import Map From Computer" Height="230" Width="600">
     <Window.Resources>

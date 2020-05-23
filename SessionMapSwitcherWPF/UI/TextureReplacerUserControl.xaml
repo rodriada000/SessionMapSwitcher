@@ -35,7 +35,6 @@
                 Click="btnManage_Click"
                 Content="Manage Installed Textures"
                 Style="{StaticResource MainButtonStyle}"
-                IsEnabled="{Binding IsReplaceButtonEnabled}"
                 Padding="5,2,5,2"
                 Margin="0,5,10,0"/>
 
@@ -43,7 +42,6 @@
                 Click="BtnReplace_Click"
                 Content="Replace"
                 Style="{StaticResource MainButtonStyle}"
-                IsEnabled="{Binding IsReplaceButtonEnabled}"
                 Padding="5,2,5,2"
                 Margin="0,5,2,0"/>
         </WrapPanel>
