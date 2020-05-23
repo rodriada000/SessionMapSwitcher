@@ -109,21 +109,17 @@ namespace SessionModManagerWPF.UI
             }
         }
 
-        private void lstAssets_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (lstAssets.SelectedItem == null)
-            {
-                return;
-            }
-
-            ViewModel.RefreshPreviewForSelected();
-        }
         private void btnInstall_Click(object sender, RoutedEventArgs e)
         {
             if (ViewModel.SelectedAsset == null)
             {
                 MessageBox.Show("Select an asset to install first.", "Notice", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
+            }
+
+            if (ViewModel.SelectedAsset.IsOutOfDate)
+            {
+                MessageBox.Show("This mod was last updated before the Session 0.0.0.5 game update. Installing this mod may crash your game with the following error:\n\n\"Corrupt data found, please verify your installation.\"\n\nUninstall all old mods to fix the above error.", "Warning - Possible Old Mod Detected", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
 
             ViewModel.DownloadSelectedAssetAsync();

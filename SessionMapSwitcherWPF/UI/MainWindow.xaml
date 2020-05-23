@@ -12,9 +12,9 @@
         Loaded="MainWindow_Loaded"
         Closing="mainWindow_Closing"
         MinHeight="500" MinWidth="830"
-        MaxWidth="1600"
-        Height="590" Width="900"
+        Height="615" Width="900"
         SizeChanged="mainWindow_SizeChanged"
+        StateChanged="mainWindow_StateChanged"
         Style="{StaticResource WindowStyle}">
     <Window.Resources>
 
@@ -195,7 +195,7 @@
                         <ListBox x:Name="lstMaps"
                                  Grid.Row="1"
                                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                 ToolTip="Righ-click a map for additional options"
+                                 ToolTip="Right-click a map for additional options"
                                  MinWidth="300" MaxWidth="350"
                                  ScrollViewer.CanContentScroll="False"
                                  Margin="4,1,2,5"
@@ -296,14 +296,16 @@
                                           Margin="0,10,10,0"/>
 
                                 <CheckBox Content="Enable DBuffer"
-                                          ToolTip="Sets [/Script/Engine.RendererSettings] r.DBuffer in UserEngine.ini (defaults to 'true' to fix some decals for Session 0.0.0.5+)"
+                                          ToolTipService.InitialShowDelay="100"
+                                          ToolTip="Defaults to 'true' to fix some decals for Session 0.0.0.5+ ... Sets [/Script/Engine.RendererSettings] r.DBuffer in UserEngine.ini"
                                           HorizontalAlignment="Right"
                                           Width="{Binding ElementName=chkSkipMovie, Path=ActualWidth}"
                                           IsChecked="{Binding DBufferIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='True'}"
                                           Margin="0,5,10,0"/>
                                 
                                 <CheckBox Content="Enable Light Propagation Volume"
-                                          ToolTip="Sets [/Script/Engine.RendererSettings] r.LightPropagationVolume in UserEngine.ini (defaults to 'false' to work for Session 0.0.0.5+)"
+                                          ToolTipService.InitialShowDelay="100"
+                                          ToolTip="Defaults to 'false' to enable some custom materials for Session 0.0.0.5+ ... Sets [/Script/Engine.RendererSettings] r.LightPropagationVolume in UserEngine.ini"
                                           HorizontalAlignment="Right"
                                           IsChecked="{Binding LightPropagationVolumeIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='False'}"
                                           Margin="0,5,10,0"/>

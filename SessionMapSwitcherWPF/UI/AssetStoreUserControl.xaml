@@ -16,6 +16,19 @@
 
         <Style TargetType="{x:Type ListViewItem}" x:Key="AssetListStyle">
             <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsOutOfDate}" Value="True">
+                    <Setter Property="Background" Value="LightGray"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="PreviewTextStyle" TargetType="{x:Type TextBlock}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding SelectedAsset.IsOutOfDate}" Value="True">
+                    <Setter Property="Foreground" Value="Red"/>
+                </DataTrigger>
+            </Style.Triggers>
         </Style>
 
 
@@ -171,9 +184,10 @@
                   GridViewColumnHeader.Click="GridViewColumnHeaderClickedHandler"
                   HorizontalAlignment="Stretch"
                   VerticalAlignment="Stretch"
+                  SelectionMode="Single"
                   ItemsSource="{Binding FilteredAssetList}"
                   ItemContainerStyle="{StaticResource AssetListStyle}"
-                  SelectionChanged="lstAssets_SelectionChanged"
+                  SelectedItem="{Binding SelectedAsset, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                   Margin="5,5,0,5">
             <ListView.View>
                 <GridView>
@@ -182,7 +196,6 @@
                     <GridViewColumn Header="Category" Width="95" DisplayMemberBinding="{Binding AssetCategory}"/>
                     <GridViewColumn Header="Updated Date" Width="130" DisplayMemberBinding="{Binding UpdatedDate}"/>
                     <GridViewColumn Header="Ver." Width="40" DisplayMemberBinding="{Binding Version}"/>
-
                 </GridView>
             </ListView.View>
         </ListView>
@@ -192,6 +205,7 @@
                   Grid.Row="3" 
                   Margin="5,0,0,10"
                   ItemsSource="{Binding CurrentDownloads, UpdateSourceTrigger=PropertyChanged}"
+                  SelectionMode="Single"
                   MinHeight="75"
                   MaxHeight="100">
             <ListView.ContextMenu>
@@ -235,6 +249,7 @@
                                        Margin="5,5,5,0"
                                        FontWeight="Bold"/>
                             <TextBlock Text="{Binding SelectedAuthor, FallbackValue='Author name'}"
+                                       Style="{StaticResource PreviewTextStyle}"
                                        TextWrapping="Wrap"
                                        Margin="5,5,0,0"/>
                         </WrapPanel>
@@ -244,6 +259,7 @@
                                        Margin="5,5,5,0"
                                        FontWeight="Bold"/>
                             <TextBlock Text="{Binding SelectedDescription, FallbackValue='example description for a selected asset.'}"
+                                       Style="{StaticResource PreviewTextStyle}"
                                        TextWrapping="Wrap"
                                        Margin="5,5,0,0"/>
                         </WrapPanel>

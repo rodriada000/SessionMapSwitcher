@@ -53,6 +53,13 @@ namespace SessionMapSwitcher
             this.Title = $"{App.GetAppName()} - v{App.GetAppVersion()}";
 
             SelectedTabIndex = tabControl.SelectedIndex;
+
+            // set window state
+            string windowStateVal = AppSettingsUtil.GetAppSetting(SettingKey.WindowState);
+            if (!string.IsNullOrWhiteSpace(windowStateVal) && WindowState.TryParse(windowStateVal, out WindowState state))
+            {
+                this.WindowState = state;
+            }
         }
 
         private void SetCustomWindowSizeFromAppSettings()
@@ -61,7 +68,7 @@ namespace SessionMapSwitcher
 
             string customSize = AppSettingsUtil.GetAppSetting(SettingKey.CustomWindowSize);
 
-            if (String.IsNullOrEmpty(customSize))
+            if (string.IsNullOrEmpty(customSize))
             {
                 IsSettingWindowSize = false;
                 return;
@@ -78,6 +85,7 @@ namespace SessionMapSwitcher
                 this.Width = newWidth;
                 this.Height = newHeight;
             }
+
 
             IsSettingWindowSize = false;
         }
@@ -224,8 +232,6 @@ namespace SessionMapSwitcher
         {
             ViewModel.SetSessionPath(path); // this will save it to app settings
             ViewModel.SetCurrentlyLoadedMap();
-
-            ctrlTextureReplacer.ViewModel.TriggerPropertyChanged();
 
             if (SessionPath.IsSessionPathValid())
             {
@@ -681,6 +687,11 @@ namespace SessionMapSwitcher
         {
             ctrlTextureReplacer.ViewModel.MessageChanged -= TextureReplacer_MessageChanged;
             ImageCache.WriteToFile();
+        }
+
+        private void mainWindow_StateChanged(object sender, EventArgs e)
+        {
+            AppSettingsUtil.AddOrUpdateAppSettings(SettingKey.WindowState, this.WindowState.ToString());
         }
     }
 }
