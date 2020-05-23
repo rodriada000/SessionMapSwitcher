@@ -358,11 +358,7 @@ namespace SessionMapSwitcher
 
             ComputerImportViewModel importViewModel = new ComputerImportViewModel();
 
-            ComputerImportWindow importWindow = new ComputerImportWindow(importViewModel)
-            {
-                WindowStyle = WindowStyle.ToolWindow,
-                WindowStartupLocation = WindowStartupLocation.CenterScreen
-            };
+            ComputerImportWindow importWindow = new ComputerImportWindow(importViewModel);
             importWindow.ShowDialog();
 
             ViewModel.ReloadAvailableMapsInBackground(); // reload list of available maps as it may have changed
@@ -472,24 +468,23 @@ namespace SessionMapSwitcher
                 bool hasImportLocation = MetaDataManager.IsImportLocationStored(selected);
                 menuReimporSelectedMap.IsEnabled = hasImportLocation;
                 menuReimporSelectedMap.ToolTip = hasImportLocation ? null : "You can only re-import if you imported the map from 'Import Map > From Computer ...' and imported a folder.\n(does not work with .zip files)";
-                menuHideSelectedMap.Header = selected.IsHiddenByUser ? "Show Selected Map ..." : "Hide Selected Map ...";
+                menuHideSelectedMap.Header = selected.IsHiddenByUser ? "Show Selected Map" : "Hide Selected Map";
 
 
                 if (ViewModel.SecondMapToLoad == null || ViewModel.SecondMapToLoad?.FullPath != selected.FullPath)
                 {
-                    menuSecondMapToLoad.Header = "Set As Second Map To Load (When Leaving Apartment) ...";
+                    menuSecondMapToLoad.Header = "Set As Second Map To Load (When Leaving Apartment)";
                     menuSecondMapToLoad.ToolTip = "Set the map to be loaded after you leave the apartment (before starting the game)";
                 }
                 else
                 {
                     menuSecondMapToLoad.ToolTip = "This will clear the selected map to not load after you leave the apartment";
-                    menuSecondMapToLoad.Header = "Clear As Second Map To Load ...";
+                    menuSecondMapToLoad.Header = "Clear As Second Map To Load";
                 }
 
 
                 bool canBeDeleted = MetaDataManager.HasPathToMapFilesStored(selected);
                 menuDeleteSelectedMap.IsEnabled = canBeDeleted;
-                menuDeleteSelectedMap.ToolTip = canBeDeleted ? null : "You can only delete a map that has been imported via version 2.2.3 or greater.";
             }
         }
 

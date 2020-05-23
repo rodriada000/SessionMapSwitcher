@@ -198,6 +198,11 @@
                     <GridViewColumn Header="Ver." Width="40" DisplayMemberBinding="{Binding Version}"/>
                 </GridView>
             </ListView.View>
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem x:Name="menuItemBrowserDownload" Header="Download in Browser ..." Click="menuItemBrowserDownload_Click"/>
+                </ContextMenu>
+            </ListView.ContextMenu>
         </ListView>
 
 
