@@ -35,11 +35,13 @@
                 <Ellipse x:Name="elpsStatus" Width="10" Height="10" Fill="{Binding StatusColor, Mode=OneWay}"/>
             </Border>
             
-            <TextBlock Text="{Binding StatusText, Mode=OneWay}"/>
+            <TextBlock Text="{Binding StatusText, Mode=OneWay, FallbackValue='Here is some text'}"/>
 
         </StackPanel>
 
-        <StackPanel HorizontalAlignment="Right" Grid.Row="2" Grid.ColumnSpan="3" Orientation="Horizontal">
+        <WrapPanel HorizontalAlignment="Right" 
+                   Grid.Row="2" Grid.ColumnSpan="3"
+                   Margin="0,0,0,5">
             
             <Button x:Name="btnWatch"
                 Click="BtnWatch_Click"
@@ -47,7 +49,7 @@
                 Style="{StaticResource MainButtonStyle}"
                 HorizontalAlignment="Right" VerticalAlignment="Top"
                 Padding="5,2,5,2"
-                Margin="0,5,2,0"/>
+                Margin="0,5,5,0"/>
 
             <Button x:Name="btnUnwatch"
                 Click="BtnUnwatch_Click"
@@ -57,7 +59,7 @@
                 Padding="5,2,5,2"
                 Margin="0,5,2,0"/>
 
-        </StackPanel>
+        </WrapPanel>
         
     </Grid>
 </UserControl>

@@ -128,12 +128,8 @@ namespace SessionModManagerWPF.UI
         {
             DownloadItemViewModel downloadItem = lstDownloads.SelectedItem as DownloadItemViewModel;
 
-            if (downloadItem == null)
-            {
-                return;
-            }
-
-            downloadItem.PerformCancel?.Invoke();
+            downloadItem.IsCanceled = true;
+            ViewModel.CancelDownload(downloadItem);
         }
 
         private void btnManageCat_Click(object sender, RoutedEventArgs e)
@@ -146,6 +142,16 @@ namespace SessionModManagerWPF.UI
         private void menuItemBrowserDownload_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.LaunchDownloadInBrowser();
+        }
+
+        private void menuItemFetchImages_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.DownloadAllPreviewImagesAsync();
+        }
+
+        private void menuItemCancelAll_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.CancelAllDownloads();
         }
     }
 }

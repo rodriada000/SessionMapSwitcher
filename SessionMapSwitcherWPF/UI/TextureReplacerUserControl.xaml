@@ -25,23 +25,20 @@
                 Click="BtnBrowse_Click" 
                 Grid.Row="1" Grid.Column="1" 
                 Content="..." 
-                Style="{StaticResource MainButtonStyle}" 
                 Width="25" Margin="0,0,2,0"/>
 
         <WrapPanel Grid.Row="2" Grid.ColumnSpan="2"
-                   HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,2,0,0">
+                   HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,2,0,5">
             
             <Button x:Name="btnManage"
                 Click="btnManage_Click"
                 Content="Manage Installed Textures"
-                Style="{StaticResource MainButtonStyle}"
                 Padding="5,2,5,2"
-                Margin="0,5,10,0"/>
+                Margin="0,5,5,0"/>
 
             <Button x:Name="btnReplace"
                 Click="BtnReplace_Click"
                 Content="Replace"
-                Style="{StaticResource MainButtonStyle}"
                 Padding="5,2,5,2"
                 Margin="0,5,2,0"/>
         </WrapPanel>

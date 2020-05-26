@@ -11,6 +11,15 @@
         Title="Manage Catalogs" 
         Width="575"
         Height="375">
+    <Window.Style>
+        <Style TargetType="Window" BasedOn="{StaticResource WindowStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsAdding}" Value="True">
+                    <Setter Property="Cursor" Value="Wait"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Style>
     <Window.Resources>
 
         <Style x:Key="ManageButtonsStyle" BasedOn="{StaticResource MainButtonStyle}" TargetType="Button">
@@ -37,15 +46,6 @@
             </Style.Triggers>
         </Style>
     </Window.Resources>
-    <Window.Style>
-        <Style TargetType="Window" BasedOn="{StaticResource WindowStyle}">
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding IsAdding}" Value="True">
-                    <Setter Property="Cursor" Value="Wait"/>
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-    </Window.Style>
     
     <Grid>
         <Grid.ColumnDefinitions>
@@ -80,7 +80,7 @@
                 Content="Remove Catalog"
                 Style="{StaticResource ManageButtonsStyle}"
                 HorizontalAlignment="Left"
-                Margin="0,3,0,0"/>
+                Margin="5,3,5,0"/>
 
         <Button x:Name="btnCancel"
                 Grid.Column="1"
@@ -88,7 +88,7 @@
                 Content="Cancel"
                 Style="{StaticResource AddButtonsStyle}"
                 HorizontalAlignment="Left"
-                Margin="0,3,0,0"/>
+                Margin="5,3,5,0"/>
 
         <TextBox x:Name="txtUrl"
                  Grid.Column="2"
@@ -158,15 +158,16 @@
                   ScrollViewer.VerticalScrollBarVisibility="Auto"
                   ScrollViewer.HorizontalScrollBarVisibility="Auto"
                   SelectionMode="Extended"
+                  ItemContainerStyle="{StaticResource PrimaryListViewItemStyle}"
                   ItemsSource="{Binding CatalogList}"
-                  Margin="10,0,10,0">
+                  Margin="10,5,10,0">
             <ListView.ContextMenu>
                 <ContextMenu x:Name="menuCatalogCommands" IsEnabled="{Binding ContextMenuIsEnabled}">
                     <MenuItem x:Name="menuItemRemove" Header="Remove Selected Catalog(s)" Click="menuItemRemove_Click"/>
-                    <Separator/>
+                    <MenuItem Style="{StaticResource ContextMenuSeperator}"/>
                     <MenuItem x:Name="menuItemActivate" Header="Activate All" Click="menuItemActivate_Click"/>
                     <MenuItem x:Name="menuItemDeactivate" Header="De-activate All" Click="menuItemDeactivate_Click"/>
-                    <Separator/>
+                    <MenuItem Style="{StaticResource ContextMenuSeperator}"/>
                     <MenuItem x:Name="menuItemAddDefaults" Header="Add Default Catalogs" Click="menuItemAddDefaults_Click"/>
                 </ContextMenu>
             </ListView.ContextMenu>

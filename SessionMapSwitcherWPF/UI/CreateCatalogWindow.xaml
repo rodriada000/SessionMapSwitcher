@@ -19,7 +19,7 @@
             <Setter Property="HorizontalAlignment" Value="Right"/>
         </Style>
 
-        <Style TargetType="TextBox">
+        <Style TargetType="TextBox" BasedOn="{StaticResource PrimaryTextBoxStyle}">
             <Setter Property="Height" Value="20"/>
         </Style>
 
@@ -84,6 +84,7 @@
         <ListView x:Name="lstAssets"
                   Grid.Row="1"
                   Margin="10,5,0,10"
+                  ItemContainerStyle="{StaticResource PrimaryListViewItemStyle}"
                   SelectedItem="{Binding SelectedAsset, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                   ItemsSource="{Binding AssetList}">
             <ListView.View>
@@ -142,6 +143,8 @@
                          Margin="5,5,5,0"/>
 
                     <ComboBox Name="cboIDExtension"
+                              Style="{StaticResource ComboBoxDefaultStyle}"
+                              ItemContainerStyle="{StaticResource DefaultComboBoxItem}"
                               ItemsSource="{Binding IDExtensions}"
                               SelectedItem="{Binding SelectedIDExtension, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                               ToolTip=".zip or .rar extension to append to Asset ID"
@@ -185,6 +188,8 @@
                            Margin="5,6,0,0"
                            Style="{StaticResource labelStyle}"/>
                 <ComboBox x:Name="cboCategory"
+                          Style="{StaticResource ComboBoxDefaultStyle}"
+                          ItemContainerStyle="{StaticResource DefaultComboBoxItem}"
                           Grid.Column="1"
                           VerticalAlignment="Center"
                           Grid.Row="4"
@@ -208,6 +213,8 @@
                            Margin="5,6,0,0"
                            Style="{StaticResource labelStyle}"/>
                 <ComboBox x:Name="cboDownloadType"
+                          Style="{StaticResource ComboBoxDefaultStyle}"
+                          ItemContainerStyle="{StaticResource DefaultComboBoxItem}"
                           Grid.Column="1"
                           Grid.Row="6"
                           VerticalAlignment="Center"
@@ -290,6 +297,7 @@
                 </TextBlock>
 
                 <Button x:Name="btnAdd"
+                        Margin="0,0,5,0"
                         Click="btnAdd_Click"
                         Grid.Row="10"
                         Grid.Column="1"

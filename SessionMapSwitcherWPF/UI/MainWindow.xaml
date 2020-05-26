@@ -12,7 +12,7 @@
         Loaded="MainWindow_Loaded"
         Closing="mainWindow_Closing"
         MinHeight="500" MinWidth="830"
-        Height="615" Width="900"
+        Height="645" Width="900"
         SizeChanged="mainWindow_SizeChanged"
         StateChanged="mainWindow_StateChanged"
         Style="{StaticResource WindowStyle}">
@@ -39,7 +39,7 @@
                                            Margin="5,0,0,0"
                                            Padding="0,2,0,2"/>
                                 <TextBlock x:Name="validationText" 
-                                           Foreground="Maroon"
+                                           Foreground="Red"
                                            Text="{Binding ValidationHint, FallbackValue='(missing game mode)'}"
                                            Visibility="Hidden"
                                            FontSize="11"
@@ -49,18 +49,18 @@
 
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="{StaticResource AppSelectedBrush}"/>
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource AccentOverlayBrush}"/>
                                 <Setter TargetName="mapText" Property="Foreground" Value="White"/>
                                 <Setter TargetName="validationText" Property="Foreground" Value="White"/>
                             </Trigger>
 
                             <DataTrigger Binding="{Binding IsValid}" Value="False">
-                                <Setter TargetName="mapText" Property="Foreground" Value="Maroon"/>
+                                <Setter TargetName="mapText" Property="Foreground" Value="Red"/>
                                 <Setter TargetName="validationText" Property="Visibility" Value="Visible"/>
                             </DataTrigger>
 
                             <Trigger SourceName="border" Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="{StaticResource AppSelectedBrush}"/>
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource AccentOverlayBrush}"/>
                                 <Setter TargetName="mapText" Property="Foreground" Value="White"/>
                                 <Setter TargetName="validationText" Property="Foreground" Value="White"/>
                             </Trigger>
@@ -98,7 +98,10 @@
         </ContextMenu>
     </Window.ContextMenu>
 
-    <TabControl x:Name="tabControl" SelectionChanged="tabControl_SelectionChanged" Background="Transparent">
+    <TabControl x:Name="tabControl" 
+                SelectionChanged="tabControl_SelectionChanged" 
+                BorderBrush="{StaticResource AccentOverlayBrush}"
+                Background="Transparent">
         <TabItem x:Name="tabMainWindow" Header="Main Window">
             <Grid Style="{StaticResource mainGridStyle}">
                 <Grid.RowDefinitions>
@@ -113,38 +116,38 @@
 
                 <!--PATH TO SESSION TEXTBOX AND BUTTONS-->
                 <Label Content="Path To Session:"
-               FontWeight="SemiBold"
-               VerticalAlignment="Top" HorizontalAlignment="Left" Margin="5,10,0,0" Height="26" Width="97"/>
+                       FontSize="13"
+                       VerticalAlignment="Top" HorizontalAlignment="Left" Margin="5,10,0,0"/>
 
                 <TextBox x:Name="txtSessionPath" 
-                 Grid.Column="0" Grid.ColumnSpan="2"
-                 VerticalAlignment="Top" HorizontalAlignment="Stretch"
-                 Text="{Binding SessionPathTextInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                 IsEnabled="{Binding InputControlsEnabled}"
-                 ContextMenuOpening="ContextMenu_ContextMenuOpening"
-                 AllowDrop="True"
-                 PreviewDragOver="TxtSessionPath_PreviewDragOver"
-                 PreviewDrop="TxtSessionPath_PreviewDrop"
-                 KeyUp="TxtSessionPath_KeyUp"
-                 Height="27"
-                 Margin="100,10,50,0"
-                 ContextMenu="{Binding ElementName=mainContextMenu}"/>
+                         Grid.Column="0" Grid.ColumnSpan="2"
+                         VerticalAlignment="Top" HorizontalAlignment="Stretch"
+                         Text="{Binding SessionPathTextInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         IsEnabled="{Binding InputControlsEnabled}"
+                         ContextMenuOpening="ContextMenu_ContextMenuOpening"
+                         AllowDrop="True"
+                         PreviewDragOver="TxtSessionPath_PreviewDragOver"
+                         PreviewDrop="TxtSessionPath_PreviewDrop"
+                         KeyUp="TxtSessionPath_KeyUp"
+                         Height="27"
+                         Margin="105,10,50,0"
+                         ContextMenu="{Binding ElementName=mainContextMenu}"/>
 
 
                 <Button Name="btnBrowseSessionPath" 
-                Grid.Column="1"
-                Content="..." 
-                ToolTip="Browse for path to Session"
-                Style="{StaticResource MainButtonStyle}"
-                IsEnabled="{Binding InputControlsEnabled}"
-                VerticalAlignment="Top" HorizontalAlignment="Right" 
-                Margin="0,10,18,0" 
-                Height="27" Width="27"
-                Click="BtnBrowseSessionPath_Click"/>
+                        FontSize="13"
+                        Grid.Column="1"
+                        Content="..." 
+                        ToolTip="Browse for path to Session"
+                        IsEnabled="{Binding InputControlsEnabled}"
+                        VerticalAlignment="Top" HorizontalAlignment="Right" 
+                        Margin="0,10,18,0" 
+                        Height="27" Width="27"
+                        Click="BtnBrowseSessionPath_Click"/>
 
 
                 <!--AVAILABLE MAPS GROUPBOX-->
-                <GroupBox Grid.Row="1" Header="Available Maps" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,0,3" BorderBrush="#BDBDBD">
+                <GroupBox Grid.Row="1" Header="Available Maps" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,0,3">
 
                     <Grid>
                         <Grid.RowDefinitions>
@@ -153,10 +156,9 @@
                             <RowDefinition Height="auto"/>
                         </Grid.RowDefinitions>
 
-                        <WrapPanel HorizontalAlignment="Left" VerticalAlignment="Top" Margin="3,8,0,0" >
+                        <WrapPanel HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5" >
 
                             <Button x:Name="btnReloadMaps"
-                            Style="{StaticResource MainButtonStyle}"
                             Click="BtnReloadMaps_Click"
                             IsEnabled="{Binding InputControlsEnabled}"
                             Content="Reload Available Maps"
@@ -166,7 +168,6 @@
 
 
                             <Button x:Name="btnImportMap"
-                            Style="{StaticResource MainButtonStyle}"
                             IsEnabled="{Binding InputControlsEnabled}"
                             Content="Import Map"
                             Click="BtnImportMap_Click"
@@ -198,7 +199,7 @@
                                  ToolTip="Right-click a map for additional options"
                                  MinWidth="300" MaxWidth="350"
                                  ScrollViewer.CanContentScroll="False"
-                                 Margin="4,1,2,5"
+                                 Margin="4,1,5,5"
                                  ItemsSource="{Binding FilteredAvailableMaps}"
                                  ItemContainerStyle="{StaticResource MapListItem}"
                                  ContextMenuOpening="ContextMenu_ContextMenuOpening">
@@ -209,11 +210,11 @@
                                     <MenuItem x:Name="menuRenameSelectedMap" Header="Rename Selected Map ..."  Click="MenuRenameSelectedMap_Click"  ToolTipService.ShowOnDisabled="True" ToolTipService.ShowDuration="8000"/>
                                     <MenuItem x:Name="menuHideSelectedMap" Header="Hide Selected Map"  Click="MenuHideSelectedMap_Click"  ToolTipService.ShowOnDisabled="True" ToolTipService.ShowDuration="8000"/>
                                     <MenuItem x:Name="menuDeleteSelectedMap" Header="Delete Selected Map ..."  Click="menuDeleteSelectedMap_Click"  ToolTipService.ShowOnDisabled="True" ToolTipService.ShowDuration="8000"/>
-                                    <Separator/>
+                                    <MenuItem Style="{StaticResource ContextMenuSeperator}"/>
                                     <MenuItem x:Name="menuOpenSessionFolder" Header="Open Session Folder ..."  Click="MenuOpenSessionFolder_Click"/>
                                     <MenuItem x:Name="menuOpenMapsFolder" Header="Open Content Folder ..." Click="MenuOpenMapsFolder_Click"/>
                                     <MenuItem x:Name="menuOpenSelectedMapFolder" Header="Open Selected Map Folder ..." Click="MenuOpenSelectedMapFolder_Click"/>
-                                    <Separator/>
+                                    <MenuItem Style="{StaticResource ContextMenuSeperator}"/>
                                     <MenuItem x:Name="menuOpenReadme" Header="View Help ..." Click="MenuOpenReadme_Click"/>
                                 </ContextMenu>
                             </ListBox.ContextMenu>
@@ -226,12 +227,10 @@
                             
                             <WrapPanel>
                                 <Label Content="Currently Loaded Map:"
-                                       Padding="3,0,0,0"
-                                       FontSize="12"
-                                       FontWeight="SemiBold"/>
+                                       Padding="3,0,0,0"/>
 
                                 <TextBlock x:Name="txtLoadedMap"
-                                           Padding="5,0,0,0"
+                                           Padding="3,0,0,0"
                                            FontSize="12"
                                            MaxWidth="225"
                                            TextTrimming="CharacterEllipsis"
@@ -262,21 +261,20 @@
                     <StackPanel>
 
                         <GroupBox x:Name="grpIniOptions"
-                          BorderBrush="#BDBDBD"
-                          Header="Game Settings"
-                          HorizontalAlignment="Stretch"
-                          VerticalAlignment="Top"
-                          Margin="10,0,10,0">
+                                  Header="Game Settings"
+                                  HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Top"
+                                  Margin="10,0,10,0">
 
                             <StackPanel>
                                 <WrapPanel Margin="10,10,0,0" HorizontalAlignment="Right">
                                     <Label Content="Gravity:" Padding="0,0,5,0"/>
                                     <TextBox x:Name="txtGravity"
-                                     ToolTip="Default value is -980"
-                                     Width="150"
-                                     Height="20"
-                                     Text="{Binding GravityText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='-666.000000'}"
-                                     Margin="0,0,10,0"/>
+                                             ToolTip="Default value is -980"
+                                             Width="150"
+                                             Height="20"
+                                             Text="{Binding GravityText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='-666.000000'}"
+                                             Margin="0,0,10,0"/>
                                 </WrapPanel>
 
                                 <WrapPanel Margin="10,10,0,0" HorizontalAlignment="Right">
@@ -315,7 +313,6 @@
                                 Content="Apply"
                                 ToolTip="Update the game with new settings."
                                 Click="BtnApplySettings_Click"
-                                Style="{StaticResource MainButtonStyle}"
                                 IsEnabled="{Binding InputControlsEnabled}"
                                 HorizontalAlignment="Right"
                                 Margin="10,10,10,5"
@@ -326,22 +323,20 @@
 
 
                         <GroupBox x:Name="grpTextureReplace"
-                          BorderBrush="#BDBDBD"
-                          Header="Texture Replacer"
-                          HorizontalAlignment="Stretch"
-                          VerticalAlignment="Top"
-                          IsEnabled="{Binding IsReplaceTextureControlEnabled}"
-                          Margin="10,10,10,0">
+                                  Header="Texture Replacer"
+                                  HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Top"
+                                  IsEnabled="{Binding IsReplaceTextureControlEnabled}"
+                                  Margin="10,10,10,0">
                             <ui:TextureReplacerUserControl x:Name="ctrlTextureReplacer"/>
                         </GroupBox>
 
                         <GroupBox x:Name="grpProjectWatch"
-                          BorderBrush="#BDBDBD"
-                          Header="Project Watcher"
-                          HorizontalAlignment="Stretch"
-                          VerticalAlignment="Top"
-                          IsEnabled="{Binding IsProjectWatchControlEnabled}"
-                          Margin="10,10,10,0">
+                                  Header="Project Watcher"
+                                  HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Top"
+                                  IsEnabled="{Binding IsProjectWatchControlEnabled}"
+                                  Margin="10,10,10,0">
                             <ui:ProjectWatcherUserControl x:Name="ctrlProjectWatcher"/>
                         </GroupBox>
                     </StackPanel>
@@ -350,50 +345,50 @@
 
                 <!--USER MESSAGE AND LOAD/START BUTTONS-->
                 <TextBlock x:Name="lblUserMessage"
-                   Grid.Row="2" Grid.ColumnSpan="2"
-                   HorizontalAlignment="Left"
-                   VerticalAlignment="Bottom"
-                   Margin="10,0,0,45"
-                   Text="{Binding UserMessage, FallbackValue='Map Loaded!'}"
-                   TextWrapping="Wrap"
-                   FontSize="14"/>
+                           Grid.Row="2" 
+                           Grid.ColumnSpan="2"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Bottom"
+                           Margin="10,5,0,45"
+                           Text="{Binding UserMessage, FallbackValue='Map Loaded!'}"
+                           TextWrapping="Wrap"
+                           FontSize="14"/>
 
                 <TextBlock x:Name="lblHintMessage"
-                   Grid.Row="2" Grid.ColumnSpan="2"
-                   Grid.RowSpan="2"
-                   HorizontalAlignment="Left"
-                   VerticalAlignment="Bottom"
-                   Margin="10,0,0,4"
-                   Text="{Binding HintMessage, FallbackValue='Hint: This is a hint shown to the user that changes on app start every time.'}"
-                   TextWrapping="Wrap"
-                   MaxWidth="600"
-                   FontSize="11"/>
+                           Grid.Row="2" 
+                           Grid.ColumnSpan="2"
+                           Grid.RowSpan="2"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Bottom"
+                           Margin="10,0,0,4"
+                           Text="{Binding HintMessage, FallbackValue='Hint: This is a hint shown to the user that changes on app start every time.'}"
+                           TextWrapping="Wrap"
+                           MaxWidth="600"
+                           FontSize="11"/>
 
                 <Button x:Name="btnLoadMap"
                         Grid.Row="2" Grid.ColumnSpan="2"
                         Content="{Binding LoadMapButtonText, FallbackValue='Load Map'}"
                         ToolTip="Load selected map from the list"
-                        Style="{StaticResource MainButtonStyle}"
                         IsEnabled="{Binding InputControlsEnabled}"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Bottom"
                         FontSize="16"
-                        Margin="0,0,125,30"
+                        Margin="0,5,125,30"
                         Padding="5,0,5,0"
                         Click="BtnLoadMap_Click" Height="33"/>
 
                 <Button x:Name="btnStartGame"
-                Grid.Row="2" Grid.ColumnSpan="2"
-                Content="Start Session"
-                ToolTip="Load selected map and start the game. Restart game if already running."
-                Style="{StaticResource MainButtonStyle}"
-                IsEnabled="{Binding InputControlsEnabled}"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Bottom"
-                FontSize="16"
-                Margin="0,0,10,30"
-                Padding="0"
-                Click="BtnStartGame_Click" Height="33" Width="102"/>
+                        Grid.Row="2" Grid.ColumnSpan="2"
+                        Content="Start Session"
+                        ToolTip="Load selected map and start the game. Restart game if already running."
+                        IsEnabled="{Binding InputControlsEnabled}"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        FontSize="16"
+                        Margin="0,5,10,30"
+                        Padding="0"
+                        Click="BtnStartGame_Click" Height="33" Width="102"/>
 
                 <Button x:Name="btnPatch"
                 Click="BtnPatch_Click"

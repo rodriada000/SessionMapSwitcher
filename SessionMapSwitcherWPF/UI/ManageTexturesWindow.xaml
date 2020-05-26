@@ -11,25 +11,24 @@
         MaxHeight="700" MaxWidth="600"
         Title="Manage Installed Textures" Height="450" Width="500">
     <Window.Resources>
-        <Style TargetType="Button" BasedOn="{StaticResource MainButtonStyle}"/>
 
         <Style TargetType="ListBoxItem">
             <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ListBoxItem">
-                        <Border x:Name="Bd" HorizontalAlignment="Stretch" Background="White">
-                            <TextBlock x:Name="txt" Margin="3" Text="{Binding TextureName, FallbackValue='Texture Name'}" Foreground="Black"/>
+                        <Border x:Name="Bd" HorizontalAlignment="Stretch" Background="{StaticResource SecondaryBackgroundOverlayBrush}">
+                            <TextBlock x:Name="txt" Margin="3" Text="{Binding TextureName, FallbackValue='Texture Name'}" Foreground="{StaticResource PrimaryForegroundBrush}"/>
                         </Border>
 
                         <ControlTemplate.Triggers>
                             <Trigger SourceName="Bd" Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource AppSelectedBrush}"/>
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource PrimaryBackgroundMaskBrush}"/>
                                 <Setter TargetName="txt" Property="Foreground" Value="White"/>
                             </Trigger>
 
                             <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource AppSelectedBrush}"/>
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource PrimaryBackgroundMaskBrush}"/>
                                 <Setter TargetName="txt" Property="Foreground" Value="White"/>
                             </DataTrigger>
                         </ControlTemplate.Triggers>
