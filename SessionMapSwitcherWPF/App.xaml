@@ -11,8 +11,8 @@
         <Color x:Key="DisabledForegroundColor">#c2cbcf</Color>
         <Color x:Key="EnabledForegroundColor">#edf0f1</Color>
 
-        <SolidColorBrush x:Key="ControlPressedBrush" Color="#161818"/>
-        <SolidColorBrush x:Key="ControlMouseOverBrush" Color="#3b363d"/>
+        <SolidColorBrush x:Key="ControlPressedBrush" Color="#3b363d"/>
+        <SolidColorBrush x:Key="ControlMouseOverBrush" Color="#65738a"/>
         <SolidColorBrush x:Key="DisabledForegroundBrush" Color="{StaticResource DisabledForegroundColor}"/>
 
         <!-- Border colors -->
@@ -153,8 +153,8 @@
                         <BulletDecorator Background="Transparent">
                             <BulletDecorator.Bullet>
                                 <Border x:Name="Border"
-                                        Width="13"
-                                        Height="13"
+                                        Width="14"
+                                        Height="14"
                                         CornerRadius="0"
                                         Margin="0,1,0,0"
                                         Background="{StaticResource SecondaryBackgroundBrush}"
@@ -164,12 +164,12 @@
                                     </Border.BorderBrush>
                                     <Grid>
                                         <Path Visibility="Collapsed"
-                                              Width="7"
-                                              Height="7"
+                                              Width="8"
+                                              Height="8"
                                               x:Name="CheckMark"
                                               SnapsToDevicePixels="False"
                                               StrokeThickness="1.5"
-                                              Data="M 0 0 L 7 7 M 0 7 L 7 0">
+                                              Data="M 0 0 L 8 8 M 0 8 L 8 0">
                                             <Path.Stroke>
                                                 <SolidColorBrush Color="{DynamicResource AccentColor}" />
                                             </Path.Stroke>
@@ -177,7 +177,7 @@
                                     </Grid>
                                 </Border>
                             </BulletDecorator.Bullet>
-                            <ContentPresenter Margin="3,0,0,0"
+                            <ContentPresenter Margin="4,0,0,0"
                                               VerticalAlignment="Center"
                                               HorizontalAlignment="Left"
                                               RecognizesAccessKey="True" />
@@ -188,7 +188,7 @@
                                 <Setter TargetName="CheckMark" Property="Visibility" Value="Visible"/>
                             </Trigger>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Border" Property="Background" Value="{StaticResource AccentBrush}"/>
+                                <Setter TargetName="Border" Property="Background" Value="{StaticResource AccentOverlayBrush}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>

@@ -128,6 +128,11 @@ namespace SessionModManagerWPF.UI
         {
             DownloadItemViewModel downloadItem = lstDownloads.SelectedItem as DownloadItemViewModel;
 
+            if (downloadItem == null)
+            {
+                return;
+            }
+
             downloadItem.IsCanceled = true;
             ViewModel.CancelDownload(downloadItem);
         }

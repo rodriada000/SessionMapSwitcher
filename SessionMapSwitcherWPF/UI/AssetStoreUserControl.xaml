@@ -16,7 +16,11 @@
             <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             <Style.Triggers>
                 <DataTrigger Binding="{Binding IsOutOfDate}" Value="True">
-                    <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
+                    <Setter Property="Background">
+                        <Setter.Value>
+                            <SolidColorBrush Color="{StaticResource AccentColor}" Opacity="0.5"/>
+                        </Setter.Value>
+                    </Setter>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
@@ -41,14 +45,16 @@
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding ElementName=gd, Path=DataContext.AuthorToFilterBy.Author, FallbackValue='Author Name'}" 
-                                       HorizontalAlignment="Stretch"
-                                       Padding="0,2,0,2"
-                                       Margin="4,0,0,0"/>
+                           FontSize="{Binding RelativeSource={RelativeSource AncestorType=ComboBox, Mode=FindAncestor}, Path=FontSize}"
+                           HorizontalAlignment="Stretch"
+                           Padding="0,2,0,2"
+                           Margin="4,0,0,0"/>
                 <TextBlock Text="{Binding ElementName=gd, Path=DataContext.AuthorToFilterBy.AssetCountDisplayText, FallbackValue='(4)'}" 
-                                       Grid.Column="1" 
-                                       HorizontalAlignment="Right"
-                                       Padding="0,2,0,2"
-                                       Margin="0,0,30,0"/>
+                           FontSize="{Binding RelativeSource={RelativeSource AncestorType=ComboBox, Mode=FindAncestor}, Path=FontSize}"
+                           Grid.Column="1" 
+                           HorizontalAlignment="Right"
+                           Padding="0,2,0,2"
+                           Margin="0,0,30,0"/>
             </Grid>
         </DataTemplate>
 
@@ -117,7 +123,7 @@
             <Grid VerticalAlignment="Bottom" Margin="3">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
-                    <RowDefinition Height="3"/>
+                    <RowDefinition Height="5"/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
@@ -359,12 +365,12 @@
         </GroupBox>
 
         <StackPanel Grid.Column="1"
-                    Margin="10,15,0,10"
+                    Margin="5,15,0,10"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top">
-            <Label Content="By Author:" Padding="0" FontSize="11"/>
+            <Label Content="Author:" Padding="0"/>
             <ComboBox Width="145" 
-                      Margin="0,0,0,3"
+                      Margin="0,1,0,5"
                       FontSize="11"
                       ToolTip="Choose an Author to filter by"
                       ItemsSource="{Binding AuthorList}"
@@ -372,7 +378,7 @@
                       SelectedValue="{Binding AuthorToFilterBy, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
             </ComboBox>
 
-            <Label Content="Install Status:" Padding="0" FontSize="11"/>
+            <Label Content="Install Status:" Padding="0"/>
             <ComboBox Width="145" 
                       FontSize="11"
                       ToolTip="Filter by installed or not installed"
@@ -383,9 +389,9 @@
         </StackPanel>
 
         <WrapPanel Grid.Column="1"
-                    Margin="0,18,5,0"
+                    Margin="0,0,5,10"
                     HorizontalAlignment="Right"
-                    VerticalAlignment="Top">
+                    VerticalAlignment="Bottom">
 
             <Button x:Name="btnRefresh"
                     Margin="0,0,0,0"

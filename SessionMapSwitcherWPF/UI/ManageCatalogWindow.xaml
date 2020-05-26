@@ -9,17 +9,10 @@
         WindowStartupLocation="CenterScreen"
         Closing="Window_Closing"
         Title="Manage Catalogs" 
-        Width="575"
-        Height="375">
-    <Window.Style>
-        <Style TargetType="Window" BasedOn="{StaticResource WindowStyle}">
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding IsAdding}" Value="True">
-                    <Setter Property="Cursor" Value="Wait"/>
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-    </Window.Style>
+        Width="600"
+        Style="{StaticResource WindowStyle}"
+        Height="400">
+
     <Window.Resources>
 
         <Style x:Key="ManageButtonsStyle" BasedOn="{StaticResource MainButtonStyle}" TargetType="Button">
@@ -60,17 +53,27 @@
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
+        <Grid.Style>
+            <Style TargetType="Grid">
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsAdding}" Value="True">
+                        <Setter Property="Cursor" Value="Wait"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Grid.Style>
+
         <Button x:Name="btnAdd"
                 Click="btnAdd_Click"
                 Content="Add Catalog"
-                Margin="10,3,0,0"
+                Margin="10,5,0,0"
                 Style="{StaticResource ManageButtonsStyle}"
                 HorizontalAlignment="Left"/>
 
         <Button x:Name="btnConfirm"
                 Click="btnConfirm_Click"
                 Content="Confirm"
-                Margin="10,3,0,0"
+                Margin="10,5,0,0"
                 Style="{StaticResource AddButtonsStyle}"
                 HorizontalAlignment="Left"/>
 
@@ -80,7 +83,7 @@
                 Content="Remove Catalog"
                 Style="{StaticResource ManageButtonsStyle}"
                 HorizontalAlignment="Left"
-                Margin="5,3,5,0"/>
+                Margin="5,5,5,0"/>
 
         <Button x:Name="btnCancel"
                 Grid.Column="1"
@@ -88,7 +91,7 @@
                 Content="Cancel"
                 Style="{StaticResource AddButtonsStyle}"
                 HorizontalAlignment="Left"
-                Margin="5,3,5,0"/>
+                Margin="5,5,5,0"/>
 
         <TextBox x:Name="txtUrl"
                  Grid.Column="2"
@@ -101,7 +104,7 @@
                  VerticalAlignment="Bottom"
                  Margin="0,0,10,2">
             <TextBox.Style>
-                <Style TargetType="TextBox">
+                <Style TargetType="TextBox" BasedOn="{StaticResource PrimaryTextBoxStyle}">
                     <Setter Property="Visibility" Value="Hidden"/>
 
                     <Style.Triggers>
@@ -148,7 +151,7 @@
                 Grid.Column="3"
                 Click="btnCreate_Click"
                 Content="Create Catalog"
-                Margin="0,3,10,0"
+                Margin="0,5,10,0"
                 Style="{StaticResource ManageButtonsStyle}"
                 HorizontalAlignment="Right"/>
 
@@ -175,8 +178,7 @@
                 <GridView>
                     <GridViewColumn Width="50">
                         <GridViewColumnHeader IsEnabled="False" 
-                                              Content="Active" 
-                                              Foreground="Black" 
+                                              Content="Active"  
                                               ToolTipService.ShowOnDisabled="True"
                                               ToolTip="Only active catalogs will be shown in the asset store."/>
                         <GridViewColumn.CellTemplate>
@@ -194,6 +196,7 @@
         </ListView>
 
         <Button x:Name="btnClose"
+                FontSize="13"
                 Click="btnClose_Click"
                 Grid.Row="2"
                 Grid.ColumnSpan="4"
@@ -202,6 +205,6 @@
                 Height="26"
                 Style="{StaticResource MainButtonStyle}"
                 HorizontalAlignment="Center"
-                Margin="0,3,0,3"/>
+                Margin="0,5,0,5"/>
     </Grid>
 </Window>

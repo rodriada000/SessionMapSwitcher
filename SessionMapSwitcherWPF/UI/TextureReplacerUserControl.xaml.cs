@@ -34,7 +34,7 @@ namespace SessionMapSwitcher.UI
         {
             using (System.Windows.Forms.OpenFileDialog fileBrowserDialog = new System.Windows.Forms.OpenFileDialog())
             {
-                fileBrowserDialog.Filter = "All files (*.*)|*.*|uasset file (*.uasset)|*.uasset|Zip files (*.zip)|*.zip|Rar files (*.rar)|*.rar";
+                fileBrowserDialog.Filter = "*.uasset *.zip *.rar file|*.uasset;*.zip;*.rar|All files (*.*)|*.*";
                 fileBrowserDialog.Title = "Select .uasset Texture File, .zip, or .rar File Containing Texture Files";
                 System.Windows.Forms.DialogResult result = fileBrowserDialog.ShowDialog();
                 if (result == System.Windows.Forms.DialogResult.OK)
