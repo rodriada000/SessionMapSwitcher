@@ -12,7 +12,7 @@
         Loaded="MainWindow_Loaded"
         Closing="mainWindow_Closing"
         MinHeight="500" MinWidth="830"
-        Height="645" Width="900"
+        Height="655" Width="900"
         SizeChanged="mainWindow_SizeChanged"
         StateChanged="mainWindow_StateChanged"
         Style="{StaticResource WindowStyle}">

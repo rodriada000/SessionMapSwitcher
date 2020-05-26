@@ -18,15 +18,10 @@ This is a Desktop application to easily mod Session and install custom maps and 
 * Mod Manager can download the required patch (thanks to dga711/GHFear) for Session to play custom modded maps and have custom textures within minutes. (`Patch With Illusory Mod Unlocker` button)
 * Easily load custom maps and switch between maps in-game without having to restart the game everytime you want to play a new map.
 * Use the Asset Store easily download dozens of maps and custom textues like decks, wheels, shirts, decks, etc. Mod Manager installs the downloaded assets in minutes for you, No more fiddling with copying & deleting files from folders.
-<img src="https://github.com/rodriada000/SessionMapSwitcher/blob/master/docs/images/asset_store_demo.gif?raw=true" width="90%">
 * Easily replace textures with custom ones using the Texture Replacer. Mod Manager will automatically find the correct texture files to replace for you.
 * Easily import your own custom maps from your Computer and be able to easily re-import the map after making changes to it. Just right click the map you're working on and click `Re-import Selected Map ...`.
 * Unreal Engine 4 Project Watcher for map creators that automatically re-imports the map you are working on after cooking the content.
 
-
-## Notes Before Using
-* **NOTE:** You should start the game using Session Mod Manager's `Start Session` button. If Session is already running then close the game and start it from Session Mod Manager instead.
-* **NOTE:** You will have to load the custom map from Mod Manager when you enter the apartment in-game otherwise the original default map will load after you leave the apartment to go skate.
 
 ## How To Use
 
@@ -44,7 +39,8 @@ _Skip this if you already patched/unpacked the game._
 6. Mod Manager will open a web browser so you can download the Illusory Universal Mod Unlocker ([or you can download it from here](https://illusory.dev/#))
 7. After it finishes downloading, run the setup.exe and then the mod unlocker program will open.
 8. Set the path to be `...\Session\SessionGame\Binaries\Win64` and then click `patch`
-> Note: This path is slightly different from the one set in SMM. The game should now be patched and you can close the mod unlocker program.\
+9. The game should now be patched and you can close the mod unlocker program.
+> Note: This path is slightly different from the one set in SMM. 
 
 ### Modify Object Placement Count
 _This feature allows you to change how many objects you can place in-game_
@@ -82,7 +78,7 @@ _This is the final way to add custom maps and is not recommended for beginners. 
 2. Before starting the game, change any game settings like gravity _(default value is -980)_ or number of objects you can place down.  
 3. _(Optional)_ Check the `Load Second Map After Start` option so your selected map will be loaded if you go back to the apartment
 4. Click `Start Session` (_this will load the selected map and save your game settings before starting the game_).
-> NOTE: When you go to the apartment in-game you will have to open Mod Manager and load the custom map again (even if you are not switching to a new map). This is to ensure the custom map is loaded instead of the original Brooklyn Banks map when you leave the apartment. 
+> **NOTE: When you go to the apartment in-game you will have to open Mod Manager and load the custom map again (even if you are not switching to a new map). This is to ensure the custom map is loaded instead of the original Brooklyn Banks map when you leave the apartment.** 
 
 
 ### Switching Maps In-game
