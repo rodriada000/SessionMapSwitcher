@@ -23,7 +23,7 @@ namespace SessionModManagerWPF.UI
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.IsAdding = false;
+            ViewModel.IsInAddMode = false;
         }
 
         private void btnRemove_Click(object sender, RoutedEventArgs e)
@@ -43,16 +43,16 @@ namespace SessionModManagerWPF.UI
             ViewModel.RemoveUrls(selectedUrls);
         }
 
-        private void btnConfirm_Click(object sender, RoutedEventArgs e)
+        private async void btnConfirm_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.AddUrl(ViewModel.NewUrlText);
+            await ViewModel.AddUrl(ViewModel.NewUrlText);
             ViewModel.NewUrlText = "";
-            ViewModel.IsAdding = false;
+            ViewModel.IsInAddMode = false;
         }
 
         private void btnAdd_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.IsAdding = true;
+            ViewModel.IsInAddMode = true;
             txtUrl.Focus();
         }
 
@@ -92,9 +92,9 @@ namespace SessionModManagerWPF.UI
             btnRemove_Click(sender, e);
         }
 
-        private void menuItemAddDefaults_Click(object sender, RoutedEventArgs e)
+        private async void menuItemAddDefaults_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.AddDefaultCatalogs();
+            await ViewModel.AddDefaultCatalogsAsync();
         }
     }
 }

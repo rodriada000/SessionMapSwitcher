@@ -30,7 +30,7 @@
 
         <TextBox x:Name="txtName" 
                  Grid.Row="1"
-                 Margin="10,0,2,25"
+                 Margin="10,1,2,25"
                  HorizontalAlignment="Stretch"
                  VerticalAlignment="Center"
                  TabIndex="0" 
@@ -40,7 +40,6 @@
                  KeyDown="TxtName_KeyDown"/>
 
         <Button x:Name="btnRename" 
-                Style="{StaticResource MainButtonStyle}"
                 Click="BtnRename_Click" 
                 Grid.Row="1" Grid.Column="1" 
                 Height="25"

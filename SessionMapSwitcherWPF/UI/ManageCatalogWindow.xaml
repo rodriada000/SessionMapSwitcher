@@ -9,9 +9,10 @@
         WindowStartupLocation="CenterScreen"
         Closing="Window_Closing"
         Title="Manage Catalogs" 
-        Width="575"
-        Height="375" 
-        Style="{StaticResource WindowStyle}">
+        Width="600"
+        Style="{StaticResource WindowStyle}"
+        Height="400">
+
     <Window.Resources>
 
         <Style x:Key="ManageButtonsStyle" BasedOn="{StaticResource MainButtonStyle}" TargetType="Button">
@@ -20,7 +21,7 @@
             <Setter Property="Height" Value="26"/>
 
             <Style.Triggers>
-                <DataTrigger Binding="{Binding IsAdding}" Value="True">
+                <DataTrigger Binding="{Binding IsInAddMode}" Value="True">
                     <Setter Property="Visibility" Value="Hidden"/>
                 </DataTrigger>
             </Style.Triggers>
@@ -32,7 +33,7 @@
             <Setter Property="Height" Value="26"/>
 
             <Style.Triggers>
-                <DataTrigger Binding="{Binding IsAdding}" Value="True">
+                <DataTrigger Binding="{Binding IsInAddMode}" Value="True">
                     <Setter Property="Visibility" Value="Visible"/>
                 </DataTrigger>
             </Style.Triggers>
@@ -52,17 +53,27 @@
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
+        <Grid.Style>
+            <Style TargetType="Grid">
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsAdding}" Value="True">
+                        <Setter Property="Cursor" Value="Wait"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Grid.Style>
+
         <Button x:Name="btnAdd"
                 Click="btnAdd_Click"
                 Content="Add Catalog"
-                Margin="10,3,0,0"
+                Margin="10,5,0,0"
                 Style="{StaticResource ManageButtonsStyle}"
                 HorizontalAlignment="Left"/>
 
         <Button x:Name="btnConfirm"
                 Click="btnConfirm_Click"
                 Content="Confirm"
-                Margin="10,3,0,0"
+                Margin="10,5,0,0"
                 Style="{StaticResource AddButtonsStyle}"
                 HorizontalAlignment="Left"/>
 
@@ -72,7 +83,7 @@
                 Content="Remove Catalog"
                 Style="{StaticResource ManageButtonsStyle}"
                 HorizontalAlignment="Left"
-                Margin="0,3,0,0"/>
+                Margin="5,5,5,0"/>
 
         <Button x:Name="btnCancel"
                 Grid.Column="1"
@@ -80,7 +91,7 @@
                 Content="Cancel"
                 Style="{StaticResource AddButtonsStyle}"
                 HorizontalAlignment="Left"
-                Margin="0,3,0,0"/>
+                Margin="5,5,5,0"/>
 
         <TextBox x:Name="txtUrl"
                  Grid.Column="2"
@@ -93,11 +104,11 @@
                  VerticalAlignment="Bottom"
                  Margin="0,0,10,2">
             <TextBox.Style>
-                <Style TargetType="TextBox">
+                <Style TargetType="TextBox" BasedOn="{StaticResource PrimaryTextBoxStyle}">
                     <Setter Property="Visibility" Value="Hidden"/>
 
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsAdding}" Value="True">
+                        <DataTrigger Binding="{Binding IsInAddMode}" Value="True">
                             <Setter Property="Visibility" Value="Visible"/>
                         </DataTrigger>
                     </Style.Triggers>
@@ -119,14 +130,14 @@
                     <Style.Triggers>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding IsAdding}" Value="True"/>
+                                <Condition Binding="{Binding IsInAddMode}" Value="True"/>
                                 <Condition Binding="{Binding NewUrlText}" Value=""/>
                             </MultiDataTrigger.Conditions>
                             <MultiDataTrigger.Setters>
                                 <Setter Property="Visibility" Value="Visible"/>
                             </MultiDataTrigger.Setters>
                         </MultiDataTrigger>
-                        <DataTrigger Binding="{Binding IsAdding, FallbackValue='True'}" Value="False">
+                        <DataTrigger Binding="{Binding IsInAddMode, FallbackValue='True'}" Value="False">
                             <Setter Property="Visibility" Value="Hidden"/>
                         </DataTrigger>
                     </Style.Triggers>
@@ -140,7 +151,7 @@
                 Grid.Column="3"
                 Click="btnCreate_Click"
                 Content="Create Catalog"
-                Margin="0,3,10,0"
+                Margin="0,5,10,0"
                 Style="{StaticResource ManageButtonsStyle}"
                 HorizontalAlignment="Right"/>
 
@@ -150,15 +161,16 @@
                   ScrollViewer.VerticalScrollBarVisibility="Auto"
                   ScrollViewer.HorizontalScrollBarVisibility="Auto"
                   SelectionMode="Extended"
+                  ItemContainerStyle="{StaticResource PrimaryListViewItemStyle}"
                   ItemsSource="{Binding CatalogList}"
-                  Margin="10,0,10,0">
+                  Margin="10,5,10,0">
             <ListView.ContextMenu>
-                <ContextMenu x:Name="menuCatalogCommands">
+                <ContextMenu x:Name="menuCatalogCommands" IsEnabled="{Binding ContextMenuIsEnabled}">
                     <MenuItem x:Name="menuItemRemove" Header="Remove Selected Catalog(s)" Click="menuItemRemove_Click"/>
-                    <Separator/>
+                    <MenuItem Style="{StaticResource ContextMenuSeperator}"/>
                     <MenuItem x:Name="menuItemActivate" Header="Activate All" Click="menuItemActivate_Click"/>
                     <MenuItem x:Name="menuItemDeactivate" Header="De-activate All" Click="menuItemDeactivate_Click"/>
-                    <Separator/>
+                    <MenuItem Style="{StaticResource ContextMenuSeperator}"/>
                     <MenuItem x:Name="menuItemAddDefaults" Header="Add Default Catalogs" Click="menuItemAddDefaults_Click"/>
                 </ContextMenu>
             </ListView.ContextMenu>
@@ -166,8 +178,7 @@
                 <GridView>
                     <GridViewColumn Width="50">
                         <GridViewColumnHeader IsEnabled="False" 
-                                              Content="Active" 
-                                              Foreground="Black" 
+                                              Content="Active"  
                                               ToolTipService.ShowOnDisabled="True"
                                               ToolTip="Only active catalogs will be shown in the asset store."/>
                         <GridViewColumn.CellTemplate>
@@ -185,6 +196,7 @@
         </ListView>
 
         <Button x:Name="btnClose"
+                FontSize="13"
                 Click="btnClose_Click"
                 Grid.Row="2"
                 Grid.ColumnSpan="4"
@@ -193,6 +205,6 @@
                 Height="26"
                 Style="{StaticResource MainButtonStyle}"
                 HorizontalAlignment="Center"
-                Margin="0,3,0,3"/>
+                Margin="0,5,0,5"/>
     </Grid>
 </Window>

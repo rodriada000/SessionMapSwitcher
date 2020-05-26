@@ -8,17 +8,19 @@
              mc:Ignorable="d" 
              d:DesignHeight="550" d:DesignWidth="900">
     <UserControl.Resources>
-        <Style TargetType="CheckBox">
-            <Setter Property="Margin" Value="0,0,0,0"/>
+        <Style TargetType="CheckBox" BasedOn="{StaticResource MainCheckboxStyle}">
+            <Setter Property="Margin" Value="0,0,10,0"/>
         </Style>
 
-        <Style TargetType="Button" BasedOn="{StaticResource MainButtonStyle}"/>
-
-        <Style TargetType="{x:Type ListViewItem}" x:Key="AssetListStyle">
+        <Style TargetType="{x:Type ListViewItem}" x:Key="AssetListStyle" BasedOn="{StaticResource PrimaryListViewItemStyle}">
             <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             <Style.Triggers>
                 <DataTrigger Binding="{Binding IsOutOfDate}" Value="True">
-                    <Setter Property="Background" Value="LightGray"/>
+                    <Setter Property="Background">
+                        <Setter.Value>
+                            <SolidColorBrush Color="{StaticResource AccentColor}" Opacity="0.5"/>
+                        </Setter.Value>
+                    </Setter>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
@@ -26,7 +28,11 @@
         <Style x:Key="PreviewTextStyle" TargetType="{x:Type TextBlock}">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding SelectedAsset.IsOutOfDate}" Value="True">
-                    <Setter Property="Foreground" Value="Red"/>
+                    <Setter Property="Foreground">
+                        <Setter.Value>
+                            <SolidColorBrush Color="Red" Opacity="0.75"/>
+                        </Setter.Value>
+                    </Setter>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
@@ -39,26 +45,16 @@
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding ElementName=gd, Path=DataContext.AuthorToFilterBy.Author, FallbackValue='Author Name'}" 
-                                       HorizontalAlignment="Stretch"
-                                       Padding="0,2,0,2"
-                                       Margin="4,0,0,0"/>
-                <TextBlock Text="{Binding ElementName=gd, Path=DataContext.AuthorToFilterBy.AssetCountDisplayText, FallbackValue='(4)'}" 
-                                       Grid.Column="1" 
-                                       HorizontalAlignment="Right"
-                                       Padding="0,2,0,2"
-                                       Margin="0,0,30,0"/>
-            </Grid>
-        </DataTemplate>
-
-        <DataTemplate x:Key="InstallStatusContentTemplate">
-            <Grid x:Name="gd" DataContext="{Binding ElementName=ctrlAssetStore, Path=DataContext}" Background="Transparent">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock Text="{Binding ElementName=gd, Path=DataContext.SelectedInstallStatus, FallbackValue='Installed / Not Installed'}" 
+                           FontSize="{Binding RelativeSource={RelativeSource AncestorType=ComboBox, Mode=FindAncestor}, Path=FontSize}"
                            HorizontalAlignment="Stretch"
                            Padding="0,2,0,2"
                            Margin="4,0,0,0"/>
+                <TextBlock Text="{Binding ElementName=gd, Path=DataContext.AuthorToFilterBy.AssetCountDisplayText, FallbackValue='(4)'}" 
+                           FontSize="{Binding RelativeSource={RelativeSource AncestorType=ComboBox, Mode=FindAncestor}, Path=FontSize}"
+                           Grid.Column="1" 
+                           HorizontalAlignment="Right"
+                           Padding="0,2,0,2"
+                           Margin="0,0,30,0"/>
             </Grid>
         </DataTemplate>
 
@@ -87,8 +83,8 @@
 
                         <ControlTemplate.Triggers>
                             <Trigger SourceName="gd" Property="IsMouseOver" Value="True">
-                                <Setter TargetName="gd" Property="Background" Value="{StaticResource AppPrimaryBrush}"/>
-                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource AppAccentBrush}"/>
+                                <Setter TargetName="gd" Property="Background" Value="{StaticResource AccentOverlayBrush}"/>
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource ControlMouseOverBrush}"/>
                                 <Setter Property="Foreground" Value="White"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
@@ -103,14 +99,9 @@
             <Setter Property="ItemContainerStyle" Value="{StaticResource AuthorComboBoxItemStyle}"/>
         </Style>
 
-        <Style TargetType="{x:Type ComboBox}" x:Key="InstallStatusComboBoxStyle" BasedOn="{StaticResource ComboBoxDefaultStyle}">
-            <Setter Property="ItemTemplate" Value="{StaticResource InstallStatusContentTemplate}"/>
-            <Setter Property="ItemContainerStyle" Value="{StaticResource DefaultComboBoxItem}"/>
-        </Style>
-
     </UserControl.Resources>
 
-    <Grid Background="#CFD8DC">
+    <Grid Background="Transparent">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
@@ -128,26 +119,36 @@
                   HorizontalAlignment="Left"
                   VerticalAlignment="Bottom"
                   Margin="5,5,0,10"
-                  Header="Categories" Padding="3,10,0,10">
-            <StackPanel VerticalAlignment="Bottom">
-                <WrapPanel>
-                    <CheckBox Content="All" IsChecked="{Binding DisplayAll, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="5,0,35,5"/>
-                    <CheckBox Content="Maps" IsChecked="{Binding DisplayMaps, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="5,0,10,0"/>
-                    <CheckBox Content="Decks" IsChecked="{Binding DisplayDecks, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="5,0,10,0"/>
-                    <CheckBox Content="Griptapes" IsChecked="{Binding DisplayGriptapes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="5,0,7,0"/>
-                    <CheckBox Content="Trucks" IsChecked="{Binding DisplayTrucks, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="5,0,10,0"/>
-                    <CheckBox Content="Meshes" IsChecked="{Binding DisplayMeshes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="5,0,10,0"/>
-                </WrapPanel>
+                  Header="Categories">
+            <Grid VerticalAlignment="Bottom" Margin="3">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="5"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
 
-                <WrapPanel>
-                    <CheckBox Content="Wheels" IsChecked="{Binding DisplayWheels, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="5,0,10,0"/>
-                    <CheckBox Content="Hats" IsChecked="{Binding DisplayHats, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="5,0,15,0"/>
-                    <CheckBox Content="Shirts" IsChecked="{Binding DisplayShirts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="5,0,12,0"/>
-                    <CheckBox Content="Pants" IsChecked="{Binding DisplayPants, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="5,0,30,0"/>
-                    <CheckBox Content="Shoes" IsChecked="{Binding DisplayShoes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="5,0,10,0"/>
-                    <CheckBox Content="Characters" IsChecked="{Binding DisplayCharacters, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="5,0,10,0"/>
-                </WrapPanel>
-            </StackPanel>
+                <CheckBox Grid.Column="0" Content="All" IsChecked="{Binding DisplayAll, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <CheckBox Grid.Column="1" Content="Maps" IsChecked="{Binding DisplayMaps, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <CheckBox Grid.Column="2" Content="Decks" IsChecked="{Binding DisplayDecks, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <CheckBox Grid.Column="3" Content="Griptapes" IsChecked="{Binding DisplayGriptapes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <CheckBox Grid.Column="4" Content="Trucks" IsChecked="{Binding DisplayTrucks, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <CheckBox Grid.Column="5" Content="Meshes" IsChecked="{Binding DisplayMeshes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <CheckBox Grid.Row="2" Grid.Column="0" Content="Wheels" IsChecked="{Binding DisplayWheels, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <CheckBox Grid.Row="2" Grid.Column="1" Content="Hats" IsChecked="{Binding DisplayHats, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <CheckBox Grid.Row="2" Grid.Column="2" Content="Shirts" IsChecked="{Binding DisplayShirts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <CheckBox Grid.Row="2" Grid.Column="3" Content="Pants" IsChecked="{Binding DisplayPants, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <CheckBox Grid.Row="2" Grid.Column="4" Content="Shoes" IsChecked="{Binding DisplayShoes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <CheckBox Grid.Row="2" Grid.Column="5" Content="Characters" IsChecked="{Binding DisplayCharacters, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            </Grid>
         </GroupBox>
 
         <TextBox x:Name="txtSearch"
@@ -156,7 +157,7 @@
                  VerticalContentAlignment="Center"
                  Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  TextWrapping="NoWrap"
-                 Margin="5,9,0,0"/>
+                 Margin="5,1,0,0"/>
 
         <TextBlock Text="Type to search by Name or Description (only searches checked Categories)..."
                    Grid.Row="1"
@@ -165,7 +166,7 @@
                    VerticalAlignment="Center"
                    IsHitTestVisible="False"
                    TextWrapping="NoWrap"
-                   Margin="10,9,0,0">
+                   Margin="10,0,0,0">
             <TextBlock.Style>
                 <Style TargetType="TextBlock">
                     <Setter Property="Visibility" Value="Hidden"/>
@@ -193,7 +194,7 @@
                 <GridView>
                     <GridViewColumn Header="Name" Width="190" DisplayMemberBinding="{Binding Name}"/>
                     <GridViewColumn Header="Author" Width="100" DisplayMemberBinding="{Binding Author}"/>
-                    <GridViewColumn Header="Category" Width="95" DisplayMemberBinding="{Binding AssetCategory}"/>
+                    <GridViewColumn Header="Category" Width="95" DisplayMemberBinding="{Binding Category}"/>
                     <GridViewColumn Header="Updated Date" Width="130" DisplayMemberBinding="{Binding UpdatedDate}"/>
                     <GridViewColumn Header="Ver." Width="40" DisplayMemberBinding="{Binding Version}"/>
                 </GridView>
@@ -201,6 +202,12 @@
             <ListView.ContextMenu>
                 <ContextMenu>
                     <MenuItem x:Name="menuItemBrowserDownload" Header="Download in Browser ..." Click="menuItemBrowserDownload_Click"/>
+                    <MenuItem Style="{StaticResource ContextMenuSeperator}"/>
+                    <MenuItem x:Name="menuItemFetchImages" 
+                              IsEnabled="{Binding IsNotDownloadingAllImages}"
+                              Header="Fetch All Preview Images" 
+                              Click="menuItemFetchImages_Click" 
+                              ToolTip="Download all preview images for assets listed."/>
                 </ContextMenu>
             </ListView.ContextMenu>
         </ListView>
@@ -209,13 +216,17 @@
         <ListView x:Name="lstDownloads" 
                   Grid.Row="3" 
                   Margin="5,0,0,10"
+                  ItemContainerStyle="{StaticResource PrimaryListViewItemStyle}"
                   ItemsSource="{Binding CurrentDownloads, UpdateSourceTrigger=PropertyChanged}"
                   SelectionMode="Single"
-                  MinHeight="75"
-                  MaxHeight="100">
+                  MinHeight="125"
+                  MaxHeight="125">
             <ListView.ContextMenu>
                 <ContextMenu>
-                    <MenuItem x:Name="menuItemCancelDownload" Header="Cancel selected download" Click="menuItemCancelDownload_Click"/>
+                    <MenuItem x:Name="menuItemCancelDownload" Header="Cancel Selected Download" Click="menuItemCancelDownload_Click"/>
+                    <MenuItem Style="{StaticResource ContextMenuSeperator}"/>
+                    <MenuItem x:Name="menuItemCancelAll" Header="Cancel All Downloads" Click="menuItemCancelAll_Click"/>
+
                 </ContextMenu>
             </ListView.ContextMenu>
             <ListView.View>
@@ -308,15 +319,17 @@
                     </TextBlock.Style>
                 </TextBlock>
 
+
                 <WrapPanel Grid.Row="2" 
                            HorizontalAlignment="Right" 
-                           VerticalAlignment="Bottom">
+                           VerticalAlignment="Bottom"
+                           Margin="0,0,5,25">
                     <Button x:Name="btnRemove"
                             ToolTip="Delete the files related to this asset from your game."
                             Content="{Binding RemoveButtonText, FallbackValue='Remove Asset'}"
                             IsEnabled="{Binding IsRemoveButtonEnabled}"
                             Click="btnRemove_Click"
-                            Margin="0,0,10,0"
+                            Margin="0,0,5,0"
                             Padding="5">
                         <Button.Style>
                             <Style TargetType="Button" BasedOn="{StaticResource MainButtonStyle}">
@@ -334,19 +347,30 @@
                             IsEnabled="{Binding IsInstallButtonEnabled}"
                             Click="btnInstall_Click"
                             Padding="5"/>
+                    
                 </WrapPanel>
+
+                <CheckBox x:Name="chkDeleteAfterDownload" 
+                          Grid.Row="2"
+                          FontSize="10"
+                          HorizontalAlignment="Right" 
+                          VerticalAlignment="Bottom"
+                          Margin="0,0,5,5"
+                          Content="Delete Download After Install" 
+                          ToolTip="Downloaded assets are saved to 'store_data/temp_downloads' and are deleted to save space... Uncheck to keep downloaded file(s)."
+                          IsChecked="{Binding DeleteDownloadAfterInstall, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
 
             </Grid>
         </GroupBox>
 
         <StackPanel Grid.Column="1"
-                    Margin="10,15,0,10"
+                    Margin="5,15,0,10"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top">
-            <Label Content="By Author:" Padding="0" FontSize="11"/>
+            <Label Content="Author:" Padding="0"/>
             <ComboBox Width="145" 
-                      Margin="0,0,0,3"
+                      Margin="0,1,0,5"
                       FontSize="11"
                       ToolTip="Choose an Author to filter by"
                       ItemsSource="{Binding AuthorList}"
@@ -354,47 +378,36 @@
                       SelectedValue="{Binding AuthorToFilterBy, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
             </ComboBox>
 
-            <Label Content="Install Status:" Padding="0" FontSize="11"/>
+            <Label Content="Install Status:" Padding="0"/>
             <ComboBox Width="145" 
                       FontSize="11"
-                      ToolTip="Filter the list of assets by installed or not installed"
+                      ToolTip="Filter by installed or not installed"
                       ItemsSource="{Binding InstallStatusList}"
-                      Style="{StaticResource InstallStatusComboBoxStyle}"
-                      SelectedValue="{Binding SelectedInstallStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                      Style="{StaticResource ComboBoxDefaultStyle}"
+                      SelectedItem="{Binding SelectedInstallStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
         </StackPanel>
 
-        <StackPanel Grid.Column="1"
-                    Margin="0,18,5,0"
+        <WrapPanel Grid.Column="1"
+                    Margin="0,0,5,10"
                     HorizontalAlignment="Right"
-                    VerticalAlignment="Top">
-            <WrapPanel Margin="0,0,0,10">
+                    VerticalAlignment="Bottom">
 
-                <Button x:Name="btnRefresh"
-                        Margin="0,0,0,0"
-                        Content="Refresh Assets"
-                        IsEnabled="{Binding IsNotLoadingManifests}"
-                        ToolTip="Downloads the latest asset catalogs and refreshes asset list."
-                        Click="btnRefresh_Click"
-                        Padding="5,2,5,2"/>
+            <Button x:Name="btnRefresh"
+                    Margin="0,0,0,0"
+                    Content="Refresh Assets"
+                    IsEnabled="{Binding IsNotLoadingManifests}"
+                    ToolTip="Downloads the latest asset catalogs and refreshes asset list."
+                    Click="btnRefresh_Click"
+                    Padding="5,2,5,2"/>
 
-                <Button x:Name="btnManageCat"
+            <Button x:Name="btnManageCat"
                     Content="Manage Catalogs"
-                    ToolTip="Add or remove asset catalogs."
+                    ToolTip="Add, remove, or create asset catalogs."
                     Click="btnManageCat_Click"
+                    Margin="5,0,0,0"
                     Padding="5,3,5,3"/>
-            </WrapPanel>
-
-            <CheckBox x:Name="chkFetchAllImages" 
-                      Content="Fetch All Preview Images" 
-                      ToolTip="Download all preview images for the assets."
-                      Margin="0,0,0,7" 
-                      IsChecked="{Binding FetchAllPreviewImages, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-            <CheckBox x:Name="chkDeleteAfterDownload" 
-                      Content="Delete Download After Install" 
-                      ToolTip="When unchecked the downloaded assets will not be deleted from 'store_data/temp_downloads'"
-                      IsChecked="{Binding DeleteDownloadAfterInstall, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-        </StackPanel>
+        </WrapPanel>
 
 
 

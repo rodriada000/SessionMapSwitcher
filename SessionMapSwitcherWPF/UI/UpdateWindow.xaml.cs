@@ -1,4 +1,5 @@
-﻿using SessionMapSwitcherCore.Classes;
+﻿using NLog;
+using SessionMapSwitcherCore.Classes;
 using SessionMapSwitcherCore.Utils;
 using SessionModManagerCore.Classes;
 using SessionModManagerCore.ViewModels;
@@ -15,6 +16,7 @@ namespace SessionMapSwitcher.UI
     /// </summary>
     public partial class UpdateWindow : Window
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         private UpdateViewModel ViewModel { get; set; }
 
@@ -45,6 +47,11 @@ namespace SessionMapSwitcher.UI
 
             scraperTask.ContinueWith((antecedent) =>
             {
+                if (antecedent.IsFaulted)
+                {
+                    Logger.Error(antecedent.Exception.GetBaseException());
+                }
+
                 browser.NavigateToString(htmlVersionNotes);
                 ViewModel.IsBrowserVisible = true;
                 browser.Visibility = ViewModel.IsBrowserVisible ? Visibility.Visible : Visibility.Hidden;
@@ -93,7 +100,7 @@ namespace SessionMapSwitcher.UI
             bool foundbody = false;
 
             // append css style to the scraped html so it the document does not load with default Arial font
-            fullHtml += "<style type=\"text/css\"> * { font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji; background: #CFD8DC } a { pointer-events: none; cursor: default; } </style>";
+            fullHtml += "<style type=\"text/css\"> * { font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji; background: #221E1F; color: white } a { pointer-events: none; cursor: default; color: #799BAC } </style>";
 
             // loop over html elements and find the 'release-header' div and 'markdown-body' div
             foreach (HtmlElement element in doc.Body.All)
