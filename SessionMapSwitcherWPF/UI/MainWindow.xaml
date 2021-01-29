@@ -280,6 +280,9 @@
                                 <WrapPanel Margin="10,10,0,0" HorizontalAlignment="Right">
                                     <Label Content="Object Placement Count:" Padding="0,0,5,0"/>
                                     <TextBox x:Name="txtObjectCount"
+                                             IsEnabled="False"
+                                             ToolTipService.ShowOnDisabled="True"
+                                             ToolTip="Does not work with 0.0.0.7 YET"
                                      MaxWidth="150"
                                      Width="150"
                                      Height="20"

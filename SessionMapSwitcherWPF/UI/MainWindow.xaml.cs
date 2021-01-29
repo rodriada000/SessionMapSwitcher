@@ -284,20 +284,20 @@ namespace SessionMapSwitcher
                 return;
             }
 
-            if (GameSettingsManager.DoesObjectPlacementFileExist() == false)
-            {
-                MessageBoxResult promptResult = System.Windows.MessageBox.Show("The required file is missing and must be extracted before object count can be modified.\n\nClick 'Yes' to extract the file (UnrealPak and crypto.json will be downloaded if it is not installed locally).",
-                                                                               "Warning - Cannot Modify Object Count!",
-                                                                               MessageBoxButton.YesNo,
-                                                                               MessageBoxImage.Information,
-                                                                               MessageBoxResult.Yes);
+            //if (GameSettingsManager.DoesObjectPlacementFileExist() == false)
+            //{
+            //    MessageBoxResult promptResult = System.Windows.MessageBox.Show("The required file is missing and must be extracted before object count can be modified.\n\nClick 'Yes' to extract the file (UnrealPak and crypto.json will be downloaded if it is not installed locally).",
+            //                                                                   "Warning - Cannot Modify Object Count!",
+            //                                                                   MessageBoxButton.YesNo,
+            //                                                                   MessageBoxImage.Information,
+            //                                                                   MessageBoxResult.Yes);
 
-                if (promptResult == MessageBoxResult.Yes)
-                {
-                    ViewModel.StartUnrealPakProcess(RegistryHelper.GetPathToUnrealEngine());
-                    return;
-                }
-            }
+            //    if (promptResult == MessageBoxResult.Yes)
+            //    {
+            //        ViewModel.StartUnrealPakProcess(RegistryHelper.GetPathToUnrealEngine());
+            //        return;
+            //    }
+            //}
 
 
             bool didSet = ViewModel.UpdateGameSettings();
