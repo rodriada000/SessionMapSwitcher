@@ -213,6 +213,7 @@
                                     <MenuItem Style="{StaticResource ContextMenuSeperator}"/>
                                     <MenuItem x:Name="menuOpenSessionFolder" Header="Open Session Folder ..."  Click="MenuOpenSessionFolder_Click"/>
                                     <MenuItem x:Name="menuOpenMapsFolder" Header="Open Content Folder ..." Click="MenuOpenMapsFolder_Click"/>
+                                    <MenuItem x:Name="menuOpenSaveFolder" Header="Open Save Folder ..." Click="menuOpenSaveFolder_Click"/>
                                     <MenuItem x:Name="menuOpenSelectedMapFolder" Header="Open Selected Map Folder ..." Click="MenuOpenSelectedMapFolder_Click"/>
                                     <MenuItem Style="{StaticResource ContextMenuSeperator}"/>
                                     <MenuItem x:Name="menuOpenReadme" Header="View Help ..." Click="MenuOpenReadme_Click"/>
@@ -268,17 +269,7 @@
 
                             <StackPanel>
                                 <WrapPanel Margin="10,10,0,0" HorizontalAlignment="Right">
-                                    <Label Content="Gravity:" Padding="0,0,5,0"/>
-                                    <TextBox x:Name="txtGravity"
-                                             ToolTip="Default value is -980"
-                                             Width="150"
-                                             Height="20"
-                                             Text="{Binding GravityText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='-666.000000'}"
-                                             Margin="0,0,10,0"/>
-                                </WrapPanel>
-
-                                <WrapPanel Margin="10,10,0,0" HorizontalAlignment="Right">
-                                    <Label Content="Object Placement Count:" Padding="0,0,5,0"/>
+                                    <Label Content="Object Placement Max Count:" Padding="0,0,5,0"/>
                                     <TextBox x:Name="txtObjectCount"
                                      MaxWidth="150"
                                      Width="150"
