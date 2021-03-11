@@ -1,0 +1,77 @@
+﻿<UserControl x:Class="SessionModManagerWPF.UI.GameSettingsUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SessionModManagerWPF.UI"
+             xmlns:ui="clr-namespace:SessionMapSwitcher.UI"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="600">
+    <Grid>
+        <ScrollViewer Grid.Row="1" Grid.Column="1" 
+                      VerticalScrollBarVisibility="Auto"
+                      Margin="0,10,0,0">
+            <StackPanel>
+
+                <GroupBox x:Name="grpIniOptions"
+                                  Header="Game Settings"
+                                  HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Top"
+                                  Margin="10,0,10,0">
+
+                    <StackPanel>
+                        <WrapPanel Margin="10,10,0,0" HorizontalAlignment="Left">
+                            <Label Content="Object Placement Max Count:" Padding="0,0,5,0"/>
+                            <TextBox x:Name="txtObjectCount"
+                                     MaxWidth="150"
+                                     Width="150"
+                                     Height="20"
+                                     Text="{Binding ObjectCountText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='5'}"
+                                     Margin="0,0,10,0"/>
+                        </WrapPanel>
+
+                        <CheckBox Content="Skip Intro Movie"
+                                          x:Name="chkSkipMovie"
+                                          HorizontalAlignment="Left"
+                                          IsChecked="{Binding SkipMovieIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='True'}"
+                                          Margin="10,10,10,0"/>
+
+                        <CheckBox Content="Enable DBuffer"
+                                          ToolTipService.InitialShowDelay="100"
+                                          ToolTip="Defaults to 'true' to fix some decals for Session 0.0.0.5+ ... Sets [/Script/Engine.RendererSettings] r.DBuffer in UserEngine.ini"
+                                          HorizontalAlignment="Left"
+                                          Width="{Binding ElementName=chkSkipMovie, Path=ActualWidth}"
+                                          IsChecked="{Binding DBufferIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='True'}"
+                                          Margin="10,5,10,0"/>
+
+                        <CheckBox Content="Enable Light Propagation Volume"
+                                          ToolTipService.InitialShowDelay="100"
+                                          ToolTip="Defaults to 'false' to enable some custom materials for Session 0.0.0.5+ ... Sets [/Script/Engine.RendererSettings] r.LightPropagationVolume in UserEngine.ini"
+                                          HorizontalAlignment="Left"
+                                          IsChecked="{Binding LightPropagationVolumeIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='False'}"
+                                          Margin="10,5,10,0"/>
+
+
+                        <Button x:Name="btnApplySettings"
+                                Content="Save Settings"
+                                ToolTip="Update the game with new settings."
+                                Click="BtnApplySettings_Click"
+                                HorizontalAlignment="Right"
+                                Margin="10,10,10,5"
+                                Padding="10,0,10,2"/>
+                    </StackPanel>
+
+                </GroupBox>
+
+                <GroupBox x:Name="grpProjectWatch"
+                                  Header="Project Watcher"
+                                  HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Top"
+                                  Margin="10,10,10,0">
+                    <ui:ProjectWatcherUserControl x:Name="ctrlProjectWatcher"/>
+                </GroupBox>
+            </StackPanel>
+        </ScrollViewer>
+
+    </Grid>
+</UserControl>

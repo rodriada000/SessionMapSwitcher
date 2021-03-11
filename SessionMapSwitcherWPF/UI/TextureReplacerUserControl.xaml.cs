@@ -17,12 +17,15 @@ namespace SessionMapSwitcher.UI
             InitializeComponent();
 
             ViewModel = new TextureReplacerViewModel();
+            ViewModel.InitInstalledTextures();
+
             this.DataContext = ViewModel;
         }
 
         private void BtnReplace_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.ReplaceTextures();
+            ViewModel.InitInstalledTextures();
         }
 
         private void BtnBrowse_Click(object sender, RoutedEventArgs e)
@@ -68,10 +71,18 @@ namespace SessionMapSwitcher.UI
             }
         }
 
-        private void btnManage_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Validates a item in the list is selected before removing texture
+        /// </summary>
+        private void RemoveTexture()
         {
-            ManageTexturesWindow manageWindow = new ManageTexturesWindow();
-            manageWindow.ShowDialog();
+            if (lstTextures.SelectedItem == null)
+            {
+                MessageBox.Show("Select a mod to remove first.", "Notice", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            ViewModel.RemoveSelectedTexture();
         }
     }
 }

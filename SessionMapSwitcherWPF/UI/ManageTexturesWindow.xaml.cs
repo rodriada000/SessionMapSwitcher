@@ -51,7 +51,7 @@ namespace SessionModManagerWPF.UI
                 return;
             }
 
-            ViewModel.RemoveSelectedTexture();
+            //ViewModel.RemoveSelectedTexture();
         }
     }
 }

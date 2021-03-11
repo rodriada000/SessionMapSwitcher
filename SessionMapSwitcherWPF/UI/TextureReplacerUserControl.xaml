@@ -5,43 +5,80 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              x:Name="ctrlTextureReplacer"
              mc:Ignorable="d"              
-             d:DesignHeight="125" d:DesignWidth="350">
+             d:DesignHeight="400" d:DesignWidth="600">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="auto"/>
         </Grid.ColumnDefinitions>
-        
-        <TextBlock Text="Drag in a texture file, .zip, or .rar file containing textures and click 'Replace' to easily copy new textures into the game." TextWrapping="Wrap" Margin="10,6,0,10"/>
 
-        <TextBox Grid.Row="1" Margin="10,0,2,0" Height="20" Text="{Binding PathToFile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AllowDrop="True" PreviewDragOver="TextBox_PreviewDragOver" PreviewDrop="TextBox_PreviewDrop"/>
+        <TextBlock Text="Drag in a .zip or .rar file and click 'Replace' to easily copy new textures/meshes into the game" 
+                   Margin="15,6,0,0"
+                   VerticalAlignment="Top"
+                   HorizontalAlignment="Left"
+                   TextTrimming="CharacterEllipsis"
+                   MaxWidth="{Binding ElementName=txtPath, Path=ActualWidth}"
+                   Foreground="{StaticResource DisabledForegroundBrush}"
+                   FontSize="11">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Visibility" Value="Hidden"/>
 
-        <Button x:Name="btnBrowse" 
-                Click="BtnBrowse_Click" 
-                Grid.Row="1" Grid.Column="1" 
-                Content="..." 
-                Width="25" Margin="0,0,2,0"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding PathToFile, FallbackValue=''}" Value="">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
 
-        <WrapPanel Grid.Row="2" Grid.ColumnSpan="2"
-                   HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,2,0,5">
-            
-            <Button x:Name="btnManage"
-                Click="btnManage_Click"
-                Content="Manage Installed Textures"
-                Padding="5,2,5,2"
-                Margin="0,5,5,0"/>
+        <TextBox Margin="10,5,2,0" 
+                 x:Name="txtPath"
+                 VerticalAlignment="Top"
+                 Text="{Binding PathToFile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                 AllowDrop="True" 
+                 PreviewDragOver="TextBox_PreviewDragOver" 
+                 PreviewDrop="TextBox_PreviewDrop"/>
+
+
+        <WrapPanel Grid.Column="1" 
+                   HorizontalAlignment="Right" 
+                   VerticalAlignment="Top" Margin="2,4,10,5">
+           
+            <Button x:Name="btnBrowse" 
+                    Click="BtnBrowse_Click" 
+                    Content="..." 
+                    Width="25" Margin="0,0,4,0"/>
 
             <Button x:Name="btnReplace"
                 Click="BtnReplace_Click"
                 Content="Replace"
-                Padding="5,2,5,2"
-                Margin="0,5,2,0"/>
+                Padding="5,2,5,2"/>
         </WrapPanel>
+
+        <ListView x:Name="lstTextures" 
+                  Grid.Row="1"
+                  Grid.ColumnSpan="2"
+                  VerticalAlignment="Stretch"
+                  Margin="10"
+                  ItemContainerStyle="{StaticResource PrimaryListViewItemStyle}"
+                  SelectedItem="{Binding SelectedTexture, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                  ItemsSource="{Binding InstalledTextures, UpdateSourceTrigger=PropertyChanged}"
+                  SelectionMode="Single"
+                  MinHeight="125">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Texture/Mesh" Width="250" DisplayMemberBinding="{Binding TextureName, FallbackValue='item text'}"/>
+                    <GridViewColumn Header="Category" Width="100" DisplayMemberBinding="{Binding Category, FallbackValue=''}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
 
 
     </Grid>

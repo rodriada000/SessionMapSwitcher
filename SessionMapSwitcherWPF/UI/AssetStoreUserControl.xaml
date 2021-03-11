@@ -215,7 +215,7 @@
 
         <ListView x:Name="lstDownloads" 
                   Grid.Row="3" 
-                  Margin="5,0,0,10"
+                  Margin="5,0,0,5"
                   ItemContainerStyle="{StaticResource PrimaryListViewItemStyle}"
                   ItemsSource="{Binding CurrentDownloads, UpdateSourceTrigger=PropertyChanged}"
                   SelectionMode="Single"
@@ -249,7 +249,7 @@
                   Grid.RowSpan="3"
                   HorizontalAlignment="Stretch"
                   VerticalAlignment="Stretch"
-                  Margin="5,0,5,10"
+                  Margin="5,0,5,5"
                   Header="Selected Asset Preview">
             <Grid>
                 <Grid.RowDefinitions>
@@ -408,17 +408,5 @@
                     Margin="5,0,0,0"
                     Padding="5,3,5,3"/>
         </WrapPanel>
-
-
-
-
-
-        <TextBlock Grid.Row="4" Grid.ColumnSpan="2"
-                   VerticalAlignment="Bottom"
-                   HorizontalAlignment="Left"
-                   FontSize="16"
-                   Margin="5,0,0,5"
-                   TextWrapping="Wrap"
-                   Text="{Binding UserMessage, FallbackValue='This is a message to the user ...'}"/>
     </Grid>
 </UserControl>
