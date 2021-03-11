@@ -96,9 +96,6 @@
     <Compile Include="UI\ManageCatalogWindow.xaml.cs">
       <DependentUpon>ManageCatalogWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\ManageTexturesWindow.xaml.cs">
-      <DependentUpon>ManageTexturesWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UI\MapSelectionUserControl.xaml.cs">
       <DependentUpon>MapSelectionUserControl.xaml</DependentUpon>
     </Compile>
@@ -143,10 +140,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\ManageCatalogWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UI\ManageTexturesWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
