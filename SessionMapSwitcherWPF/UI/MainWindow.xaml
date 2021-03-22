@@ -93,10 +93,9 @@
 
                 <Button x:Name="btnPatch"
                         Click="BtnPatch_Click"
-                        IsEnabled="{Binding IsPatchButtonEnabled}"
                         Grid.Column="1"
                         Content="Patch With Illusory Mod Unlocker"
-                        ToolTip="{Binding PatchButtonToolTip}"
+                        ToolTip="Download/Open the Illusory Mod Unlocker to patch the game."
                         ToolTipService.ShowOnDisabled="True"
                         Style="{StaticResource HyperlinkButtonStyle}"
                         HorizontalAlignment="Right"

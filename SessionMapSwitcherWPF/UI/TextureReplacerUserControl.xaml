@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              x:Name="ctrlTextureReplacer"
              mc:Ignorable="d"              
-             d:DesignHeight="400" d:DesignWidth="600">
+             d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -17,7 +17,7 @@
         </Grid.ColumnDefinitions>
 
         <TextBlock Text="Drag in a .zip or .rar file and click 'Replace' to easily copy new textures/meshes into the game" 
-                   Margin="15,12,0,0"
+                   Margin="15,14,0,0"
                    VerticalAlignment="Top"
                    HorizontalAlignment="Left"
                    TextTrimming="CharacterEllipsis"
@@ -40,8 +40,7 @@
         <TextBox Margin="10,5,2,0" 
                  x:Name="txtPath"
                  FontSize="13"
-                 Height="27"
-                 VerticalAlignment="Top"
+                 VerticalAlignment="Stretch"
                  Text="{Binding PathToFile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                  AllowDrop="True" 
                  PreviewDragOver="TextBox_PreviewDragOver" 
@@ -53,10 +52,12 @@
                    VerticalAlignment="Top" Margin="2,5,10,0">
 
             <Button x:Name="btnBrowse" 
+                    Style="{StaticResource ButtonIcon}"
+                    Tag="FolderOpen"
                     Click="BtnBrowse_Click" 
                     Content="..."
-                    Height="27"
-                    Width="25" Margin="0,0,4,0"/>
+                    Height="32"
+                    Width="32" Margin="0,0,4,0"/>
 
             <Button x:Name="btnReplace"
                 Click="BtnReplace_Click"
@@ -73,26 +74,62 @@
 
             <GroupBox Header="Installed Mods"
                       Margin="10">
-                <ListView x:Name="lstTextures" 
-                          VerticalAlignment="Stretch"
-                          ItemContainerStyle="{StaticResource PrimaryListViewItemStyle}"
-                          SelectedItem="{Binding SelectedTexture, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                          ItemsSource="{Binding InstalledTextures, UpdateSourceTrigger=PropertyChanged}"
-                          SelectionMode="Single"
-                          MinHeight="125">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn Header="Name" Width="195" DisplayMemberBinding="{Binding TextureName, FallbackValue='item text'}"/>
-                            <GridViewColumn Header="Category" Width="95" DisplayMemberBinding="{Binding Category, FallbackValue=''}"/>
-                        </GridView>
-                    </ListView.View>
-                </ListView>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Button x:Name="btnRemove"
+                            Grid.Row="0"
+                            HorizontalAlignment="Right"
+                            ToolTip="Remove Mod"
+                            Click="btnRemove_Click"
+                            Style="{StaticResource ButtonIcon}" 
+                            Tag="Delete" 
+                            Height="32"
+                            Margin="0,-10,0,5"
+                            Width="48"/>
+                    <ListView x:Name="lstTextures" 
+                              Grid.Row="1"
+                              VerticalAlignment="Stretch"
+                              ItemContainerStyle="{StaticResource PrimaryListViewItemStyle}"
+                              SelectedItem="{Binding SelectedTexture, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                              ItemsSource="{Binding InstalledTextures, UpdateSourceTrigger=PropertyChanged}"
+                              SelectionMode="Single"
+                              MinHeight="125">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Name" Width="195" DisplayMemberBinding="{Binding TextureName, FallbackValue='item text'}"/>
+                                <GridViewColumn Header="Category" Width="95" DisplayMemberBinding="{Binding Category, FallbackValue=''}"/>
+                                <!--<GridViewColumn Width="45">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button x:Name="btnRemove"
+                                                    Grid.Row="1"
+                                                    HorizontalAlignment="Left"
+                                                    ToolTip="Remove Mod"
+                                                    Click="btnRemove_Click"
+                                                    Style="{StaticResource ButtonIcon}" 
+                                                    Tag="Delete" 
+                                                    Height="28"
+                                                    Width="28"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>-->
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </Grid>
             </GroupBox>
             
             <GroupBox Grid.Column="1"
                       Header="Mod Preview"
                       Margin="0,10,10,10">
                 <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
                     <Image Source="{Binding ModPreviewSource}" Margin="2"
                            Grid.Column="1"
                            HorizontalAlignment="Stretch"

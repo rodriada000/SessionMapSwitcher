@@ -195,7 +195,7 @@ namespace SessionMapSwitcher
                 }
                 else if (tabTextureManager.IsSelected)
                 {
-                    controlTextureMan.ViewModel.InitInstalledTextures();
+                    controlTextureMan.ViewModel.LoadInstalledTextures();
                 }
             }
 

@@ -82,6 +82,41 @@
 
     <Style TargetType="{x:Type Button}" BasedOn="{StaticResource MainButtonStyle}"/>
 
+
+    <Style x:Key="ButtonIcon" TargetType="{x:Type Button}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="border" CornerRadius="3" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1">
+                        <Viewbox Stretch="Uniform">
+                            <icons:PackIconModern Kind="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Tag}"
+                                                  x:Name="icon"
+                                                  Padding="{TemplateBinding Padding}"
+                                                  ToolTip="{TemplateBinding ToolTip}"
+                                                  Width="{TemplateBinding Width}"
+                                                  Height="{TemplateBinding Height}"
+                                                  Margin="0,5,0,5"
+                                                  Foreground="{StaticResource PrimaryForegroundBrush}"/>
+                        </Viewbox>
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" TargetName="border" Value="{StaticResource ControlMouseOverBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" TargetName="border" Value="{StaticResource ControlPressedBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" TargetName="border" Value="0.25"/>
+                            <Setter Property="Foreground" Value="{StaticResource DisabledForegroundBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="{x:Type GroupBox}">
         <Setter Property="Foreground" Value="{StaticResource PrimaryForegroundBrush}"/>
 
@@ -570,5 +605,6 @@
             </Setter.Value>
         </Setter>
     </Style>
+
 
 </ResourceDictionary>
