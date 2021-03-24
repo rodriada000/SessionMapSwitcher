@@ -1,4 +1,5 @@
-﻿using SessionModManagerCore.ViewModels;
+﻿using SessionModManagerCore.Classes;
+using SessionModManagerCore.ViewModels;
 using SessionModManagerWPF.UI;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,12 +18,15 @@ namespace SessionMapSwitcher.UI
             InitializeComponent();
 
             ViewModel = new TextureReplacerViewModel();
+            ViewModel.LoadInstalledTextures();
+
             this.DataContext = ViewModel;
         }
 
         private void BtnReplace_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.ReplaceTextures();
+            ViewModel.LoadInstalledTextures();
         }
 
         private void BtnBrowse_Click(object sender, RoutedEventArgs e)
@@ -44,6 +48,20 @@ namespace SessionMapSwitcher.UI
             }
         }
 
+        private void btnRemove_Click(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel.SelectedTexture == null)
+            {
+                MessageService.Instance.ShowMessage("Select a mod to remove first!");
+                return;
+            }
+
+            ViewModel.RemoveSelectedTexture();
+        }
+
+        /// <summary>
+        /// Method for showing drag n drop effect when dragging text into textbox
+        /// </summary>
         private void TextBox_PreviewDragOver(object sender, DragEventArgs e)
         {
             e.Handled = true;
@@ -54,6 +72,9 @@ namespace SessionMapSwitcher.UI
             }
         }
 
+        /// <summary>
+        /// logic when dropping file into textbox to extract path
+        /// </summary>
         private void TextBox_PreviewDrop(object sender, DragEventArgs e)
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
@@ -66,12 +87,6 @@ namespace SessionMapSwitcher.UI
                     ViewModel.PathToFile = ViewModel.PathToFile.Replace(".uexp", ".uasset").Replace(".ubulk", ".uasset");
                 }
             }
-        }
-
-        private void btnManage_Click(object sender, RoutedEventArgs e)
-        {
-            ManageTexturesWindow manageWindow = new ManageTexturesWindow();
-            manageWindow.ShowDialog();
         }
     }
 }
