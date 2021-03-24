@@ -86,6 +86,7 @@
                 <TextBlock x:Name="lblUserMessage"
                            HorizontalAlignment="Left"
                            VerticalAlignment="Bottom"
+                           TextTrimming="CharacterEllipsis"
                            Margin="10,0,0,3"
                            Text="{Binding UserMessage, FallbackValue='Map Loaded!'}"
                            TextWrapping="Wrap"

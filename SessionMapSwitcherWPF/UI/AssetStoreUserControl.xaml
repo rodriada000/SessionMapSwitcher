@@ -270,15 +270,18 @@
                                        Margin="5,5,0,0"/>
                         </WrapPanel>
 
-                        <WrapPanel Margin="0,0,0,0">
-                            <TextBlock Text="Description:" 
-                                       Margin="5,5,5,0"
-                                       FontWeight="Bold"/>
-                            <TextBlock Text="{Binding SelectedDescription, FallbackValue='example description for a selected asset.'}"
-                                       Style="{StaticResource PreviewTextStyle}"
-                                       TextWrapping="Wrap"
-                                       Margin="5,5,0,0"/>
-                        </WrapPanel>
+                        <TextBlock Text="Description:" 
+                                   Margin="5,5,5,0"
+                                   FontWeight="Bold"/>
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden"
+                                      MaxHeight="200">
+                            <WrapPanel Margin="0,0,0,0">
+                                <TextBlock Text="{Binding SelectedDescription, FallbackValue='example description for a selected asset.'}"
+                                           Style="{StaticResource PreviewTextStyle}"
+                                           TextWrapping="Wrap"
+                                           Margin="5,5,0,0"/>
+                            </WrapPanel>
+                        </ScrollViewer>
                     </StackPanel>
                     
                 </ScrollViewer>
@@ -394,15 +397,22 @@
                     VerticalAlignment="Bottom">
 
             <Button x:Name="btnRefresh"
+                    Style="{StaticResource ButtonIcon}"
+                    Tag="Refresh"
+                    Width="64"
+                    Height="32"
                     Margin="0,0,0,0"
                     Content="Refresh Assets"
                     IsEnabled="{Binding IsNotLoadingManifests}"
-                    ToolTip="Downloads the latest asset catalogs and refreshes asset list."
+                    ToolTip="Download the latest asset catalogs and refresh."
                     Click="btnRefresh_Click"
                     Padding="5,2,5,2"/>
 
             <Button x:Name="btnManageCat"
-                    Content="Manage Catalogs"
+                    Style="{StaticResource ButtonIcon}"
+                    Tag="BookOpenText"
+                    Width="64"
+                    Height="32"
                     ToolTip="Add, remove, or create asset catalogs."
                     Click="btnManageCat_Click"
                     Margin="5,0,0,0"

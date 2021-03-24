@@ -94,35 +94,53 @@
         </Grid.ColumnDefinitions>
 
         <!--PATH TO SESSION TEXTBOX AND BUTTONS-->
-        <Label Content="Path To Session:"
-                       FontSize="13"
-                       VerticalAlignment="Top" HorizontalAlignment="Left" Margin="5,10,0,0"/>
+        <TextBlock Text="Enter Path to Session: [PathToSteam]\steamapps\common\Session" 
+                   Grid.Column="0" Grid.ColumnSpan="2"
+                   Margin="50,18,0,0"
+                   VerticalAlignment="Top"
+                   HorizontalAlignment="Left"
+                   TextTrimming="CharacterEllipsis"
+                   MaxWidth="{Binding ElementName=txtSessionPath, Path=ActualWidth}"
+                   Foreground="{StaticResource DisabledForegroundBrush}"
+                   FontSize="11">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Visibility" Value="Hidden"/>
 
-        <TextBox x:Name="txtSessionPath" 
-                         Grid.Column="0" Grid.ColumnSpan="2"
-                         VerticalAlignment="Top" HorizontalAlignment="Stretch"
-                         Text="{Binding SessionPathTextInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                         IsEnabled="{Binding InputControlsEnabled}"
-                         ContextMenuOpening="ContextMenu_ContextMenuOpening"
-                         AllowDrop="True"
-                         PreviewDragOver="TxtSessionPath_PreviewDragOver"
-                         PreviewDrop="TxtSessionPath_PreviewDrop"
-                         KeyUp="TxtSessionPath_KeyUp"
-                         Height="27"
-                         Margin="105,10,50,0"
-                         ContextMenu="{Binding ElementName=mainContextMenu}"/>
-
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding SessionPathTextInput, FallbackValue=''}" Value="">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
 
         <Button Name="btnBrowseSessionPath" 
-                        FontSize="13"
-                        Grid.Column="1"
-                        Content="..." 
-                        ToolTip="Browse for path to Session"
-                        IsEnabled="{Binding InputControlsEnabled}"
-                        VerticalAlignment="Top" HorizontalAlignment="Right" 
-                        Margin="0,10,18,0" 
-                        Height="27" Width="27"
-                        Click="BtnBrowseSessionPath_Click"/>
+                Style="{StaticResource ButtonIcon}"
+                Tag="FolderOpen"
+                ToolTip="Browse for path to Session"
+                IsEnabled="{Binding InputControlsEnabled}"
+                VerticalAlignment="Top" HorizontalAlignment="Left" 
+                Margin="10,10,18,0" 
+                Height="32" Width="32"
+                Click="BtnBrowseSessionPath_Click"/>
+        
+        <TextBox x:Name="txtSessionPath" 
+                 Grid.Column="0" Grid.ColumnSpan="2"
+                 VerticalAlignment="Stretch"        
+                 HorizontalAlignment="Stretch"
+                 Text="{Binding SessionPathTextInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 IsEnabled="{Binding InputControlsEnabled}"
+                 ContextMenuOpening="ContextMenu_ContextMenuOpening"
+                 AllowDrop="True"
+                 PreviewDragOver="TxtSessionPath_PreviewDragOver"
+                 PreviewDrop="TxtSessionPath_PreviewDrop"
+                 KeyUp="TxtSessionPath_KeyUp"
+                 Margin="45,10,10,0"
+                 ContextMenu="{Binding ElementName=mainContextMenu}"/>
+
+
 
 
         <!--AVAILABLE MAPS GROUPBOX-->
@@ -153,11 +171,6 @@
                             Margin="5,0,0,0"
                             Padding="5,1,5,1"
                             FontSize="11">
-                        <Button.ContextMenu>
-                            <ContextMenu x:Name="importContextMenu">
-                                <MenuItem x:Name="menuComputerImport" Header="From Computer ..." Click="MenuComputerImport_Click"/>
-                            </ContextMenu>
-                        </Button.ContextMenu>
                     </Button>
 
                     <CheckBox x:Name="chkShowInvalidMaps"
@@ -263,6 +276,22 @@
                             <Setter Property="Visibility" Value="Hidden"/>
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding IsLoadingImage, FallbackValue='True'}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+
+                <TextBlock Text="No Preview."
+                           Grid.Row="1"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Hidden"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsPreviewMissing, FallbackValue='False'}" Value="True">
                                     <Setter Property="Visibility" Value="Visible"/>
                                 </DataTrigger>
                             </Style.Triggers>

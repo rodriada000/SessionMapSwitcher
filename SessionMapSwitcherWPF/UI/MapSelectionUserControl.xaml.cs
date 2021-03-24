@@ -231,17 +231,6 @@ namespace SessionModManagerWPF.UI
 
         private void BtnImportMap_Click(object sender, RoutedEventArgs e)
         {
-            if (UeModUnlocker.IsGamePatched() == false)
-            {
-                MessageBoxResult result = System.Windows.MessageBox.Show("Session has not been patched yet. Click 'Patch With Illusory Mod Unlocker' to patch the game.", "Notice!", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            importContextMenu.IsOpen = true;
-        }
-
-        private void MenuComputerImport_Click(object sender, RoutedEventArgs e)
-        {
             OpenComputerImportWindow();
         }
 
@@ -253,7 +242,7 @@ namespace SessionModManagerWPF.UI
                 return;
             }
 
-            ComputerImportViewModel importViewModel = new ComputerImportViewModel();
+            MapImportViewModel importViewModel = new MapImportViewModel();
 
             ComputerImportWindow importWindow = new ComputerImportWindow(importViewModel);
             importWindow.ShowDialog();

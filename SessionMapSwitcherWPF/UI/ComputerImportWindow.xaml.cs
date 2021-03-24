@@ -8,14 +8,14 @@ namespace SessionMapSwitcher
     /// </summary>
     public partial class ComputerImportWindow : Window
     {
-        private ComputerImportViewModel ViewModel { get; set; }
+        private MapImportViewModel ViewModel { get; set; }
 
         public ComputerImportWindow()
         {
             InitializeComponent();
         }
 
-        public ComputerImportWindow(ComputerImportViewModel importViewModel)
+        public ComputerImportWindow(MapImportViewModel importViewModel)
         {
             InitializeComponent();
 

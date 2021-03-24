@@ -9,6 +9,7 @@ using SessionMapSwitcherCore.Utils;
 using SessionMapSwitcherWPF.Classes;
 using SessionModManagerCore.Classes;
 using SessionModManagerCore.ViewModels;
+using SessionMapSwitcher.Classes.Events;
 
 namespace SessionMapSwitcher
 {
@@ -111,13 +112,13 @@ namespace SessionMapSwitcher
         {
             CheckForNewVersionInBackground();
             controlTextureMan.ViewModel.MessageChanged += MessageService_MessageReceived;
-            //ctrlProjectWatcher.ViewModel.MapImported += ProjectWatcher_MapImported;
+            controlSettings.ctrlProjectWatcher.ViewModel.MapImported += ProjectWatcher_MapImported;
         }
 
-        //private void ProjectWatcher_MapImported(object sender, MapImportedEventArgs e)
-        //{
-        //    controlMapSelection.ViewModel.LoadMap(e.MapName);
-        //}
+        private void ProjectWatcher_MapImported(object sender, MapImportedEventArgs e)
+        {
+            controlMapSelection.ViewModel.LoadMap(e.MapName);
+        }
 
         #region Update Related Methods
 
@@ -148,7 +149,7 @@ namespace SessionMapSwitcher
         {
             updateTimer = new DispatcherTimer();
             updateTimer.Tick += UpdateTimer_Tick;
-            updateTimer.Interval = new TimeSpan(days: 0, hours: 0, minutes: 0, seconds: 0, milliseconds: 250);
+            updateTimer.Interval = new TimeSpan(days: 0, hours: 0, minutes: 0, seconds: 1);
             updateTimer.Start();
         }
 

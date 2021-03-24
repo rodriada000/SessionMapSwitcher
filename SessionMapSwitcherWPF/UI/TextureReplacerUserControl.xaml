@@ -12,12 +12,13 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
         <TextBlock Text="Drag in a .zip or .rar file and click 'Replace' to easily copy new textures/meshes into the game" 
                    Margin="15,14,0,0"
+                   Grid.Column="1"
                    VerticalAlignment="Top"
                    HorizontalAlignment="Left"
                    TextTrimming="CharacterEllipsis"
@@ -37,7 +38,8 @@
             </TextBlock.Style>
         </TextBlock>
 
-        <TextBox Margin="10,5,2,0" 
+        <TextBox Margin="5,5,10,0" 
+                 Grid.Column="1"
                  x:Name="txtPath"
                  FontSize="13"
                  VerticalAlignment="Stretch"
@@ -47,9 +49,9 @@
                  PreviewDrop="TextBox_PreviewDrop"/>
 
 
-        <WrapPanel Grid.Column="1" 
+        <WrapPanel Grid.Column="0" 
                    HorizontalAlignment="Right" 
-                   VerticalAlignment="Top" Margin="2,5,10,0">
+                   VerticalAlignment="Top" Margin="10,5,0,0">
 
             <Button x:Name="btnBrowse" 
                     Style="{StaticResource ButtonIcon}"
@@ -156,6 +158,22 @@
                                 <Setter Property="Visibility" Value="Hidden"/>
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsLoadingImage, FallbackValue='True'}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+
+                    <TextBlock Text="No Preview."
+                               Grid.Column="1"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Hidden"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPreviewMissing, FallbackValue='False'}" Value="True">
                                         <Setter Property="Visibility" Value="Visible"/>
                                     </DataTrigger>
                                 </Style.Triggers>
