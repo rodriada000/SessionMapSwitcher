@@ -10,6 +10,7 @@ using SessionMapSwitcherWPF.Classes;
 using SessionModManagerCore.Classes;
 using SessionModManagerCore.ViewModels;
 using SessionMapSwitcher.Classes.Events;
+using System.Windows.Documents;
 
 namespace SessionMapSwitcher
 {
@@ -198,6 +199,10 @@ namespace SessionMapSwitcher
                 {
                     controlTextureMan.ViewModel.LoadInstalledTextures();
                 }
+                else if (tabSettings.IsSelected)
+                {
+                    controlSettings.ViewModel.RefreshGameSettings();
+                }
             }
 
         }
@@ -213,8 +218,12 @@ namespace SessionMapSwitcher
         public void PromptToPatch()
         {
             string displayName = "IllusoryUniversalModUnlocker";
+            string newDisplayName = "Unreal-Mod-Unlocker";
 
-            if (!RegistryHelper.IsSoftwareInstalled(displayName, Microsoft.Win32.RegistryHive.CurrentUser, Microsoft.Win32.RegistryView.Registry32))
+            bool isOldVersionInstalled = RegistryHelper.IsSoftwareInstalled(displayName, Microsoft.Win32.RegistryHive.CurrentUser, Microsoft.Win32.RegistryView.Registry32);
+            bool isUnlockerInstalled = RegistryHelper.IsSoftwareInstalled(newDisplayName, Microsoft.Win32.RegistryHive.CurrentUser, Microsoft.Win32.RegistryView.Registry32);
+
+            if (!isOldVersionInstalled && !isUnlockerInstalled)
             {
                 ModUnlockerDownloadLink downloadInfo = UeModUnlocker.GetLatestDownloadLinkInfo();
 
@@ -235,9 +244,14 @@ namespace SessionMapSwitcher
                     Process.Start(new ProcessStartInfo(downloadInfo.Url));
                 }
             }
-            else
+            else if (isOldVersionInstalled)
             {
                 string modUnlockerPath = RegistryHelper.GetExePathFromDisplayIcon(displayName, Microsoft.Win32.RegistryHive.CurrentUser, Microsoft.Win32.RegistryView.Registry32);
+                Process.Start(modUnlockerPath);
+            }
+            else if (isUnlockerInstalled)
+            {
+                string modUnlockerPath = RegistryHelper.GetExePathFromDisplayIcon(newDisplayName, Microsoft.Win32.RegistryHive.CurrentUser, Microsoft.Win32.RegistryView.Registry32);
                 Process.Start(modUnlockerPath);
             }
         }

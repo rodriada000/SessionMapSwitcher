@@ -1,6 +1,7 @@
 ﻿using SessionModManagerCore.Classes;
 using SessionModManagerCore.ViewModels;
 using SessionModManagerWPF.UI;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -25,8 +26,16 @@ namespace SessionMapSwitcher.UI
 
         private void BtnReplace_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.ReplaceTextures();
-            ViewModel.LoadInstalledTextures();
+            ViewModel.IsReplaceButtonEnabled = false;
+            
+            Task.Factory.StartNew(() =>
+            {
+                ViewModel.ReplaceTextures();
+                ViewModel.LoadInstalledTextures();
+            }).ContinueWith(result =>
+            {
+                ViewModel.IsReplaceButtonEnabled = true;
+            });
         }
 
         private void BtnBrowse_Click(object sender, RoutedEventArgs e)

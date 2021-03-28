@@ -6,7 +6,12 @@
              xmlns:local="clr-namespace:SessionModManagerWPF.UI"
              xmlns:ui="clr-namespace:SessionMapSwitcher.UI"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="600">
+             d:DesignHeight="725" d:DesignWidth="575">
+    <UserControl.Resources>
+        <Style TargetType="Label" BasedOn="{StaticResource MainLabelStyle}">
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+        </Style>
+    </UserControl.Resources>
     <Grid>
         <ScrollViewer Grid.Row="1" Grid.Column="1" 
                       VerticalScrollBarVisibility="Auto"
@@ -21,11 +26,11 @@
 
                     <StackPanel>
                         <WrapPanel Margin="10,10,0,0" HorizontalAlignment="Left">
-                            <Label Content="Object Placement Max Count:" Padding="0,0,5,0"/>
+                            <Label Content="Object Placement Max Count" Padding="0,4,5,0"/>
                             <TextBox x:Name="txtObjectCount"
                                      MaxWidth="150"
                                      Width="150"
-                                     Height="20"
+                                     Height="27"
                                      Text="{Binding ObjectCountText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='5'}"
                                      Margin="0,0,10,0"/>
                         </WrapPanel>
@@ -49,8 +54,164 @@
                                           ToolTip="Defaults to 'false' to enable some custom materials for Session 0.0.0.5+ ... Sets [/Script/Engine.RendererSettings] r.LightPropagationVolume in UserEngine.ini"
                                           HorizontalAlignment="Left"
                                           IsChecked="{Binding LightPropagationVolumeIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='False'}"
-                                          Margin="10,5,10,0"/>
+                                          Margin="10,5,10,10"/>
 
+                        <GroupBox Header="Video Settings" Margin="10,10,10,0">
+                            <Grid Margin="0,10,0,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Content="Shadows"/>
+                                <ComboBox Grid.Column="1"
+                                          ItemsSource="{Binding VideoSettingsDropdownOptions}"
+                                          SelectedValue="{Binding ShadowQualityText, Mode=TwoWay, FallbackValue='Epic'}"
+                                          Style="{StaticResource ComboBoxDefaultStyle}"/>
+                                <Label Content="Anti-Aliasing"
+                                       Margin="0,5,0,0"
+                                       Grid.Row="1"/>
+                                <ComboBox Grid.Column="1"
+                                          Grid.Row="1"
+                                          Margin="0,5,0,0"
+                                          ItemsSource="{Binding VideoSettingsDropdownOptions}"
+                                          SelectedValue="{Binding AntiAliasingText, Mode=TwoWay, FallbackValue='Epic'}"
+                                          Style="{StaticResource ComboBoxDefaultStyle}"/>
+                                <Label Content="Textures"
+                                       Margin="0,5,0,0"
+                                       Grid.Row="2"/>
+                                <ComboBox Grid.Column="1"
+                                          Grid.Row="2"
+                                          Margin="0,5,0,0"
+                                          ItemsSource="{Binding VideoSettingsDropdownOptions}"
+                                          SelectedValue="{Binding TexturesQualityText, Mode=TwoWay, FallbackValue='Epic'}"
+                                          Style="{StaticResource ComboBoxDefaultStyle}"/>
+
+                                <Label Content="View Distance"
+                                       Margin="0,5,0,0"
+                                       Grid.Row="3"/>
+                                <ComboBox Grid.Column="1"
+                                          Grid.Row="3"
+                                          Margin="0,5,0,0"
+                                          ItemsSource="{Binding VideoSettingsDropdownOptions}"
+                                          SelectedValue="{Binding ViewDistanceQualityText, Mode=TwoWay, FallbackValue='Epic'}"
+                                          Style="{StaticResource ComboBoxDefaultStyle}"/>
+
+                                <Label Content="Shading"
+                                       Margin="0,5,0,0"
+                                       Grid.Row="4"/>
+                                <ComboBox Grid.Column="1"
+                                          Grid.Row="4"
+                                          Margin="0,5,0,0"
+                                          ItemsSource="{Binding VideoSettingsDropdownOptions}"
+                                          SelectedValue="{Binding ShadingQualityText, Mode=TwoWay, FallbackValue='Epic'}"
+                                          Style="{StaticResource ComboBoxDefaultStyle}"/>
+
+                                <Label Content="Foliage"
+                                       Margin="0,5,0,0"
+                                       Grid.Row="5"/>
+                                <ComboBox Grid.Column="1"
+                                          Grid.Row="5"
+                                          Margin="0,5,0,0"
+                                          ItemsSource="{Binding VideoSettingsDropdownOptions}"
+                                          SelectedValue="{Binding FoliageQualityText, Mode=TwoWay, FallbackValue='Epic'}"
+                                          Style="{StaticResource ComboBoxDefaultStyle}"/>
+
+                                <Label Content="Effects"
+                                       Margin="0,5,0,0"
+                                       Grid.Row="6"/>
+                                <ComboBox Grid.Column="1"
+                                          Grid.Row="6"
+                                          Margin="0,5,0,0"
+                                          ItemsSource="{Binding VideoSettingsDropdownOptions}"
+                                          SelectedValue="{Binding EffectsQualityText, Mode=TwoWay, FallbackValue='Epic'}"
+                                          Style="{StaticResource ComboBoxDefaultStyle}"/>
+                                
+                                <Label Content="Post Processing"
+                                       Margin="0,5,0,0"
+                                       Grid.Row="7"/>
+                                <ComboBox Grid.Column="1"
+                                          Grid.Row="7"
+                                          Margin="0,5,0,0"
+                                          ItemsSource="{Binding VideoSettingsDropdownOptions}"
+                                          SelectedValue="{Binding PostProcessingText, Mode=TwoWay, FallbackValue='Epic'}"
+                                          Style="{StaticResource ComboBoxDefaultStyle}"/>
+
+                                <Label Content="Window Mode"
+                                       Margin="0,5,0,0"
+                                       Grid.Row="9"/>
+                                <ComboBox Grid.Column="1"
+                                          Grid.Row="9"
+                                          Margin="0,5,0,0"
+                                          ItemsSource="{Binding FullscreenDropdownOptions}"
+                                          SelectedValue="{Binding FullScreenMode, Mode=TwoWay, FallbackValue='Fullscreen'}"
+                                          Style="{StaticResource ComboBoxDefaultStyle}"/>
+
+                                <Label Content="Resolution"
+                                       Margin="0,5,0,0"
+                                       Grid.Row="10"/>
+                                <ComboBox Grid.Column="1"
+                                          Grid.Row="10"
+                                          Margin="0,5,0,0"
+                                          ItemsSource="{Binding ResolutionDropdownOptions}"
+                                          SelectedValue="{Binding ResolutionText, Mode=TwoWay, FallbackValue='Epic'}"
+                                          Style="{StaticResource ComboBoxDefaultStyle}"/>
+
+                                <TextBox Grid.Row="10"
+                                         Text="{Binding CustomResolutionText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         Margin="3,6,3,1"
+                                         Grid.Column="2">
+                                    <TextBox.Style>
+                                        <Style BasedOn="{StaticResource PrimaryTextBoxStyle}" TargetType="TextBox">
+                                            <Setter Property="Visibility" Value="Hidden"/>
+
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ResolutionText, FallbackValue='Custom'}" Value="Custom">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBox.Style>
+                                </TextBox>
+
+                                <Label Content="Frame Rate Limit"
+                                       Margin="0,5,0,0"
+                                       Grid.Row="11"/>
+                                <TextBox Grid.Column="1"
+                                          Grid.Row="11"
+                                          Margin="0,5,0,0"
+                                          Text="{Binding FrameRateLimitText, Mode=TwoWay, FallbackValue='120'}"
+                                          Style="{StaticResource PrimaryTextBoxStyle}"/>
+
+                                <Label Content="Enable Vsync"
+                                       Margin="0,5,0,0"
+                                       Grid.Row="12"/>
+                                <CheckBox Grid.Column="1"
+                                          Grid.Row="12"
+                                          HorizontalAlignment="Left"
+                                          VerticalAlignment="Center"
+                                          Margin="0,5,0,0"
+                                          Content=""
+                                          IsChecked="{Binding IsVsyncEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='120'}"
+                                          Style="{StaticResource MainCheckboxStyle}"/>
+                            </Grid>
+                            
+                        </GroupBox>
 
                         <Button x:Name="btnApplySettings"
                                 Content="Save Settings"

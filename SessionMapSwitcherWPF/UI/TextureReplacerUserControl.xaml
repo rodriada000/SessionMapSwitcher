@@ -62,9 +62,10 @@
                     Width="32" Margin="0,0,4,0"/>
 
             <Button x:Name="btnReplace"
-                Click="BtnReplace_Click"
-                Content="Replace"
-                Padding="5,2,5,2"/>
+                    IsEnabled="{Binding IsReplaceButtonEnabled}"
+                    Click="BtnReplace_Click"
+                    Content="Replace"
+                    Padding="5,2,5,2"/>
         </WrapPanel>
 
         <Grid Grid.Row="1"
