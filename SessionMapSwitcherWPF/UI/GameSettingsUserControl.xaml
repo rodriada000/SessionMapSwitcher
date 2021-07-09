@@ -49,12 +49,7 @@
                                           IsChecked="{Binding DBufferIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='True'}"
                                           Margin="10,5,10,0"/>
 
-                        <CheckBox Content="Enable Light Propagation Volume"
-                                          ToolTipService.InitialShowDelay="100"
-                                          ToolTip="Defaults to 'false' to enable some custom materials for Session 0.0.0.5+ ... Sets [/Script/Engine.RendererSettings] r.LightPropagationVolume in UserEngine.ini"
-                                          HorizontalAlignment="Left"
-                                          IsChecked="{Binding LightPropagationVolumeIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='False'}"
-                                          Margin="10,5,10,10"/>
+
 
                         <GroupBox Header="Video Settings" Margin="10,10,10,0">
                             <Grid Margin="0,10,0,0">
