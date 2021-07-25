@@ -65,7 +65,7 @@ namespace SessionMapSwitcher.UI
                 return;
             }
 
-            ViewModel.RemoveSelectedTexture();
+            ViewModel.RemoveSelectedMod();
         }
 
         /// <summary>
