@@ -16,7 +16,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Text="Drag in a .zip or .rar file and click 'Replace' to easily copy new textures/meshes into the game" 
+        <TextBlock Text="Drag in a .zip or .rar file and click 'Import' to easily copy new mods and textures/meshes into the game" 
                    Margin="15,14,0,0"
                    Grid.Column="1"
                    VerticalAlignment="Top"
@@ -64,7 +64,7 @@
             <Button x:Name="btnReplace"
                     IsEnabled="{Binding IsReplaceButtonEnabled}"
                     Click="BtnReplace_Click"
-                    Content="Replace"
+                    Content="Import"
                     Padding="5,2,5,2"/>
         </WrapPanel>
 

@@ -80,6 +80,8 @@
             <Setter Property="IsEnabled" Value="{Binding IsEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         </Style>
+
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
     </UserControl.Resources>
     
     <Grid Style="{StaticResource mainGridStyle}">
@@ -230,14 +232,6 @@
                                            Text="{Binding CurrentlyLoadedMapName, FallbackValue='This is a really long name that needs to be truncated'}"/>
                     </WrapPanel>
 
-                    <CheckBox x:Name="chkLoadSecondMap"
-                                      Padding="3,0,0,0"
-                                      FontSize="11"
-                                      VerticalContentAlignment="Center"
-                                      Margin="1,5,0,0"
-                                      ToolTip="Check this to load a different map after the game starts so you can switch to other maps after leaving the apartment. Right-click a map to set the second map to load."
-                                      IsChecked="{Binding LoadSecondMapIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                      Content="{Binding SecondMapCheckboxText, FallbackValue='Load Second Map After Start (Map Name)'}"/>
                 </StackPanel>
 
             </Grid>
@@ -250,10 +244,13 @@
                   Margin="10,10,10,3"
                   Header="Map Preview">
             <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
                 <Image Source="{Binding MapPreviewSource}" Margin="6"
                        HorizontalAlignment="Stretch"
                        VerticalAlignment="Stretch"
-                       Grid.Row="1"
                        RenderOptions.BitmapScalingMode="HighQuality">
                     <Image.Style>
                         <Style TargetType="Image">
@@ -268,7 +265,6 @@
                 </Image>
 
                 <TextBlock Text="Loading Preview Image ..."
-                           Grid.Row="1"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center">
                     <TextBlock.Style>
@@ -284,7 +280,6 @@
                 </TextBlock>
 
                 <TextBlock Text="No Preview."
-                           Grid.Row="1"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center">
                     <TextBlock.Style>
@@ -298,6 +293,29 @@
                         </Style>
                     </TextBlock.Style>
                 </TextBlock>
+
+                <GroupBox Grid.Row="1" 
+                          Header="Options"
+                          Margin="0">
+                    <StackPanel>
+                        <CheckBox x:Name="chkLoadSecondMap"
+                                  Padding="3,0,0,0"
+                                  FontSize="11"
+                                  VerticalContentAlignment="Center"
+                                  Margin="1,5,0,0"
+                                  ToolTip="Load a different map after the game starts so you can switch to other maps after leaving the apartment. Right-click a map to set the second map to load."
+                                  IsChecked="{Binding LoadSecondMapIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                  Content="{Binding SecondMapCheckboxText, FallbackValue='Load Second Map After Start (Map Name)'}"/>
+
+                        <CheckBox x:Name="chkEnableRMSTools"
+                                  Margin="1,5,0,0"
+                                  Content="Enable RMS Toolsuite"
+                                  ToolTip="Enable/Disable the RMS Toolsuite for the selected map (works with custom maps if they support the toolsuite)"
+                                  Visibility="{Binding Path=RMSToolsuiteCheckboxIsVisible, Converter={StaticResource BoolToVis}}"
+                                  IsChecked="{Binding RMSToolsuiteIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    </StackPanel>
+                </GroupBox>
 
             </Grid>
         </GroupBox>

@@ -190,10 +190,15 @@ namespace SessionMapSwitcher
             {
                 SelectedTabIndex = tabControl.SelectedIndex;
 
-                if (tabMainWindow.IsSelected && controlAssetStore.ViewModel.HasDownloadedMap)
+                if (tabMainWindow.IsSelected)
                 {
-                    controlAssetStore.ViewModel.HasDownloadedMap = false;
-                    controlMapSelection.ViewModel.ReloadAvailableMapsInBackground();
+                    controlMapSelection.ViewModel.CheckForRMSTools(); // ensures the rms tools is enabled when switching tabs (in the case the user installs the mod then switches back to the map selection)
+
+                    if (controlAssetStore.ViewModel.HasDownloadedMap)
+                    {
+                        controlAssetStore.ViewModel.HasDownloadedMap = false;
+                        controlMapSelection.ViewModel.ReloadAvailableMapsInBackground();
+                    }
                 }
                 else if (tabTextureManager.IsSelected)
                 {
