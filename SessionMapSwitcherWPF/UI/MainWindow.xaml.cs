@@ -228,15 +228,20 @@ namespace SessionMapSwitcher
             bool isOldVersionInstalled = RegistryHelper.IsSoftwareInstalled(displayName, Microsoft.Win32.RegistryHive.CurrentUser, Microsoft.Win32.RegistryView.Registry32);
             bool isUnlockerInstalled = RegistryHelper.IsSoftwareInstalled(newDisplayName, Microsoft.Win32.RegistryHive.CurrentUser, Microsoft.Win32.RegistryView.Registry32);
 
-            if (!isOldVersionInstalled && !isUnlockerInstalled)
-            {
-                ModUnlockerDownloadLink downloadInfo = UeModUnlocker.GetLatestDownloadLinkInfo();
+            string currentVersion = RegistryHelper.GetDisplayVersion(newDisplayName, Microsoft.Win32.RegistryHive.CurrentUser, Microsoft.Win32.RegistryView.Registry32);
 
-                if (downloadInfo == null || string.IsNullOrEmpty(downloadInfo.Url))
-                {
-                    System.Windows.MessageBox.Show("Failed to get the latest download link. Check that you have internet and try again.", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
-                }
+            ModUnlockerDownloadLink downloadInfo = UeModUnlocker.GetLatestDownloadLinkInfo();
+
+            if (downloadInfo == null || string.IsNullOrEmpty(downloadInfo.Url))
+            {
+                System.Windows.MessageBox.Show("Failed to get the latest download link. Check that you have internet and try again.", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            bool isOutdated = !string.IsNullOrWhiteSpace(currentVersion) && new Version(currentVersion) < new Version($"0.{downloadInfo.Version}");
+
+            if ((!isOldVersionInstalled && !isUnlockerInstalled) || isOutdated)
+            {
 
                 MessageBoxResult result = System.Windows.MessageBox.Show("This will open your browser to download the Illusory Universal Mod Unlocker.\n\nLaunch the unlocker installer after it downloads to patch Session.\n\nDo you want to continue?",
                                                                          "Notice!",
