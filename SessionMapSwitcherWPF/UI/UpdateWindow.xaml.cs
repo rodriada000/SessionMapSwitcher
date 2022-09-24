@@ -105,29 +105,18 @@ namespace SessionMapSwitcher.UI
             // loop over html elements and find the 'release-header' div and 'markdown-body' div
             foreach (HtmlElement element in doc.Body.All)
             {
-                if (element.GetAttribute("className").Contains("release-header"))
+                if (element.GetAttribute("className").Contains("Box-body") && element.Children.Count >= 3)
                 {
-                    foreach (HtmlElement child in element.Children)
-                    {
-                        // skip the unordered list that is hidden in header that has commit hash
-                        if (child.TagName.Equals("ul", StringComparison.OrdinalIgnoreCase) == false)
-                        {
-                            DisableHyperLinksInHtml(child);
+                    DisableHyperLinksInHtml(element.Children[1]);
+                    DisableHyperLinksInHtml(element.Children[2]);
 
-                            fullHtml += child.InnerHtml;
-                            fullHtml += "<br/>";
-                        }
-                    }
+                    fullHtml += element.Children[1].InnerHtml;
+                    fullHtml += element.Children[2].InnerHtml;
+
                     foundHeader = true;
                 }
 
-                if (element.GetAttribute("className").Contains("markdown-body"))
-                {
-                    fullHtml += element.InnerHtml;
-                    foundbody = true;
-                }
-
-                if (foundbody && foundHeader)
+                if (foundHeader)
                 {
                     return fullHtml;
                 }
