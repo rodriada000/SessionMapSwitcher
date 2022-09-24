@@ -1,4 +1,4 @@
-﻿using SessionMapSwitcherCore.ViewModels;
+﻿using SessionModManagerCore.ViewModels;
 using System.Windows;
 
 namespace SessionMapSwitcher
@@ -8,14 +8,14 @@ namespace SessionMapSwitcher
     /// </summary>
     public partial class ComputerImportWindow : Window
     {
-        private ComputerImportViewModel ViewModel { get; set; }
+        private MapImportViewModel ViewModel { get; set; }
 
         public ComputerImportWindow()
         {
             InitializeComponent();
         }
 
-        public ComputerImportWindow(ComputerImportViewModel importViewModel)
+        public ComputerImportWindow(MapImportViewModel importViewModel)
         {
             InitializeComponent();
 
@@ -58,7 +58,7 @@ namespace SessionMapSwitcher
             {
                 using (System.Windows.Forms.OpenFileDialog fileBrowserDialog = new System.Windows.Forms.OpenFileDialog())
                 {
-                    fileBrowserDialog.Filter = "Zip files (*.zip)|*.zip|Rar files (*.rar)|*.rar|All files (*.*)|*.*";
+                    fileBrowserDialog.Filter = "Zip/Rar files (*.zip *.rar)|*.zip;*.rar|All files (*.*)|*.*";
                     fileBrowserDialog.Title = "Select .zip or .rar File Containing Session Map";
                     System.Windows.Forms.DialogResult result = fileBrowserDialog.ShowDialog();
                     if (result == System.Windows.Forms.DialogResult.OK)

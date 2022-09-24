@@ -1,0 +1,210 @@
+﻿<Window x:Class="SessionModManagerWPF.UI.ManageCatalogWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SessionModManagerWPF.UI"
+        mc:Ignorable="d"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
+        Closing="Window_Closing"
+        Title="Manage Catalogs" 
+        Width="600"
+        Style="{StaticResource WindowStyle}"
+        Height="400">
+
+    <Window.Resources>
+
+        <Style x:Key="ManageButtonsStyle" BasedOn="{StaticResource MainButtonStyle}" TargetType="Button">
+            <Setter Property="Visibility" Value="Visible"/>
+            <Setter Property="Width" Value="100"/>
+            <Setter Property="Height" Value="26"/>
+
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsInAddMode}" Value="True">
+                    <Setter Property="Visibility" Value="Hidden"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="AddButtonsStyle" BasedOn="{StaticResource MainButtonStyle}" TargetType="Button">
+            <Setter Property="Visibility" Value="Hidden"/>
+            <Setter Property="Width" Value="100"/>
+            <Setter Property="Height" Value="26"/>
+
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsInAddMode}" Value="True">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="auto"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid.Style>
+            <Style TargetType="Grid">
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsAdding}" Value="True">
+                        <Setter Property="Cursor" Value="Wait"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Grid.Style>
+
+        <Button x:Name="btnAdd"
+                Click="btnAdd_Click"
+                Content="Add Catalog"
+                Margin="10,5,0,0"
+                Style="{StaticResource ManageButtonsStyle}"
+                HorizontalAlignment="Left"/>
+
+        <Button x:Name="btnConfirm"
+                Click="btnConfirm_Click"
+                Content="Confirm"
+                Margin="10,5,0,0"
+                Style="{StaticResource AddButtonsStyle}"
+                HorizontalAlignment="Left"/>
+
+        <Button x:Name="btnRemove"
+                Grid.Column="1"
+                Click="btnRemove_Click"
+                Content="Remove Catalog"
+                Style="{StaticResource ManageButtonsStyle}"
+                HorizontalAlignment="Left"
+                Margin="5,5,5,0"/>
+
+        <Button x:Name="btnCancel"
+                Grid.Column="1"
+                Click="btnCancel_Click"
+                Content="Cancel"
+                Style="{StaticResource AddButtonsStyle}"
+                HorizontalAlignment="Left"
+                Margin="5,5,5,0"/>
+
+        <TextBox x:Name="txtUrl"
+                 Grid.Column="2"
+                 Grid.ColumnSpan="2"
+                 MaxLines="1"
+                 Text="{Binding NewUrlText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue=''}"
+                 Height="22"
+                 VerticalContentAlignment="Center"
+                 HorizontalAlignment="Stretch"
+                 VerticalAlignment="Bottom"
+                 Margin="0,0,10,2">
+            <TextBox.Style>
+                <Style TargetType="TextBox" BasedOn="{StaticResource PrimaryTextBoxStyle}">
+                    <Setter Property="Visibility" Value="Hidden"/>
+
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsInAddMode}" Value="True">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBox.Style>
+        </TextBox>
+
+        <TextBlock x:Name="txtHint"
+                   Grid.Column="2"
+                   IsHitTestVisible="False"
+                   Foreground="Gray"
+                   Text="Enter url and click 'Confirm'"
+                   Height="19"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Bottom"
+                   Margin="5,0,10,2">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                    <Style.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsInAddMode}" Value="True"/>
+                                <Condition Binding="{Binding NewUrlText}" Value=""/>
+                            </MultiDataTrigger.Conditions>
+                            <MultiDataTrigger.Setters>
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </MultiDataTrigger.Setters>
+                        </MultiDataTrigger>
+                        <DataTrigger Binding="{Binding IsInAddMode, FallbackValue='True'}" Value="False">
+                            <Setter Property="Visibility" Value="Hidden"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+
+                    <Setter Property="Visibility" Value="Hidden"/>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+
+        <Button x:Name="btnCreate"
+                Grid.Column="3"
+                Click="btnCreate_Click"
+                Content="Create Catalog"
+                Margin="0,5,10,0"
+                Style="{StaticResource ManageButtonsStyle}"
+                HorizontalAlignment="Right"/>
+
+        <ListView x:Name="lstUrls"
+                  Grid.ColumnSpan="4"
+                  Grid.Row="1"
+                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                  SelectionMode="Extended"
+                  ItemContainerStyle="{StaticResource PrimaryListViewItemStyle}"
+                  ItemsSource="{Binding CatalogList}"
+                  Margin="10,5,10,0">
+            <ListView.ContextMenu>
+                <ContextMenu x:Name="menuCatalogCommands" IsEnabled="{Binding ContextMenuIsEnabled}">
+                    <MenuItem x:Name="menuItemRemove" Header="Remove Selected Catalog(s)" Click="menuItemRemove_Click"/>
+                    <MenuItem Style="{StaticResource ContextMenuSeperator}"/>
+                    <MenuItem x:Name="menuItemActivate" Header="Activate All" Click="menuItemActivate_Click"/>
+                    <MenuItem x:Name="menuItemDeactivate" Header="De-activate All" Click="menuItemDeactivate_Click"/>
+                    <MenuItem Style="{StaticResource ContextMenuSeperator}"/>
+                    <MenuItem x:Name="menuItemAddDefaults" Header="Add Default Catalogs" Click="menuItemAddDefaults_Click"/>
+                </ContextMenu>
+            </ListView.ContextMenu>
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Width="50">
+                        <GridViewColumnHeader IsEnabled="False" 
+                                              Content="Active"  
+                                              ToolTipService.ShowOnDisabled="True"
+                                              ToolTip="Only active catalogs will be shown in the asset store."/>
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid Margin="10,0,0,0">
+                                    <CheckBox IsChecked="{Binding IsActive, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Name" Width="Auto" DisplayMemberBinding="{Binding Name}"/>
+                    <GridViewColumn Header="Url" Width="Auto" DisplayMemberBinding="{Binding Url}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        <Button x:Name="btnClose"
+                FontSize="13"
+                Click="btnClose_Click"
+                Grid.Row="2"
+                Grid.ColumnSpan="4"
+                Content="Close"
+                Width="100"
+                Height="26"
+                Style="{StaticResource MainButtonStyle}"
+                HorizontalAlignment="Center"
+                Margin="0,5,0,5"/>
+    </Grid>
+</Window>

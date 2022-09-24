@@ -5,48 +5,190 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              x:Name="ctrlTextureReplacer"
              mc:Ignorable="d"              
-             d:DesignHeight="125" d:DesignWidth="350">
+             d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        
-        <TextBlock Text="Drag in a texture file, .zip, or .rar file containing textures and click 'Replace' to easily copy new textures into the game." TextWrapping="Wrap" Margin="10,6,0,10"/>
 
-        <TextBox Grid.Row="1" Margin="10,0,2,0" Height="20" Text="{Binding PathToFile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AllowDrop="True" PreviewDragOver="TextBox_PreviewDragOver" PreviewDrop="TextBox_PreviewDrop"/>
+        <TextBlock Text="Drag in a .zip or .rar file and click 'Import' to easily copy new mods and textures/meshes into the game" 
+                   Margin="15,14,0,0"
+                   Grid.Column="1"
+                   VerticalAlignment="Top"
+                   HorizontalAlignment="Left"
+                   TextTrimming="CharacterEllipsis"
+                   MaxWidth="{Binding ElementName=txtPath, Path=ActualWidth}"
+                   Foreground="{StaticResource DisabledForegroundBrush}"
+                   FontSize="11">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Visibility" Value="Hidden"/>
 
-        <Button x:Name="btnBrowse" 
-                Click="BtnBrowse_Click" 
-                Grid.Row="1" Grid.Column="1" 
-                Content="..." 
-                Style="{StaticResource MainButtonStyle}" 
-                Width="25" Margin="0,0,2,0"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding PathToFile, FallbackValue=''}" Value="">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
 
-        <WrapPanel Grid.Row="2" Grid.ColumnSpan="2"
-                   HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,2,0,0">
-            
-            <Button x:Name="btnManage"
-                Click="btnManage_Click"
-                Content="Manage Installed Textures"
-                Style="{StaticResource MainButtonStyle}"
-                IsEnabled="{Binding IsReplaceButtonEnabled}"
-                Padding="5,2,5,2"
-                Margin="0,5,10,0"/>
+        <TextBox Margin="5,5,10,0" 
+                 Grid.Column="1"
+                 x:Name="txtPath"
+                 FontSize="13"
+                 VerticalAlignment="Stretch"
+                 Text="{Binding PathToFile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                 AllowDrop="True" 
+                 PreviewDragOver="TextBox_PreviewDragOver" 
+                 PreviewDrop="TextBox_PreviewDrop"/>
+
+
+        <WrapPanel Grid.Column="0" 
+                   HorizontalAlignment="Right" 
+                   VerticalAlignment="Top" Margin="10,5,0,0">
+
+            <Button x:Name="btnBrowse" 
+                    Style="{StaticResource ButtonIcon}"
+                    Tag="FolderOpen"
+                    Click="BtnBrowse_Click" 
+                    Content="..."
+                    Height="32"
+                    Width="32" Margin="0,0,4,0"/>
 
             <Button x:Name="btnReplace"
-                Click="BtnReplace_Click"
-                Content="Replace"
-                Style="{StaticResource MainButtonStyle}"
-                IsEnabled="{Binding IsReplaceButtonEnabled}"
-                Padding="5,2,5,2"
-                Margin="0,5,2,0"/>
+                    IsEnabled="{Binding IsReplaceButtonEnabled}"
+                    Click="BtnReplace_Click"
+                    Content="Import"
+                    Padding="5,2,5,2"/>
         </WrapPanel>
+
+        <Grid Grid.Row="1"
+              Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1.25*"/>
+            </Grid.ColumnDefinitions>
+
+            <GroupBox Header="Installed Mods"
+                      Margin="10">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Button x:Name="btnRemove"
+                            Grid.Row="0"
+                            HorizontalAlignment="Right"
+                            ToolTip="Remove Mod"
+                            Click="btnRemove_Click"
+                            Style="{StaticResource ButtonIcon}" 
+                            Tag="Delete" 
+                            Height="32"
+                            Margin="0,-10,0,5"
+                            Width="48"/>
+                    <ListView x:Name="lstTextures" 
+                              Grid.Row="1"
+                              VerticalAlignment="Stretch"
+                              ItemContainerStyle="{StaticResource PrimaryListViewItemStyle}"
+                              SelectedItem="{Binding SelectedTexture, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                              ItemsSource="{Binding InstalledTextures, UpdateSourceTrigger=PropertyChanged}"
+                              SelectionMode="Single"
+                              MinHeight="125">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Name" Width="195" DisplayMemberBinding="{Binding TextureName, FallbackValue='item text'}"/>
+                                <GridViewColumn Header="Category" Width="95" DisplayMemberBinding="{Binding Category, FallbackValue=''}"/>
+                                <!--<GridViewColumn Width="45">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button x:Name="btnRemove"
+                                                    Grid.Row="1"
+                                                    HorizontalAlignment="Left"
+                                                    ToolTip="Remove Mod"
+                                                    Click="btnRemove_Click"
+                                                    Style="{StaticResource ButtonIcon}" 
+                                                    Tag="Delete" 
+                                                    Height="28"
+                                                    Width="28"/>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>-->
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </Grid>
+            </GroupBox>
+            
+            <GroupBox Grid.Column="1"
+                      Header="Mod Preview"
+                      Margin="0,10,10,10">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <Image Source="{Binding ModPreviewSource}" Margin="2"
+                           Grid.Column="1"
+                           HorizontalAlignment="Stretch"
+                           VerticalAlignment="Stretch"
+                           RenderOptions.BitmapScalingMode="HighQuality">
+                        <Image.Style>
+                            <Style TargetType="Image">
+                                <Setter Property="Visibility" Value="Visible"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsLoadingImage, FallbackValue='False'}" Value="True">
+                                        <Setter Property="Visibility" Value="Hidden"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Image.Style>
+                    </Image>
+
+                    <TextBlock Text="Loading Preview Image ..."
+                               Grid.Column="1"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Hidden"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsLoadingImage, FallbackValue='True'}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+
+                    <TextBlock Text="No Preview."
+                               Grid.Column="1"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Hidden"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPreviewMissing, FallbackValue='False'}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Grid>
+            </GroupBox>
+
+
+
+        </Grid>
+
+
 
 
     </Grid>

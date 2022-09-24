@@ -1,21 +1,10 @@
 ﻿using SessionMapSwitcherCore.ViewModels;
 using SessionModManagerCore.ViewModels;
 using SessionModManagerWPF.Classes;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace SessionModManagerWPF.UI
 {
@@ -109,21 +98,17 @@ namespace SessionModManagerWPF.UI
             }
         }
 
-        private void lstAssets_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (lstAssets.SelectedItem == null)
-            {
-                return;
-            }
-
-            ViewModel.RefreshPreviewForSelected();
-        }
         private void btnInstall_Click(object sender, RoutedEventArgs e)
         {
             if (ViewModel.SelectedAsset == null)
             {
                 MessageBox.Show("Select an asset to install first.", "Notice", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
+            }
+
+            if (ViewModel.SelectedAsset.IsOutOfDate)
+            {
+                MessageBox.Show("This mod was last updated before the Session 0.0.0.5 game update. Installing this mod may crash your game with the following error:\n\n\"Corrupt data found, please verify your installation.\"\n\nUninstall all old mods to fix the above error.", "Warning - Possible Old Mod Detected", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
 
             ViewModel.DownloadSelectedAssetAsync();
@@ -136,44 +121,42 @@ namespace SessionModManagerWPF.UI
 
         private void btnRefresh_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.GetManifestsAsync(forceRefresh: true, getSelectedOnly: true);
+            ViewModel.CheckForCatalogUpdatesAsync();
         }
 
-        private void btnUpload_Click(object sender, RoutedEventArgs e)
+        private void menuItemCancelDownload_Click(object sender, RoutedEventArgs e)
         {
-            OpenUploadAssetForm();
-        }
+            DownloadItemViewModel downloadItem = lstDownloads.SelectedItem as DownloadItemViewModel;
 
-        private void OpenUploadAssetForm()
-        {
-            UploadAssetViewModel viewModel = new UploadAssetViewModel()
+            if (downloadItem == null)
             {
-                AvailableBuckets = ViewModel.GetAvailableBuckets()
-            };
-
-            UploadAssetWindow window = new UploadAssetWindow(viewModel)
-            {
-                WindowStartupLocation = WindowStartupLocation.CenterScreen
-            };
-            bool? result = window.ShowDialog();
-
-            ViewModel.UserMessage = "Force refresh list of assets to view uploaded asset.";
-        }
-
-        private void menuDeleteAsset_Click(object sender, RoutedEventArgs e)
-        {
-            if (ViewModel.SelectedAsset == null)
-            {
-                MessageBox.Show("Select an asset to delete first.", "Notice", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            MessageBoxResult result = MessageBox.Show($"Are you sure you want to delete the selected asset {ViewModel.SelectedAsset.Name} ?", "Delete Warning!", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
+            downloadItem.IsCanceled = true;
+            ViewModel.CancelDownload(downloadItem);
+        }
 
-            if (result == MessageBoxResult.Yes)
-            {
-                ViewModel.DeleteSelectedAssetFromAssetStore();
-            }
+        private void btnManageCat_Click(object sender, RoutedEventArgs e)
+        {
+            ManageCatalogWindow catalogWindow = new ManageCatalogWindow();
+            catalogWindow.ShowDialog();
+            ViewModel.CheckForCatalogUpdatesAsync();
+        }
+
+        private void menuItemBrowserDownload_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.LaunchDownloadInBrowser();
+        }
+
+        private void menuItemFetchImages_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.DownloadAllPreviewImagesAsync();
+        }
+
+        private void menuItemCancelAll_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.CancelAllDownloads();
         }
     }
 }

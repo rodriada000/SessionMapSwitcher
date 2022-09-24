@@ -1,8 +1,8 @@
-﻿using SessionMapSwitcherCore.Classes;
+﻿using NLog;
+using SessionMapSwitcherCore.Classes;
 using SessionMapSwitcherCore.Utils;
-using SessionMapSwitcherCore.ViewModels;
-using SessionMapSwitcherWPF.Classes;
 using SessionModManagerCore.Classes;
+using SessionModManagerCore.ViewModels;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,6 +16,7 @@ namespace SessionMapSwitcher.UI
     /// </summary>
     public partial class UpdateWindow : Window
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         private UpdateViewModel ViewModel { get; set; }
 
@@ -46,6 +47,11 @@ namespace SessionMapSwitcher.UI
 
             scraperTask.ContinueWith((antecedent) =>
             {
+                if (antecedent.IsFaulted)
+                {
+                    Logger.Error(antecedent.Exception.GetBaseException());
+                }
+
                 browser.NavigateToString(htmlVersionNotes);
                 ViewModel.IsBrowserVisible = true;
                 browser.Visibility = ViewModel.IsBrowserVisible ? Visibility.Visible : Visibility.Hidden;
@@ -86,7 +92,7 @@ namespace SessionMapSwitcher.UI
         /// <returns> Scraped html from Github if found </returns>
         public static string ScrapeLatestVersionNotesFromGitHub()
         {
-            string pageHtml = DownloadUtils.GetTxtDocumentFromGitHubRepo(UpdateViewModel.LatestReleaseUrl);
+            string pageHtml = DownloadUtils.GetTextResponseFromUrl(UpdateViewModel.LatestReleaseUrl);
             HtmlDocument doc = GetHtmlDocument(pageHtml);
 
             string fullHtml = "";
@@ -94,34 +100,23 @@ namespace SessionMapSwitcher.UI
             bool foundbody = false;
 
             // append css style to the scraped html so it the document does not load with default Arial font
-            fullHtml += "<style type=\"text/css\"> * { font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji; background: #CFD8DC } a { pointer-events: none; cursor: default; } </style>";
+            fullHtml += "<style type=\"text/css\"> * { font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji; background: #221E1F; color: white } a { pointer-events: none; cursor: default; color: #799BAC } </style>";
 
             // loop over html elements and find the 'release-header' div and 'markdown-body' div
             foreach (HtmlElement element in doc.Body.All)
             {
-                if (element.GetAttribute("className").Contains("release-header"))
+                if (element.GetAttribute("className").Contains("Box-body") && element.Children.Count >= 3)
                 {
-                    foreach (HtmlElement child in element.Children)
-                    {
-                        // skip the unordered list that is hidden in header that has commit hash
-                        if (child.TagName.Equals("ul", StringComparison.OrdinalIgnoreCase) == false)
-                        {
-                            DisableHyperLinksInHtml(child);
+                    DisableHyperLinksInHtml(element.Children[1]);
+                    DisableHyperLinksInHtml(element.Children[2]);
 
-                            fullHtml += child.InnerHtml;
-                            fullHtml += "<br/>";
-                        }
-                    }
+                    fullHtml += element.Children[1].InnerHtml;
+                    fullHtml += element.Children[2].InnerHtml;
+
                     foundHeader = true;
                 }
 
-                if (element.GetAttribute("className").Contains("markdown-body"))
-                {
-                    fullHtml += element.InnerHtml;
-                    foundbody = true;
-                }
-
-                if (foundbody && foundHeader)
+                if (foundHeader)
                 {
                     return fullHtml;
                 }

@@ -7,6 +7,8 @@
         x:Name="mainWindow"
         mc:Ignorable="d"
         Style="{StaticResource WindowStyle}"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
         MinWidth="300" MinHeight="230" MaxHeight="230" MaxWidth="800"
         Title="Import Map From Computer" Height="230" Width="600">
     <Window.Resources>
@@ -23,50 +25,65 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="5"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="auto"/>
         </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.ColumnSpan="2" Margin="10,5,10,1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <TextBlock TextWrapping="Wrap" Margin="0,0,0,5">
-                <TextBlock.Text>
-                    This will copy the contents of the selected folder to the Session\SessionGame\Content folder...
-                    You can also import a map from .zip or .rar files which will extract the files into the Content folder.
-                </TextBlock.Text>
-            </TextBlock>
+        <CheckBox Content="Import .zip/.rar File" 
+                  Margin="10,10,0,5" 
+                  HorizontalAlignment="Left" VerticalAlignment="Top"
+                  IsChecked="{Binding IsZipFileImport, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                  IsEnabled="{Binding IsNotImporting}"
+                  ToolTip="Check this if the map you are importing is in a .zip/.rar file format. This will extract the files for you and copy them correctly."/>
 
-            <CheckBox Content="Import .zip/.rar File" 
-                      Margin="0,10,0,0" 
-                      HorizontalAlignment="Left" VerticalAlignment="Top"
-                      IsChecked="{Binding IsZipFileImport, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                      IsEnabled="{Binding IsNotImporting}"
-                      ToolTip="Check this if the map you are importing is in a .zip/.rar file format. This will extract the files for you and copy them correctly."/>
+        <TextBlock Text="{Binding PathLabel, FallbackValue='Folder Path To Map Files'}" 
+                   Grid.Row="1"
+                   Margin="15,8,0,0"
+                   VerticalAlignment="Top"
+                   HorizontalAlignment="Left"
+                   TextTrimming="CharacterEllipsis"
+                   MaxWidth="{Binding ElementName=txtSessionPath, Path=ActualWidth}"
+                   Foreground="{StaticResource DisabledForegroundBrush}"
+                   FontSize="11">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Visibility" Value="Hidden"/>
 
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding PathInput, FallbackValue=''}" Value="">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
 
-            <Label Content="{Binding PathLabel, FallbackValue='Folder Path To Map Files:'}" Padding="0"
-                   HorizontalAlignment="Left" VerticalAlignment="Top"
-                   Margin="2,10,0,0"/>
-        </StackPanel>
-
-
-        <TextBox Grid.Row="1" Grid.Column="0" Height="20" Margin="10,0,00,0" 
+        <TextBox Grid.Row="1"
+                 VerticalAlignment="Stretch" 
+                 Margin="10,0,0,0" 
                  Text="{Binding PathInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  AllowDrop="True" PreviewDragOver="TextBox_PreviewDragOver" PreviewDrop="TextBox_PreviewDrop" />
 
         <Button x:Name="btnBrowse" 
+                Style="{StaticResource ButtonIcon}"
+                Tag="FolderOpen"
+                Width="32"
+                Height="32"
                 Click="BtnBrowse_Click" 
                 IsEnabled="{Binding IsNotImporting}"
-                Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" 
-                Content="..." Margin="3,0,10,0" 
-                Padding="5,0,5,0" Style="{StaticResource MainButtonStyle}" FontSize="15"/>
+                Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" 
+                Margin="3,0,10,0" />
 
 
         <Button x:Name="btnImportMap" HorizontalAlignment="Center" VerticalAlignment="Bottom"
-                Grid.Row="2" Grid.ColumnSpan="2"
+                Margin="0,10,0,0"
+                Grid.Row="3" Grid.ColumnSpan="2"
                 Click="BtnImportMap_Click"
                 FontSize="13"
                 Padding="5,3,5,3"
@@ -77,9 +94,31 @@
         
 
         <TextBlock x:Name="txtMessage"
-                   Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Top"
+                   Grid.Row="4" HorizontalAlignment="Left" VerticalAlignment="Top"
                    TextWrapping="Wrap"
                    Text="{Binding UserMessage, FallbackValue='Importing map ...'}" 
                    Margin="10,3,0,0"/>
+
+        <ProgressBar x:Name="progressBar" 
+                     Value="{Binding ImportProgress, FallbackValue='50'}"
+                     Foreground="{StaticResource AccentBrush}"
+                     Grid.Row="5"
+                     Grid.ColumnSpan="2"
+                     VerticalAlignment="Bottom"
+                     Margin="25,0,25,10"
+                     Height="10">
+            <ProgressBar.Style>
+                <Style TargetType="ProgressBar">
+                    <Setter Property="Visibility" Value="Hidden"/>
+
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsImporting, FallbackValue='True'}" Value="True">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ProgressBar.Style>
+        </ProgressBar>
+
     </Grid>
 </Window>
