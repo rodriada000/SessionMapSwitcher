@@ -37,7 +37,6 @@
             </Style.Triggers>
         </Style>
 
-
         <DataTemplate x:Key="AuthorComboBoxContentTemplate">
             <Grid x:Name="gd" DataContext="{Binding ElementName=ctrlAssetStore, Path=DataContext}" Background="Transparent">
                 <Grid.ColumnDefinitions>
@@ -275,9 +274,11 @@
                                    FontWeight="Bold"/>
                         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden"
                                       MaxHeight="200">
-                            <TextBlock Text="{Binding SelectedDescription, FallbackValue='example description for a selected asset.'}"
-                                       Style="{StaticResource PreviewTextStyle}"
+                            <TextBox Text="{Binding SelectedDescription, FallbackValue='example description for a selected asset.'}"
                                        TextWrapping="Wrap"
+                                       IsReadOnly="True"
+                                     BorderThickness="0"
+                                     Background="Transparent"
                                        Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=GroupBox}, Path=ActualWidth}"
                                        Margin="5,5,0,0" 
                                        Padding="0,0,10,0"/>
@@ -306,7 +307,7 @@
                     </Image.Style>
                 </Image>
 
-                <TextBlock Text="Loading Preview Image ..."
+                <TextBlock Text="{Binding PreviewImageText, FallbackValue='Loading Preview Image ...'}"
                            Grid.Row="1"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center">

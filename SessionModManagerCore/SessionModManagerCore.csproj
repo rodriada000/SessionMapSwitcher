@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net8.0</TargetFrameworks>
+    <AssemblyName>SessionModManagerCore</AssemblyName>
+    <RootNamespace>SessionModManagerCore</RootNamespace>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <DocumentationFile>
+    </DocumentationFile>
+    <Version>1.10.0</Version>
+    <AssemblyVersion>1.10.0.0</AssemblyVersion>
+    <FileVersion>1.10.0.0</FileVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="ViewModels\DownloadableMap.cs" />
+    <Compile Remove="ViewModels\UploadAssetViewModel.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="modmanager.csv" />
+    <None Remove="modmanager.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="avantgarde" Version="1.0.5" />
+    <PackageReference Include="ini-parser-netstandard" Version="2.5.2" />
+    <PackageReference Include="MegaApiClient" Version="1.10.4" />
+    <PackageReference Include="NLog" Version="5.3.2" />
+    <PackageReference Include="SharpCompress" Version="0.37.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="ag_settings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>

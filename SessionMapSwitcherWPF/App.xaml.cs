@@ -3,6 +3,7 @@ using SessionMapSwitcherCore.Utils;
 using SessionMapSwitcherWPF.Classes;
 using System;
 using System.Diagnostics;
+using System.Reflection;
 using System.Security.Principal;
 using System.Windows;
 
@@ -73,6 +74,11 @@ namespace SessionMapSwitcher
 
             SessionPath.ToSession = sessionPath;
 
+            if (!string.IsNullOrWhiteSpace(sessionPath) && SessionPath.IsSessionPathValid() && string.IsNullOrWhiteSpace(AppSettingsUtil.GetAppSetting(SettingKey.LaunchViaSteam)))
+            {
+                // set the steam launch setting based on path
+                AppSettingsUtil.AddOrUpdateAppSettings(SettingKey.LaunchViaSteam, sessionPath.Contains("steamapps").ToString());
+            }
 
 #if DEBUG
             NLog.LogManager.ThrowExceptions = true;

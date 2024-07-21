@@ -1,7 +1,13 @@
-﻿using SessionMapSwitcherCore.Classes;
+﻿using NLog.Targets;
+using NLog;
+using SessionMapSwitcherCore.Classes;
 using SessionModManagerCore.ViewModels;
+using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using System.Linq;
+using System.IO;
 
 namespace SessionModManagerWPF.UI
 {
@@ -11,6 +17,8 @@ namespace SessionModManagerWPF.UI
     public partial class GameSettingsUserControl : UserControl
     {
         public readonly GameSettingsViewModel ViewModel;
+
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         public GameSettingsUserControl()
         {
@@ -29,6 +37,30 @@ namespace SessionModManagerWPF.UI
             }
 
             ViewModel.UpdateGameSettings();
+        }
+
+        private void btnViewLogs_Click(object sender, RoutedEventArgs e)
+        {
+            var file = LogManager.Configuration?.AllTargets.OfType<FileTarget>() 
+                        .Select(x => x.FileName.Render(LogEventInfo.CreateNullEvent()))
+                        .FirstOrDefault(x => !string.IsNullOrWhiteSpace(x));
+            
+            if (!string.IsNullOrWhiteSpace(file))
+            {
+                file = Path.Combine(SessionPath.ToApplicationRoot, file);
+
+                if (File.Exists(file))
+                {
+                    try
+                    {
+                        Process.Start(new ProcessStartInfo(file) { UseShellExecute = true});
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error(ex, "Failed to open log file");
+                    }
+                }
+            }
         }
     }
 }
