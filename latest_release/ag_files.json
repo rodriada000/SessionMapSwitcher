@@ -1,5 +1,5 @@
 {
-  "TargetVersion": "2.11.1.0",
+  "TargetVersion": "2.12.0.0",
   "files": [
     {
       "source": "https://raw.githubusercontent.com/rodriada000/SessionMapSwitcher/release_updates/latest_release/v2/avantgarde.lib.dll",
@@ -61,9 +61,29 @@
       "source": "https://raw.githubusercontent.com/rodriada000/SessionMapSwitcher/release_updates/latest_release/v2/Resources/defaultMap2.png",
       "destination": "Resources/defaultMap2.png"
     },
-	{
+    {
       "source": "https://raw.githubusercontent.com/rodriada000/SessionMapSwitcher/release_updates/latest_release/v2/Resources/defaultMap3.png",
       "destination": "Resources/defaultMap3.png"
+    },
+    {
+      "source": "https://raw.githubusercontent.com/rodriada000/SessionMapSwitcher/release_updates/latest_release/v2/ZstdSharp.dll",
+      "destination": "ZstdSharp.dll"
+    },
+    {
+      "source": "https://raw.githubusercontent.com/rodriada000/SessionMapSwitcher/release_updates/latest_release/v2/SessionModManager.runtimeconfig.json",
+      "destination": "SessionModManager.runtimeconfig.json"
+    },
+    {
+      "source": "https://raw.githubusercontent.com/rodriada000/SessionMapSwitcher/release_updates/latest_release/v2/SessionModManager.dll.config",
+      "destination": "SessionModManager.dll.config"
+    },
+    {
+      "source": "https://raw.githubusercontent.com/rodriada000/SessionMapSwitcher/release_updates/latest_release/v2/SessionModManager.dll",
+      "destination": "SessionModManager.dll"
+    },
+    {
+      "source": "https://raw.githubusercontent.com/rodriada000/SessionMapSwitcher/release_updates/latest_release/v2/SessionModManager.deps.json",
+      "destination": "SessionModManager.deps.json"
     }
   ]
 }
