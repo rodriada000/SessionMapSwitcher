@@ -41,7 +41,7 @@ namespace SessionModManagerWPF.UI
 
         private void btnViewLogs_Click(object sender, RoutedEventArgs e)
         {
-            var file = LogManager.Configuration?.AllTargets.OfType<FileTarget>()
+            var file = LogManager.Configuration?.AllTargets.OfType<FileTarget>() 
                         .Select(x => x.FileName.Render(LogEventInfo.CreateNullEvent()))
                         .FirstOrDefault(x => !string.IsNullOrWhiteSpace(x));
             
