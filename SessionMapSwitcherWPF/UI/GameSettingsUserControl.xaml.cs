@@ -49,13 +49,16 @@ namespace SessionModManagerWPF.UI
             {
                 file = Path.Combine(SessionPath.ToApplicationRoot, file);
 
-                try
+                if (File.Exists(file))
                 {
-                    Process.Start(new ProcessStartInfo(file) { UseShellExecute = true});
-                }
-                catch (Exception ex)
-                {
-                    Logger.Error(ex, "Failed to open log file");
+                    try
+                    {
+                        Process.Start(new ProcessStartInfo(file) { UseShellExecute = true});
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error(ex, "Failed to open log file");
+                    }
                 }
             }
         }
