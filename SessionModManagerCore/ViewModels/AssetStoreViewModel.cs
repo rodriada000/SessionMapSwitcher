@@ -1546,7 +1546,7 @@ namespace SessionMapSwitcherCore.ViewModels
                     url = $"https://mega.nz/file/{url}";
                 }
 
-                Process.Start(new ProcessStartInfo(url));
+                Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
             }
         }
 

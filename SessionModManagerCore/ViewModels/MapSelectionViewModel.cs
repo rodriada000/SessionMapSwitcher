@@ -308,7 +308,25 @@ namespace SessionModManagerCore.ViewModels
                 }
             }
 
-            Process.Start(SessionPath.ToSessionExe);
+            if (AppSettingsUtil.GetAppSetting(SettingKey.LaunchViaSteam)?.Equals("true", StringComparison.OrdinalIgnoreCase) == true)
+            {
+                try
+                {
+                    Process.Start(new ProcessStartInfo("steam://launch/861650/dialog") { UseShellExecute = true });
+                }
+                catch (Exception)
+                {
+                    // if fails to launch via steam then just launch the .exe directly
+                    Logger.Warn("Failed to launch via steam://launch/861650/dialog command. Defaulting to .exe ...");
+                    Process.Start(SessionPath.ToSessionExe);
+                }
+                
+            }
+            else
+            {
+                Process.Start(SessionPath.ToSessionExe);
+            }
+
 
             if (LoadSecondMapIsChecked == false)
             {
@@ -650,7 +668,7 @@ namespace SessionModManagerCore.ViewModels
         {
             try
             {
-                Process.Start(SessionPath.ToSession);
+                Process.Start(new ProcessStartInfo(SessionPath.ToSession) { UseShellExecute = true });
             }
             catch (Exception ex)
             {
@@ -662,7 +680,7 @@ namespace SessionModManagerCore.ViewModels
         {
             try
             {
-                Process.Start(SessionPath.ToSaveGamesFolder);
+                Process.Start(new ProcessStartInfo(SessionPath.ToSaveGamesFolder) { UseShellExecute = true });
             }
             catch (Exception ex)
             {
@@ -674,7 +692,7 @@ namespace SessionModManagerCore.ViewModels
         {
             try
             {
-                Process.Start(SessionPath.ToContent);
+                Process.Start(new ProcessStartInfo(SessionPath.ToContent) { UseShellExecute = true });
             }
             catch (Exception ex)
             {
@@ -686,7 +704,7 @@ namespace SessionModManagerCore.ViewModels
         {
             try
             {
-                Process.Start(map.DirectoryPath);
+                Process.Start(new ProcessStartInfo(map.DirectoryPath) { UseShellExecute = true });
             }
             catch (Exception ex)
             {

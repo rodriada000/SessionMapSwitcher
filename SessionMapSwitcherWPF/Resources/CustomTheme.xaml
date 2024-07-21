@@ -154,18 +154,6 @@
         </Setter>
     </Style>
 
-    <ControlTemplate x:Key="HeaderTemplate">
-        <Border Grid.Row="0"
-                    BorderThickness="1,1,1,0"
-                    Background="{StaticResource PrimaryBackgroundMaskBrush}"
-                    BorderBrush="{StaticResource PrimaryBackgroundMaskBrush}"
-                    CornerRadius="0">
-
-            <ContentPresenter Margin="5,2,0,2"
-                                  ContentSource="Header"/>
-        </Border>
-    </ControlTemplate>
-
     <Style x:Key="MainLabelStyle" TargetType="{x:Type Label}">
         <Setter Property="Foreground" Value="{StaticResource PrimaryForegroundBrush}"/>
     </Style>

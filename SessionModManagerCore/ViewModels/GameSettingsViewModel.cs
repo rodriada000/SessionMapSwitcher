@@ -1,4 +1,5 @@
 ﻿using SessionMapSwitcherCore.Classes;
+using SessionMapSwitcherCore.Utils;
 using SessionModManagerCore.Classes;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,7 @@ namespace SessionModManagerCore.ViewModels
         private string _frameRateLimitText;
         private string _fullScreenMode;
         private bool _isVsyncEnabled;
+        private bool _steamLaunchIsChecked;
 
         public string ShadowQualityText
         {
@@ -192,6 +194,24 @@ namespace SessionModManagerCore.ViewModels
             }
         }
 
+        public bool SteamLaunchIsChecked
+        {
+            get
+            {
+                return _steamLaunchIsChecked;
+            }
+            set
+            {
+                if (value != _steamLaunchIsChecked)
+                {
+                    _steamLaunchIsChecked = value;
+                    NotifyPropertyChanged();
+                    AppSettingsUtil.AddOrUpdateAppSettings(SettingKey.LaunchViaSteam, _steamLaunchIsChecked.ToString());
+                }
+
+            }
+        }
+
 
         private List<string> _videoDropdown;
         public List<string> VideoSettingsDropdownOptions
@@ -252,6 +272,7 @@ namespace SessionModManagerCore.ViewModels
         }
 
         private List<string> _fullscreenDropdownOptions;
+
         public List<string> FullscreenDropdownOptions
         {
             get
@@ -286,6 +307,7 @@ namespace SessionModManagerCore.ViewModels
             ObjectCountText = GameSettingsManager.ObjectCount.ToString();
             SkipMovieIsChecked = GameSettingsManager.SkipIntroMovie;
             DBufferIsChecked = GameSettingsManager.EnableDBuffer;
+            SteamLaunchIsChecked = AppSettingsUtil.GetAppSetting(SettingKey.LaunchViaSteam).Equals("true", StringComparison.OrdinalIgnoreCase);
 
             ShadowQualityText = ((VideoSettingsOptions) GameSettingsManager.ShadowQuality).ToString();
             AntiAliasingText = ((VideoSettingsOptions)GameSettingsManager.AntiAliasingQuality).ToString();

@@ -103,7 +103,8 @@ namespace SessionMapSwitcher
         {
             ProcessStartInfo info = new ProcessStartInfo()
             {
-                FileName = "https://github.com/rodriada000/SessionMapSwitcher/blob/master/README.md"
+                FileName = "https://github.com/rodriada000/SessionMapSwitcher/blob/master/README.md",
+                UseShellExecute = true,
             };
 
             Process.Start(info);

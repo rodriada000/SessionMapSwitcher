@@ -24,7 +24,8 @@ namespace SessionMapSwitcherCore.Utils
         AssetStoreCharactersChecked,
         WindowState,
         EnableRMSTools,
-        LastSelectedMap
+        LastSelectedMap,
+        LaunchViaSteam,
     }
 
     public class AppSettingsUtil

@@ -74,6 +74,11 @@ namespace SessionMapSwitcher
 
             SessionPath.ToSession = sessionPath;
 
+            if (!string.IsNullOrWhiteSpace(sessionPath) && SessionPath.IsSessionPathValid() && string.IsNullOrWhiteSpace(AppSettingsUtil.GetAppSetting(SettingKey.LaunchViaSteam)))
+            {
+                // set the steam launch setting based on path
+                AppSettingsUtil.AddOrUpdateAppSettings(SettingKey.LaunchViaSteam, sessionPath.Contains("steamapps").ToString());
+            }
 
 #if DEBUG
             NLog.LogManager.ThrowExceptions = true;
