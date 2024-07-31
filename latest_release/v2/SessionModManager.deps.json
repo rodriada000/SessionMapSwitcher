@@ -11,7 +11,7 @@
           "MahApps.Metro.IconPacks.Modern": "5.0.0",
           "Microsoft.CSharp": "4.7.0",
           "NLog": "5.3.2",
-          "SessionModManagerCore": "1.10.0",
+          "SessionModManagerCore": "1.10.1",
           "System.Data.DataSetExtensions": "4.5.0"
         },
         "runtime": {
@@ -514,7 +514,7 @@
           }
         }
       },
-      "SessionModManagerCore/1.10.0": {
+      "SessionModManagerCore/1.10.1": {
         "dependencies": {
           "MegaApiClient": "1.10.4",
           "NLog": "5.3.2",
@@ -991,7 +991,7 @@
       "path": "zstdsharp.port/0.8.0",
       "hashPath": "zstdsharp.port.0.8.0.nupkg.sha512"
     },
-    "SessionModManagerCore/1.10.0": {
+    "SessionModManagerCore/1.10.1": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
