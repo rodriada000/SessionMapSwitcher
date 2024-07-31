@@ -5,5 +5,5 @@
   "CloseMethod": "waitAndKill",
   "TempDir": "temp/",
   "FileManifest": "https://raw.githubusercontent.com/rodriada000/SessionMapSwitcher/release_updates/latest_release/ag_files.json",
-  "CurrentVersion": "2.12.0.0"
+  "CurrentVersion": "2.12.1.0"
 }
