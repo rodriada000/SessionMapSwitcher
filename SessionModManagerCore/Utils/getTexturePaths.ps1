@@ -4,9 +4,9 @@
 ## Make sure to have UnrealPak.exe in same folder as .pak file
 ## outputs C# code to add textures to a dictionary where Key is texture name and Value is relative path to texture
 
-cd "F:\SteamLibrary\steamapps\common\Session\SessionGame\Content\Paks"
+cd "C:\Program Files (x86)\Steam\steamapps\common\Session\SessionGame\Content\Paks"
 
-.\UnrealPak.exe -cryptokeys="crypto.json" -List .\pakchunk0-WindowsNoEditor.pak > FileList.txt
+# .\UnrealPak.exe -cryptokeys="crypto.json" -List .\pakchunk0-WindowsNoEditor.pak > FileList.txt
 
 
 $allFiles = Get-Content .\FileList.txt
