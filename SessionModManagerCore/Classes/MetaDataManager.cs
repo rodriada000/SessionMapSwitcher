@@ -521,7 +521,12 @@ namespace SessionMapSwitcherCore.Classes
 
                 // lastly delete entry from list of installed textures
                 InstalledTexturesMetaData currentlyInstalledTextures = MetaDataManager.LoadTextureMetaData();
+
                 currentlyInstalledTextures.Remove(metaData);
+                metaData.Enabled = false;
+                metaData.FilePaths = new List<string>();
+                currentlyInstalledTextures.Add(metaData);
+
                 MetaDataManager.SaveTextureMetaData(currentlyInstalledTextures);
 
                 return BoolWithMessage.True($"{metaData.Name} has been deleted!");

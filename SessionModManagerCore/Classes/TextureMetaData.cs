@@ -7,6 +7,9 @@ namespace SessionModManagerCore.Classes
 {
     public class TextureMetaData
     {
+        public string FolderInstallPath { get; set; }
+        public bool Enabled { get; set; }
+
         /// <summary>
         /// List of absolute paths to files that were copied for the texture
         /// </summary>

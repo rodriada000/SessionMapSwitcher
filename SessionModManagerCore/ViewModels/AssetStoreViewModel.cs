@@ -1193,7 +1193,7 @@ namespace SessionMapSwitcherCore.ViewModels
                     AssetToInstall = assetToInstall.Asset
                 };
                 replacerViewModel.MessageChanged += TextureReplacerViewModel_MessageChanged;
-                replacerViewModel.ReplaceTextures();
+                replacerViewModel.ImportTextureMod();
                 replacerViewModel.MessageChanged -= TextureReplacerViewModel_MessageChanged;
             }
         }

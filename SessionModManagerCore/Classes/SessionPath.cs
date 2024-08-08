@@ -9,7 +9,6 @@ namespace SessionMapSwitcherCore.Classes
     public static class SessionPath
     {
         public const string MapBackupFolderName = "Original_Session_Map";
-        public const string GameTexturesJsonFileName = "game_textures.json";
 
         public static string ToApplicationRoot
         {
@@ -216,11 +215,11 @@ namespace SessionMapSwitcherCore.Classes
             }
         }
 
-        public static string ToMetaGameTexturesJsonFile
+        public static string PathToInstalledModsFolder
         {
             get
             {
-                return Path.Combine(FullPathToMetaFolder, GameTexturesJsonFileName);
+                return Path.Combine(FullPathToMetaFolder, "InstalledMods");
             }
         }
 

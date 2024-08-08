@@ -102,23 +102,18 @@
                               MinHeight="125">
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Header="Name" Width="195" DisplayMemberBinding="{Binding TextureName, FallbackValue='item text'}"/>
-                                <GridViewColumn Header="Category" Width="95" DisplayMemberBinding="{Binding Category, FallbackValue=''}"/>
-                                <!--<GridViewColumn Width="45">
+                                <GridViewColumn Header="Name" Width="185" DisplayMemberBinding="{Binding TextureName, FallbackValue='item text'}"/>
+                                <GridViewColumn Header="Category" Width="90" DisplayMemberBinding="{Binding Category, FallbackValue=''}"/>
+                                <GridViewColumn Header="Enabled" Width="45">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Button x:Name="btnRemove"
-                                                    Grid.Row="1"
-                                                    HorizontalAlignment="Left"
-                                                    ToolTip="Remove Mod"
-                                                    Click="btnRemove_Click"
-                                                    Style="{StaticResource ButtonIcon}" 
-                                                    Tag="Delete" 
-                                                    Height="28"
-                                                    Width="28"/>
+                                            <CheckBox Content="" 
+                                                      Margin="0,0,0,0" 
+                                                      IsChecked="{Binding IsEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                                      HorizontalAlignment="Center" VerticalAlignment="Top"/>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
-                                </GridViewColumn>-->
+                                </GridViewColumn>
                             </GridView>
                         </ListView.View>
                     </ListView>

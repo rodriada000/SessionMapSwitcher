@@ -1,4 +1,5 @@
 ﻿using SessionModManagerCore.Classes;
+using static SessionModManagerCore.ViewModels.TextureReplacerViewModel;
 
 namespace SessionModManagerCore.ViewModels
 {
@@ -6,6 +7,12 @@ namespace SessionModManagerCore.ViewModels
     {
         private string _textureName;
         private bool _isSelected;
+        private bool _isEnabled;
+
+        public delegate void EnabledChanged(bool isEnabled, TextureMetaData metaData);
+
+        public event EnabledChanged IsEnabledChanged;
+
 
         public TextureMetaData MetaData { get; set; }
 
@@ -45,10 +52,23 @@ namespace SessionModManagerCore.ViewModels
             }
         }
 
+        public bool IsEnabled
+        {
+            get { return _isEnabled; }
+            set
+            {
+                _isEnabled = value;
+                NotifyPropertyChanged();
+                IsEnabledChanged?.Invoke(_isEnabled, MetaData);
+            }
+        }
+
+
         public InstalledTextureItemViewModel(TextureMetaData metaData)
         {
             this.IsSelected = false;
             this.MetaData = metaData;
+            this.IsEnabled = metaData.Enabled;
             TextureName = this.MetaData.Name == null ? this.MetaData.AssetName : this.MetaData.Name;
         }
 

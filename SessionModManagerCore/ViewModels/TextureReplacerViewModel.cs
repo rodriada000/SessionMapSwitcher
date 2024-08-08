@@ -153,7 +153,7 @@ namespace SessionModManagerCore.ViewModels
 
         }
 
-        public void ReplaceTextures()
+        public void ImportTextureMod()
         {
             InitTexturePaths();
 
@@ -163,81 +163,40 @@ namespace SessionModManagerCore.ViewModels
             }
 
 
-            if (IsPathToCompressedFile)
+            if (!IsPathToCompressedFile)
             {
-                ReplaceTexturesFromCompressedFile();
+                MessageChanged?.Invoke($"Path to file is not a valid .zip or .rar");
                 return;
             }
 
-
-            FileInfo textureFileInfo = null;
-            textureFileInfo = new FileInfo(PathToFile);
-
-            string textureFileName = textureFileInfo.NameWithoutExtension();
-
-            // find which folder to copy to based on file name
-            string originalTextureName = GetTextureNameFromFile(textureFileInfo);
-
-
-            string targetFolder = TexturePaths.Where(t => t.TextureName == originalTextureName).Select(t => t.RelativePath).FirstOrDefault();
-
-            if (String.IsNullOrEmpty(targetFolder))
-            {
-                // could not find folder path based on name in cooked asset file so look up based on file name
-                TexturePaths.Where(t => t.TextureName == textureFileName).Select(t => t.RelativePath).FirstOrDefault();
-            }
-
-            if (String.IsNullOrEmpty(targetFolder))
-            {
-                MessageChanged?.Invoke($"Failed to find path to original texture: {textureFileInfo.Name}");
-                return;
-            }
-
-            targetFolder = Path.Combine(SessionPath.ToContent, targetFolder);
-
-            TextureMetaData metaData = new TextureMetaData()
-            {
-                AssetName = textureFileInfo.Name,
-                Name = textureFileInfo.Name
-            };
-
-            try
-            {
-                DeleteCurrentTextureFiles(textureFileInfo.NameWithoutExtension(), targetFolder);
-
-                // find and copy files in source dir that match the .uasset name
-                List<string> filesCopied = CopyNewTextureFilesToGame(textureFileInfo, targetFolder);
-                metaData.FilePaths.AddRange(filesCopied);
-
-                MetaDataManager.SaveTextureMetaData(metaData);
-            }
-            catch (Exception e)
-            {
-                Logger.Error(e);
-                MessageChanged?.Invoke($"Failed to copy texture files: {e.Message}");
-                return;
-            }
-
-            MessageChanged?.Invoke($"Successfully replaced textures for {textureFileInfo.Name}!");
+            ImportTexturesFromCompressedFile();
         }
 
-        private void ReplaceTexturesFromCompressedFile()
+        private void ImportTexturesFromCompressedFile()
         {
-            FileInfo textureFileInfo = null;
-            DeleteTempZipFolder();
-            Directory.CreateDirectory(PathToTempFolder);
+            string pathToFile = PathToFile;
+            Asset assetFromStore = AssetToInstall;
+            string pathToMod = "";
+
+            if (AssetToInstall != null)
+            {
+                pathToMod = Path.Combine(SessionPath.PathToInstalledModsFolder, $"{assetFromStore.IDWithoutExtension}");
+            }
+            else
+            {
+                pathToMod = Path.Combine(SessionPath.PathToInstalledModsFolder, Path.GetFileNameWithoutExtension(PathToFile));
+            }
+
+            Directory.CreateDirectory(pathToMod);
 
             Logger.Info($"Extracting {PathToFile}...");
             MessageChanged?.Invoke($"Extracting mod files 0% ...");
 
-            string pathToFile = PathToFile;
-
-
-            // extract to temp location
+            // extract to download location
             try
             {
                 IProgress<double> progress = new Progress<double>(percent => MessageChanged?.Invoke($"Extracting mod files {percent * 100:0.0}% ..."));
-                FileUtils.ExtractCompressedFile(pathToFile, PathToTempFolder, progress);
+                FileUtils.ExtractCompressedFile(pathToFile, pathToMod, progress);
             }
             catch (Exception e)
             {
@@ -246,9 +205,84 @@ namespace SessionModManagerCore.ViewModels
                 return;
             }
 
-            string rootFolder = PathToTempFolder;
+
+            var metaData = CreateNewTextureMetaData(pathToFile, pathToMod, assetFromStore);
+
+            if (!HasConflicts(metaData))
+            {
+                // enable mod if no conflicts
+                CopyModToSession(metaData);
+            }
+            else
+            {
+                MetaDataManager.SaveTextureMetaData(metaData);
+            }
+
+            AssetToInstall = null; // texture asset replaced so nullify it since done with object
+
+            MessageChanged?.Invoke($"Successfully finished importing mod {new FileInfo(pathToFile).NameWithoutExtension()}!");
+        }
+
+        private bool HasConflicts(TextureMetaData metaData)
+        {
+            return false;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pathToFile"></param>
+        /// <param name="rootFolder"></param>
+        /// <param name="asset"></param>
+        private TextureMetaData CreateNewTextureMetaData(string pathToFile, string rootFolder, Asset asset)
+        {
+            List<string> foundTextures = new List<string>();
+
+            TextureMetaData newTextureMetaData = new TextureMetaData(asset)
+            {
+                FolderInstallPath = rootFolder
+            };
+
+            if (asset == null)
+            {
+                // if not replacing from Asset Store then just use name of compressed file being used to replace textures
+                newTextureMetaData.AssetName = Path.GetFileName(pathToFile);
+                newTextureMetaData.Name = Path.GetFileNameWithoutExtension(pathToFile);
+            }
+            else
+            {
+                if (File.Exists(asset.PathToDownloadedImage))
+                {
+                    newTextureMetaData.PathToImage = asset.PathToDownloadedImage;
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(newTextureMetaData.PathToImage))
+            {
+                // check unzipped files for a preview img
+                foreach (string filePath in Directory.GetFiles(rootFolder, "*", SearchOption.AllDirectories))
+                {
+                    if (filePath.Contains("preview."))
+                    {
+                        newTextureMetaData.PathToImage = filePath;
+                        break;
+                    }
+                }
+            }
+
+            return newTextureMetaData;
+        }
+
+        private void CopyModToSession(TextureMetaData metaData)
+        {
+            FileInfo textureFileInfo = null;
+            metaData.FilePaths = new List<string>();
+            List<string> foundTextures = new List<string>();
+
+            string rootFolder = metaData.FolderInstallPath;
+
             // change root folder to be where 'Customization' folder starts in unzipped files
-            foreach (string dir in Directory.GetDirectories(PathToTempFolder, "*", SearchOption.AllDirectories))
+            foreach (string dir in Directory.GetDirectories(rootFolder, "*", SearchOption.AllDirectories))
             {
                 DirectoryInfo dirInfo = new DirectoryInfo(dir);
                 if (dirInfo.Name == "Customization")
@@ -257,8 +291,6 @@ namespace SessionModManagerCore.ViewModels
                     break;
                 }
             }
-
-            List<string> foundTextures = new List<string>();
 
             string foundTextureName = FindTextureFileInUnzippedTempFolder(dirToSearch: rootFolder, filesToExclude: foundTextures);
             bool hasPakFile = Directory.GetFiles(rootFolder, "*.pak", SearchOption.AllDirectories).Length > 0;
@@ -269,22 +301,6 @@ namespace SessionModManagerCore.ViewModels
                 Logger.Warn("... failed to find a .uasset or .pak file");
                 MessageChanged?.Invoke($"Failed to find a .uasset or .pak file inside the extracted folders.");
                 return;
-            }
-
-            TextureMetaData newTextureMetaData = new TextureMetaData(AssetToInstall);
-
-            if (AssetToInstall == null)
-            {
-                // if not replacing from Asset Store then just use name of compressed file being used to replace textures
-                newTextureMetaData.AssetName = Path.GetFileName(pathToFile);
-                newTextureMetaData.Name = Path.GetFileNameWithoutExtension(pathToFile);
-            }
-            else
-            {
-                if (File.Exists(AssetToInstall.PathToDownloadedImage))
-                {
-                    newTextureMetaData.PathToImage = AssetToInstall.PathToDownloadedImage;
-                }
             }
 
             while (foundTextureName != "")
@@ -339,7 +355,7 @@ namespace SessionModManagerCore.ViewModels
                     DeleteCurrentTextureFiles(textureFileInfo.NameWithoutExtension(), targetFolder);
                     // find and copy files in source dir that match the .uasset name
                     List<string> filesCopied = CopyNewTextureFilesToGame(textureFileInfo, targetFolder);
-                    newTextureMetaData.FilePaths.AddRange(filesCopied);
+                    metaData.FilePaths.AddRange(filesCopied);
                 }
                 catch (Exception e)
                 {
@@ -348,7 +364,6 @@ namespace SessionModManagerCore.ViewModels
                     return;
                 }
 
-                MessageChanged?.Invoke($"Successfully imported mod file {textureFileInfo.Name}!");
 
 
                 foundTextureName = FindTextureFileInUnzippedTempFolder(dirToSearch: rootFolder, filesToExclude: foundTextures);
@@ -358,20 +373,20 @@ namespace SessionModManagerCore.ViewModels
             try
             {
                 // copy other files to Content
-                if (UnzippedTempFolderHasOtherFolders(rootFolder))
+                if (FolderHasOtherFolders(rootFolder))
                 {
-                    List<string> otherFilesCopied = CopyOtherSubfoldersInTempDir(rootFolder, filesToExclude: foundTextures);
-                    newTextureMetaData.FilePaths.AddRange(otherFilesCopied);
+                    List<string> otherFilesCopied = CopyOtherSubfoldersInDir(rootFolder, filesToExclude: foundTextures);
+                    metaData.FilePaths.AddRange(otherFilesCopied);
                 }
 
-                if (string.IsNullOrWhiteSpace(newTextureMetaData.PathToImage))
+                if (string.IsNullOrWhiteSpace(metaData.PathToImage))
                 {
                     // check unzipped files for a preview img and copy over
-                    foreach (string filePath in Directory.GetFiles(PathToTempFolder, "*", SearchOption.AllDirectories))
+                    foreach (string filePath in Directory.GetFiles(rootFolder, "*", SearchOption.AllDirectories))
                     {
                         if (filePath.Contains("preview."))
                         {
-                            string targetPath = Path.Combine(SessionPath.FullPathToMetaImagesFolder, newTextureMetaData.AssetNameWithoutExtension);
+                            string targetPath = Path.Combine(SessionPath.FullPathToMetaImagesFolder, metaData.AssetNameWithoutExtension);
 
                             if (!Directory.Exists(SessionPath.FullPathToMetaImagesFolder))
                             {
@@ -380,14 +395,12 @@ namespace SessionModManagerCore.ViewModels
 
                             File.Copy(filePath, targetPath, true);
 
-                            newTextureMetaData.PathToImage = targetPath;
-                            newTextureMetaData.FilePaths.Add(targetPath);
+                            metaData.PathToImage = targetPath;
+                            metaData.FilePaths.Add(targetPath);
                             break;
                         }
                     }
                 }
-
-                DeleteTempZipFolder();
             }
             catch (Exception e)
             {
@@ -396,27 +409,18 @@ namespace SessionModManagerCore.ViewModels
                 return;
             }
 
+            metaData.Enabled = true;
+            MetaDataManager.SaveTextureMetaData(metaData);
 
-            MetaDataManager.SaveTextureMetaData(newTextureMetaData);
-            AssetToInstall = null; // texture asset replaced so nullify it since done with object
+            MessageChanged?.Invoke($"Successfully enabled mod {metaData.AssetNameWithoutExtension}!");
 
-            MessageChanged?.Invoke($"Successfully finished importing mod {new FileInfo(pathToFile).NameWithoutExtension()}!");
         }
 
-        private void DeleteTempZipFolder()
-        {
-            // delete temp folder with unzipped files
-            if (Directory.Exists(PathToTempFolder))
-            {
-                Logger.Info("... deleting temp zip");
-                Directory.Delete(PathToTempFolder, true);
-            }
-        }
 
         /// <summary>
         /// Copies other folders (not stock game folders) from unzipped temp folder into games Content folder
         /// </summary>
-        private List<string> CopyOtherSubfoldersInTempDir(string rootFolder, List<string> filesToExclude)
+        private List<string> CopyOtherSubfoldersInDir(string rootFolder, List<string> filesToExclude)
         {
             List<string> filesCopied = new List<string>();
 
@@ -446,7 +450,7 @@ namespace SessionModManagerCore.ViewModels
         /// <summary>
         /// Return true if unzipped temp folder has subfolders other than the games stock folders e.g. 'Customization' folder
         /// </summary>
-        private bool UnzippedTempFolderHasOtherFolders(string rootFolder)
+        private bool FolderHasOtherFolders(string rootFolder)
         {
             foreach (string folder in Directory.GetDirectories(rootFolder))
             {
@@ -459,26 +463,6 @@ namespace SessionModManagerCore.ViewModels
             }
 
             return false;
-        }
-
-        public static string GetTextureNameFromFile(FileInfo textureFile)
-        {
-            try
-            {
-                string pathInFile = GetPathFromTextureFile(textureFile);
-
-                int index = pathInFile.LastIndexOf(Path.DirectorySeparatorChar);
-                if (index < 0)
-                {
-                    return "";
-                }
-
-                return pathInFile.Substring(index + 1);
-            }
-            catch (Exception)
-            {
-                return "";
-            }
         }
 
         public static string GetFolderPathToTextureFromFile(FileInfo textureFile)
@@ -685,7 +669,9 @@ namespace SessionModManagerCore.ViewModels
 
             foreach (TextureMetaData item in installedMetaData.InstalledTextures)
             {
-                textures.Add(new InstalledTextureItemViewModel(item));
+                var meta = new InstalledTextureItemViewModel(item);
+                meta.IsEnabledChanged += EnableOrDisableMod;
+                textures.Add(meta);
             }
 
             // remember selected item or select first in list
@@ -695,6 +681,8 @@ namespace SessionModManagerCore.ViewModels
                 assetName = SelectedTexture.MetaData?.AssetName;
             }
 
+
+            InstalledTextures.ForEach(t => t.IsEnabledChanged -=  EnableOrDisableMod);
             InstalledTextures = textures.OrderBy(t => t.TextureName).ToList();
             SetMissingImageFilePaths();
 
@@ -706,6 +694,19 @@ namespace SessionModManagerCore.ViewModels
             if (SelectedTexture == null)
             {
                 SelectedTexture = InstalledTextures.FirstOrDefault();
+            }
+        }
+
+        private void EnableOrDisableMod(bool isEnabled, TextureMetaData metaData)
+        {
+            if (isEnabled)
+            {
+                // copy files to game
+                CopyModToSession(metaData);
+            }
+            else
+            {
+                DisableSelectedMod(metaData);
             }
         }
 
@@ -735,33 +736,24 @@ namespace SessionModManagerCore.ViewModels
             }
         }
 
-        public void RemoveSelectedMod()
+        public void DisableSelectedMod(TextureMetaData modMetaData)
         {
-            InstalledTextureItemViewModel modToRemove = SelectedTexture;
-
-            if (modToRemove == null || modToRemove.MetaData == null)
+            if (modMetaData == null)
             {
-                Logger.Warn("textureToRemove is null");
+                Logger.Warn("modMetaData is null");
                 return;
             }
 
-            // check if removing RMS tools and delete loaded files before removing mod
-            if (modToRemove.MetaData.FilePaths.Any(f => f.Contains(RMSToolsuiteLoader.PathToToolsuite)) && RMSToolsuiteLoader.IsLoaded())
-            {
-                RMSToolsuiteLoader.DeleteFilesInEnvFolder();
-                AppSettingsUtil.AddOrUpdateAppSettings(SettingKey.EnableRMSTools, ""); // clear out setting since not installed anymore
-            }
-
-            BoolWithMessage deleteResult = MetaDataManager.DeleteTextureFiles(modToRemove.MetaData);
+            BoolWithMessage deleteResult = MetaDataManager.DeleteTextureFiles(modMetaData);
 
             if (deleteResult.Result)
             {
-                MessageService.Instance.ShowMessage($"Successfully removed {modToRemove.TextureName}!");
+                MessageService.Instance.ShowMessage($"Successfully disabled {modMetaData.AssetNameWithoutExtension}!");
                 LoadInstalledTextures();
             }
             else
             {
-                MessageService.Instance.ShowMessage($"Failed to remove mod: {deleteResult.Message}");
+                MessageService.Instance.ShowMessage($"Failed to disable mod: {deleteResult.Message}");
             }
         }
 
@@ -7574,6 +7566,54 @@ namespace SessionModManagerCore.ViewModels
             _texturePaths.Add(new TexturePathInfo() { TextureName = "GridItem_ShoesImage", RelativePath = $"Customization{Path.DirectorySeparatorChar}UI{Path.DirectorySeparatorChar}Textures" });
             _texturePaths.Add(new TexturePathInfo() { TextureName = "Mat_RenderTarget", RelativePath = $"Customization{Path.DirectorySeparatorChar}UI{Path.DirectorySeparatorChar}Textures" });
 
+        }
+
+        public void DeleteSelectedMod()
+        {
+            InstalledTextureItemViewModel modToRemove = SelectedTexture;
+
+            if (modToRemove == null || modToRemove.MetaData == null)
+            {
+                Logger.Warn("modToRemove is null");
+                return;
+            }
+
+            if (modToRemove.IsEnabled)
+            {
+                BoolWithMessage deleteResult = MetaDataManager.DeleteTextureFiles(modToRemove.MetaData);
+
+                if (!deleteResult.Result)
+                {
+                    MessageService.Instance.ShowMessage($"Failed to remove mod: {deleteResult.Message}");
+                    return;
+                }
+            }
+
+            // check if removing RMS tools and delete loaded files before removing mod
+            if (modToRemove.MetaData.FilePaths.Any(f => f.Contains(RMSToolsuiteLoader.PathToToolsuite)) && RMSToolsuiteLoader.IsLoaded())
+            {
+                RMSToolsuiteLoader.DeleteFilesInEnvFolder();
+                AppSettingsUtil.AddOrUpdateAppSettings(SettingKey.EnableRMSTools, ""); // clear out setting since not installed anymore
+            }
+
+            // delete downloaded files
+            try
+            {
+                Directory.Delete(modToRemove.MetaData.FolderInstallPath, true);
+
+                InstalledTexturesMetaData currentlyInstalledTextures = MetaDataManager.LoadTextureMetaData();
+                currentlyInstalledTextures.Remove(modToRemove.MetaData);
+                MetaDataManager.SaveTextureMetaData(currentlyInstalledTextures);
+
+                LoadInstalledTextures();
+
+                MessageService.Instance.ShowMessage($"Successfully removed {modToRemove.TextureName}!");
+            }
+            catch (Exception ex)
+            {
+                MessageService.Instance.ShowMessage($"Failed to remove mod: {ex.Message}");
+            }
+            
         }
     }
 }
