@@ -665,6 +665,12 @@ namespace SessionModManagerCore.ViewModels
         {
             InstalledTexturesMetaData installedMetaData = MetaDataManager.LoadTextureMetaData();
 
+            // convert old meta data file to new version to allow for enabling/disabling mods
+            if (string.IsNullOrWhiteSpace(installedMetaData.SchemaVersion) || installedMetaData.SchemaVersion != "v1")
+            {
+                ConvertToV1Schema(ref installedMetaData);
+            }
+
             List<InstalledTextureItemViewModel> textures = new List<InstalledTextureItemViewModel>();
 
             foreach (TextureMetaData item in installedMetaData.InstalledTextures)
@@ -694,6 +700,44 @@ namespace SessionModManagerCore.ViewModels
             if (SelectedTexture == null)
             {
                 SelectedTexture = InstalledTextures.FirstOrDefault();
+            }
+        }
+
+        private void ConvertToV1Schema(ref InstalledTexturesMetaData installedMetaData)
+        {
+            try
+            {
+                foreach (TextureMetaData item in installedMetaData.InstalledTextures)
+                {
+                    item.Enabled = true;
+                    item.FolderInstallPath = Path.Combine(SessionPath.PathToInstalledModsFolder, item.AssetNameWithoutExtension);
+
+                    if (!Directory.Exists(item.FolderInstallPath))
+                    {
+                        Directory.CreateDirectory(item.FolderInstallPath);
+                    }
+
+                    foreach (var file in item.FilePaths)
+                    {
+                        int idx = file.IndexOf("Customization");
+                        string destPath = file.Substring(idx, file.Length - idx);
+                        destPath = Path.Combine(item.FolderInstallPath, destPath);
+
+                        FileInfo fileInfo = new FileInfo(destPath);
+                        if (!fileInfo.Directory.Exists)
+                        {
+                            fileInfo.Directory.Create();
+                        }
+
+                        File.Copy(file, destPath, overwrite: true);
+                    }
+                }
+
+                MetaDataManager.SaveTextureMetaData(installedMetaData);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Failed to convert installed_textures.json to v1 Schema");
             }
         }
 

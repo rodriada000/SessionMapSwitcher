@@ -7,6 +7,7 @@ namespace SessionModManagerCore.Classes
 {
     public class InstalledTexturesMetaData
     {
+        public string SchemaVersion = "";
         public List<TextureMetaData> InstalledTextures { get; set; }
 
         public InstalledTexturesMetaData()
