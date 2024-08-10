@@ -6,6 +6,9 @@
              x:Name="ctrlTextureReplacer"
              mc:Ignorable="d"              
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -121,6 +124,7 @@
             </GroupBox>
             
             <GroupBox Grid.Column="1"
+                      Visibility="{Binding Path=IsShowingModPreview, Converter={StaticResource BoolToVis}}"
                       Header="Mod Preview"
                       Margin="0,10,10,10">
                 <Grid>
@@ -179,7 +183,27 @@
                 </Grid>
             </GroupBox>
 
-
+            <GroupBox Grid.Column="1"
+                      Visibility="{Binding Path=IsShowingConflicts, Converter={StaticResource BoolToVis}}"
+                      Header="Conflicts Found"
+                      Margin="0,10,10,10">
+                <Grid>
+                    <ListView x:Name="lstConflicts" 
+                              Margin="0,28,0,0"
+                              VerticalAlignment="Stretch"
+                              ItemContainerStyle="{StaticResource PrimaryListViewItemStyle}"
+                              ItemsSource="{Binding FileConflicts, UpdateSourceTrigger=PropertyChanged}"
+                              SelectionMode="Single"
+                              MinHeight="125">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Conflicting Asset Name" Width="Auto" DisplayMemberBinding="{Binding ExistingAssetName, FallbackValue=''}"/>
+                                <GridViewColumn Header="Conflicting File" Width="Auto" DisplayMemberBinding="{Binding FileName, FallbackValue=''}"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </Grid>
+            </GroupBox>
 
         </Grid>
 
