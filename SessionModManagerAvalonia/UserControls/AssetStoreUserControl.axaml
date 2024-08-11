@@ -1,0 +1,284 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:v="using:SessionMapSwitcherCore.ViewModels"
+			 xmlns:vi="using:SessionModManagerCore.ViewModels"
+			 xmlns:local="using:SessionModManagerAvalonia.Classes"
+			 x:DataType="v:AssetStoreViewModel"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="SessionModManagerAvalonia.AssetStoreUserControl">
+	<UserControl.Resources>
+		<local:StreamToBitmapConverter x:Key="streamConverter"/>
+	</UserControl.Resources>
+
+	<Grid Background="Transparent">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="auto"/>
+			<RowDefinition Height="auto"/>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="auto"/>
+			<RowDefinition Height="auto"/>
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="1.25*"/>
+			<ColumnDefinition Width="*"/>
+		</Grid.ColumnDefinitions>
+
+
+		<Grid Grid.Row="0" Grid.Column="0"
+                  HorizontalAlignment="Left"
+                  VerticalAlignment="Bottom"
+                  Margin="5,5,0,10">
+			<Grid VerticalAlignment="Bottom" Margin="3">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="auto"/>
+					<RowDefinition Height="5"/>
+					<RowDefinition Height="auto"/>
+				</Grid.RowDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="auto"/>
+					<ColumnDefinition Width="auto"/>
+					<ColumnDefinition Width="auto"/>
+					<ColumnDefinition Width="auto"/>
+					<ColumnDefinition Width="auto"/>
+					<ColumnDefinition Width="auto"/>
+				</Grid.ColumnDefinitions>
+
+				<CheckBox Grid.Column="0" Content="All" IsChecked="{Binding DisplayAll, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+				<CheckBox Grid.Column="1" Content="Maps" IsChecked="{Binding DisplayMaps, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+				<CheckBox Grid.Column="2" Content="Decks" IsChecked="{Binding DisplayDecks, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+				<CheckBox Grid.Column="3" Content="Griptapes" IsChecked="{Binding DisplayGriptapes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+				<CheckBox Grid.Column="4" Content="Trucks" IsChecked="{Binding DisplayTrucks, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+				<CheckBox Grid.Column="5" Content="Meshes" IsChecked="{Binding DisplayMeshes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+				<CheckBox Grid.Row="2" Grid.Column="0" Content="Wheels" IsChecked="{Binding DisplayWheels, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+				<CheckBox Grid.Row="2" Grid.Column="1" Content="Hats" IsChecked="{Binding DisplayHats, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+				<CheckBox Grid.Row="2" Grid.Column="2" Content="Shirts" IsChecked="{Binding DisplayShirts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+				<CheckBox Grid.Row="2" Grid.Column="3" Content="Pants" IsChecked="{Binding DisplayPants, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+				<CheckBox Grid.Row="2" Grid.Column="4" Content="Shoes" IsChecked="{Binding DisplayShoes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+				<CheckBox Grid.Row="2" Grid.Column="5" Content="Characters" IsChecked="{Binding DisplayCharacters, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+			</Grid>
+		</Grid>
+
+		<TextBox x:Name="txtSearch"
+                 Grid.Row="1"
+                 Height="25"
+                 VerticalContentAlignment="Center"
+				 Watermark="Type to search by Name or Description (only searches checked Categories)..."
+                 Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 TextWrapping="NoWrap"
+                 Margin="5,1,0,0"/>
+
+		<DataGrid x:Name="lstAssets"
+                  Grid.Row="2" Grid.Column="0"
+                  HorizontalAlignment="Stretch"
+                  VerticalAlignment="Stretch"
+                  SelectionMode="Single"
+                  ItemsSource="{Binding FilteredAssetList}"
+                  SelectedItem="{Binding SelectedAsset, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                  Margin="5,5,0,5">
+			<DataGrid.Columns>
+				<DataGridTextColumn Header="Name" Width="190" Binding="{Binding Name}"/>
+				<DataGridTextColumn Header="Author" Width="100" Binding="{Binding Author}"/>
+				<DataGridTextColumn Header="Category" Width="95" Binding="{Binding Category}"/>
+				<DataGridTextColumn Header="Updated Date" Width="130" Binding="{Binding UpdatedDate}"/>
+				<DataGridTextColumn Header="Ver." Width="40" Binding="{Binding Version}"/>
+			</DataGrid.Columns>
+
+			<DataGrid.ContextMenu>
+				<ContextMenu>
+					<MenuItem x:Name="menuItemBrowserDownload" Header="Download in Browser ..." Click="menuItemBrowserDownload_Click"/>
+					<MenuItem x:Name="menuItemFetchImages"
+                              IsEnabled="{Binding IsNotDownloadingAllImages}"
+                              Header="Fetch All Preview Images"
+                              Click="menuItemFetchImages_Click"
+                              ToolTip.Tip="Download all preview images for assets listed."/>
+				</ContextMenu>
+			</DataGrid.ContextMenu>
+		</DataGrid>
+
+
+		<DataGrid x:Name="lstDownloads"
+                  Grid.Row="3"
+                  Margin="5,0,0,5"
+                  ItemsSource="{Binding CurrentDownloads, UpdateSourceTrigger=PropertyChanged}"
+                  SelectionMode="Single"
+                  MinHeight="125"
+                  MaxHeight="125">
+			<DataGrid.ContextMenu>
+				<ContextMenu>
+					<MenuItem x:Name="menuItemCancelDownload" Header="Cancel Selected Download" Click="menuItemCancelDownload_Click"/>
+					<MenuItem x:Name="menuItemCancelAll" Header="Cancel All Downloads" Click="menuItemCancelAll_Click"/>
+
+				</ContextMenu>
+			</DataGrid.ContextMenu>
+			<DataGrid.Columns>
+				<DataGridTextColumn Header="Item"  Binding="{Binding ItemName}"/>
+				<DataGridTemplateColumn>
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate DataType="vi:DownloadItemViewModel">
+							<ProgressBar Value="{Binding PercentComplete, FallbackValue='50'}" Height="10"/>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+				<DataGridTextColumn Header="Speed" Width="100" Binding="{Binding DownloadSpeed, FallbackValue='32.5 kb/s'}"/>
+			</DataGrid.Columns>
+		</DataGrid>
+
+
+		<Grid Grid.Row="1" Grid.Column="1"
+                  Grid.RowSpan="3"
+                  HorizontalAlignment="Stretch"
+                  VerticalAlignment="Stretch"
+                  Margin="5,0,5,5">
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="auto"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="auto"/>
+				</Grid.RowDefinitions>
+
+				<ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,0,0,10">
+					<StackPanel>
+						<WrapPanel Margin="0,0,0,0">
+							<TextBlock Text="Author:"
+                                       Margin="5,5,5,0"
+                                       FontWeight="Bold"/>
+							<TextBlock Text="{Binding SelectedAuthor, FallbackValue='Author name'}"
+                                       TextWrapping="Wrap"
+                                       Margin="5,5,0,0"/>
+						</WrapPanel>
+
+						<TextBlock Text="Description:"
+                                   Margin="5,5,5,0"
+                                   FontWeight="Bold"/>
+						<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden"
+                                      MaxHeight="200">
+							<TextBox Text="{Binding SelectedDescription, FallbackValue='example description for a selected asset.'}"
+                                       TextWrapping="Wrap"
+                                       IsReadOnly="True"
+                                     BorderThickness="0"
+                                     Background="Transparent"
+                                       Margin="5,5,0,0"
+                                       Padding="0,0,10,0"/>
+						</ScrollViewer>
+					</StackPanel>
+
+				</ScrollViewer>
+
+
+
+
+				<Image Source="{Binding PreviewImageSource, Converter={StaticResource streamConverter}}" Margin="5,0,5,5"
+					   IsVisible="{Binding !IsLoadingImage}"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"
+                       Grid.Row="1">
+				</Image>
+
+				<TextBlock Text="{Binding PreviewImageText, FallbackValue='Loading Preview Image ...'}"
+                           Grid.Row="1"
+						   IsVisible="{Binding IsLoadingImage}"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center">
+				</TextBlock>
+
+
+				<WrapPanel Grid.Row="2"
+                           HorizontalAlignment="Right"
+                           VerticalAlignment="Bottom"
+                           Margin="0,0,5,25">
+					<Button x:Name="btnRemove"
+                            ToolTip.Tip="Delete the files related to this asset from your game."
+                            Content="{Binding RemoveButtonText, FallbackValue='Remove Asset'}"
+                            IsEnabled="{Binding IsRemoveButtonEnabled}"
+                            Click="btnRemove_Click"
+                            Margin="0,0,5,0"
+                            Padding="5">
+					</Button>
+
+					<Button x:Name="btnInstall"
+                            Content="{Binding InstallButtonText, FallbackValue='Install Asset'}"
+                            IsEnabled="{Binding IsInstallButtonEnabled}"
+                            Click="btnInstall_Click"
+                            Padding="5"/>
+
+				</WrapPanel>
+
+				<CheckBox x:Name="chkDeleteAfterDownload"
+                          Grid.Row="2"
+                          FontSize="10"
+                          HorizontalAlignment="Right"
+                          VerticalAlignment="Bottom"
+                          Margin="0,0,5,5"
+                          Content="Delete Download After Install"
+                          ToolTip.Tip="Downloaded assets are saved to 'store_data/temp_downloads' and are deleted to save space... Uncheck to keep downloaded file(s)."
+                          IsChecked="{Binding DeleteDownloadAfterInstall, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+
+			</Grid>
+		</Grid>
+
+		<StackPanel Grid.Column="1"
+                    Margin="5,15,0,10"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top">
+			<Label Content="Author:" Padding="0"/>
+			<ComboBox Width="200"
+                      Margin="0,1,0,5"
+                      FontSize="11"
+                      ToolTip.Tip="Choose an Author to filter by"
+					  ItemsSource="{Binding AuthorList}"
+					  SelectedIndex="{Binding AuthorToFilterByIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+				<ComboBox.ItemTemplate>
+					<DataTemplate DataType="vi:AuthorDropdownViewModel">
+						<Grid ColumnDefinitions="*,auto" Background="Transparent" HorizontalAlignment="Stretch">
+							<TextBlock Text="{Binding Author}"
+									   HorizontalAlignment="Stretch"
+									   Padding="0,2,0,2"
+									   Margin="0,0,0,0"/>
+							<TextBlock Text="{Binding AssetCountDisplayText}"
+									   Grid.Column="1"
+									   HorizontalAlignment="Right"
+									   Padding="0,2,0,2"
+									   Margin="0,0,30,0"/>
+						</Grid>
+					</DataTemplate>
+				</ComboBox.ItemTemplate>
+			</ComboBox>
+
+			<Label Content="Install Status:" Padding="0"/>
+			<ComboBox Width="200"
+                      FontSize="11"
+                      ToolTip.Tip="Filter by installed or not installed"
+                      ItemsSource="{Binding InstallStatusList}"
+                      SelectedItem="{Binding SelectedInstallStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+		</StackPanel>
+
+		<WrapPanel Grid.Column="1"
+                    Margin="0,0,5,10"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom">
+
+			<Button x:Name="btnRefresh"
+                    Width="64"
+                    Height="32"
+                    Margin="0,0,0,0"
+                    Content="Refresh Assets"
+                    ToolTip.Tip="Download the latest asset catalogs and refresh."
+                    Click="btnRefresh_Click"
+                    Padding="5,2,5,2"/>
+
+			<Button x:Name="btnManageCat"
+                    Width="64"
+                    Height="32"
+                    ToolTip.Tip="Add, remove, or create asset catalogs."
+                    Click="btnManageCat_Click"
+                    Margin="5,0,0,0"
+                    Padding="5,3,5,3"/>
+		</WrapPanel>
+	</Grid>
+
+</UserControl>

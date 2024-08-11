@@ -157,30 +157,19 @@
 			<Grid RowDefinitions="*,auto">
 				<Image Source="{Binding MapPreviewSource, Converter={StaticResource streamConverter}}" Margin="6"
                        HorizontalAlignment="Stretch"
-					   Classes.v1="{Binding !IsLoadingImage}"
-					   Classes.hide="{Binding IsLoadingImage}"
+					   IsVisible="{Binding !IsLoadingImage}"
                        VerticalAlignment="Stretch">
-					<Image.Styles>
-						<Style Selector="Image.v1">
-							<Setter Property="IsVisible" Value="True"/>
-						</Style>
-						<Style Selector="Image.hide">
-							<Setter Property="IsVisible" Value="False"/>
-						</Style>
-					</Image.Styles>
 				</Image>
 
 				<TextBlock Text="Loading Preview Image ..."
-						   Classes.v1="{Binding IsLoadingImage}"
-						   Classes.hide="{Binding !IsLoadingImage}"
+						   IsVisible="{Binding IsLoadingImage}"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center">
 				</TextBlock>
 				
 				
 				<TextBlock Text="No Preview."
-						   Classes.v1="{Binding IsPreviewMissing}"
-						   Classes.hide="{Binding !IsPreviewMissing}"
+						   IsVisible="{Binding IsPreviewMissing}"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center">
 				</TextBlock>

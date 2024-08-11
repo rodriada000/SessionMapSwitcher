@@ -29,13 +29,13 @@
 			<TabItem Header="Asset Store"
                      Tag="Store"
                      x:Name="tabAssetStore">
-				<!--<uii:AssetStoreUserControl x:Name="controlAssetStore" />-->
+				<uii:AssetStoreUserControl x:Name="controlAssetStore" />
 			</TabItem>
 
 			<TabItem Header="Texture Manager"
                      Tag="CabinetFiles"
                      x:Name="tabTextureManager">
-				<!--<ui:TextureReplacerUserControl x:Name="controlTextureMan"/>-->
+				<uii:TextureReplacerUserControl x:Name="controlTextureMan"/>
 			</TabItem>
 
 			<TabItem Header="Game Settings"

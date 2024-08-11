@@ -73,15 +73,15 @@ namespace SessionModManagerAvalonia
                 {
                     controlMapSelection.ViewModel.CheckForRMSTools(); // ensures the rms tools is enabled when switching tabs (in the case the user installs the mod then switches back to the map selection)
 
-                    //if (controlAssetStore.ViewModel.HasDownloadedMap)
-                    //{
-                    //    controlAssetStore.ViewModel.HasDownloadedMap = false;
-                    //    controlMapSelection.ViewModel.ReloadAvailableMapsInBackground();
-                    //}
+                    if (controlAssetStore.ViewModel.HasDownloadedMap)
+                    {
+                        controlAssetStore.ViewModel.HasDownloadedMap = false;
+                        controlMapSelection.ViewModel.ReloadAvailableMapsInBackground();
+                    }
                 }
                 else if (tabTextureManager.IsSelected)
                 {
-                    //controlTextureMan.ViewModel.LoadInstalledTextures();
+                    controlTextureMan.ViewModel.LoadInstalledTextures();
                 }
                 else if (tabSettings.IsSelected)
                 {
@@ -93,13 +93,13 @@ namespace SessionModManagerAvalonia
         private void Window_Loaded_1(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             //CheckForNewVersionInBackground();
-            //controlTextureMan.ViewModel.MessageChanged += MessageService_MessageReceived;
+            controlTextureMan.ViewModel.MessageChanged += MessageService_MessageReceived;
             //controlSettings.ctrlProjectWatcher.ViewModel.MapImported += ProjectWatcher_MapImported;
         }
 
         private void Window_Closing(object? sender, Avalonia.Controls.WindowClosingEventArgs e)
         {
-            //controlTextureMan.ViewModel.MessageChanged -= MessageService_MessageReceived;
+            controlTextureMan.ViewModel.MessageChanged -= MessageService_MessageReceived;
             MessageService.Instance.MessageReceived -= MessageService_MessageReceived;
             ImageCache.WriteToFile();
         }

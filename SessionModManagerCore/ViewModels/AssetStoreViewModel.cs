@@ -5,6 +5,7 @@ using SessionModManagerCore.Classes;
 using SessionModManagerCore.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -47,7 +48,7 @@ namespace SessionMapSwitcherCore.ViewModels
         private bool _isLoadingImage;
         private List<AssetViewModel> _filteredAssetList;
         private List<AssetViewModel> _allAssets;
-        private List<AuthorDropdownViewModel> _authorList;
+        private ObservableCollection<AuthorDropdownViewModel> _authorList;
         private List<string> _installStatusList;
         private List<DownloadItemViewModel> _currentDownloads;
         private AssetCatalog _catalogCache;
@@ -74,6 +75,8 @@ namespace SessionMapSwitcherCore.ViewModels
         private AssetViewModel _selectedAsset;
         private bool _isDownloadingAllImages;
         private string _previewImageText;
+        private bool _isRefreshing;
+        private int _authorToFilterByIndex;
 
         #endregion
 
@@ -453,18 +456,40 @@ namespace SessionMapSwitcherCore.ViewModels
         {
             get
             {
-                if (_authorToFilterBy == null)
-                    _authorToFilterBy = new AuthorDropdownViewModel(defaultAuthorValue, 0);
+                if (_authorList == null || _authorList.Count < AuthorToFilterByIndex)
+                    return new AuthorDropdownViewModel(defaultAuthorValue, 0);
 
-                return _authorToFilterBy;
+                if (AuthorToFilterByIndex == -1 && _authorList?.Count > 0)
+                {
+                    return _authorList[0];
+                }
+
+                return _authorList[AuthorToFilterByIndex];
+            }
+        }
+
+        public int AuthorToFilterByIndex
+        {
+            get
+            {
+                return _authorToFilterByIndex;
             }
             set
             {
-                if (_authorToFilterBy != value)
+                if (_authorToFilterByIndex != value && value != -1)
                 {
-                    _authorToFilterBy = value;
-                    NotifyPropertyChanged();
+                    if (value < 0)
+                    {
+                        _authorToFilterByIndex = 0;
+                    }
+                    else
+                    {
+                        _authorToFilterByIndex = value;
+                    }
+
                     RefreshFilteredAssetList();
+                    NotifyPropertyChanged();
+                    NotifyPropertyChanged(nameof(AuthorToFilterBy));
                 }
             }
         }
@@ -545,12 +570,12 @@ namespace SessionMapSwitcherCore.ViewModels
             }
         }
 
-        public List<AuthorDropdownViewModel> AuthorList
+        public ObservableCollection<AuthorDropdownViewModel> AuthorList
         {
             get
             {
                 if (_authorList == null)
-                    _authorList = new List<AuthorDropdownViewModel>();
+                    _authorList = new ObservableCollection<AuthorDropdownViewModel>();
 
                 return _authorList;
             }
@@ -656,9 +681,6 @@ namespace SessionMapSwitcherCore.ViewModels
             InstallStatusList = new List<string>() { defaultInstallStatusValue, "Installed", "Not Installed" };
             SelectedInstallStatus = defaultInstallStatusValue;
 
-            AuthorList = new List<AuthorDropdownViewModel>() { new AuthorDropdownViewModel(defaultAuthorValue, 0) };
-            AuthorToFilterBy = AuthorList[0];
-
             _catalogCache = GetCurrentCatalog();
             ReloadAllAssets();
             CheckForCatalogUpdatesAsync(clearCache: false);
@@ -666,6 +688,13 @@ namespace SessionMapSwitcherCore.ViewModels
 
         public void RefreshFilteredAssetList()
         {
+            if (_isRefreshing)
+            {
+                return;
+            }
+
+            _isRefreshing = true;
+
             List<AssetCategory> categories = GetSelectedCategories();
             List<AssetViewModel> newList = new List<AssetViewModel>();
 
@@ -674,9 +703,8 @@ namespace SessionMapSwitcherCore.ViewModels
                 newList.AddRange(GetAssetsByCategory(cat));
             }
 
-            RefreshAuthorList();
 
-            if (AuthorToFilterBy.Author != defaultAuthorValue)
+            if (AuthorToFilterBy?.Author != defaultAuthorValue)
             {
                 newList = newList.Where(a => a.Author == AuthorToFilterBy.Author).ToList();
             }
@@ -724,6 +752,8 @@ namespace SessionMapSwitcherCore.ViewModels
                     MessageService.Instance.ShowMessage($"No results found for: {SearchText}");
                 }
             }
+
+            _isRefreshing = false;
         }
 
         /// <summary>
@@ -731,6 +761,7 @@ namespace SessionMapSwitcherCore.ViewModels
         /// </summary>
         private void RefreshAuthorList()
         {
+            int prevIndex = _authorToFilterByIndex;
             List<AuthorDropdownViewModel> newAuthorList = new List<AuthorDropdownViewModel>();
 
             // use GroupBy to get count of assets per author
@@ -743,12 +774,16 @@ namespace SessionMapSwitcherCore.ViewModels
 
             newAuthorList.Insert(0, new AuthorDropdownViewModel(defaultAuthorValue, 0));
 
-            AuthorList = newAuthorList;
 
-            //clear selection if selected author not in list
-            if (AuthorList.Any(a => a.Author == AuthorToFilterBy.Author) == false)
+            AuthorList = new ObservableCollection<AuthorDropdownViewModel>(newAuthorList);
+
+            if (prevIndex > 0)
             {
-                AuthorToFilterBy = AuthorList[0];
+                AuthorToFilterByIndex = prevIndex;
+            }
+            else
+            {
+                AuthorToFilterByIndex = 0;
             }
         }
 
@@ -915,11 +950,11 @@ namespace SessionMapSwitcherCore.ViewModels
                 {
                     using (FileStream stream = File.Open(pathToThumbnail, FileMode.Open, FileAccess.Read, FileShare.Read))
                     {
-                        PreviewImageSource = new MemoryStream();
-                        stream.CopyTo(PreviewImageSource);
+                        byte[] data = new byte[stream.Length];
+                        stream.Read(data, 0, data.Length);
+                        PreviewImageSource = new MemoryStream(data);
                     }
 
-                    PreviewImageSource = new MemoryStream(File.ReadAllBytes(pathToThumbnail));
                 }
 
             });
@@ -1516,6 +1551,7 @@ namespace SessionMapSwitcherCore.ViewModels
         private void ReloadAllAssets()
         {
             AllAssets = _catalogCache.Assets.Select(a => new AssetViewModel(a)).ToList();
+            RefreshAuthorList();
         }
 
         internal AssetCatalog GetCurrentCatalog()
