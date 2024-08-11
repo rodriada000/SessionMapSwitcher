@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 
@@ -20,6 +21,8 @@ namespace SessionModManagerCore.ViewModels
 
         private string _userMessage;
 
+        private bool _flashStatusBar;
+
         public string UserMessage
         {
             get { return _userMessage; }
@@ -30,6 +33,26 @@ namespace SessionModManagerCore.ViewModels
                 NotifyPropertyChanged();
             }
         }
+
+
+        public bool FlashStatusBar
+        {
+            get { return _flashStatusBar; }
+            set
+            {
+                _flashStatusBar = value;
+                if (_flashStatusBar)
+                {
+                    Task.Factory.StartNew(async () =>
+                    {
+                        await Task.Delay(3000);
+                        FlashStatusBar = false;
+                    });
+                }
+                NotifyPropertyChanged();
+            }
+        }
+
 
         #endregion
 
