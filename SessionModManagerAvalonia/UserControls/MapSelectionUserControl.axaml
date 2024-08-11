@@ -2,10 +2,22 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:local="using:SessionModManagerAvalonia.Classes"
 			 xmlns:v="using:SessionModManagerCore.ViewModels"
 			 x:DataType="v:MapSelectionViewModel"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SessionModManagerAvalonia.MapSelectionUserControl">
+	<UserControl.Resources>
+		<local:StreamToBitmapConverter x:Key="streamConverter"/>
+	</UserControl.Resources>
+	<UserControl.Styles>
+		<Style Selector="TextBlock.v1">
+			<Setter Property="IsVisible" Value="True"/>
+		</Style>
+		<Style Selector="TextBlock.hide">
+			<Setter Property="IsVisible" Value="False"/>
+		</Style>
+	</UserControl.Styles>
 	<Grid RowDefinitions="auto,*,auto" ColumnDefinitions="*,1.5*">
 
 
@@ -143,51 +155,35 @@
                   Grid.Column="1"
                   Margin="10,10,10,3">
 			<Grid RowDefinitions="*,auto">
-				<!--<Image Source="{Binding MapPreviewSource}" Margin="6"
+				<Image Source="{Binding MapPreviewSource, Converter={StaticResource streamConverter}}" Margin="6"
                        HorizontalAlignment="Stretch"
-                       VerticalAlignment="Stretch"
-                       RenderOptions.BitmapScalingMode="HighQuality">
-					<Image.Style>
-						<Style TargetType="Image">
-							<Setter Property="Visibility" Value="Visible"/>
-							<Style.Triggers>
-								<DataTrigger Binding="{Binding IsLoadingImage, FallbackValue='False'}" Value="True">
-									<Setter Property="Visibility" Value="Hidden"/>
-								</DataTrigger>
-							</Style.Triggers>
+					   Classes.v1="{Binding !IsLoadingImage}"
+					   Classes.hide="{Binding IsLoadingImage}"
+                       VerticalAlignment="Stretch">
+					<Image.Styles>
+						<Style Selector="Image.v1">
+							<Setter Property="IsVisible" Value="True"/>
 						</Style>
-					</Image.Style>
+						<Style Selector="Image.hide">
+							<Setter Property="IsVisible" Value="False"/>
+						</Style>
+					</Image.Styles>
 				</Image>
 
 				<TextBlock Text="Loading Preview Image ..."
+						   Classes.v1="{Binding IsLoadingImage}"
+						   Classes.hide="{Binding !IsLoadingImage}"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center">
-					<TextBlock.Style>
-						<Style TargetType="TextBlock">
-							<Setter Property="Visibility" Value="Hidden"/>
-							<Style.Triggers>
-								<DataTrigger Binding="{Binding IsLoadingImage, FallbackValue='True'}" Value="True">
-									<Setter Property="Visibility" Value="Visible"/>
-								</DataTrigger>
-							</Style.Triggers>
-						</Style>
-					</TextBlock.Style>
 				</TextBlock>
-
+				
+				
 				<TextBlock Text="No Preview."
+						   Classes.v1="{Binding IsPreviewMissing}"
+						   Classes.hide="{Binding !IsPreviewMissing}"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center">
-					<TextBlock.Style>
-						<Style TargetType="TextBlock">
-							<Setter Property="Visibility" Value="Hidden"/>
-							<Style.Triggers>
-								<DataTrigger Binding="{Binding IsPreviewMissing, FallbackValue='False'}" Value="True">
-									<Setter Property="Visibility" Value="Visible"/>
-								</DataTrigger>
-							</Style.Triggers>
-						</Style>
-					</TextBlock.Style>
-				</TextBlock>-->
+				</TextBlock>
 
 				<Grid Grid.Row="1"
                           Margin="0">

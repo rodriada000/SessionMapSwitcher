@@ -240,10 +240,14 @@ public partial class MapSelectionUserControl : UserControl
 
         MapImportViewModel importViewModel = new MapImportViewModel();
 
-        //ComputerImportWindow importWindow = new ComputerImportWindow(importViewModel);
-        //importWindow.ShowDialog();
+        ComputerImportWindow importWindow = new ComputerImportWindow(importViewModel);
 
-        ViewModel.ReloadAvailableMapsInBackground(); // reload list of available maps as it may have changed
+        importWindow.Closed += (s, e) =>
+        {
+            ViewModel.ReloadAvailableMapsInBackground(); // reload list of available maps as it may have changed
+        };
+
+        importWindow.Show();
     }
 
     private async void MenuReimporSelectedMap_Click(object sender, RoutedEventArgs e)

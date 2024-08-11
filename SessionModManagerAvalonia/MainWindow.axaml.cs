@@ -71,7 +71,7 @@ namespace SessionModManagerAvalonia
 
                 if (tabMainWindow.IsSelected)
                 {
-                    //controlMapSelection.ViewModel.CheckForRMSTools(); // ensures the rms tools is enabled when switching tabs (in the case the user installs the mod then switches back to the map selection)
+                    controlMapSelection.ViewModel.CheckForRMSTools(); // ensures the rms tools is enabled when switching tabs (in the case the user installs the mod then switches back to the map selection)
 
                     //if (controlAssetStore.ViewModel.HasDownloadedMap)
                     //{
@@ -85,7 +85,7 @@ namespace SessionModManagerAvalonia
                 }
                 else if (tabSettings.IsSelected)
                 {
-                    //controlSettings.ViewModel.RefreshGameSettings();
+                    controlSettings.ViewModel.RefreshGameSettings();
                 }
             }
         }

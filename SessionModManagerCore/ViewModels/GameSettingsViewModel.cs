@@ -130,6 +130,15 @@ namespace SessionModManagerCore.ViewModels
                     CustomResolutionText = "1920x1080";
                 }
                 NotifyPropertyChanged();
+                NotifyPropertyChanged(nameof(IsCustomResolutionVisible));
+            }
+        }
+
+        public bool IsCustomResolutionVisible
+        {
+            get
+            {
+                return _resolutionText == "Custom";
             }
         }
 

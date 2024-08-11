@@ -49,4 +49,10 @@
   <ItemGroup>
     <Resource Include="Resources\new_switcher.ico" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="NLog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

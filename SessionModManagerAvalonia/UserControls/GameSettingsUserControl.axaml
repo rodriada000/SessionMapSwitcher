@@ -1,0 +1,237 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:v="using:SessionModManagerCore.ViewModels"
+			 x:DataType="v:GameSettingsViewModel"
+             mc:Ignorable="d" d:DesignHeight="825" d:DesignWidth="575"
+             x:Class="SessionModManagerAvalonia.GameSettingsUserControl">
+
+	<Grid>
+		<ScrollViewer Grid.Row="1" Grid.Column="1"
+                      VerticalScrollBarVisibility="Auto"
+                      Margin="0,10,0,0">
+			<StackPanel>
+
+				<Grid x:Name="grpIniOptions"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Top"
+                      Margin="10,0,10,0">
+
+					<StackPanel>
+						<Label FontWeight="Bold" FontSize="18">Game Settings</Label>
+						<WrapPanel Margin="10,10,0,0" HorizontalAlignment="Left">
+							<Label Content="Object Placement Max Count" Padding="0,4,5,0"/>
+							<TextBox x:Name="txtObjectCount"
+                                     MaxWidth="150"
+                                     Width="150"
+                                     Height="27"
+                                     Text="{Binding ObjectCountText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='5'}"
+                                     Margin="0,0,10,0"/>
+						</WrapPanel>
+
+						<CheckBox Content="Launch using Steam"
+                                          x:Name="chkSteamLaunch"
+                                          HorizontalAlignment="Left"
+                                          IsChecked="{Binding SteamLaunchIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='True'}"
+                                          Margin="10,10,10,0"/>
+
+						<CheckBox Content="Skip Intro Movie"
+                                          x:Name="chkSkipMovie"
+                                          HorizontalAlignment="Left"
+                                          IsChecked="{Binding SkipMovieIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='True'}"
+                                          Margin="10,5,10,0"/>
+
+						<CheckBox Content="Enable DBuffer"
+                                          HorizontalAlignment="Left"
+                                          
+                                          IsChecked="{Binding DBufferIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='True'}"
+                                          Margin="10,5,10,0"/>
+
+
+						<Label Margin="0,10,0,0" FontWeight="Bold" FontSize="18">Video Settings</Label>
+						<Grid Margin="10,10,10,0">
+							<Grid Margin="0,10,0,0">
+								<Grid.RowDefinitions>
+									<RowDefinition Height="auto"/>
+									<RowDefinition Height="auto"/>
+									<RowDefinition Height="auto"/>
+									<RowDefinition Height="auto"/>
+									<RowDefinition Height="auto"/>
+									<RowDefinition Height="auto"/>
+									<RowDefinition Height="auto"/>
+									<RowDefinition Height="auto"/>
+									<RowDefinition Height="auto"/>
+									<RowDefinition Height="auto"/>
+									<RowDefinition Height="auto"/>
+									<RowDefinition Height="auto"/>
+									<RowDefinition Height="auto"/>
+								</Grid.RowDefinitions>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="auto"/>
+									<ColumnDefinition Width="*"/>
+									<ColumnDefinition Width="*"/>
+								</Grid.ColumnDefinitions>
+								<Label Content="Shadows"/>
+								<ComboBox Grid.Column="1"
+                                          ItemsSource="{Binding VideoSettingsDropdownOptions}"
+                                          SelectedValue="{Binding ShadowQualityText, Mode=TwoWay, FallbackValue='Epic'}"
+                                          />
+								<Label Content="Anti-Aliasing"
+                                       Margin="0,5,0,0"
+                                       Grid.Row="1"/>
+								<ComboBox Grid.Column="1"
+                                          Grid.Row="1"
+                                          Margin="0,5,0,0"
+                                          ItemsSource="{Binding VideoSettingsDropdownOptions}"
+                                          SelectedValue="{Binding AntiAliasingText, Mode=TwoWay, FallbackValue='Epic'}"
+                                          />
+								<Label Content="Textures"
+                                       Margin="0,5,0,0"
+                                       Grid.Row="2"/>
+								<ComboBox Grid.Column="1"
+                                          Grid.Row="2"
+                                          Margin="0,5,0,0"
+                                          ItemsSource="{Binding VideoSettingsDropdownOptions}"
+                                          SelectedValue="{Binding TexturesQualityText, Mode=TwoWay, FallbackValue='Epic'}"
+                                          />
+
+								<Label Content="View Distance"
+                                       Margin="0,5,0,0"
+                                       Grid.Row="3"/>
+								<ComboBox Grid.Column="1"
+                                          Grid.Row="3"
+                                          Margin="0,5,0,0"
+                                          ItemsSource="{Binding VideoSettingsDropdownOptions}"
+                                          SelectedValue="{Binding ViewDistanceQualityText, Mode=TwoWay, FallbackValue='Epic'}"
+                                          />
+
+								<Label Content="Shading"
+                                       Margin="0,5,0,0"
+                                       Grid.Row="4"/>
+								<ComboBox Grid.Column="1"
+                                          Grid.Row="4"
+                                          Margin="0,5,0,0"
+                                          ItemsSource="{Binding VideoSettingsDropdownOptions}"
+                                          SelectedValue="{Binding ShadingQualityText, Mode=TwoWay, FallbackValue='Epic'}"
+                                          />
+
+								<Label Content="Foliage"
+                                       Margin="0,5,0,0"
+                                       Grid.Row="5"/>
+								<ComboBox Grid.Column="1"
+                                          Grid.Row="5"
+                                          Margin="0,5,0,0"
+                                          ItemsSource="{Binding VideoSettingsDropdownOptions}"
+                                          SelectedValue="{Binding FoliageQualityText, Mode=TwoWay, FallbackValue='Epic'}"
+                                          />
+
+								<Label Content="Effects"
+                                       Margin="0,5,0,0"
+                                       Grid.Row="6"/>
+								<ComboBox Grid.Column="1"
+                                          Grid.Row="6"
+                                          Margin="0,5,0,0"
+                                          ItemsSource="{Binding VideoSettingsDropdownOptions}"
+                                          SelectedValue="{Binding EffectsQualityText, Mode=TwoWay, FallbackValue='Epic'}"
+                                          />
+
+								<Label Content="Post Processing"
+                                       Margin="0,5,0,0"
+                                       Grid.Row="7"/>
+								<ComboBox Grid.Column="1"
+                                          Grid.Row="7"
+                                          Margin="0,5,0,0"
+                                          ItemsSource="{Binding VideoSettingsDropdownOptions}"
+                                          SelectedValue="{Binding PostProcessingText, Mode=TwoWay, FallbackValue='Epic'}"
+                                          />
+
+								<Label Content="Window Mode"
+                                       Margin="0,5,0,0"
+                                       Grid.Row="9"/>
+								<ComboBox Grid.Column="1"
+                                          Grid.Row="9"
+                                          Margin="0,5,0,0"
+                                          ItemsSource="{Binding FullscreenDropdownOptions}"
+                                          SelectedValue="{Binding FullScreenMode, Mode=TwoWay, FallbackValue='Fullscreen'}"
+                                          />
+
+								<Label Content="Resolution"
+                                       Margin="0,5,0,0"
+                                       Grid.Row="10"/>
+								<ComboBox Grid.Column="1"
+                                          Grid.Row="10"
+                                          Margin="0,5,0,0"
+                                          ItemsSource="{Binding ResolutionDropdownOptions}"
+                                          SelectedValue="{Binding ResolutionText, Mode=TwoWay, FallbackValue='Epic'}"
+                                          />
+
+								<TextBox Grid.Row="10"
+                                         Text="{Binding CustomResolutionText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         Margin="3,6,3,1"
+										 Classes.v1="{Binding IsCustomResolutionVisible}"
+										 Classes.hide="{Binding !IsCustomResolutionVisible}"
+                                         Grid.Column="2">
+									<TextBox.Styles>
+										<Style Selector="TextBox.v1">
+											<Setter Property="IsVisible" Value="True"/>
+										</Style>
+										<Style Selector="TextBox.hide">
+											<Setter Property="IsVisible" Value="False"/>
+										</Style>
+									</TextBox.Styles>
+								</TextBox>
+
+								<Label Content="Frame Rate Limit"
+                                       Margin="0,5,0,0"
+                                       Grid.Row="11"/>
+								<TextBox Grid.Column="1"
+                                          Grid.Row="11"
+                                          Margin="0,5,0,0"
+                                          Text="{Binding FrameRateLimitText, Mode=TwoWay, FallbackValue='120'}"/>
+
+								<Label Content="Enable Vsync"
+                                       Margin="0,5,0,0"
+                                       Grid.Row="12"/>
+								<CheckBox Grid.Column="1"
+                                          Grid.Row="12"
+                                          HorizontalAlignment="Left"
+                                          VerticalAlignment="Center"
+                                          Margin="0,5,0,0"
+                                          Content=""
+                                          IsChecked="{Binding IsVsyncEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='120'}"
+                                          />
+							</Grid>
+
+						</Grid>
+
+						<Button x:Name="btnApplySettings"
+                                Content="Save Settings"
+                                Click="BtnApplySettings_Click"
+                                HorizontalAlignment="Right"
+                                Margin="10,10,10,5"
+                                Padding="10,0,10,2"/>
+					</StackPanel>
+
+				</Grid>
+
+				<!--<GroupBox x:Name="grpProjectWatch"
+                                  Header="Project Watcher"
+                                  HorizontalAlignment="Stretch"
+                                  VerticalAlignment="Top"
+                                  Margin="10,10,10,0">
+					<ui:ProjectWatcherUserControl x:Name="ctrlProjectWatcher"/>
+				</GroupBox>-->
+
+				<Button x:Name="btnViewLogs"
+                                Content="View Logs"
+                                Click="btnViewLogs_Click"
+                                HorizontalAlignment="Left"
+                                Margin="10,20,10,5"
+                                Padding="10,0,10,2"/>
+			</StackPanel>
+		</ScrollViewer>
+
+	</Grid>
+
+</UserControl>
