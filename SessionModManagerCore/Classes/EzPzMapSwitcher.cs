@@ -3,6 +3,7 @@ using IniParser.Model;
 using SessionMapSwitcherCore.Classes.Interfaces;
 using SessionMapSwitcherCore.Utils;
 using SessionModManagerCore.Classes;
+using SessionModManagerCore.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;

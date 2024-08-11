@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using SessionModManagerCore.ViewModels;
+using System.Collections.Generic;
 
 namespace SessionMapSwitcherCore.Classes.Interfaces
 {

@@ -2,6 +2,7 @@
 using SessionMapSwitcherCore.Utils;
 using SessionMapSwitcherCore.ViewModels;
 using SessionModManagerCore.Classes;
+using SessionModManagerCore.ViewModels;
 using SharpCompress;
 using System;
 using System.Collections.Generic;

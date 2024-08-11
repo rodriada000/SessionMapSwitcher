@@ -1,239 +1,241 @@
 ﻿using SessionMapSwitcherCore.Classes;
-using SessionModManagerCore.ViewModels;
 using System;
 using System.IO;
 
-public class MapListItem : ViewModelBase
+namespace SessionModManagerCore.ViewModels
 {
-    private string _mapName;
-    private string _customName;
-    private string _fullPath;
-    private string _validationHint;
-    private string _pathToImage;
-    private string _tooltip;
-    private bool _isEnabled = true;
-    private bool _isSelected = false;
-    private bool _isValid = true;
-    private bool _isHiddenByUser = false;
-
-    public string CustomName
+    public class MapListItem : ViewModelBase
     {
-        get { return _customName; }
-        set
-        {
-            _customName = value;
-            NotifyPropertyChanged();
-            NotifyPropertyChanged(DisplayName);
-        }
-    }
+        private string _mapName;
+        private string _customName;
+        private string _fullPath;
+        private string _validationHint;
+        private string _pathToImage;
+        private string _tooltip;
+        private bool _isEnabled = true;
+        private bool _isSelected = false;
+        private bool _isValid = true;
+        private bool _isHiddenByUser = false;
 
-    public string MapName
-    {
-        get { return _mapName; }
-        set
+        public string CustomName
         {
-            _mapName = value;
-            NotifyPropertyChanged();
-            NotifyPropertyChanged(DisplayName);
-        }
-    }
-
-    public string DisplayName
-    {
-        get
-        {
-            if (string.IsNullOrEmpty(CustomName))
+            get { return _customName; }
+            set
             {
-                return MapName;
+                _customName = value;
+                NotifyPropertyChanged();
+                NotifyPropertyChanged(DisplayName);
             }
-            return CustomName;
         }
-    }
 
-    public string PathToImage
-    {
-        get { return _pathToImage; }
-        set
+        public string MapName
         {
-            _pathToImage = value;
-            NotifyPropertyChanged();
-        }
-    }
-
-    /// <summary>
-    /// Absolute path to the .umap file
-    /// </summary>
-    public string FullPath { get => _fullPath; set => _fullPath = value; }
-
-    /// <summary>
-    /// Path to directory where all files related to this map are located.
-    /// </summary>
-    public string DirectoryPath
-    {
-        get
-        {
-            if (String.IsNullOrEmpty(FullPath))
+            get { return _mapName; }
+            set
             {
-                return "";
+                _mapName = value;
+                NotifyPropertyChanged();
+                NotifyPropertyChanged(DisplayName);
             }
-
-            FileInfo mapFileInfo = new FileInfo(FullPath);
-
-            return mapFileInfo.DirectoryName;
         }
-    }
 
-    /// <summary>
-    /// Returns <see cref="FullPath"/> formatted to work for UserEngine.ini
-    /// e.g. "/Game/Path/To/Map"
-    /// </summary>
-    public string MapPathForIni
-    {
-        get
+        public string DisplayName
         {
-            if (string.IsNullOrWhiteSpace(FullPath))
+            get
             {
-                return "";
+                if (string.IsNullOrEmpty(CustomName))
+                {
+                    return MapName;
+                }
+                return CustomName;
             }
-
-            return FullPath.Replace(SessionPath.ToContent, "/Game").Replace("\\", "/").Replace(".umap", "");
         }
-    }
 
-    public string ValidationHint
-    {
-        get { return _validationHint; }
-        set
+        public string PathToImage
         {
-            _validationHint = value;
-            NotifyPropertyChanged();
-        }
-    }
-
-    public string Tooltip
-    {
-        get
-        {
-            if (_tooltip == null && !string.IsNullOrWhiteSpace(DirectoryPath))
+            get { return _pathToImage; }
+            set
             {
-                _tooltip = DirectoryPath;
+                _pathToImage = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        /// <summary>
+        /// Absolute path to the .umap file
+        /// </summary>
+        public string FullPath { get => _fullPath; set => _fullPath = value; }
+
+        /// <summary>
+        /// Path to directory where all files related to this map are located.
+        /// </summary>
+        public string DirectoryPath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(FullPath))
+                {
+                    return "";
+                }
+
+                FileInfo mapFileInfo = new FileInfo(FullPath);
+
+                return mapFileInfo.DirectoryName;
+            }
+        }
+
+        /// <summary>
+        /// Returns <see cref="FullPath"/> formatted to work for UserEngine.ini
+        /// e.g. "/Game/Path/To/Map"
+        /// </summary>
+        public string MapPathForIni
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(FullPath))
+                {
+                    return "";
+                }
+
+                return FullPath.Replace(SessionPath.ToContent, "/Game").Replace("\\", "/").Replace(".umap", "");
+            }
+        }
+
+        public string ValidationHint
+        {
+            get { return _validationHint; }
+            set
+            {
+                _validationHint = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public string Tooltip
+        {
+            get
+            {
+                if (_tooltip == null && !string.IsNullOrWhiteSpace(DirectoryPath))
+                {
+                    _tooltip = DirectoryPath;
+                }
+
+                return _tooltip;
+            }
+            set
+            {
+                _tooltip = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public bool IsHiddenByUser
+        {
+            get { return _isHiddenByUser; }
+            set
+            {
+                _isHiddenByUser = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public bool IsEnabled
+        {
+            get { return _isEnabled; }
+            set
+            {
+                _isEnabled = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public bool IsSelected
+        {
+            get { return _isSelected; }
+            set
+            {
+                _isSelected = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public bool IsValid
+        {
+            get { return _isValid; }
+            set
+            {
+                _isValid = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public bool IsDefaultMap { get; set; }
+
+        public string GameDefaultMapSetting { get; set; }
+        public string GlobalDefaultGameModeSetting { get; set; }
+
+        public MapListItem()
+        {
+            FullPath = "";
+            MapName = "";
+        }
+
+        public MapListItem(string pathToMapFile)
+        {
+            FullPath = pathToMapFile;
+            MapName = Path.GetFileNameWithoutExtension(pathToMapFile);
+
+            Validate();
+        }
+
+        public void Validate()
+        {
+            IsValid = true;
+
+            if (File.Exists(FullPath) == false)
+            {
+                IsValid = false;
+                ValidationHint = "(file missing)";
+                return;
             }
 
-            return _tooltip;
-        }
-        set
-        {
-            _tooltip = value;
-            NotifyPropertyChanged();
-        }
-    }
-
-    public bool IsHiddenByUser
-    {
-        get { return _isHiddenByUser; }
-        set
-        {
-            _isHiddenByUser = value;
-            NotifyPropertyChanged();
-        }
-    }
-
-    public bool IsEnabled
-    {
-        get { return _isEnabled; }
-        set
-        {
-            _isEnabled = value;
-            NotifyPropertyChanged();
-        }
-    }
-
-    public bool IsSelected
-    {
-        get { return _isSelected; }
-        set
-        {
-            _isSelected = value;
-            NotifyPropertyChanged();
-        }
-    }
-
-    public bool IsValid
-    {
-        get { return _isValid; }
-        set
-        {
-            _isValid = value;
-            NotifyPropertyChanged();
-        }
-    }
-
-    public bool IsDefaultMap { get; set; }
-
-    public string GameDefaultMapSetting { get; set; }
-    public string GlobalDefaultGameModeSetting { get; set; }
-
-    public MapListItem()
-    {
-        FullPath = "";
-        MapName = "";
-    }
-
-    public MapListItem(string pathToMapFile)
-    {
-        FullPath = pathToMapFile;
-        MapName = Path.GetFileNameWithoutExtension(pathToMapFile);
-
-        Validate();
-    }
-
-    public void Validate()
-    {
-        IsValid = true;
-
-        if (File.Exists(FullPath) == false)
-        {
-            IsValid = false;
-            ValidationHint = "(file missing)";
-            return;
+            if (HasGameMode(FullPath) == false)
+            {
+                IsValid = false;
+                ValidationHint = "(missing gamemode)";
+            }
         }
 
-        if (MapListItem.HasGameMode(FullPath) == false)
+        /// <summary>
+        /// Reads the file and looks for the string '/Game/Data/PBP_InGameSessionGameMode'
+        /// </summary>
+        /// <param name="fullPath"> full path to file </param>
+        public static bool HasGameMode(string fullPath)
         {
-            IsValid = false;
-            ValidationHint = "(missing gamemode)";
-        }
-    }
+            try
+            {
+                if (!File.Exists(fullPath))
+                {
+                    return false;
+                }
 
-    /// <summary>
-    /// Reads the file and looks for the string '/Game/Data/PBP_InGameSessionGameMode'
-    /// </summary>
-    /// <param name="fullPath"> full path to file </param>
-    public static bool HasGameMode(string fullPath)
-    {
-        try
+                string umapContents = File.ReadAllText(fullPath);
+                return umapContents.IndexOf("/Game/Data/PBP_InGameSessionGameMode", StringComparison.OrdinalIgnoreCase) >= 0;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public override bool Equals(object obj)
         {
-            if (!File.Exists(fullPath))
+            if (!(obj is MapListItem))
             {
                 return false;
             }
 
-            string umapContents = File.ReadAllText(fullPath);
-            return umapContents.IndexOf("/Game/Data/PBP_InGameSessionGameMode", StringComparison.OrdinalIgnoreCase) >= 0;
+            return (obj as MapListItem).FullPath == FullPath && (obj as MapListItem).MapName == MapName;
         }
-        catch (Exception)
-        {
-            return false;
-        }
-    }
-
-    public override bool Equals(object obj)
-    {
-        if (!(obj is MapListItem))
-        {
-            return false;
-        }
-
-        return (obj as MapListItem).FullPath == this.FullPath && (obj as MapListItem).MapName == this.MapName;
     }
 }

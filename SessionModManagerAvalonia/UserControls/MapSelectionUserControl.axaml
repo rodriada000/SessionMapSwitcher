@@ -1,0 +1,258 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:v="using:SessionModManagerCore.ViewModels"
+			 x:DataType="v:MapSelectionViewModel"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="SessionModManagerAvalonia.MapSelectionUserControl">
+	<Grid RowDefinitions="auto,*,auto" ColumnDefinitions="*,1.5*">
+
+
+		<!--PATH TO SESSION TEXTBOX AND BUTTONS-->
+		<Button Name="btnBrowseSessionPath"
+                Tag="FolderOpen"
+                IsEnabled="{Binding InputControlsEnabled}"
+                VerticalAlignment="Top" HorizontalAlignment="Left"
+                Margin="10,10,18,0"
+                Height="32" Width="32"
+                Click="BtnBrowseSessionPath_Click"/>
+
+		<TextBox x:Name="txtSessionPath"
+                 Grid.Column="0" Grid.ColumnSpan="2"
+				 Watermark="Enter Path to Session: [PathToSteam]\steamapps\common\Session"
+                 VerticalAlignment="Stretch"
+                 HorizontalAlignment="Stretch"
+                 Text="{Binding SessionPathTextInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 IsEnabled="{Binding InputControlsEnabled}"
+                 KeyUp="TxtSessionPath_KeyUp"
+                 Margin="45,10,10,0"
+                 ContextMenu="{Binding ElementName=mainContextMenu}"/>
+
+
+
+
+		<!--AVAILABLE MAPS GROUPBOX-->
+		<Grid Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,0,3">
+
+			<Grid RowDefinitions="auto,*,auto">
+
+				<WrapPanel HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5" >
+
+					<Button x:Name="btnReloadMaps"
+                            Click="BtnReloadMaps_Click"
+                            IsEnabled="{Binding InputControlsEnabled}"
+                            Content="Reload Available Maps"
+                            Padding="5,1,5,1"
+                            FontSize="11"/>
+
+
+					<Button x:Name="btnImportMap"
+                            IsEnabled="{Binding InputControlsEnabled}"
+                            Content="Import Map"
+                            Click="BtnImportMap_Click"
+                            Margin="5,0,0,0"
+                            Padding="5,1,5,1"
+                            FontSize="11">
+					</Button>
+
+					<CheckBox x:Name="chkShowInvalidMaps"
+                              Content="Show Invalid/Hidden Maps"
+                              IsChecked="{Binding ShowInvalidMapsIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='True'}"
+                              Click="ChkShowInvalidMaps_Click"
+                              FontSize="10"
+                              Margin="10,5,0,0"
+                              VerticalAlignment="Center"/>
+				</WrapPanel>
+
+
+				<ListBox x:Name="lstMaps"
+                         Grid.Row="1"
+                         HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                         MinWidth="300"
+                         Margin="4,1,5,5"
+                         ItemsSource="{Binding FilteredAvailableMaps}"
+                         SelectionChanged="lstMaps_SelectionChanged"
+                         >
+					<ListBox.ContextMenu>
+						<ContextMenu x:Name="mainContextMenu">
+							<MenuItem x:Name="menuSecondMapToLoad" Header="Set Selected Map To Load Next"  Click="menuSecondMapToLoad_Click" />
+							<MenuItem x:Name="menuReimporSelectedMap" Header="Re-import Selected Map ..."  Click="MenuReimporSelectedMap_Click"/>
+							<MenuItem x:Name="menuRenameSelectedMap" Header="Rename Selected Map ..."  Click="MenuRenameSelectedMap_Click" />
+							<MenuItem x:Name="menuHideSelectedMap" Header="Hide Selected Map"  Click="MenuHideSelectedMap_Click" />
+							<MenuItem x:Name="menuDeleteSelectedMap" Header="Delete Selected Map ..."  Click="menuDeleteSelectedMap_Click" />
+							<!--<MenuItem Style="{StaticResource ContextMenuSeperator}"/>-->
+							<MenuItem x:Name="menuOpenSessionFolder" Header="Open Session Folder ..."  Click="MenuOpenSessionFolder_Click"/>
+							<MenuItem x:Name="menuOpenMapsFolder" Header="Open Content Folder ..." Click="MenuOpenMapsFolder_Click"/>
+							<MenuItem x:Name="menuOpenSaveFolder" Header="Open Save Folder ..." Click="menuOpenSaveFolder_Click"/>
+							<MenuItem x:Name="menuOpenSelectedMapFolder" Header="Open Selected Map Folder ..." Click="MenuOpenSelectedMapFolder_Click"/>
+							<!--<MenuItem Style="{StaticResource ContextMenuSeperator}"/>-->
+							<MenuItem x:Name="menuOpenReadme" Header="View Help ..." Click="MenuOpenReadme_Click"/>
+						</ContextMenu>
+					</ListBox.ContextMenu>
+					<ListBox.ItemTemplate>
+						<DataTemplate DataType="v:MapListItem">
+							<Border x:Name="border" IsEnabled="{Binding IsEnabled}">
+								<WrapPanel DoubleTapped="MapListItem_DoubleTapped">
+									<TextBlock x:Name="mapText" Text="{Binding DisplayName, FallbackValue='Test Map Name'}"
+											   Margin="5,0,0,0"
+											   Padding="0,2,0,2"/>
+									<TextBlock x:Name="validationText"
+											   Foreground="Red"
+											   Text="{Binding ValidationHint, FallbackValue='(missing game mode)'}"
+											   IsVisible="False"
+											   FontSize="11"
+											   Margin="10,2,0,0"/>
+								</WrapPanel>
+							</Border>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+					<ListBox.Styles>
+						<Style Selector="ListBoxItem" x:DataType="v:MapListItem">
+							<Setter Property="IsEnabled" Value="{Binding IsEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+							<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+						</Style>
+					</ListBox.Styles>
+				</ListBox>
+
+				<StackPanel Grid.Row="2"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Bottom"
+                                    Margin="3,0,0,3">
+
+					<WrapPanel>
+						<Label Content="Currently Loaded Map:"
+                                       Padding="3,0,0,0"/>
+
+						<TextBlock x:Name="txtLoadedMap"
+                                           Padding="3,0,0,0"
+                                           FontSize="12"
+                                           MaxWidth="225"
+                                           TextTrimming="CharacterEllipsis"
+                                           Text="{Binding CurrentlyLoadedMapName, FallbackValue='This is a really long name that needs to be truncated'}"/>
+					</WrapPanel>
+
+				</StackPanel>
+
+			</Grid>
+
+		</Grid>
+
+
+		<Grid Grid.Row="1"
+                  Grid.Column="1"
+                  Margin="10,10,10,3">
+			<Grid RowDefinitions="*,auto">
+				<!--<Image Source="{Binding MapPreviewSource}" Margin="6"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"
+                       RenderOptions.BitmapScalingMode="HighQuality">
+					<Image.Style>
+						<Style TargetType="Image">
+							<Setter Property="Visibility" Value="Visible"/>
+							<Style.Triggers>
+								<DataTrigger Binding="{Binding IsLoadingImage, FallbackValue='False'}" Value="True">
+									<Setter Property="Visibility" Value="Hidden"/>
+								</DataTrigger>
+							</Style.Triggers>
+						</Style>
+					</Image.Style>
+				</Image>
+
+				<TextBlock Text="Loading Preview Image ..."
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center">
+					<TextBlock.Style>
+						<Style TargetType="TextBlock">
+							<Setter Property="Visibility" Value="Hidden"/>
+							<Style.Triggers>
+								<DataTrigger Binding="{Binding IsLoadingImage, FallbackValue='True'}" Value="True">
+									<Setter Property="Visibility" Value="Visible"/>
+								</DataTrigger>
+							</Style.Triggers>
+						</Style>
+					</TextBlock.Style>
+				</TextBlock>
+
+				<TextBlock Text="No Preview."
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center">
+					<TextBlock.Style>
+						<Style TargetType="TextBlock">
+							<Setter Property="Visibility" Value="Hidden"/>
+							<Style.Triggers>
+								<DataTrigger Binding="{Binding IsPreviewMissing, FallbackValue='False'}" Value="True">
+									<Setter Property="Visibility" Value="Visible"/>
+								</DataTrigger>
+							</Style.Triggers>
+						</Style>
+					</TextBlock.Style>
+				</TextBlock>-->
+
+				<Grid Grid.Row="1"
+                          Margin="0">
+					<StackPanel>
+						<CheckBox x:Name="chkLoadSecondMap"
+                                  Padding="3,0,0,0"
+                                  FontSize="11"
+                                  VerticalContentAlignment="Center"
+                                  Margin="1,5,0,0"
+                                  IsChecked="{Binding LoadSecondMapIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                  Content="{Binding SecondMapCheckboxText, FallbackValue='Load Second Map After Start (Map Name)'}"/>
+
+						<CheckBox x:Name="chkEnableRMSTools"
+                                  Margin="1,5,0,0"
+                                  Content="Enable RMS Toolsuite"
+                                  IsChecked="{Binding RMSToolsuiteIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+					</StackPanel>
+				</Grid>
+
+			</Grid>
+		</Grid>
+
+
+
+		<!--USER MESSAGE AND LOAD/START BUTTONS-->
+
+
+
+
+		<TextBlock x:Name="lblHintMessage"
+                           Grid.Row="2"
+                           Grid.ColumnSpan="2"
+                           Grid.RowSpan="2"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           Margin="10,4,0,0"
+                           Text="{Binding HintMessage, FallbackValue='Hint: This is a hint shown to the user that changes on app start every time.'}"
+                           TextWrapping="Wrap"
+                           MaxWidth="600"
+                           FontSize="11"/>
+
+		<Button x:Name="btnLoadMap"
+                        Grid.Row="2" Grid.ColumnSpan="2"
+                        Content="{Binding LoadMapButtonText, FallbackValue='Load Map'}"
+                        IsEnabled="{Binding InputControlsEnabled}"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        FontSize="16"
+                        Margin="0,5,125,5"
+                        Padding="5,0,5,0"
+                        Click="btnLoadMap_Click" Height="33"/>
+
+		<Button x:Name="btnStartGame"
+                        Grid.Row="2" Grid.ColumnSpan="2"
+                        Content="Start Session"
+                        IsEnabled="{Binding InputControlsEnabled}"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        FontSize="16"
+                        Margin="0,5,10,5"
+                        Padding="0"
+                        Click="BtnStartGame_Click" Height="33" Width="102"/>
+	</Grid>
+
+
+
+</UserControl>
