@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 		xmlns:v="using:SessionModManagerCore.ViewModels"
-        x:Class="SessionModManagerAvalonia.ComputerImportWindow"
+        x:Class="SessionModManagerAvalonia.Windows.ComputerImportWindow"
 		x:DataType="v:MapImportViewModel"
 		WindowStartupLocation="CenterScreen"
         CanResize="False"

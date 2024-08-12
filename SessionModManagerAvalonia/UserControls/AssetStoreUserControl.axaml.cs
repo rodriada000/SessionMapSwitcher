@@ -52,21 +52,21 @@ public partial class AssetStoreUserControl : UserControl
 
     private void menuItemCancelDownload_Click(object sender, RoutedEventArgs e)
     {
-        //DownloadItemViewModel downloadItem = lstDownloads.SelectedItem as DownloadItemViewModel;
+        DownloadItemViewModel downloadItem = lstDownloads.SelectedItem as DownloadItemViewModel;
 
-        //if (downloadItem == null)
-        //{
-        //    return;
-        //}
+        if (downloadItem == null)
+        {
+            return;
+        }
 
-        //downloadItem.IsCanceled = true;
-        //ViewModel.CancelDownload(downloadItem);
+        downloadItem.IsCanceled = true;
+        ViewModel.CancelDownload(downloadItem);
     }
 
     private void btnManageCat_Click(object sender, RoutedEventArgs e)
     {
-        //ManageCatalogWindow catalogWindow = new ManageCatalogWindow();
-        //catalogWindow.ShowDialog();
+        ManageCatalogWindow catalogWindow = new ManageCatalogWindow();
+        catalogWindow.Show();
         ViewModel.CheckForCatalogUpdatesAsync();
     }
 

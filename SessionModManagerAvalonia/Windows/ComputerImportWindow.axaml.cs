@@ -10,7 +10,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SessionModManagerAvalonia;
+namespace SessionModManagerAvalonia.Windows;
 
 public partial class ComputerImportWindow : Window
 {
@@ -25,8 +25,8 @@ public partial class ComputerImportWindow : Window
     {
         InitializeComponent();
 
-        this.ViewModel = importViewModel;
-        this.DataContext = this.ViewModel;
+        ViewModel = importViewModel;
+        DataContext = ViewModel;
     }
 
     private async void BtnBrowse_Click(object sender, RoutedEventArgs e)
@@ -61,7 +61,7 @@ public partial class ComputerImportWindow : Window
     internal async Task BrowseForFolderOrFile()
     {
         // Get top level from the current control. Alternatively, you can use Window reference instead.
-        var topLevel = TopLevel.GetTopLevel(this);
+        var topLevel = GetTopLevel(this);
 
         if (ViewModel.IsZipFileImport)
         {

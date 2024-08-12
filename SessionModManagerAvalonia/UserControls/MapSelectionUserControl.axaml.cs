@@ -14,6 +14,7 @@ using Avalonia.Platform.Storage;
 using System.IO;
 using System.Linq;
 using SessionMapSwitcherCore.Utils;
+using SessionModManagerAvalonia.Windows;
 
 namespace SessionModManagerAvalonia;
 

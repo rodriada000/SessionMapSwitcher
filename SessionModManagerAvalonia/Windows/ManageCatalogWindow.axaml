@@ -1,0 +1,155 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:v="using:SessionModManagerCore.ViewModels"
+		x:DataType="v:ManageCatalogViewModel"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="SessionModManagerAvalonia.ManageCatalogWindow"
+        CanResize="False"
+        Closing="Window_Closing"
+        Title="Manage Catalogs" 
+        Width="600"
+        Height="400">
+
+	<Window.Resources>
+
+		<!--<Style x:Key="ManageButtonsStyle" BasedOn="{StaticResource MainButtonStyle}" TargetType="Button">
+			<Setter Property="Visibility" Value="Visible"/>
+			<Setter Property="Width" Value="100"/>
+			<Setter Property="Height" Value="26"/>
+
+			<Style.Triggers>
+				<DataTrigger Binding="{Binding IsInAddMode}" Value="True">
+					<Setter Property="Visibility" Value="Hidden"/>
+				</DataTrigger>
+			</Style.Triggers>
+		</Style>
+
+		<Style x:Key="AddButtonsStyle" BasedOn="{StaticResource MainButtonStyle}" TargetType="Button">
+			<Setter Property="Visibility" Value="Hidden"/>
+			<Setter Property="Width" Value="100"/>
+			<Setter Property="Height" Value="26"/>
+
+			<Style.Triggers>
+				<DataTrigger Binding="{Binding IsInAddMode}" Value="True">
+					<Setter Property="Visibility" Value="Visible"/>
+				</DataTrigger>
+			</Style.Triggers>
+		</Style>-->
+	</Window.Resources>
+
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="auto"/>
+			<ColumnDefinition Width="auto"/>
+			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="auto"/>
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="auto"/>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="auto"/>
+		</Grid.RowDefinitions>
+
+		<!--<Grid.Style>
+			<Style TargetType="Grid">
+				<Style.Triggers>
+					<DataTrigger Binding="{Binding IsAdding}" Value="True">
+						<Setter Property="Cursor" Value="Wait"/>
+					</DataTrigger>
+				</Style.Triggers>
+			</Style>
+		</Grid.Style>-->
+
+		<Button x:Name="btnAdd"
+                Click="btnAdd_Click"
+                Content="Add Catalog"
+				IsVisible="{Binding !IsInAddMode}"
+                Margin="10,5,0,0"
+                HorizontalAlignment="Left"/>
+
+		<Button x:Name="btnConfirm"
+				IsVisible="{Binding IsInAddMode}"
+                Click="btnConfirm_Click"
+                Content="Confirm"
+                Margin="10,5,0,0"
+                HorizontalAlignment="Left"/>
+
+		<Button x:Name="btnRemove"
+                Grid.Column="1"
+				IsVisible="{Binding !IsInAddMode}"
+                Click="btnRemove_Click"
+                Content="Remove Catalog"
+                HorizontalAlignment="Left"
+                Margin="5,5,5,0"/>
+
+		<Button x:Name="btnCancel"
+                Grid.Column="1"
+				IsVisible="{Binding IsInAddMode}"
+                Click="btnCancel_Click"
+                Content="Cancel"
+                HorizontalAlignment="Left"
+                Margin="5,5,5,0"/>
+
+		<TextBox x:Name="txtUrl"
+                 Grid.Column="2"
+				 Watermark="Enter url and click 'Confirm'"
+                 Grid.ColumnSpan="2"
+                 MaxLines="1"
+                 Text="{Binding NewUrlText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue=''}"
+                 Height="22"
+				 IsVisible="{Binding IsInAddMode}"
+                 VerticalContentAlignment="Center"
+                 HorizontalAlignment="Stretch"
+                 VerticalAlignment="Bottom"
+                 Margin="0,0,10,2">
+		</TextBox>
+
+
+		<Button x:Name="btnCreate"
+                Grid.Column="3"
+                Click="btnCreate_Click"
+                Content="Create Catalog"
+                Margin="0,5,10,0"
+                HorizontalAlignment="Right"/>
+
+		<DataGrid x:Name="lstUrls"
+                  Grid.ColumnSpan="4"
+                  Grid.Row="1"
+                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                  SelectionMode="Extended"
+                  ItemsSource="{Binding CatalogList}"
+                  Margin="10,5,10,0">
+			<DataGrid.ContextMenu>
+				<ContextMenu x:Name="menuCatalogCommands" IsEnabled="{Binding ContextMenuIsEnabled}">
+					<MenuItem x:Name="menuItemRemove" Header="Remove Selected Catalog(s)" Click="menuItemRemove_Click"/>
+					<!--<MenuItem Style="{StaticResource ContextMenuSeperator}"/>-->
+					<MenuItem x:Name="menuItemActivate" Header="Activate All" Click="menuItemActivate_Click"/>
+					<MenuItem x:Name="menuItemDeactivate" Header="De-activate All" Click="menuItemDeactivate_Click"/>
+					<!--<MenuItem Style="{StaticResource ContextMenuSeperator}"/>-->
+					<MenuItem x:Name="menuItemAddDefaults" Header="Add Default Catalogs" Click="menuItemAddDefaults_Click"/>
+				</ContextMenu>
+			</DataGrid.ContextMenu>
+			<DataGrid.Columns>
+				<DataGridCheckBoxColumn Header="Active" Binding="{Binding IsActive}"/>
+				<DataGridTextColumn IsReadOnly="True" Header="Name" Width="Auto" Binding="{Binding Name}"/>
+				<DataGridTextColumn IsReadOnly="True" Header="Url" Width="Auto" Binding="{Binding Url}"/>
+			</DataGrid.Columns>
+		</DataGrid>
+
+		<Button x:Name="btnClose"
+                FontSize="13"
+                Click="btnClose_Click"
+                Grid.Row="2"
+                Grid.ColumnSpan="4"
+                Content="Close"
+                Width="100"
+                Height="26"
+                HorizontalAlignment="Center"
+                Margin="0,5,0,5"/>
+	</Grid>
+
+
+</Window>

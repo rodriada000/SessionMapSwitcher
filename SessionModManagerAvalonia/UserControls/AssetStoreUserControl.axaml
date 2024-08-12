@@ -33,7 +33,6 @@
 			<Grid VerticalAlignment="Bottom" Margin="3">
 				<Grid.RowDefinitions>
 					<RowDefinition Height="auto"/>
-					<RowDefinition Height="5"/>
 					<RowDefinition Height="auto"/>
 				</Grid.RowDefinitions>
 				<Grid.ColumnDefinitions>
@@ -52,14 +51,15 @@
 				<CheckBox Grid.Column="4" Content="Trucks" IsChecked="{Binding DisplayTrucks, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 				<CheckBox Grid.Column="5" Content="Meshes" IsChecked="{Binding DisplayMeshes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-				<CheckBox Grid.Row="2" Grid.Column="0" Content="Wheels" IsChecked="{Binding DisplayWheels, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-				<CheckBox Grid.Row="2" Grid.Column="1" Content="Hats" IsChecked="{Binding DisplayHats, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-				<CheckBox Grid.Row="2" Grid.Column="2" Content="Shirts" IsChecked="{Binding DisplayShirts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-				<CheckBox Grid.Row="2" Grid.Column="3" Content="Pants" IsChecked="{Binding DisplayPants, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-				<CheckBox Grid.Row="2" Grid.Column="4" Content="Shoes" IsChecked="{Binding DisplayShoes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-				<CheckBox Grid.Row="2" Grid.Column="5" Content="Characters" IsChecked="{Binding DisplayCharacters, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+				<CheckBox Grid.Row="1" Grid.Column="0" Content="Wheels" IsChecked="{Binding DisplayWheels, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+				<CheckBox Grid.Row="1" Grid.Column="1" Content="Hats" IsChecked="{Binding DisplayHats, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+				<CheckBox Grid.Row="1" Grid.Column="2" Content="Shirts" IsChecked="{Binding DisplayShirts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+				<CheckBox Grid.Row="1" Grid.Column="3" Content="Pants" IsChecked="{Binding DisplayPants, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+				<CheckBox Grid.Row="1" Grid.Column="4" Content="Shoes" IsChecked="{Binding DisplayShoes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+				<CheckBox Grid.Row="1" Grid.Column="5" Content="Characters" IsChecked="{Binding DisplayCharacters, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 			</Grid>
 		</Grid>
+
 
 		<TextBox x:Name="txtSearch"
                  Grid.Row="1"
@@ -72,6 +72,10 @@
 
 		<DataGrid x:Name="lstAssets"
                   Grid.Row="2" Grid.Column="0"
+				  IsReadOnly="True"
+				  CanUserSortColumns="True"
+				  CanUserReorderColumns="True"
+				  CanUserResizeColumns="True"
                   HorizontalAlignment="Stretch"
                   VerticalAlignment="Stretch"
                   SelectionMode="Single"
@@ -102,8 +106,10 @@
 		<DataGrid x:Name="lstDownloads"
                   Grid.Row="3"
                   Margin="5,0,0,5"
+				  CanUserResizeColumns="True"
                   ItemsSource="{Binding CurrentDownloads, UpdateSourceTrigger=PropertyChanged}"
                   SelectionMode="Single"
+				  IsReadOnly="True"
                   MinHeight="125"
                   MaxHeight="125">
 			<DataGrid.ContextMenu>
@@ -114,8 +120,8 @@
 				</ContextMenu>
 			</DataGrid.ContextMenu>
 			<DataGrid.Columns>
-				<DataGridTextColumn Header="Item"  Binding="{Binding ItemName}"/>
-				<DataGridTemplateColumn>
+				<DataGridTextColumn Header="Item"  Binding="{Binding ItemName}" Width="150"/>
+				<DataGridTemplateColumn Width="100" Header="Progress">
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate DataType="vi:DownloadItemViewModel">
 							<ProgressBar Value="{Binding PercentComplete, FallbackValue='50'}" Height="10"/>
@@ -188,7 +194,7 @@
 				<WrapPanel Grid.Row="2"
                            HorizontalAlignment="Right"
                            VerticalAlignment="Bottom"
-                           Margin="0,0,5,25">
+                           Margin="0,0,5,45">
 					<Button x:Name="btnRemove"
                             ToolTip.Tip="Delete the files related to this asset from your game."
                             Content="{Binding RemoveButtonText, FallbackValue='Remove Asset'}"
@@ -211,7 +217,7 @@
                           FontSize="10"
                           HorizontalAlignment="Right"
                           VerticalAlignment="Bottom"
-                          Margin="0,0,5,5"
+                          Margin="0,0,5,15"
                           Content="Delete Download After Install"
                           ToolTip.Tip="Downloaded assets are saved to 'store_data/temp_downloads' and are deleted to save space... Uncheck to keep downloaded file(s)."
                           IsChecked="{Binding DeleteDownloadAfterInstall, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
