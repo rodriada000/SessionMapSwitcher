@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace SessionMapSwitcherCore.ViewModels
@@ -77,6 +78,7 @@ namespace SessionMapSwitcherCore.ViewModels
         private string _previewImageText;
         private bool _isRefreshing;
         private int _authorToFilterByIndex;
+        private bool _isCategoryDropdownOpen;
 
         #endregion
 
@@ -122,6 +124,30 @@ namespace SessionMapSwitcherCore.ViewModels
             }
         }
 
+        public string SelectedCategories
+        {
+            get
+            {
+                if (_displayAll)
+                {
+                    return "All Selected";
+                }
+
+                StringBuilder sb = new StringBuilder();
+
+                if (_displayMaps) sb.Append(",Maps");
+                if (_displayDecks) sb.Append(",Decks");
+                if (_displayGriptapes) sb.Append(",Griptapes");
+                if (_displayTrucks) sb.Append(",Trucks");
+
+                if (sb.Length == 0)
+                {
+                    return "Select Categories ...";
+                }
+
+                return sb.Remove(0,1).ToString();
+            }
+        }
 
         public bool DisplayAll
         {
@@ -158,6 +184,7 @@ namespace SessionMapSwitcherCore.ViewModels
                 {
                     _displayMaps = value;
                     NotifyPropertyChanged();
+                    NotifyPropertyChanged(nameof(SelectedCategories));
                     RefreshFilteredAssetList();
                     AppSettingsUtil.AddOrUpdateAppSettings(SettingKey.AssetStoreMapsChecked, DisplayMaps.ToString());
                 }
@@ -173,6 +200,7 @@ namespace SessionMapSwitcherCore.ViewModels
                 {
                     _displayDecks = value;
                     NotifyPropertyChanged();
+                    NotifyPropertyChanged(nameof(SelectedCategories));
                     RefreshFilteredAssetList();
                     AppSettingsUtil.AddOrUpdateAppSettings(SettingKey.AssetStoreDecksChecked, DisplayDecks.ToString());
                 }
@@ -188,6 +216,7 @@ namespace SessionMapSwitcherCore.ViewModels
                 {
                     _displayGriptapes = value;
                     NotifyPropertyChanged();
+                    NotifyPropertyChanged(nameof(SelectedCategories));
                     RefreshFilteredAssetList();
                     AppSettingsUtil.AddOrUpdateAppSettings(SettingKey.AssetStoreGriptapesChecked, DisplayGriptapes.ToString());
                 }
@@ -203,6 +232,7 @@ namespace SessionMapSwitcherCore.ViewModels
                 {
                     _displayTrucks = value;
                     NotifyPropertyChanged();
+                    NotifyPropertyChanged(nameof(SelectedCategories));
                     RefreshFilteredAssetList();
                     AppSettingsUtil.AddOrUpdateAppSettings(SettingKey.AssetStoreTrucksChecked, DisplayTrucks.ToString());
                 }
@@ -217,6 +247,7 @@ namespace SessionMapSwitcherCore.ViewModels
                 {
                     _displayWheels = value;
                     NotifyPropertyChanged();
+                    NotifyPropertyChanged(nameof(SelectedCategories));
                     RefreshFilteredAssetList();
                     AppSettingsUtil.AddOrUpdateAppSettings(SettingKey.AssetStoreWheelsChecked, DisplayWheels.ToString());
                 }
@@ -232,6 +263,7 @@ namespace SessionMapSwitcherCore.ViewModels
                 {
                     _displayHats = value;
                     NotifyPropertyChanged();
+                    NotifyPropertyChanged(nameof(SelectedCategories));
                     RefreshFilteredAssetList();
                     AppSettingsUtil.AddOrUpdateAppSettings(SettingKey.AssetStoreHatsChecked, DisplayHats.ToString());
                 }
@@ -246,6 +278,7 @@ namespace SessionMapSwitcherCore.ViewModels
                 {
                     _displayShirts = value;
                     NotifyPropertyChanged();
+                    NotifyPropertyChanged(nameof(SelectedCategories));
                     RefreshFilteredAssetList();
                     AppSettingsUtil.AddOrUpdateAppSettings(SettingKey.AssetStoreShirtsChecked, DisplayShirts.ToString());
                 }
@@ -260,6 +293,7 @@ namespace SessionMapSwitcherCore.ViewModels
                 {
                     _displayPants = value;
                     NotifyPropertyChanged();
+                    NotifyPropertyChanged(nameof(SelectedCategories));
                     RefreshFilteredAssetList();
                     AppSettingsUtil.AddOrUpdateAppSettings(SettingKey.AssetStorePantsChecked, DisplayPants.ToString());
                 }
@@ -274,6 +308,7 @@ namespace SessionMapSwitcherCore.ViewModels
                 {
                     _displayShoes = value;
                     NotifyPropertyChanged();
+                    NotifyPropertyChanged(nameof(SelectedCategories));
                     RefreshFilteredAssetList();
                     AppSettingsUtil.AddOrUpdateAppSettings(SettingKey.AssetStoreShoesChecked, DisplayShoes.ToString());
                 }
@@ -289,6 +324,7 @@ namespace SessionMapSwitcherCore.ViewModels
                 {
                     _displayMeshes = value;
                     NotifyPropertyChanged();
+                    NotifyPropertyChanged(nameof(SelectedCategories));
                     RefreshFilteredAssetList();
                     AppSettingsUtil.AddOrUpdateAppSettings(SettingKey.AssetStoreMeshesChecked, DisplayMeshes.ToString());
                 }
@@ -304,6 +340,7 @@ namespace SessionMapSwitcherCore.ViewModels
                 {
                     _displayCharacters = value;
                     NotifyPropertyChanged();
+                    NotifyPropertyChanged(nameof(SelectedCategories));
                     RefreshFilteredAssetList();
                     AppSettingsUtil.AddOrUpdateAppSettings(SettingKey.AssetStoreCharactersChecked, DisplayCharacters.ToString());
                 }
@@ -648,6 +685,19 @@ namespace SessionMapSwitcherCore.ViewModels
                 _isDownloadingAllImages = value;
                 NotifyPropertyChanged();
                 NotifyPropertyChanged(nameof(IsNotDownloadingAllImages));
+            }
+        }
+
+        public bool IsCategoryDropdownOpen
+        {
+            get
+            {
+                return _isCategoryDropdownOpen;
+            }
+            set
+            {
+                _isCategoryDropdownOpen = value;
+                NotifyPropertyChanged();
             }
         }
 
@@ -1342,6 +1392,7 @@ namespace SessionMapSwitcherCore.ViewModels
             NotifyPropertyChanged(nameof(DisplayShoes));
             NotifyPropertyChanged(nameof(DisplayMeshes));
             NotifyPropertyChanged(nameof(DisplayCharacters));
+            NotifyPropertyChanged(nameof(SelectedCategories));
         }
 
         private void AddToDownloads(DownloadItemViewModel downloadItem)

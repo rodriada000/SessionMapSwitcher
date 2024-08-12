@@ -84,4 +84,9 @@ public partial class AssetStoreUserControl : UserControl
     {
         ViewModel.CancelAllDownloads();
     }
+
+    private void btnCategory_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        ViewModel.IsCategoryDropdownOpen = !ViewModel.IsCategoryDropdownOpen;
+    }
 }

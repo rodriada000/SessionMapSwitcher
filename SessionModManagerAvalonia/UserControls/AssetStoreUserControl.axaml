@@ -26,12 +26,114 @@
 			<ColumnDefinition Width="*"/>
 		</Grid.ColumnDefinitions>
 
+		
+		<Border IsVisible="{Binding IsCategoryDropdownOpen}" Width="200" CornerRadius="3"  Grid.RowSpan="5" BorderBrush="{StaticResource BorderMediumColor}" BorderThickness="1" Background="{StaticResource PrimaryBackgroundColor}" Margin="5,75,0,0" ZIndex="9" VerticalAlignment="Top" HorizontalAlignment="Left">
+			<StackPanel Margin="5">
+				<CheckBox Grid.Column="0" Content="All" IsChecked="{Binding DisplayAll, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+				<CheckBox Grid.Column="1" Content="Maps" IsChecked="{Binding DisplayMaps, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+				<CheckBox Grid.Column="2" Content="Decks" IsChecked="{Binding DisplayDecks, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+				<CheckBox Grid.Column="3" Content="Griptapes" IsChecked="{Binding DisplayGriptapes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+				<CheckBox Grid.Column="4" Content="Trucks" IsChecked="{Binding DisplayTrucks, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+				<CheckBox Grid.Column="5" Content="Meshes" IsChecked="{Binding DisplayMeshes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-		<Grid Grid.Row="0" Grid.Column="0"
+				<CheckBox Grid.Row="1" Grid.Column="0" Content="Wheels" IsChecked="{Binding DisplayWheels, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+				<CheckBox Grid.Row="1" Grid.Column="1" Content="Hats" IsChecked="{Binding DisplayHats, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+				<CheckBox Grid.Row="1" Grid.Column="2" Content="Shirts" IsChecked="{Binding DisplayShirts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+				<CheckBox Grid.Row="1" Grid.Column="3" Content="Pants" IsChecked="{Binding DisplayPants, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+				<CheckBox Grid.Row="1" Grid.Column="4" Content="Shoes" IsChecked="{Binding DisplayShoes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+				<CheckBox Grid.Row="1" Grid.Column="5" Content="Characters" IsChecked="{Binding DisplayCharacters, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+			</StackPanel>
+		</Border>
+
+		<Grid Grid.ColumnSpan="2" RowDefinitions="auto,*" ColumnDefinitions="*,*,*,*" Margin="5,0,0,10">
+			<Label Content="Categories:" Margin="0,0,0,0" VerticalAlignment="Bottom"/>
+			<Button Margin="0,0,5,0"  Click="btnCategory_Click" Content="{Binding SelectedCategories}"  HorizontalAlignment="Stretch" Grid.Row="1">
+				<Button.Styles>
+					<Style Selector="Button">
+						<Setter Property="Template">
+							<Setter.Value>
+								<ControlTemplate>
+									<Grid ColumnDefinitions="*,auto" IsHitTestVisible="True">
+										<Border CornerRadius="3" BorderThickness="1" Grid.ColumnSpan="2" BorderBrush="{StaticResource PrimaryGrayBrush}" Height="30"/>
+										<TextBlock TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Margin="5,0,0,0" Text="{Binding $parent[Button].Content}" HorizontalAlignment="Stretch"/>
+										<i:Icon Grid.Column="1" FontSize="18" Value="mdi-chevron-down" Margin="0,0,5,0" Foreground="{StaticResource PrimaryGrayBrush}"/>
+									</Grid>
+								</ControlTemplate>
+							</Setter.Value>
+						</Setter>
+					</Style>
+				</Button.Styles>
+			</Button>
+
+			<Label Content="Author:" Grid.Column="1" VerticalAlignment="Bottom"/>
+			<ComboBox Width="200"
+					  Grid.Column="1"
+					  Grid.Row="1"
+					  FontSize="11"
+					  ToolTip.Tip="Choose an Author to filter by"
+					  ItemsSource="{Binding AuthorList}"
+					  SelectedIndex="{Binding AuthorToFilterByIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+				<ComboBox.ItemTemplate>
+					<DataTemplate DataType="vi:AuthorDropdownViewModel">
+						<Grid ColumnDefinitions="*,auto" Background="Transparent" HorizontalAlignment="Stretch">
+							<TextBlock Text="{Binding Author}"
+									   HorizontalAlignment="Stretch"
+									   Padding="0,2,0,2"
+									   Margin="0,0,0,0"/>
+							<TextBlock Text="{Binding AssetCountDisplayText}"
+									   Grid.Column="1"
+									   HorizontalAlignment="Right"
+									   Padding="0,2,0,2"
+									   Margin="0,0,30,0"/>
+						</Grid>
+					</DataTemplate>
+				</ComboBox.ItemTemplate>
+			</ComboBox>
+
+
+			<Label Content="Install Status:"  Grid.Column="2" VerticalAlignment="Bottom"/>
+			<ComboBox Width="200"
+					  FontSize="11"
+					  Grid.Row="1"
+					  Grid.Column="2"
+					  Margin="5,0,0,0"
+					  ToolTip.Tip="Filter by installed or not installed"
+					  ItemsSource="{Binding InstallStatusList}"
+					  SelectedItem="{Binding SelectedInstallStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+
+			<WrapPanel Grid.Column="3" Margin="0,10,10,0"
+				  HorizontalAlignment="Right"
+				  VerticalAlignment="Top">
+
+				<Button x:Name="btnRefresh"
+						Width="56"
+						Height="32"
+						FontSize="22"
+						Margin="0,0,0,0"
+						i:Attached.Icon="mdi-cloud-refresh-outline"
+						ToolTip.Tip="Download the latest asset catalogs and refresh."
+						Click="btnRefresh_Click"/>
+
+				<Button x:Name="btnManageCat"
+						Width="56"
+						Height="32"
+						FontSize="22"
+						Grid.Column="1"
+						i:Attached.Icon="mdi-book-cog-outline"
+						ToolTip.Tip="Add, remove, or create asset catalogs."
+						Click="btnManageCat_Click"
+						Margin="5,0,0,0"
+						Padding="5,3,5,3"/>
+			</WrapPanel>
+		</Grid>
+
+
+		<!--<Grid Grid.Row="0" Grid.Column="0"
                   HorizontalAlignment="Left"
-                  VerticalAlignment="Bottom"
+                  VerticalAlignment="Top"
                   Margin="5,5,0,10">
-			<Grid VerticalAlignment="Bottom" Margin="3">
+			<Grid VerticalAlignment="Top" Margin="3">
 				<Grid.RowDefinitions>
 					<RowDefinition Height="auto"/>
 					<RowDefinition Height="auto"/>
@@ -59,7 +161,7 @@
 				<CheckBox Grid.Row="1" Grid.Column="4" Content="Shoes" IsChecked="{Binding DisplayShoes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 				<CheckBox Grid.Row="1" Grid.Column="5" Content="Characters" IsChecked="{Binding DisplayCharacters, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 			</Grid>
-		</Grid>
+		</Grid>-->
 
 
 		<TextBox x:Name="txtSearch"
@@ -225,67 +327,7 @@
 			</Grid>
 		</Grid>
 
-		<StackPanel Grid.Column="1"
-                    Margin="5,15,0,10"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top">
-			<Label Content="Author:" Padding="0"/>
-			<ComboBox Width="200"
-                      Margin="0,1,0,5"
-                      FontSize="11"
-                      ToolTip.Tip="Choose an Author to filter by"
-					  ItemsSource="{Binding AuthorList}"
-					  SelectedIndex="{Binding AuthorToFilterByIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-				<ComboBox.ItemTemplate>
-					<DataTemplate DataType="vi:AuthorDropdownViewModel">
-						<Grid ColumnDefinitions="*,auto" Background="Transparent" HorizontalAlignment="Stretch">
-							<TextBlock Text="{Binding Author}"
-									   HorizontalAlignment="Stretch"
-									   Padding="0,2,0,2"
-									   Margin="0,0,0,0"/>
-							<TextBlock Text="{Binding AssetCountDisplayText}"
-									   Grid.Column="1"
-									   HorizontalAlignment="Right"
-									   Padding="0,2,0,2"
-									   Margin="0,0,30,0"/>
-						</Grid>
-					</DataTemplate>
-				</ComboBox.ItemTemplate>
-			</ComboBox>
 
-			<Label Content="Install Status:" Padding="0"/>
-			<ComboBox Width="200"
-                      FontSize="11"
-                      ToolTip.Tip="Filter by installed or not installed"
-                      ItemsSource="{Binding InstallStatusList}"
-                      SelectedItem="{Binding SelectedInstallStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-
-		</StackPanel>
-
-		<WrapPanel Grid.Column="1"
-                    Margin="0,33,5,10"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Top">
-
-			<Button x:Name="btnRefresh"
-                    Width="56"
-                    Height="32"
-					FontSize="22"
-                    Margin="0,0,0,0"
-                    i:Attached.Icon="mdi-cloud-refresh-outline"
-                    ToolTip.Tip="Download the latest asset catalogs and refresh."
-                    Click="btnRefresh_Click"/>
-
-			<Button x:Name="btnManageCat"
-                    Width="56"
-                    Height="32"
-					FontSize="22"
-					i:Attached.Icon="mdi-book-cog-outline"
-                    ToolTip.Tip="Add, remove, or create asset catalogs."
-                    Click="btnManageCat_Click"
-                    Margin="5,0,0,0"
-                    Padding="5,3,5,3"/>
-		</WrapPanel>
 	</Grid>
 
 </UserControl>
