@@ -1,10 +1,13 @@
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
+using SessionMapSwitcher.Classes.Events;
 using SessionMapSwitcherCore.Classes;
 using SessionMapSwitcherCore.Utils;
 using SessionModManagerCore.Classes;
 using SessionModManagerCore.ViewModels;
 using System;
+using System.Threading.Tasks;
 
 namespace SessionModManagerAvalonia
 {
@@ -92,9 +95,14 @@ namespace SessionModManagerAvalonia
 
         private void Window_Loaded_1(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
-            //CheckForNewVersionInBackground();
+            CheckForNewVersionInBackground();
             controlTextureMan.ViewModel.MessageChanged += MessageService_MessageReceived;
-            //controlSettings.ctrlProjectWatcher.ViewModel.MapImported += ProjectWatcher_MapImported;
+            controlSettings.ctrlProjectWatcher.ViewModel.MapImported += ProjectWatcher_MapImported;
+        }
+
+        private void ProjectWatcher_MapImported(object sender, MapImportedEventArgs e)
+        {
+            controlMapSelection.ViewModel.LoadMap(e.MapName);
         }
 
         private void Window_Closing(object? sender, Avalonia.Controls.WindowClosingEventArgs e)
@@ -143,6 +151,56 @@ namespace SessionModManagerAvalonia
 
             IsSettingWindowSize = false;
         }
+
+        #region Update Related Methods
+
+        private void CheckForNewVersionInBackground()
+        {
+            ViewModel.UserMessage = "Checking for updates ...";
+            Task task = Task.Factory.StartNew(() =>
+            {
+                IsNewVersionAvailable = VersionChecker.IsUpdateAvailable();
+            });
+
+
+            task.ContinueWith((antecedent) =>
+            {
+
+                if (IsNewVersionAvailable)
+                {
+                    ViewModel.UserMessage = "New update available to download";
+                    StartUpdateTimerToOpenWindow();
+                }
+            }, TaskScheduler.FromCurrentSynchronizationContext());
+        }
+
+        /// <summary>
+        /// Creates and starts a timer to open the <see cref="UpdateWindow"/> after a few milliseconds
+        /// </summary>
+        private void StartUpdateTimerToOpenWindow()
+        {
+            updateTimer = new DispatcherTimer();
+            updateTimer.Tick += UpdateTimer_Tick;
+            updateTimer.Interval = new TimeSpan(days: 0, hours: 0, minutes: 0, seconds: 1);
+            updateTimer.Start();
+        }
+
+        /// <summary>
+        /// Stops the timer and shows the <see cref="UpdateWindow"/>
+        /// </summary>
+        private void UpdateTimer_Tick(object sender, EventArgs e)
+        {
+            if (updateTimer != null)
+            {
+                updateTimer.Stop();
+                updateTimer.Tick -= UpdateTimer_Tick;
+            }
+
+            UpdateWindow updateWindow = new UpdateWindow();
+            updateWindow.ShowDialog<bool>((Avalonia.Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow);
+        }
+
+        #endregion
 
     }
 }

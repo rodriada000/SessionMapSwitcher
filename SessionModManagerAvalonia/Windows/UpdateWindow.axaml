@@ -1,0 +1,43 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:v="using:SessionModManagerCore.ViewModels"
+		x:DataType="v:UpdateViewModel"
+        mc:Ignorable="d" d:DesignWidth="625" d:DesignHeight="450"
+        x:Class="SessionModManagerAvalonia.UpdateWindow"
+		Height="450" Width="625"
+        Title="Update Available!">
+
+	<Grid RowDefinitions="auto,*,auto">
+
+
+		<TextBlock x:Name="txtHeader" TextWrapping="Wrap" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,10,10,5"
+                   FontWeight="SemiBold"
+                   FontSize="15"
+                   Text="{Binding HeaderMessage, FallbackValue='A new version of Session Mod Manager is available to download. You can view whats changed below.'}"/>
+
+
+		<TextBlock Text="Getting Latest Version Notes ..." Grid.Row="1"
+                   VerticalAlignment="Center" HorizontalAlignment="Center"
+                   FontSize="15"
+                   Margin="0,0,0,0"/>
+
+		<!--<WebBrowser x:Name="browser" Grid.Row="1" Visibility="{Binding BrowserVisibility, FallbackValue='Hidden'}"/>-->
+
+		<Button x:Name="btnUpdate"
+                Grid.Row="2"
+                HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                Margin="0,5,100,5"
+                Content="Update Now"
+                Click="BtnUpdate_Click"/>
+
+		<Button x:Name="btnClose"
+                Grid.Row="2"
+                HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                Margin="90,5,0,5"
+                Click="BtnClose_Click"
+                Content="Not Now"/>
+	</Grid>	
+
+</Window>

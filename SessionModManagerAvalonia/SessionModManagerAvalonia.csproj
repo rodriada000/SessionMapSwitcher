@@ -59,4 +59,8 @@
   <ItemGroup>
     <UpToDateCheckInput Remove="Windows\RenameMapWindow.axaml" />
   </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Windows\UpdateWindow.axaml" />
+  </ItemGroup>
 </Project>
