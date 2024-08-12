@@ -15,6 +15,7 @@ using System.IO;
 using System.Linq;
 using SessionMapSwitcherCore.Utils;
 using SessionModManagerAvalonia.Windows;
+using Avalonia.Controls.ApplicationLifetimes;
 
 namespace SessionModManagerAvalonia;
 
@@ -358,29 +359,30 @@ public partial class MapSelectionUserControl : UserControl
     /// Writes to meta data file if user clicks 'Rename' in window.
     /// </summary>
     /// <param name="selectedMap"></param>
-    internal void OpenRenameMapWindow(MapListItem selectedMap)
+    internal async Task OpenRenameMapWindow(MapListItem selectedMap)
     {
-        //RenameMapViewModel viewModel = new RenameMapViewModel(selectedMap);
-        //RenameMapWindow window = new RenameMapWindow(viewModel)
-        //{
-        //    WindowStartupLocation = WindowStartupLocation.CenterScreen
-        //};
-        //bool? result = window.ShowDialog();
+        RenameMapViewModel viewModel = new RenameMapViewModel(selectedMap);
+        RenameMapWindow window = new RenameMapWindow(viewModel)
+        {
+            WindowStartupLocation = WindowStartupLocation.CenterScreen
+        };
+        bool result = await window.ShowDialog<bool>((Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow);
 
-        //if (result.GetValueOrDefault(false) == true)
-        //{
-        //    bool didWrite = MetaDataManager.WriteCustomMapPropertiesToFile(selectedMap);
+        if (result)
+        {
+            bool didWrite = MetaDataManager.WriteCustomMapPropertiesToFile(selectedMap);
 
-        //    if (didWrite == false)
-        //    {
-        //        MessageService.Instance.ShowMessage("Failed to update .meta file with new custom name. Your custom name may have not been saved and will be lost when the app restarts.");
-        //        return;
-        //    }
+            if (didWrite == false)
+            {
+                MessageService.Instance.ShowMessage("Failed to update .meta file with new custom name. Your custom name may have not been saved and will be lost when the app restarts.");
+                return;
+            }
 
-        //    ViewModel.RefreshFilteredMaps();
-        //    MessageService.Instance.ShowMessage($"{selectedMap.MapName} renamed to {selectedMap.CustomName}!");
-        //}
+            ViewModel.RefreshFilteredMaps();
+            MessageService.Instance.ShowMessage($"{selectedMap.MapName} renamed to {selectedMap.CustomName}!");
+        }
     }
+
 
     private async void menuDeleteSelectedMap_Click(object sender, RoutedEventArgs e)
     {

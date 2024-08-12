@@ -55,4 +55,8 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Windows\RenameMapWindow.axaml" />
+  </ItemGroup>
 </Project>

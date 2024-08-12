@@ -39,7 +39,7 @@ namespace SessionModManagerCore.ViewModels
         public RenameMapViewModel(MapListItem map)
         {
             MapToRename = map;
-            CustomMapName = map.CustomName;
+            CustomMapName = map?.CustomName;
         }
 
         public BoolWithMessage ValidateAndSetCustomName()
