@@ -3,9 +3,53 @@
              x:Class="SessionModManagerAvalonia.App"
              RequestedThemeVariant="Default">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+	<Application.Resources>
+		<!-- Control colors -->
+		<Color x:Key="DisabledForegroundColor">#c2cbcf</Color>
+		<Color x:Key="EnabledForegroundColor">#edf0f1</Color>
 
+		<SolidColorBrush x:Key="ControlPressedBrush" Color="#3b363d"/>
+		<SolidColorBrush x:Key="ControlMouseOverBrush" Color="#65738a"/>
+		<SolidColorBrush x:Key="DisabledForegroundBrush" Color="{StaticResource DisabledForegroundColor}"/>
+
+		<!-- Border colors -->
+		<Color x:Key="BorderLightColor">#FFCCCCCC</Color>
+		<Color x:Key="BorderMediumColor">#FF888888</Color>
+		<Color x:Key="BorderDarkColor">#FF444444</Color>
+
+		<Color x:Key="DisabledBorderDarkColor">#FF888888</Color>
+
+		<!-- COLOR SCHEME -->
+		<Color x:Key="PrimaryBackgroundColor">#221E1F</Color>
+		<SolidColorBrush x:Key="PrimaryBackgroundBrush" Color="{StaticResource PrimaryBackgroundColor}"/>
+		<SolidColorBrush x:Key="PrimaryBackgroundMaskBrush" Color="White" Opacity="0.03"/>
+
+
+		<Color x:Key="SecondaryBackgroundColor">#171a1b</Color>
+		<SolidColorBrush x:Key="SecondaryBackgroundBrush" Color="{StaticResource SecondaryBackgroundColor}"/>
+		<SolidColorBrush x:Key="SecondaryBackgroundOverlayBrush" Color="{StaticResource SecondaryBackgroundColor}" Opacity="0.3"/>
+
+
+		<Color x:Key="PrimaryGrayColor">#757478</Color>
+		<SolidColorBrush x:Key="PrimaryGrayBrush" Color="{StaticResource PrimaryGrayColor}"/>
+
+		<Color x:Key="AccentColor">#799BAC</Color>
+		<SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}"/>
+		<SolidColorBrush x:Key="AccentOverlayBrush" Color="{StaticResource AccentColor}" Opacity="0.1"/>
+
+
+		<Color x:Key="PrimaryForegroundColor">#EDF2F3</Color>
+		<SolidColorBrush x:Key="PrimaryForegroundBrush" Color="{StaticResource PrimaryForegroundColor}"/>
+
+		<SolidColorBrush x:Key="ControlBorderBrush" Color="{StaticResource EnabledForegroundColor}" Opacity="0.15"/>
+	</Application.Resources>
     <Application.Styles>
         <FluentTheme />
 		<StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+
+		<Style Selector="DataGrid">
+			<Setter Property="Background" Value="{StaticResource AccentOverlayBrush}"/>
+		</Style>
     </Application.Styles>
+
 </Application>

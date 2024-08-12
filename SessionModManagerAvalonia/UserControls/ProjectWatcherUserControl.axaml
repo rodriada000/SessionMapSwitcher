@@ -16,8 +16,7 @@
 		<Button x:Name="btnBrowse"
                 Click="BtnBrowse_Click"
                 Grid.Row="1" Grid.Column="2"
-                Content="..."
-                Width="25" Margin="0,0,2,0"/>
+                Content="..." Margin="0,0,2,1"/>
 
 		<StackPanel Grid.Row="2" Grid.Column="0" Margin="10,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Orientation="Horizontal">
 

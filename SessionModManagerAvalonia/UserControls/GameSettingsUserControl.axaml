@@ -17,12 +17,12 @@
 				<Grid x:Name="grpIniOptions"
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Top"
-                      Margin="10,0,10,0">
-
-					<StackPanel>
-						<Label FontWeight="Bold" FontSize="18">Game Settings</Label>
-						<WrapPanel Margin="10,10,0,0" HorizontalAlignment="Left">
-							<Label Content="Object Placement Max Count" Padding="0,4,5,0"/>
+                      Margin="20,0,20,0">
+					<Border BorderThickness="1" Background="{StaticResource AccentOverlayBrush}" CornerRadius="3"/>
+					<StackPanel >
+						<Label FontWeight="Light" FontSize="18">Game Settings</Label>
+						<WrapPanel Margin="5,10,0,0" HorizontalAlignment="Left">
+							<Label Content="Object Placement Max Count" VerticalAlignment="Center"/>
 							<TextBox x:Name="txtObjectCount"
                                      MaxWidth="150"
                                      Width="150"
@@ -35,7 +35,7 @@
                                           x:Name="chkSteamLaunch"
                                           HorizontalAlignment="Left"
                                           IsChecked="{Binding SteamLaunchIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='True'}"
-                                          Margin="10,10,10,0"/>
+                                          Margin="10,0,10,0"/>
 
 						<CheckBox Content="Skip Intro Movie"
                                           x:Name="chkSkipMovie"
@@ -45,13 +45,12 @@
 
 						<CheckBox Content="Enable DBuffer"
                                           HorizontalAlignment="Left"
-                                          
                                           IsChecked="{Binding DBufferIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='True'}"
                                           Margin="10,5,10,0"/>
 
 
-						<Label Margin="0,10,0,0" FontWeight="Bold" FontSize="18">Video Settings</Label>
-						<Grid Margin="10,10,10,0">
+						<Label Margin="0,15,0,0" FontWeight="Light" FontSize="18">Video Settings</Label>
+						<Grid Margin="10,0,10,0">
 							<Grid Margin="0,10,0,0">
 								<Grid.RowDefinitions>
 									<RowDefinition Height="auto"/>
@@ -210,8 +209,7 @@
                                 Content="Save Settings"
                                 Click="BtnApplySettings_Click"
                                 HorizontalAlignment="Right"
-                                Margin="10,10,10,5"
-                                Padding="10,0,10,2"/>
+                                Margin="10,10,10,5"/>
 					</StackPanel>
 
 				</Grid>
@@ -219,17 +217,17 @@
 				<Grid x:Name="grpProjectWatch"
                                   HorizontalAlignment="Stretch"
                                   VerticalAlignment="Top"
-                                  Margin="10,10,10,0">
-					<Label Content="Project Watcher" FontWeight="Bold" FontSize="18"/>
-					<local:ProjectWatcherUserControl x:Name="ctrlProjectWatcher" Margin="0,20,0,0"/>
+                                  Margin="20,10,20,0">
+					<Border BorderThickness="1" Background="{StaticResource AccentOverlayBrush}" CornerRadius="3"/>
+					<Label Content="Project Watcher" FontWeight="Light" FontSize="18"/>
+					<local:ProjectWatcherUserControl x:Name="ctrlProjectWatcher" Margin="0,30,5,0"/>
 				</Grid>
 
 				<Button x:Name="btnViewLogs"
-                                Content="View Logs"
+                                Content="View Logs ..."
                                 Click="btnViewLogs_Click"
                                 HorizontalAlignment="Left"
-                                Margin="10,20,10,5"
-                                Padding="10,0,10,2"/>
+                                Margin="20,25,10,5"/>
 			</StackPanel>
 		</ScrollViewer>
 

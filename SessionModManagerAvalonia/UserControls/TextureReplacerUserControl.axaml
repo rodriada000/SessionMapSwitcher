@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:v="using:SessionModManagerCore.ViewModels"
 			 xmlns:local="using:SessionModManagerAvalonia.Classes"
+			 xmlns:i="https://github.com/projektanker/icons.avalonia"
 			 x:DataType="v:TextureReplacerViewModel"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SessionModManagerAvalonia.TextureReplacerUserControl">
@@ -32,20 +33,18 @@
 
 		<WrapPanel Grid.Column="0"
                    HorizontalAlignment="Right"
-                   VerticalAlignment="Top" Margin="10,5,0,0">
+                   VerticalAlignment="Top" Margin="10,8,0,0">
 
 			<Button x:Name="btnBrowse"
-                    Tag="FolderOpen"
+                    i:Attached.Icon="mdi-folder-open-outline"
                     Click="BtnBrowse_Click"
-                    Content="..."
-                    Height="32"
-                    Width="32" Margin="0,0,4,0"/>
+					FontSize="18"
+                    Margin="0,0,4,0"/>
 
 			<Button x:Name="btnReplace"
                     IsEnabled="{Binding IsReplaceButtonEnabled}"
                     Click="BtnReplace_Click"
-                    Content="Import"
-                    Padding="5,2,5,2"/>
+                    Content="Import"/>
 		</WrapPanel>
 
 		<Grid Grid.Row="1"
@@ -61,14 +60,14 @@
 						<RowDefinition Height="auto"/>
 						<RowDefinition Height="*"/>
 					</Grid.RowDefinitions>
+					<Label Content="Installed Mods" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontWeight="Light"/>
 					<Button x:Name="btnRemove"
                             Grid.Row="0"
                             HorizontalAlignment="Right"
                             Click="btnRemove_Click"
-                            Tag="Delete"
-                            Height="32"
-                            Margin="0,-10,0,5"
-                            Width="48"/>
+                            i:Attached.Icon="mdi-trash-can-outline"
+							FontSize="18"
+                            Width="42"/>
 					<DataGrid x:Name="lstTextures"
 							  Grid.Row="1"
 							  CanUserResizeColumns="True"
@@ -80,7 +79,7 @@
 							  SelectionMode="Single"
 							  MinHeight="125">
 						<DataGrid.Columns>
-							<DataGridTextColumn IsReadOnly="True" Header="Name"  Binding="{Binding TextureName}"/>
+							<DataGridTextColumn IsReadOnly="True" Header="Name" Width="150"  Binding="{Binding TextureName}"/>
 							<DataGridTextColumn IsReadOnly="True" Header="Category"  Binding="{Binding Category}"/>
 							<DataGridCheckBoxColumn Header="Enabled" Binding="{Binding IsEnabled}" />
 						</DataGrid.Columns>
@@ -119,17 +118,21 @@
 				</Grid>
 			</Grid>
 
-			<Grid Grid.Column="1"
+			<Grid Grid.Column="1" 
                       IsVisible="{Binding Path=IsShowingConflicts}"
-                      Margin="0,10,10,10">
-				<Grid>
+                      Margin="10,18,10,10">
+				<Grid RowDefinitions="auto,*">
+					<WrapPanel HorizontalAlignment="Right">
+						<i:Icon Value="mdi-alert-box-outline" FontSize="18"  />
+						<Label Content="Conflicts Found" FontWeight="Light"/>
+					</WrapPanel>
 					<DataGrid x:Name="lstConflicts"
+							  Grid.Row="1"
 							  IsReadOnly="True"
-                              Margin="0,28,0,0"
-                              VerticalAlignment="Stretch"
-                              ItemsSource="{Binding FileConflicts, UpdateSourceTrigger=PropertyChanged}"
-                              SelectionMode="Single"
-                              MinHeight="125">
+							  VerticalAlignment="Stretch"
+							  ItemsSource="{Binding FileConflicts, UpdateSourceTrigger=PropertyChanged}"
+							  SelectionMode="Single"
+							  MinHeight="125">
 						<DataGrid.Columns>
 							<DataGridTextColumn Header="Conflicting Asset Name"  Binding="{Binding ExistingAssetName}"/>
 							<DataGridTextColumn Header="Conflicting File"  Binding="{Binding FileName}"/>

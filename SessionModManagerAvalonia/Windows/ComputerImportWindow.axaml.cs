@@ -77,16 +77,6 @@ public partial class ComputerImportWindow : Window
             {
                 ViewModel.PathInput = files.FirstOrDefault().TryGetLocalPath();
             }
-            //using (System.Windows.Forms.OpenFileDialog fileBrowserDialog = new System.Windows.Forms.OpenFileDialog())
-            //{
-            //    fileBrowserDialog.Filter = "Zip/Rar files (*.zip *.rar)|*.zip;*.rar|All files (*.*)|*.*";
-            //    fileBrowserDialog.Title = "Select .zip or .rar File Containing Session Map";
-            //    System.Windows.Forms.DialogResult result = fileBrowserDialog.ShowDialog();
-            //    if (result == System.Windows.Forms.DialogResult.OK)
-            //    {
-            //        ViewModel.PathInput = fileBrowserDialog.FileName;
-            //    }
-            //}
         }
         else
         {
@@ -100,17 +90,6 @@ public partial class ComputerImportWindow : Window
             {
                 ViewModel.PathInput = folders.FirstOrDefault().TryGetLocalPath();
             }
-
-            //using (System.Windows.Forms.FolderBrowserDialog folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog())
-            //{
-            //    folderBrowserDialog.ShowNewFolderButton = false;
-            //    folderBrowserDialog.Description = "Select Folder Containing Session Map Files";
-            //    System.Windows.Forms.DialogResult result = folderBrowserDialog.ShowDialog();
-            //    if (result == System.Windows.Forms.DialogResult.OK)
-            //    {
-            //        ViewModel.PathInput = folderBrowserDialog.SelectedPath;
-            //    }
-            //}
         }
     }
 }

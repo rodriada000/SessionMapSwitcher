@@ -26,11 +26,6 @@ public partial class UpdateWindow : Window
         this.DataContext = ViewModel;
     }
 
-    private void Window_Loaded(object sender, RoutedEventArgs e)
-    {
-        GetVersionNotesInBackground();
-    }
-
     private void GetVersionNotesInBackground()
     {
         string htmlVersionNotes = "";
@@ -41,6 +36,7 @@ public partial class UpdateWindow : Window
         Task scraperTask = Task.Factory.StartNew(() =>
         {
             htmlVersionNotes = ScrapeLatestVersionNotesFromGitHub();
+            htmlPanel.Text = htmlVersionNotes;
         }, CancellationToken.None, TaskCreationOptions.LongRunning, scheduler);
 
         scraperTask.ContinueWith((antecedent) =>
@@ -91,36 +87,12 @@ public partial class UpdateWindow : Window
     /// <returns> Scraped html from Github if found </returns>
     public static string ScrapeLatestVersionNotesFromGitHub()
     {
-        //string pageHtml = DownloadUtils.GetTextResponseFromUrl(UpdateViewModel.LatestReleaseUrl);
-        //HtmlDocument doc = GetHtmlDocument(pageHtml);
+        return DownloadUtils.GetTextResponseFromUrl(UpdateViewModel.LatestReleaseUrl);
+    }
 
-        //string fullHtml = "";
-        //bool foundHeader = false;
-
-        //// append css style to the scraped html so it the document does not load with default Arial font
-        //fullHtml += "<style type=\"text/css\"> * { font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji; background: #221E1F; color: white } a { pointer-events: none; cursor: default; color: #799BAC } </style>";
-
-        //// loop over html elements and find the 'release-header' div and 'markdown-body' div
-        //foreach (HtmlElement element in doc.Body.All)
-        //{
-        //    if (element.GetAttribute("className").Contains("Box-body") && element.Children.Count >= 3)
-        //    {
-        //        DisableHyperLinksInHtml(element.Children[1]);
-        //        DisableHyperLinksInHtml(element.Children[2]);
-
-        //        fullHtml += element.Children[1].InnerHtml;
-        //        fullHtml += element.Children[2].InnerHtml;
-
-        //        foundHeader = true;
-        //    }
-
-        //    if (foundHeader)
-        //    {
-        //        return fullHtml;
-        //    }
-        //}
-
-        return "Could not locate version notes";
+    private void Window_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        GetVersionNotesInBackground();
     }
 
     ///// <summary>

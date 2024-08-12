@@ -3,7 +3,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:v="using:SessionModManagerCore.ViewModels"
+		xmlns:h="using:TheArtOfDev.HtmlRenderer.Avalonia"
 		x:DataType="v:UpdateViewModel"
+		Loaded="Window_Loaded"
         mc:Ignorable="d" d:DesignWidth="625" d:DesignHeight="450"
         x:Class="SessionModManagerAvalonia.UpdateWindow"
 		Height="450" Width="625"
@@ -19,10 +21,12 @@
 
 
 		<TextBlock Text="Getting Latest Version Notes ..." Grid.Row="1"
+				   IsVisible="{Binding !IsBrowserVisible}"
                    VerticalAlignment="Center" HorizontalAlignment="Center"
                    FontSize="15"
                    Margin="0,0,0,0"/>
 
+		<h:HtmlPanel x:Name="htmlPanel" IsVisible="{Binding IsBrowserVisible}"/>
 		<!--<WebBrowser x:Name="browser" Grid.Row="1" Visibility="{Binding BrowserVisibility, FallbackValue='Hidden'}"/>-->
 
 		<Button x:Name="btnUpdate"

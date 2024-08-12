@@ -5,6 +5,7 @@
 			 xmlns:v="using:SessionMapSwitcherCore.ViewModels"
 			 xmlns:vi="using:SessionModManagerCore.ViewModels"
 			 xmlns:local="using:SessionModManagerAvalonia.Classes"
+			 xmlns:i="https://github.com/projektanker/icons.avalonia"
 			 x:DataType="v:AssetStoreViewModel"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
              x:Class="SessionModManagerAvalonia.AssetStoreUserControl">
@@ -87,7 +88,7 @@
 				<DataGridTextColumn Header="Author" Width="100" Binding="{Binding Author}"/>
 				<DataGridTextColumn Header="Category" Width="95" Binding="{Binding Category}"/>
 				<DataGridTextColumn Header="Updated Date" Width="130" Binding="{Binding UpdatedDate}"/>
-				<DataGridTextColumn Header="Ver." Width="40" Binding="{Binding Version}"/>
+				<DataGridTextColumn Header="Ver." Width="50" Binding="{Binding Version}"/>
 			</DataGrid.Columns>
 
 			<DataGrid.ContextMenu>
@@ -159,16 +160,14 @@
 						<TextBlock Text="Description:"
                                    Margin="5,5,5,0"
                                    FontWeight="Bold"/>
-						<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden"
-                                      MaxHeight="200">
-							<TextBox Text="{Binding SelectedDescription, FallbackValue='example description for a selected asset.'}"
-                                       TextWrapping="Wrap"
-                                       IsReadOnly="True"
-                                     BorderThickness="0"
-                                     Background="Transparent"
-                                       Margin="5,5,0,0"
-                                       Padding="0,0,10,0"/>
-						</ScrollViewer>
+						<TextBox Text="{Binding SelectedDescription, FallbackValue='example description for a selected asset.'}"
+								   TextWrapping="Wrap"
+								   IsReadOnly="True"
+								 Width="{Binding $parent.Width }"
+								 BorderThickness="0"
+								 Background="Transparent"
+								   Margin="5,5,0,0"
+								   Padding="0,0,10,0"/>
 					</StackPanel>
 
 				</ScrollViewer>
@@ -176,7 +175,7 @@
 
 
 
-				<Image Source="{Binding PreviewImageSource, Converter={StaticResource streamConverter}}" Margin="5,0,5,5"
+				<Image x:Name="imgPreview" Source="{Binding PreviewImageSource, Converter={StaticResource streamConverter}}" Margin="5,0,5,5"
 					   IsVisible="{Binding !IsLoadingImage}"
                        HorizontalAlignment="Stretch"
                        VerticalAlignment="Stretch"
@@ -264,22 +263,24 @@
 		</StackPanel>
 
 		<WrapPanel Grid.Column="1"
-                    Margin="0,0,5,10"
+                    Margin="0,33,5,10"
                     HorizontalAlignment="Right"
-                    VerticalAlignment="Bottom">
+                    VerticalAlignment="Top">
 
 			<Button x:Name="btnRefresh"
-                    Width="64"
+                    Width="56"
                     Height="32"
+					FontSize="22"
                     Margin="0,0,0,0"
-                    Content="Refresh Assets"
+                    i:Attached.Icon="mdi-cloud-refresh-outline"
                     ToolTip.Tip="Download the latest asset catalogs and refresh."
-                    Click="btnRefresh_Click"
-                    Padding="5,2,5,2"/>
+                    Click="btnRefresh_Click"/>
 
 			<Button x:Name="btnManageCat"
-                    Width="64"
+                    Width="56"
                     Height="32"
+					FontSize="22"
+					i:Attached.Icon="mdi-book-cog-outline"
                     ToolTip.Tip="Add, remove, or create asset catalogs."
                     Click="btnManageCat_Click"
                     Margin="5,0,0,0"

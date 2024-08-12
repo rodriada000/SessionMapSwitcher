@@ -170,6 +170,9 @@ namespace SessionModManagerAvalonia
                 {
                     ViewModel.UserMessage = "New update available to download";
                     StartUpdateTimerToOpenWindow();
+                } else
+                {
+                    ViewModel.UserMessage = "";
                 }
             }, TaskScheduler.FromCurrentSynchronizationContext());
         }

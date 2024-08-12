@@ -16,6 +16,7 @@ namespace SessionModManagerCore.ViewModels
         private bool _isSelected = false;
         private bool _isValid = true;
         private bool _isHiddenByUser = false;
+        private bool _isLoaded;
 
         public string CustomName
         {
@@ -145,6 +146,16 @@ namespace SessionModManagerCore.ViewModels
             set
             {
                 _isEnabled = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public bool IsLoaded
+        {
+            get { return _isLoaded; }
+            set
+            {
+                _isLoaded = value;
                 NotifyPropertyChanged();
             }
         }

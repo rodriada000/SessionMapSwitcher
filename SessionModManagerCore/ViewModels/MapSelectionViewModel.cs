@@ -2,6 +2,7 @@
 using SessionMapSwitcherCore.Classes.Interfaces;
 using SessionMapSwitcherCore.Utils;
 using SessionModManagerCore.Classes;
+using SharpCompress;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -448,6 +449,7 @@ namespace SessionModManagerCore.ViewModels
                 AddDefaultMapToAvailableMaps();
 
                 SelectCurrentlyLoadedMapInList();
+                AvailableMaps.ForEach(m => m.IsLoaded = m.MapName == CurrentlyLoadedMapName);
             }
 
             MetaDataManager.SetCustomPropertiesForMaps(AvailableMaps, createIfNotExists: true);
@@ -631,8 +633,9 @@ namespace SessionModManagerCore.ViewModels
 
                 if (loadResult.Result)
                 {
-                    SetIsSelectedForMapInList(map);
                     CurrentlyLoadedMapName = map.MapName;
+                    AvailableMaps.ForEach(m => m.IsLoaded = m.MapName == CurrentlyLoadedMapName);
+                    SetIsSelectedForMapInList(map);
                     AppSettingsUtil.AddOrUpdateAppSettings(SettingKey.LastSelectedMap, map.MapName);
                 }
 
