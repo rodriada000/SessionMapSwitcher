@@ -10,6 +10,8 @@ namespace SessionModManagerAvalonia
 {
     public partial class App : Application
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
@@ -32,9 +34,13 @@ namespace SessionModManagerAvalonia
 
         public static bool IsRunningAppAsAdministrator()
         {
+            if (OperatingSystem.IsWindows())
+            {
+                // reference: https://stackoverflow.com/questions/11660184/c-sharp-check-if-run-as-administrator
+                return (new WindowsPrincipal(WindowsIdentity.GetCurrent())).IsInRole(WindowsBuiltInRole.Administrator);
+            }
+
             return false;
-            // reference: https://stackoverflow.com/questions/11660184/c-sharp-check-if-run-as-administrator
-            //return (new WindowsPrincipal(WindowsIdentity.GetCurrent())).IsInRole(WindowsBuiltInRole.Administrator);
         }
 
         internal static string GetAppName()
@@ -48,6 +54,16 @@ namespace SessionModManagerAvalonia
             }
 
             return "Session Mod Manager"; // default if can't find for some reason
+        }
+
+        internal static void LogAppNameAndVersion()
+        {
+            string logLine = $"{GetAppName()} - {GetAppVersion()}";
+
+            logLine += IsRunningAppAsAdministrator() ? " (Running As Admin)" : " (Running As Normal User)";
+
+            Logger.Info("----------------------------------------------------------------------------------------------------");
+            Logger.Info(logLine);
         }
     }
 }

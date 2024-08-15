@@ -16,6 +16,7 @@ using System.Linq;
 using SessionMapSwitcherCore.Utils;
 using SessionModManagerAvalonia.Windows;
 using Avalonia.Controls.ApplicationLifetimes;
+using SessionModManagerAvalonia.Classes;
 
 namespace SessionModManagerAvalonia;
 
@@ -443,10 +444,10 @@ public partial class MapSelectionUserControl : UserControl
     {
         string sessionPath = AppSettingsUtil.GetAppSetting(SettingKey.PathToSession);
 
-        //if (string.IsNullOrEmpty(sessionPath))
-        //{
-        //    sessionPath = RegistryHelper.GetPathFromRegistry();
-        //}
+        if (OperatingSystem.IsWindows() && string.IsNullOrEmpty(sessionPath))
+        {
+            sessionPath = RegistryHelper.GetPathFromRegistry();
+        }
 
         SessionPath.ToSession = sessionPath;
 
@@ -459,8 +460,6 @@ public partial class MapSelectionUserControl : UserControl
 #if DEBUG
         NLog.LogManager.ThrowExceptions = true;
 #endif
-
-        //LogAppNameAndVersion();
 
 
     }

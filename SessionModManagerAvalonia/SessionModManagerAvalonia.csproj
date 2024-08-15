@@ -34,6 +34,7 @@
 
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="11.1.0" />
+    <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.1.0" />
     <PackageReference Include="Avalonia.Desktop" Version="11.1.0" />
     <PackageReference Include="Avalonia.HtmlRenderer" Version="11.0.0" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.1.0" />

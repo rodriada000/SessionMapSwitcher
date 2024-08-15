@@ -139,6 +139,15 @@ namespace SessionMapSwitcherCore.ViewModels
                 if (_displayDecks) sb.Append(",Decks");
                 if (_displayGriptapes) sb.Append(",Griptapes");
                 if (_displayTrucks) sb.Append(",Trucks");
+                if (_displayWheels) sb.Append(",Wheels");
+                if (_displayHats) sb.Append(",Hats");
+                if (_displayShirts) sb.Append(",Shirts");
+                if (_displayPants) sb.Append(",Pants");
+                if (_displayShoes) sb.Append(",Shoes");
+                if (_displayMeshes) sb.Append(",Meshes");
+                if (_displayCharacters) sb.Append(",Characters");
+
+
 
                 if (sb.Length == 0)
                 {

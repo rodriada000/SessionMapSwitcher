@@ -23,7 +23,7 @@
 
 
 		<TextBox Margin="5,5,10,0"
-				 Watermark="Drag in a .zip or .rar file and click 'Import' to easily copy new mods and textures/meshes into the game"
+				 Watermark="Select a .zip or .rar file and click 'Import' to easily copy new mods and textures/meshes into the game"
                  Grid.Column="1"
                  x:Name="txtPath"
                  FontSize="13"
@@ -79,7 +79,7 @@
 							  SelectionMode="Single"
 							  MinHeight="125">
 						<DataGrid.Columns>
-							<DataGridTextColumn IsReadOnly="True" Header="Name" Width="150"  Binding="{Binding TextureName}"/>
+							<DataGridTextColumn IsReadOnly="True" Header="Name" Width="225"  Binding="{Binding TextureName}"/>
 							<DataGridTextColumn IsReadOnly="True" Header="Category"  Binding="{Binding Category}"/>
 							<DataGridCheckBoxColumn Header="Enabled" Binding="{Binding IsEnabled}" />
 						</DataGrid.Columns>

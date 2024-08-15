@@ -4,51 +4,21 @@
              RequestedThemeVariant="Default">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 	<Application.Resources>
-		<!-- Control colors -->
-		<Color x:Key="DisabledForegroundColor">#c2cbcf</Color>
-		<Color x:Key="EnabledForegroundColor">#edf0f1</Color>
 
-		<SolidColorBrush x:Key="ControlPressedBrush" Color="#3b363d"/>
-		<SolidColorBrush x:Key="ControlMouseOverBrush" Color="#65738a"/>
-		<SolidColorBrush x:Key="DisabledForegroundBrush" Color="{StaticResource DisabledForegroundColor}"/>
-
-		<!-- Border colors -->
-		<Color x:Key="BorderLightColor">#FFCCCCCC</Color>
-		<Color x:Key="BorderMediumColor">#FF888888</Color>
-		<Color x:Key="BorderDarkColor">#FF444444</Color>
-
-		<Color x:Key="DisabledBorderDarkColor">#FF888888</Color>
-
-		<!-- COLOR SCHEME -->
-		<Color x:Key="PrimaryBackgroundColor">#221E1F</Color>
-		<SolidColorBrush x:Key="PrimaryBackgroundBrush" Color="{StaticResource PrimaryBackgroundColor}"/>
-		<SolidColorBrush x:Key="PrimaryBackgroundMaskBrush" Color="White" Opacity="0.03"/>
-
-
-		<Color x:Key="SecondaryBackgroundColor">#171a1b</Color>
-		<SolidColorBrush x:Key="SecondaryBackgroundBrush" Color="{StaticResource SecondaryBackgroundColor}"/>
-		<SolidColorBrush x:Key="SecondaryBackgroundOverlayBrush" Color="{StaticResource SecondaryBackgroundColor}" Opacity="0.3"/>
-
-
-		<Color x:Key="PrimaryGrayColor">#757478</Color>
-		<SolidColorBrush x:Key="PrimaryGrayBrush" Color="{StaticResource PrimaryGrayColor}"/>
-
-		<Color x:Key="AccentColor">#799BAC</Color>
-		<SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}"/>
-		<SolidColorBrush x:Key="AccentOverlayBrush" Color="{StaticResource AccentColor}" Opacity="0.1"/>
-
-
-		<Color x:Key="PrimaryForegroundColor">#EDF2F3</Color>
-		<SolidColorBrush x:Key="PrimaryForegroundBrush" Color="{StaticResource PrimaryForegroundColor}"/>
-
-		<SolidColorBrush x:Key="ControlBorderBrush" Color="{StaticResource EnabledForegroundColor}" Opacity="0.15"/>
 	</Application.Resources>
     <Application.Styles>
-        <FluentTheme />
+		<FluentTheme>
+			<!--<FluentTheme.Palettes>
+				<ColorPaletteResources x:Key="Light" Accent="#ffcc4d11" AltHigh="White" AltLow="White" AltMedium="White" AltMediumHigh="White" AltMediumLow="White" BaseHigh="Black" BaseLow="#ff7cbee0" BaseMedium="#ff3282a8" BaseMediumHigh="#ff005a83" BaseMediumLow="#ff196e96" ChromeAltLow="#ff005a83" ChromeBlackHigh="Black" ChromeBlackLow="#ff7cbee0" ChromeBlackMedium="#ff005a83" ChromeBlackMediumLow="#ff3282a8" ChromeDisabledHigh="#ff7cbee0" ChromeDisabledLow="#ff3282a8" ChromeGray="#ff196e96" ChromeHigh="#ff7cbee0" ChromeLow="#ffc1e9fe" ChromeMedium="#ffb3e0f8" ChromeMediumLow="#ffc1e9fe" ChromeWhite="White" ListLow="#ffb3e0f8" ListMedium="#ff7cbee0" RegionColor="#ffcfeaff" />
+				<ColorPaletteResources x:Key="Dark" Accent="#ffcc4d11" AltHigh="Black" AltLow="Black" AltMedium="Black" AltMediumHigh="Black" AltMediumLow="Black" BaseHigh="White" BaseLow="#ff2f7bad" BaseMedium="#ff8dbfdf" BaseMediumHigh="#ffa5d0ec" BaseMediumLow="#ff5e9dc6" ChromeAltLow="#ffa5d0ec" ChromeBlackHigh="Black" ChromeBlackLow="#ffa5d0ec" ChromeBlackMedium="Black" ChromeBlackMediumLow="Black" ChromeDisabledHigh="#ff2f7bad" ChromeDisabledLow="#ff8dbfdf" ChromeGray="#ff76aed3" ChromeHigh="#ff76aed3" ChromeLow="#ff093b73" ChromeMedium="#ff134b82" ChromeMediumLow="#ff266b9f" ChromeWhite="White" ListLow="#ff134b82" ListMedium="#ff2f7bad" RegionColor="#ff0d2644" />
+			</FluentTheme.Palettes>-->
+
+		</FluentTheme>
+		
 		<StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
 
 		<Style Selector="DataGrid">
-			<Setter Property="Background" Value="{StaticResource AccentOverlayBrush}"/>
+			<Setter Property="Background" Value="{DynamicResource SystemControlTransientBackgroundBrush}"/>
 		</Style>
     </Application.Styles>
 

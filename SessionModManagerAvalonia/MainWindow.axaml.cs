@@ -1,12 +1,15 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
+using MsBox.Avalonia;
 using SessionMapSwitcher.Classes.Events;
 using SessionMapSwitcherCore.Classes;
 using SessionMapSwitcherCore.Utils;
+using SessionModManagerAvalonia.Classes;
 using SessionModManagerCore.Classes;
 using SessionModManagerCore.ViewModels;
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace SessionModManagerAvalonia
@@ -35,6 +38,10 @@ namespace SessionModManagerAvalonia
         {
             InitializeComponent();
 
+            App.LogAppNameAndVersion();
+
+            btnPatch.IsVisible = OperatingSystem.IsWindows();
+
             SetCustomWindowSizeFromAppSettings();
 
             ViewModel = new MainWindowViewModel();
@@ -59,8 +66,51 @@ namespace SessionModManagerAvalonia
             ViewModel.UserMessage = message;
         }
 
-        private void btnPatch_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private async void btnPatch_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
+            if (OperatingSystem.IsWindows())
+            {
+                await PromptToPatch_Windows();
+            }
+        }
+
+        /// <summary>
+        /// Prompts to download Illusory mod unlocker or opens it if already installed
+        /// </summary>
+        public async Task PromptToPatch_Windows()
+        {
+            string displayName = "Unreal Mod Unlocker Basic";
+
+            bool isUnlockerInstalled = RegistryHelper.IsSoftwareInstalled(displayName, Microsoft.Win32.RegistryHive.CurrentUser, Microsoft.Win32.RegistryView.Registry32);
+
+            string currentVersion = RegistryHelper.GetDisplayVersion(displayName, Microsoft.Win32.RegistryHive.CurrentUser, Microsoft.Win32.RegistryView.Registry32);
+
+            ModUnlockerDownloadLink downloadInfo = UeModUnlocker.GetLatestDownloadLinkInfo();
+
+            if (downloadInfo == null || string.IsNullOrEmpty(downloadInfo.Url))
+            {
+                var box = MessageBoxManager.GetMessageBoxStandard("Notice!", "Failed to get the latest download link. Check that you have internet and try again.", MsBox.Avalonia.Enums.ButtonEnum.Ok, MsBox.Avalonia.Enums.Icon.Error);
+                var result = await box.ShowAsync();
+                return;
+            }
+
+            bool isOutdated = !string.IsNullOrWhiteSpace(currentVersion) && new Version(currentVersion) < new Version($"0.{downloadInfo.Version}");
+
+            if (!isUnlockerInstalled || isOutdated)
+            {
+                var box = MessageBoxManager.GetMessageBoxStandard("Notice!", "This will open your browser to download the Illusory Universal Mod Unlocker.\n\nLaunch the unlocker installer after it downloads to patch Session.\n\nDo you want to continue?", MsBox.Avalonia.Enums.ButtonEnum.YesNo, MsBox.Avalonia.Enums.Icon.Warning);
+                var result = await box.ShowAsync();
+
+                if (result == MsBox.Avalonia.Enums.ButtonResult.Yes)
+                {
+                    Process.Start(new ProcessStartInfo(downloadInfo.Url) { UseShellExecute = true });
+                }
+            }
+            else if (isUnlockerInstalled)
+            {
+                string modUnlockerPath = RegistryHelper.GetExePathFromDisplayIcon(displayName, Microsoft.Win32.RegistryHive.CurrentUser, Microsoft.Win32.RegistryView.Registry32);
+                Process.Start(modUnlockerPath);
+            }
         }
 
         private void TabControl_SelectionChanged(object? sender, Avalonia.Controls.SelectionChangedEventArgs e)

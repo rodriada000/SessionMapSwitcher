@@ -27,8 +27,8 @@
 		</Grid.ColumnDefinitions>
 
 		
-		<Border IsVisible="{Binding IsCategoryDropdownOpen}" Width="200" CornerRadius="3"  Grid.RowSpan="5" BorderBrush="{StaticResource BorderMediumColor}" BorderThickness="1" Background="{StaticResource PrimaryBackgroundColor}" Margin="5,75,0,0" ZIndex="9" VerticalAlignment="Top" HorizontalAlignment="Left">
-			<StackPanel Margin="5">
+		<Border IsVisible="{Binding IsCategoryDropdownOpen}"  Width="200" CornerRadius="3"  Grid.RowSpan="5" BorderBrush="{DynamicResource SystemControlHighlightBaseMediumLowBrush}" BorderThickness="1" Background="{DynamicResource SystemControlBackgroundAltHighBrush}" Margin="5,75,0,0" ZIndex="10" VerticalAlignment="Top" HorizontalAlignment="Left">
+			<StackPanel Margin="5" >
 				<CheckBox Grid.Column="0" Content="All" IsChecked="{Binding DisplayAll, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 				<CheckBox Grid.Column="1" Content="Maps" IsChecked="{Binding DisplayMaps, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 				<CheckBox Grid.Column="2" Content="Decks" IsChecked="{Binding DisplayDecks, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
@@ -53,10 +53,10 @@
 						<Setter Property="Template">
 							<Setter.Value>
 								<ControlTemplate>
-									<Grid ColumnDefinitions="*,auto" IsHitTestVisible="True">
-										<Border CornerRadius="3" BorderThickness="1" Grid.ColumnSpan="2" BorderBrush="{StaticResource PrimaryGrayBrush}" Height="30"/>
+									<Grid ColumnDefinitions="*,auto" Background="{DynamicResource SystemControlTransparentBrush}" IsHitTestVisible="True">
+										<Border CornerRadius="3" BorderThickness="1" Grid.ColumnSpan="2" Height="30" BorderBrush="{DynamicResource SystemControlHighlightBaseMediumLowBrush}"/>
 										<TextBlock TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Margin="5,0,0,0" Text="{Binding $parent[Button].Content}" HorizontalAlignment="Stretch"/>
-										<i:Icon Grid.Column="1" FontSize="18" Value="mdi-chevron-down" Margin="0,0,5,0" Foreground="{StaticResource PrimaryGrayBrush}"/>
+										<i:Icon Grid.Column="1" FontSize="18" Value="mdi-chevron-down" Margin="0,0,5,0" Foreground="{DynamicResource SystemControlHighlightBaseMediumLowBrush}"/>
 									</Grid>
 								</ControlTemplate>
 							</Setter.Value>
@@ -128,42 +128,6 @@
 			</WrapPanel>
 		</Grid>
 
-
-		<!--<Grid Grid.Row="0" Grid.Column="0"
-                  HorizontalAlignment="Left"
-                  VerticalAlignment="Top"
-                  Margin="5,5,0,10">
-			<Grid VerticalAlignment="Top" Margin="3">
-				<Grid.RowDefinitions>
-					<RowDefinition Height="auto"/>
-					<RowDefinition Height="auto"/>
-				</Grid.RowDefinitions>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="auto"/>
-					<ColumnDefinition Width="auto"/>
-					<ColumnDefinition Width="auto"/>
-					<ColumnDefinition Width="auto"/>
-					<ColumnDefinition Width="auto"/>
-					<ColumnDefinition Width="auto"/>
-				</Grid.ColumnDefinitions>
-
-				<CheckBox Grid.Column="0" Content="All" IsChecked="{Binding DisplayAll, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-				<CheckBox Grid.Column="1" Content="Maps" IsChecked="{Binding DisplayMaps, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-				<CheckBox Grid.Column="2" Content="Decks" IsChecked="{Binding DisplayDecks, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-				<CheckBox Grid.Column="3" Content="Griptapes" IsChecked="{Binding DisplayGriptapes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-				<CheckBox Grid.Column="4" Content="Trucks" IsChecked="{Binding DisplayTrucks, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-				<CheckBox Grid.Column="5" Content="Meshes" IsChecked="{Binding DisplayMeshes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-
-				<CheckBox Grid.Row="1" Grid.Column="0" Content="Wheels" IsChecked="{Binding DisplayWheels, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-				<CheckBox Grid.Row="1" Grid.Column="1" Content="Hats" IsChecked="{Binding DisplayHats, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-				<CheckBox Grid.Row="1" Grid.Column="2" Content="Shirts" IsChecked="{Binding DisplayShirts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-				<CheckBox Grid.Row="1" Grid.Column="3" Content="Pants" IsChecked="{Binding DisplayPants, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-				<CheckBox Grid.Row="1" Grid.Column="4" Content="Shoes" IsChecked="{Binding DisplayShoes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-				<CheckBox Grid.Row="1" Grid.Column="5" Content="Characters" IsChecked="{Binding DisplayCharacters, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-			</Grid>
-		</Grid>-->
-
-
 		<TextBox x:Name="txtSearch"
                  Grid.Row="1"
                  Height="25"
@@ -186,11 +150,11 @@
                   SelectedItem="{Binding SelectedAsset, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                   Margin="5,5,0,5">
 			<DataGrid.Columns>
-				<DataGridTextColumn Header="Name" Width="190" Binding="{Binding Name}"/>
+				<DataGridTextColumn Header="Name" Width="250" Binding="{Binding Name}"/>
 				<DataGridTextColumn Header="Author" Width="100" Binding="{Binding Author}"/>
 				<DataGridTextColumn Header="Category" Width="95" Binding="{Binding Category}"/>
 				<DataGridTextColumn Header="Updated Date" Width="130" Binding="{Binding UpdatedDate}"/>
-				<DataGridTextColumn Header="Ver." Width="50" Binding="{Binding Version}"/>
+				<DataGridTextColumn Header="Ver." Width="65" Binding="{Binding Version}"/>
 			</DataGrid.Columns>
 
 			<DataGrid.ContextMenu>
@@ -206,7 +170,7 @@
 		</DataGrid>
 
 
-		<DataGrid x:Name="lstDownloads"
+		<DataGrid Name="lstDownloads"
                   Grid.Row="3"
                   Margin="5,0,0,5"
 				  CanUserResizeColumns="True"
@@ -223,8 +187,8 @@
 				</ContextMenu>
 			</DataGrid.ContextMenu>
 			<DataGrid.Columns>
-				<DataGridTextColumn Header="Item"  Binding="{Binding ItemName}" Width="150"/>
-				<DataGridTemplateColumn Width="100" Header="Progress">
+				<DataGridTextColumn Header="Item"  Binding="{Binding ItemName}" Width="200"/>
+				<DataGridTemplateColumn Width="120" Header="Progress">
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate DataType="vi:DownloadItemViewModel">
 							<ProgressBar Value="{Binding PercentComplete, FallbackValue='50'}" Height="10"/>
@@ -262,14 +226,17 @@
 						<TextBlock Text="Description:"
                                    Margin="5,5,5,0"
                                    FontWeight="Bold"/>
-						<TextBox Text="{Binding SelectedDescription, FallbackValue='example description for a selected asset.'}"
-								   TextWrapping="Wrap"
-								   IsReadOnly="True"
-								 Width="{Binding $parent.Width }"
-								 BorderThickness="0"
-								 Background="Transparent"
-								   Margin="5,5,0,0"
-								   Padding="0,0,10,0"/>
+						<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden"
+                                      MaxHeight="300">
+							<TextBox Text="{Binding SelectedDescription, FallbackValue='example description for a selected asset.'}"
+									   TextWrapping="Wrap"
+									   IsReadOnly="True"
+									 Width="{Binding $parent[TextBlock].Width }"
+									 BorderThickness="0"
+									 Background="Transparent"
+									   Margin="5,5,0,0"
+									   Padding="0,0,10,0"/>
+						</ScrollViewer>
 					</StackPanel>
 
 				</ScrollViewer>
@@ -300,6 +267,7 @@
                             ToolTip.Tip="Delete the files related to this asset from your game."
                             Content="{Binding RemoveButtonText, FallbackValue='Remove Asset'}"
                             IsEnabled="{Binding IsRemoveButtonEnabled}"
+							IsVisible="{Binding IsRemoveButtonEnabled}"
                             Click="btnRemove_Click"
                             Margin="0,0,5,0"
                             Padding="5">
