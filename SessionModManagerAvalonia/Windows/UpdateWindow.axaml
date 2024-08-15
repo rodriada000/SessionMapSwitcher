@@ -28,7 +28,7 @@
 
 
 		<ScrollViewer Grid.Row="1">
-			<h:HtmlPanel x:Name="htmlPanel" IsVisible="{Binding IsBrowserVisible}"/>
+			<h:HtmlPanel Background="WhiteSmoke" x:Name="htmlPanel" IsVisible="{Binding IsBrowserVisible}"/>
 		</ScrollViewer>
 		
 		<!--<WebBrowser x:Name="browser" Grid.Row="1" Visibility="{Binding BrowserVisibility, FallbackValue='Hidden'}"/>-->

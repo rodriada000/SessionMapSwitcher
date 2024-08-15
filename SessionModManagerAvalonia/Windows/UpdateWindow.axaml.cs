@@ -24,6 +24,8 @@ public partial class UpdateWindow : Window
 
         ViewModel = new UpdateViewModel();
         this.DataContext = ViewModel;
+
+        ViewModel.ReadNewVersionFromAgFilesJson();
     }
 
     private void GetVersionNotesInBackground()
@@ -42,8 +44,8 @@ public partial class UpdateWindow : Window
                 return;
             }
 
-            int startIdx = htmlVersionNotes.IndexOf("<turbo-frame");
-            int endIdx = htmlVersionNotes.IndexOf("</turbo-frame>") + "</turbo-frame>".Length;
+            int startIdx = htmlVersionNotes.IndexOf("<div data-pjax=\"true\" data-test-selector=\"body-content\"");
+            int endIdx = htmlVersionNotes.IndexOf("<div data-view-component=\"true\" class=\"Box-footer\"");
 
             if (startIdx >= 0 && endIdx >= 0)
             {
