@@ -18,7 +18,7 @@
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Top"
                       Margin="20,0,20,0">
-					<Border BorderThickness="1" Background="{StaticResource AccentOverlayBrush}" CornerRadius="3"/>
+					<Border BorderThickness="1" Background="{DynamicResource ButtonBackgroundPointerOver}" CornerRadius="3"/>
 					<StackPanel >
 						<Label FontWeight="Light" FontSize="18">Game Settings</Label>
 						<WrapPanel Margin="5,10,0,0" HorizontalAlignment="Left">
@@ -218,7 +218,7 @@
                                   HorizontalAlignment="Stretch"
                                   VerticalAlignment="Top"
                                   Margin="20,10,20,0">
-					<Border BorderThickness="1" Background="{StaticResource AccentOverlayBrush}" CornerRadius="3"/>
+					<Border BorderThickness="1" Background="{DynamicResource ButtonBackgroundPointerOver}" CornerRadius="3"/>
 					<Label Content="Project Watcher" FontWeight="Light" FontSize="18"/>
 					<local:ProjectWatcherUserControl x:Name="ctrlProjectWatcher" Margin="0,30,5,0"/>
 				</Grid>

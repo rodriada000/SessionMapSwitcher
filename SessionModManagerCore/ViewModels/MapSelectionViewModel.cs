@@ -683,7 +683,11 @@ namespace SessionModManagerCore.ViewModels
         {
             try
             {
-                Process.Start(new ProcessStartInfo(SessionPath.ToSaveGamesFolder) { UseShellExecute = true });
+                Logger.Info(SessionPath.ToSaveGamesFolder);
+                if (!string.IsNullOrWhiteSpace(SessionPath.ToSaveGamesFolder))
+                {
+                    Process.Start(new ProcessStartInfo(SessionPath.ToSaveGamesFolder) { UseShellExecute = true });
+                }
             }
             catch (Exception ex)
             {

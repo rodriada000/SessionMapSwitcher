@@ -55,7 +55,6 @@
                 Grid.Row="3" Grid.ColumnSpan="2"
                 Click="BtnImportMap_Click"
                 FontSize="13"
-                Padding="5,3,5,3"
                 Content="Import Map"
                 IsEnabled="{Binding IsNotImporting}"/>
 

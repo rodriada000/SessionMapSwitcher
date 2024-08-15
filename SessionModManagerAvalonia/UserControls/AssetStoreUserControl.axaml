@@ -45,7 +45,7 @@
 			</StackPanel>
 		</Border>
 
-		<Grid Grid.ColumnSpan="2" RowDefinitions="auto,*" ColumnDefinitions="*,*,*,*" Margin="5,0,0,10">
+		<Grid Grid.ColumnSpan="2" RowDefinitions="auto,*" ColumnDefinitions="*,*,*,*" Margin="5,0,0,20">
 			<Label Content="Categories:" Margin="0,0,0,0" VerticalAlignment="Bottom"/>
 			<Button Margin="0,0,5,0"  Click="btnCategory_Click" Content="{Binding SelectedCategories}"  HorizontalAlignment="Stretch" Grid.Row="1">
 				<Button.Styles>
@@ -66,7 +66,7 @@
 			</Button>
 
 			<Label Content="Author:" Grid.Column="1" VerticalAlignment="Bottom"/>
-			<ComboBox Width="200"
+			<ComboBox HorizontalAlignment="Stretch"
 					  Grid.Column="1"
 					  Grid.Row="1"
 					  FontSize="11"
@@ -92,7 +92,7 @@
 
 
 			<Label Content="Install Status:"  Grid.Column="2" VerticalAlignment="Bottom"/>
-			<ComboBox Width="200"
+			<ComboBox HorizontalAlignment="Stretch"
 					  FontSize="11"
 					  Grid.Row="1"
 					  Grid.Column="2"
@@ -111,7 +111,7 @@
 						Height="32"
 						FontSize="22"
 						Margin="0,0,0,0"
-						i:Attached.Icon="mdi-cloud-refresh-outline"
+						i:Attached.Icon="mdi-refresh"
 						ToolTip.Tip="Download the latest asset catalogs and refresh."
 						Click="btnRefresh_Click"/>
 
@@ -120,7 +120,7 @@
 						Height="32"
 						FontSize="22"
 						Grid.Column="1"
-						i:Attached.Icon="mdi-book-cog-outline"
+						i:Attached.Icon="mdi-book-open-variant-outline"
 						ToolTip.Tip="Add, remove, or create asset catalogs."
 						Click="btnManageCat_Click"
 						Margin="5,0,0,0"
@@ -135,7 +135,7 @@
 				 Watermark="Type to search by Name or Description (only searches checked Categories)..."
                  Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  TextWrapping="NoWrap"
-                 Margin="5,1,0,0"/>
+                 Margin="5,0,0,0"/>
 
 		<DataGrid x:Name="lstAssets"
                   Grid.Row="2" Grid.Column="0"
@@ -217,7 +217,7 @@
 						<WrapPanel Margin="0,0,0,0">
 							<TextBlock Text="Author:"
                                        Margin="5,5,5,0"
-                                       FontWeight="Bold"/>
+                                       FontWeight="SemiBold"/>
 							<TextBlock Text="{Binding SelectedAuthor, FallbackValue='Author name'}"
                                        TextWrapping="Wrap"
                                        Margin="5,5,0,0"/>
@@ -225,7 +225,7 @@
 
 						<TextBlock Text="Description:"
                                    Margin="5,5,5,0"
-                                   FontWeight="Bold"/>
+                                   FontWeight="SemiBold"/>
 						<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden"
                                       MaxHeight="300">
 							<TextBox Text="{Binding SelectedDescription, FallbackValue='example description for a selected asset.'}"

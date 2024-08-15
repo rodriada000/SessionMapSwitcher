@@ -3,8 +3,6 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using System.Security.Principal;
 using System;
-using SessionMapSwitcherCore.Classes;
-using SessionMapSwitcherCore.Utils;
 
 namespace SessionModManagerAvalonia
 {

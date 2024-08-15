@@ -36,7 +36,19 @@ public partial class UpdateWindow : Window
         Task scraperTask = Task.Factory.StartNew(() =>
         {
             htmlVersionNotes = ScrapeLatestVersionNotesFromGitHub();
-            htmlPanel.Text = htmlVersionNotes;
+
+            if (string.IsNullOrWhiteSpace(htmlVersionNotes))
+            {
+                return;
+            }
+
+            int startIdx = htmlVersionNotes.IndexOf("<turbo-frame");
+            int endIdx = htmlVersionNotes.IndexOf("</turbo-frame>") + "</turbo-frame>".Length;
+
+            if (startIdx >= 0 && endIdx >= 0)
+            {
+                htmlPanel.Text = htmlVersionNotes.Substring(startIdx, endIdx - startIdx);
+            }
         }, CancellationToken.None, TaskCreationOptions.LongRunning, scheduler);
 
         scraperTask.ContinueWith((antecedent) =>
@@ -46,15 +58,12 @@ public partial class UpdateWindow : Window
                 Logger.Error(antecedent.Exception.GetBaseException());
             }
 
-            //browser.NavigateToString(htmlVersionNotes);
             ViewModel.IsBrowserVisible = true;
-            //browser.Visibility = ViewModel.IsBrowserVisible ? Visibility.Visible : Visibility.Hidden;
         }, scheduler);
     }
 
     private void BtnClose_Click(object sender, RoutedEventArgs e)
     {
-        //this.DialogResult = false;
         this.Close(false);
     }
 
@@ -94,35 +103,6 @@ public partial class UpdateWindow : Window
     {
         GetVersionNotesInBackground();
     }
-
-    ///// <summary>
-    ///// sets the 'onclick' attribute to 'return false' so the hyperlink is disabled
-    ///// </summary>
-    ///// <param name="child"></param>
-    //private static void DisableHyperLinksInHtml(HtmlElement child)
-    //{
-    //    foreach (HtmlElement link in child.GetElementsByTagName("a"))
-    //    {
-    //        link.SetAttribute("onClick", "return false;");
-    //    }
-    //}
-
-    ///// <summary>
-    ///// Uses a WebBrowser control to get an HtmlDocument from a html string
-    ///// </summary>
-    //public static HtmlDocument GetHtmlDocument(string html)
-    //{
-    //    using (WebBrowser browser = new WebBrowser())
-    //    {
-    //        browser.ScriptErrorsSuppressed = true;
-    //        browser.DocumentText = html;
-    //        browser.Document.OpenNew(true);
-    //        browser.Document.Write(html);
-    //        browser.Refresh();
-
-    //        return browser.Document;
-    //    }
-    //}
 
     #endregion
 }

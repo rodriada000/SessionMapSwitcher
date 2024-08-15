@@ -179,7 +179,17 @@ namespace SessionMapSwitcherCore.Classes
         {
             get
             {
-                return Path.Combine(new string[] { Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SessionGame", "Saved", "SaveGames" });
+                if (OperatingSystem.IsWindows())
+                {
+                    return Path.Combine(new string[] { Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SessionGame", "Saved", "SaveGames" });
+                }
+                else if (ToSession.Contains("steamapps"))
+                {
+                    string pathToSteam = ToSession.Substring(0, ToSession.IndexOf("steamapps") + "steamapps".Length);
+                    return Path.Combine(pathToSteam, "compatdata/861650/pfx/drive_c/users/steamuser/Local Settings/Application Data/SessionGame/Saved/SaveGames/");
+                }
+
+                return "";
             }
         }
 
@@ -195,7 +205,17 @@ namespace SessionMapSwitcherCore.Classes
         {
             get
             {
-                return Path.Combine(new string[] { Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SessionGame", "Saved", "Config", "WindowsNoEditor" });
+                if (OperatingSystem.IsWindows())
+                {
+                    return Path.Combine(new string[] { Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SessionGame", "Saved", "Config", "WindowsNoEditor" });
+                }
+                else if (ToSession.Contains("steamapps"))
+                {
+                    string pathToSteam = ToSession.Substring(0, ToSession.IndexOf("steamapps") + "steamapps".Length);
+                    return Path.Combine(pathToSteam, "compatdata/861650/pfx/drive_c/users/steamuser/Local Settings/Application Data/SessionGame/Saved/Config/WindowsNoEditor/");
+                }
+
+                return "";
             }
         }
 

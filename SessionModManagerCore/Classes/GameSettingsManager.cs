@@ -141,7 +141,7 @@ namespace SessionMapSwitcherCore.Classes
 
             if (String.IsNullOrWhiteSpace(setting))
             {
-                setting = "true";
+                setting = "false";
             }
 
             bool.TryParse(setting, out parsedBool);
@@ -498,6 +498,7 @@ namespace SessionMapSwitcherCore.Classes
                 return BoolWithMessage.False("Session Path invalid.");
             }
 
+            Logger.Info($"SessionPath.ToLocalAppDataConfigFolder = {SessionPath.ToLocalAppDataConfigFolder}");
             if (!Directory.Exists(SessionPath.ToLocalAppDataConfigFolder) || !File.Exists(PathToGameUserSettingsFile))
             {
                 return BoolWithMessage.True();
