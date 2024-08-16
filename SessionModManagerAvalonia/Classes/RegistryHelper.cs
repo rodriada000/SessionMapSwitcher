@@ -9,6 +9,11 @@ namespace SessionModManagerAvalonia.Classes
     {
         public static string GetPathToUnrealEngine()
         {
+            if (!OperatingSystem.IsWindows())
+            {
+                return "";
+            }
+
             string unrealPath = "";
             string registryKeyName = "InstalledDirectory";
 
@@ -35,6 +40,11 @@ namespace SessionModManagerAvalonia.Classes
 
         public static string GetPathFromRegistry()
         {
+            if (!OperatingSystem.IsWindows())
+            {
+                return "";
+            }
+
             string sessionPath = string.Empty;
             string registryKeyName = "MatchedExeFullPath";
 
@@ -67,6 +77,11 @@ namespace SessionModManagerAvalonia.Classes
 
         internal static bool IsSoftwareInstalled(string softwareName, RegistryHive hive, RegistryView registryView)
         {
+            if (!OperatingSystem.IsWindows())
+            {
+                return false;
+            }
+
             string installedProgrammsPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall";
 
             var uninstallKey = RegistryKey.OpenBaseKey(hive, registryView)
@@ -83,6 +98,11 @@ namespace SessionModManagerAvalonia.Classes
 
         internal static string GetDisplayVersion(string softwareName, RegistryHive hive, RegistryView registryView)
         {
+            if (!OperatingSystem.IsWindows())
+            {
+                return "";
+            }
+
             string installedProgrammsPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall";
 
             var uninstallKey = RegistryKey.OpenBaseKey(hive, registryView)
@@ -98,8 +118,14 @@ namespace SessionModManagerAvalonia.Classes
                                .Select(installedSoftware => installedSoftware.Key.GetValue("DisplayVersion") as string)
                                .FirstOrDefault();
         }
+
         internal static string GetExePathFromDisplayIcon(string softwareName, RegistryHive hive, RegistryView registryView)
         {
+            if (!OperatingSystem.IsWindows())
+            {
+                return "";
+            }
+
             string installedProgrammsPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall";
 
             var uninstallKey = RegistryKey.OpenBaseKey(hive, registryView)

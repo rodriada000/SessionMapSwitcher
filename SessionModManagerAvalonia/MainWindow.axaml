@@ -80,7 +80,7 @@
 					   HorizontalAlignment="Left"
 					   VerticalAlignment="Bottom"
 					   TextTrimming="CharacterEllipsis"
-					   Margin="10,0,0,3"
+					   Margin="10,0,0,5"
 					   Text="{Binding UserMessage, FallbackValue='Map Loaded!'}"
 					   TextWrapping="Wrap"
 					   FontSize="14"/>

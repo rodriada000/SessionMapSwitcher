@@ -25,7 +25,16 @@ namespace SessionModManagerAvalonia.Classes
                 {
                     using (var stream = (Stream)value)
                     {
-                        _image = new Bitmap(stream);
+                        try
+                        {
+                            _image = new Bitmap(stream);
+
+                        }
+                        catch (Exception ex)
+                        {
+                            return new BindingNotification(ex, BindingErrorType.Error);
+                        }
+
                         return _image;
                     }
                 }

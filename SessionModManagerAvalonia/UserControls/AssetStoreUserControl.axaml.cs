@@ -75,11 +75,6 @@ public partial class AssetStoreUserControl : UserControl
         ViewModel.LaunchDownloadInBrowser();
     }
 
-    private async void menuItemFetchImages_Click(object sender, RoutedEventArgs e)
-    {
-        await ViewModel.DownloadAllPreviewImagesAsync();
-    }
-
     private void menuItemCancelAll_Click(object sender, RoutedEventArgs e)
     {
         ViewModel.CancelAllDownloads();

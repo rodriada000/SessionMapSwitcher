@@ -109,6 +109,7 @@
 
 		<Button x:Name="btnCreate"
                 Grid.Column="3"
+				IsVisible="{Binding !IsInAddMode}"
                 Click="btnCreate_Click"
                 Content="Create Catalog"
                 Margin="0,5,10,0"
@@ -146,7 +147,7 @@
                 Grid.ColumnSpan="4"
                 Content="Close"
                 Width="100"
-                Height="26"
+				TextBlock.TextAlignment="Center"
                 HorizontalAlignment="Center"
                 Margin="0,5,0,5"/>
 	</Grid>

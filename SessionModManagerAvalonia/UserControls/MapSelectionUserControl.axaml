@@ -86,18 +86,18 @@
                          SelectionChanged="lstMaps_SelectionChanged"
                          >
 					<ListBox.ContextMenu>
-						<ContextMenu x:Name="mainContextMenu">
+						<ContextMenu x:Name="mainContextMenu" Opening="ContextMenu_Opening">
 							<MenuItem x:Name="menuSecondMapToLoad" Header="Set Selected Map To Load Next"  Click="menuSecondMapToLoad_Click" />
-							<MenuItem x:Name="menuReimporSelectedMap" Header="Re-import Selected Map ..."  Click="MenuReimporSelectedMap_Click"/>
-							<MenuItem x:Name="menuRenameSelectedMap" Header="Rename Selected Map ..."  Click="MenuRenameSelectedMap_Click" />
+							<MenuItem x:Name="menuReimporSelectedMap" Header="Re-import Selected Map"  Click="MenuReimporSelectedMap_Click"/>
+							<MenuItem x:Name="menuRenameSelectedMap" Header="Rename Selected Map"  Click="MenuRenameSelectedMap_Click" />
 							<MenuItem x:Name="menuHideSelectedMap" Header="Hide Selected Map"  Click="MenuHideSelectedMap_Click" />
-							<MenuItem x:Name="menuDeleteSelectedMap" Header="Delete Selected Map ..."  Click="menuDeleteSelectedMap_Click" />
-							<!--<MenuItem Style="{StaticResource ContextMenuSeperator}"/>-->
+							<MenuItem x:Name="menuDeleteSelectedMap" Header="Delete Selected Map"  Click="menuDeleteSelectedMap_Click" />
+							<MenuItem Classes="ContextMenuSeperator"/>
 							<MenuItem x:Name="menuOpenSessionFolder" Header="Open Session Folder ..."  Click="MenuOpenSessionFolder_Click"/>
 							<MenuItem x:Name="menuOpenMapsFolder" Header="Open Content Folder ..." Click="MenuOpenMapsFolder_Click"/>
 							<MenuItem x:Name="menuOpenSaveFolder" Header="Open Save Folder ..." Click="menuOpenSaveFolder_Click"/>
 							<MenuItem x:Name="menuOpenSelectedMapFolder" Header="Open Selected Map Folder ..." Click="MenuOpenSelectedMapFolder_Click"/>
-							<!--<MenuItem Style="{StaticResource ContextMenuSeperator}"/>-->
+							<MenuItem Classes="ContextMenuSeperator"/>
 							<MenuItem x:Name="menuOpenReadme" Header="View Help ..." Click="MenuOpenReadme_Click"/>
 						</ContextMenu>
 					</ListBox.ContextMenu>
@@ -155,7 +155,7 @@
 				</TextBlock>
 
 				<Grid Grid.Row="1"
-                          Margin="5,0,0,0">
+                          Margin="5,0,0,5">
 					<StackPanel>
 						<CheckBox x:Name="chkLoadSecondMap"
                                   FontSize="11"
@@ -168,6 +168,7 @@
                                   Margin="1,0,0,0"
 								  FontSize="11"
                                   Content="Enable RMS Toolsuite"
+								  IsVisible="{Binding Path=RMSToolsuiteCheckboxIsVisible}"
                                   IsChecked="{Binding RMSToolsuiteIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
 					</StackPanel>

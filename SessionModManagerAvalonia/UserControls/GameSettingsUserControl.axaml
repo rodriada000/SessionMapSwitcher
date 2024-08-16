@@ -74,6 +74,7 @@
 								</Grid.ColumnDefinitions>
 								<Label Content="Shadows"/>
 								<ComboBox Grid.Column="1"
+										  HorizontalAlignment="Stretch"
                                           ItemsSource="{Binding VideoSettingsDropdownOptions}"
                                           SelectedValue="{Binding ShadowQualityText, Mode=TwoWay, FallbackValue='Epic'}"
                                           />
@@ -83,6 +84,7 @@
 								<ComboBox Grid.Column="1"
                                           Grid.Row="1"
                                           Margin="0,5,0,0"
+										  HorizontalAlignment="Stretch"
                                           ItemsSource="{Binding VideoSettingsDropdownOptions}"
                                           SelectedValue="{Binding AntiAliasingText, Mode=TwoWay, FallbackValue='Epic'}"
                                           />
@@ -91,6 +93,7 @@
                                        Grid.Row="2"/>
 								<ComboBox Grid.Column="1"
                                           Grid.Row="2"
+										  HorizontalAlignment="Stretch"
                                           Margin="0,5,0,0"
                                           ItemsSource="{Binding VideoSettingsDropdownOptions}"
                                           SelectedValue="{Binding TexturesQualityText, Mode=TwoWay, FallbackValue='Epic'}"
@@ -101,6 +104,7 @@
                                        Grid.Row="3"/>
 								<ComboBox Grid.Column="1"
                                           Grid.Row="3"
+										  HorizontalAlignment="Stretch"
                                           Margin="0,5,0,0"
                                           ItemsSource="{Binding VideoSettingsDropdownOptions}"
                                           SelectedValue="{Binding ViewDistanceQualityText, Mode=TwoWay, FallbackValue='Epic'}"
@@ -111,6 +115,7 @@
                                        Grid.Row="4"/>
 								<ComboBox Grid.Column="1"
                                           Grid.Row="4"
+										  HorizontalAlignment="Stretch"
                                           Margin="0,5,0,0"
                                           ItemsSource="{Binding VideoSettingsDropdownOptions}"
                                           SelectedValue="{Binding ShadingQualityText, Mode=TwoWay, FallbackValue='Epic'}"
@@ -121,6 +126,7 @@
                                        Grid.Row="5"/>
 								<ComboBox Grid.Column="1"
                                           Grid.Row="5"
+										  HorizontalAlignment="Stretch"
                                           Margin="0,5,0,0"
                                           ItemsSource="{Binding VideoSettingsDropdownOptions}"
                                           SelectedValue="{Binding FoliageQualityText, Mode=TwoWay, FallbackValue='Epic'}"
@@ -131,6 +137,7 @@
                                        Grid.Row="6"/>
 								<ComboBox Grid.Column="1"
                                           Grid.Row="6"
+										  HorizontalAlignment="Stretch"
                                           Margin="0,5,0,0"
                                           ItemsSource="{Binding VideoSettingsDropdownOptions}"
                                           SelectedValue="{Binding EffectsQualityText, Mode=TwoWay, FallbackValue='Epic'}"
@@ -141,6 +148,7 @@
                                        Grid.Row="7"/>
 								<ComboBox Grid.Column="1"
                                           Grid.Row="7"
+										  HorizontalAlignment="Stretch"
                                           Margin="0,5,0,0"
                                           ItemsSource="{Binding VideoSettingsDropdownOptions}"
                                           SelectedValue="{Binding PostProcessingText, Mode=TwoWay, FallbackValue='Epic'}"
@@ -151,6 +159,7 @@
                                        Grid.Row="9"/>
 								<ComboBox Grid.Column="1"
                                           Grid.Row="9"
+										  HorizontalAlignment="Stretch"
                                           Margin="0,5,0,0"
                                           ItemsSource="{Binding FullscreenDropdownOptions}"
                                           SelectedValue="{Binding FullScreenMode, Mode=TwoWay, FallbackValue='Fullscreen'}"
@@ -162,6 +171,7 @@
 								<ComboBox Grid.Column="1"
                                           Grid.Row="10"
                                           Margin="0,5,0,0"
+										  HorizontalAlignment="Stretch"
                                           ItemsSource="{Binding ResolutionDropdownOptions}"
                                           SelectedValue="{Binding ResolutionText, Mode=TwoWay, FallbackValue='Epic'}"
                                           />
@@ -169,17 +179,9 @@
 								<TextBox Grid.Row="10"
                                          Text="{Binding CustomResolutionText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                          Margin="3,6,3,1"
-										 Classes.v1="{Binding IsCustomResolutionVisible}"
-										 Classes.hide="{Binding !IsCustomResolutionVisible}"
+										 HorizontalAlignment="Stretch"
+										 IsVisible="{Binding IsCustomResolutionVisible}"
                                          Grid.Column="2">
-									<TextBox.Styles>
-										<Style Selector="TextBox.v1">
-											<Setter Property="IsVisible" Value="True"/>
-										</Style>
-										<Style Selector="TextBox.hide">
-											<Setter Property="IsVisible" Value="False"/>
-										</Style>
-									</TextBox.Styles>
 								</TextBox>
 
 								<Label Content="Frame Rate Limit"

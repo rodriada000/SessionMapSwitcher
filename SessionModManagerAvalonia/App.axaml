@@ -19,6 +19,20 @@
 
 		<Style Selector="DataGrid">
 			<Setter Property="Background" Value="{DynamicResource SystemControlTransientBackgroundBrush}"/>
+			<Setter Property="BorderBrush" Value="{DynamicResource SystemControlTransparentBrush}"/>
+			<Setter Property="BorderThickness" Value="1"/>
+		</Style>
+
+		<Style Selector="MenuItem.ContextMenuSeperator">
+			<Setter Property="IsEnabled" Value="False"/>
+			<Setter Property="IsHitTestVisible" Value="False"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="MenuItem">
+						<Rectangle HorizontalAlignment="Stretch" Fill="{DynamicResource SystemControlHighlightBaseMediumLowBrush}" Height="1" Focusable="False" IsEnabled="False" IsHitTestVisible="False"/>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
 		</Style>
     </Application.Styles>
 

@@ -160,11 +160,6 @@
 			<DataGrid.ContextMenu>
 				<ContextMenu>
 					<MenuItem x:Name="menuItemBrowserDownload" Header="Download in Browser ..." Click="menuItemBrowserDownload_Click"/>
-					<MenuItem x:Name="menuItemFetchImages"
-                              IsEnabled="{Binding IsNotDownloadingAllImages}"
-                              Header="Fetch All Preview Images"
-                              Click="menuItemFetchImages_Click"
-                              ToolTip.Tip="Download all preview images for assets listed."/>
 				</ContextMenu>
 			</DataGrid.ContextMenu>
 		</DataGrid>
@@ -262,7 +257,7 @@
 				<WrapPanel Grid.Row="2"
                            HorizontalAlignment="Right"
                            VerticalAlignment="Bottom"
-                           Margin="0,0,5,45">
+                           Margin="0,0,5,25">
 					<Button x:Name="btnRemove"
                             ToolTip.Tip="Delete the files related to this asset from your game."
                             Content="{Binding RemoveButtonText, FallbackValue='Remove Asset'}"
@@ -286,7 +281,7 @@
                           FontSize="10"
                           HorizontalAlignment="Right"
                           VerticalAlignment="Bottom"
-                          Margin="0,0,5,15"
+                          Margin="0,0,5,-5"
                           Content="Delete Download After Install"
                           ToolTip.Tip="Downloaded assets are saved to 'store_data/temp_downloads' and are deleted to save space... Uncheck to keep downloaded file(s)."
                           IsChecked="{Binding DeleteDownloadAfterInstall, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>

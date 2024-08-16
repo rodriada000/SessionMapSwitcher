@@ -463,4 +463,10 @@ public partial class MapSelectionUserControl : UserControl
 
 
     }
+
+    private void ContextMenu_Opening(object? sender, System.ComponentModel.CancelEventArgs e)
+    {
+        MapListItem selectedItem = lstMaps.SelectedItem as MapListItem;
+        menuHideSelectedMap.Header = selectedItem?.IsHiddenByUser == true ? "Show Selected Map" : "Hide Selected Map";
+    }
 }
