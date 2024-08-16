@@ -1,7 +1,5 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using NLog.Targets;
 using NLog;
 using SessionMapSwitcherCore.Classes;
@@ -11,6 +9,8 @@ using System;
 using System.Linq;
 using MsBox.Avalonia;
 using System.IO;
+using Avalonia.Styling;
+using SessionMapSwitcherCore.Utils;
 
 namespace SessionModManagerAvalonia;
 
@@ -26,6 +26,14 @@ public partial class GameSettingsUserControl : UserControl
 
         ViewModel = new GameSettingsViewModel();
         this.DataContext = ViewModel;
+
+        string savedTheme = AppSettingsUtil.GetAppSetting(SettingKey.AppTheme);
+        var themeOptions = cboTheme?.Items?.Select(i => (i as ComboBoxItem)?.Content).ToList();
+
+        if (!string.IsNullOrWhiteSpace(savedTheme))
+        {
+            cboTheme.SelectedItem = cboTheme?.Items[themeOptions.IndexOf(savedTheme)];
+        }
     }
 
     private async void BtnApplySettings_Click(object sender, RoutedEventArgs e)
@@ -61,6 +69,34 @@ public partial class GameSettingsUserControl : UserControl
                     Logger.Error(ex, "Failed to open log file");
                 }
             }
+        }
+    }
+
+    private void ComboBoxTheme_SelectionChanged(object? sender, Avalonia.Controls.SelectionChangedEventArgs e)
+    {
+        string selectedTheme = (cboTheme?.SelectedValue as ComboBoxItem)?.Content?.ToString();
+
+        if (string.IsNullOrWhiteSpace(selectedTheme))
+        {
+            return;
+        }
+
+        switch(selectedTheme)
+        {
+            case "System Default":
+                App.Current.RequestedThemeVariant = ThemeVariant.Default;
+                break;
+            case "Light":
+                App.Current.RequestedThemeVariant = ThemeVariant.Light;
+                break;
+            case "Dark":
+                App.Current.RequestedThemeVariant = ThemeVariant.Dark;
+                break;
+        }
+
+        if (selectedTheme != AppSettingsUtil.GetAppSetting(SettingKey.AppTheme))
+        {
+            AppSettingsUtil.AddOrUpdateAppSettings(SettingKey.AppTheme, selectedTheme);
         }
     }
 }

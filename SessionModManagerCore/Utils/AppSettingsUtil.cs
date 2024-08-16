@@ -26,6 +26,7 @@ namespace SessionMapSwitcherCore.Utils
         EnableRMSTools,
         LastSelectedMap,
         LaunchViaSteam,
+        AppTheme,
     }
 
     public class AppSettingsUtil
