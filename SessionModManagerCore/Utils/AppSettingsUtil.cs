@@ -1,5 +1,8 @@
-﻿using System;
-using System.Configuration;
+﻿using Newtonsoft.Json;
+using SessionMapSwitcherCore.Classes;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace SessionMapSwitcherCore.Utils
 {
@@ -31,6 +34,9 @@ namespace SessionMapSwitcherCore.Utils
 
     public class AppSettingsUtil
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        private static Dictionary<string, string> _config = null;
+
         public static void AddOrUpdateAppSettings(SettingKey key, string value)
         {
             AddOrUpdateAppSettings(key.ToString(), value);
@@ -40,24 +46,28 @@ namespace SessionMapSwitcherCore.Utils
         {
             try
             {
-                Configuration configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-                KeyValueConfigurationCollection settings = configFile.AppSettings.Settings;
+                string settingsPath = Path.Combine(SessionPath.ToApplicationRoot, "appsettings.json");
 
-                if (settings[key] == null)
+                if (_config == null)
                 {
-                    settings.Add(key, value);
+                    string configJson = File.ReadAllText(settingsPath);
+                    _config = JsonConvert.DeserializeObject<Dictionary<string, string>>(configJson);
+                }
+
+                if (!_config.ContainsKey(key))
+                {
+                    _config.Add(key, value);
                 }
                 else
                 {
-                    settings[key].Value = value;
+                    _config[key] = value;
                 }
 
-                configFile.Save(ConfigurationSaveMode.Modified);
-                ConfigurationManager.RefreshSection(configFile.AppSettings.SectionInformation.Name);
+                File.WriteAllText(settingsPath, JsonConvert.SerializeObject(_config));
             }
-            catch (ConfigurationErrorsException)
+            catch (Exception ex)
             {
-                Console.WriteLine("Error writing app settings");
+                Logger.Error(ex, "Error writing app settings");
             }
         }
 
@@ -70,20 +80,24 @@ namespace SessionMapSwitcherCore.Utils
         {
             try
             {
-                Configuration configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-                KeyValueConfigurationCollection settings = configFile.AppSettings.Settings;
 
-                if (settings[key] == null)
+                if (_config == null)
                 {
-                    return "";
+                    string settingsPath = Path.Combine(SessionPath.ToApplicationRoot, "appsettings.json");
+                    string configJson = File.ReadAllText(settingsPath);
+                    _config = JsonConvert.DeserializeObject<Dictionary<string, string>>(configJson);
                 }
-                else
+
+                if (_config.ContainsKey(key))
                 {
-                    return settings[key].Value;
+                    return _config[key];
                 }
+
+                return "";
             }
-            catch (ConfigurationErrorsException)
+            catch (Exception ex)
             {
+                Logger.Warn(ex, "Error writing app settings");
                 return "";
             }
         }

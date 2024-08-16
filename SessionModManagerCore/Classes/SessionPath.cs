@@ -14,7 +14,12 @@ namespace SessionMapSwitcherCore.Classes
         {
             get
             {
-                return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                if (OperatingSystem.IsWindows())
+                {
+                    return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                }
+
+                return Path.GetDirectoryName(Environment.GetCommandLineArgs().FirstOrDefault());
             }
         }
 

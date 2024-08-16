@@ -15,12 +15,16 @@
     <FileVersion>3.0.0.0</FileVersion>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="appsettings.json" />
     <None Remove="Resources\defaultMap1.png" />
     <None Remove="Resources\defaultMap2.png" />
     <None Remove="Resources\defaultMap3.png" />
     <None Remove="Resources\new_switcher.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\defaultMap1.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
