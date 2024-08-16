@@ -97,7 +97,6 @@ namespace SessionMapSwitcher.UI
 
             string fullHtml = "";
             bool foundHeader = false;
-            bool foundbody = false;
 
             // append css style to the scraped html so it the document does not load with default Arial font
             fullHtml += "<style type=\"text/css\"> * { font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji; background: #221E1F; color: white } a { pointer-events: none; cursor: default; color: #799BAC } </style>";

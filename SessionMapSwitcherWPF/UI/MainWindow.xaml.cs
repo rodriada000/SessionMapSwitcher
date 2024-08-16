@@ -103,7 +103,8 @@ namespace SessionMapSwitcher
         {
             ProcessStartInfo info = new ProcessStartInfo()
             {
-                FileName = "https://github.com/rodriada000/SessionMapSwitcher/blob/master/README.md"
+                FileName = "https://github.com/rodriada000/SessionMapSwitcher/blob/master/README.md",
+                UseShellExecute = true,
             };
 
             Process.Start(info);
@@ -222,13 +223,11 @@ namespace SessionMapSwitcher
         /// </summary>
         public void PromptToPatch()
         {
-            string displayName = "IllusoryUniversalModUnlocker";
-            string newDisplayName = "Unreal-Mod-Unlocker";
+            string displayName = "Unreal Mod Unlocker Basic";
 
-            bool isOldVersionInstalled = RegistryHelper.IsSoftwareInstalled(displayName, Microsoft.Win32.RegistryHive.CurrentUser, Microsoft.Win32.RegistryView.Registry32);
-            bool isUnlockerInstalled = RegistryHelper.IsSoftwareInstalled(newDisplayName, Microsoft.Win32.RegistryHive.CurrentUser, Microsoft.Win32.RegistryView.Registry32);
+            bool isUnlockerInstalled = RegistryHelper.IsSoftwareInstalled(displayName, Microsoft.Win32.RegistryHive.CurrentUser, Microsoft.Win32.RegistryView.Registry32);
 
-            string currentVersion = RegistryHelper.GetDisplayVersion(newDisplayName, Microsoft.Win32.RegistryHive.CurrentUser, Microsoft.Win32.RegistryView.Registry32);
+            string currentVersion = RegistryHelper.GetDisplayVersion(displayName, Microsoft.Win32.RegistryHive.CurrentUser, Microsoft.Win32.RegistryView.Registry32);
 
             ModUnlockerDownloadLink downloadInfo = UeModUnlocker.GetLatestDownloadLinkInfo();
 
@@ -240,7 +239,7 @@ namespace SessionMapSwitcher
 
             bool isOutdated = !string.IsNullOrWhiteSpace(currentVersion) && new Version(currentVersion) < new Version($"0.{downloadInfo.Version}");
 
-            if ((!isOldVersionInstalled && !isUnlockerInstalled) || isOutdated)
+            if (!isUnlockerInstalled || isOutdated)
             {
 
                 MessageBoxResult result = System.Windows.MessageBox.Show("This will open your browser to download the Illusory Universal Mod Unlocker.\n\nLaunch the unlocker installer after it downloads to patch Session.\n\nDo you want to continue?",
@@ -251,17 +250,12 @@ namespace SessionMapSwitcher
 
                 if (result == MessageBoxResult.Yes)
                 {
-                    Process.Start(new ProcessStartInfo(downloadInfo.Url));
+                    Process.Start(new ProcessStartInfo(downloadInfo.Url) { UseShellExecute = true });
                 }
-            }
-            else if (isOldVersionInstalled)
-            {
-                string modUnlockerPath = RegistryHelper.GetExePathFromDisplayIcon(displayName, Microsoft.Win32.RegistryHive.CurrentUser, Microsoft.Win32.RegistryView.Registry32);
-                Process.Start(modUnlockerPath);
             }
             else if (isUnlockerInstalled)
             {
-                string modUnlockerPath = RegistryHelper.GetExePathFromDisplayIcon(newDisplayName, Microsoft.Win32.RegistryHive.CurrentUser, Microsoft.Win32.RegistryView.Registry32);
+                string modUnlockerPath = RegistryHelper.GetExePathFromDisplayIcon(displayName, Microsoft.Win32.RegistryHive.CurrentUser, Microsoft.Win32.RegistryView.Registry32);
                 Process.Start(modUnlockerPath);
             }
         }

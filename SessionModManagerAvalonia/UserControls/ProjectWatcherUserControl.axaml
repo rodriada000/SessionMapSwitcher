@@ -1,0 +1,53 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:v="using:SessionModManagerCore.ViewModels"
+			 x:DataType="v:ProjectWatcherViewModel"
+             mc:Ignorable="d" d:DesignHeight="125" d:DesignWidth="400"
+             x:Class="SessionModManagerAvalonia.ProjectWatcherUserControl">
+
+	<Grid RowDefinitions="auto,auto,auto" ColumnDefinitions="*,auto,auto">
+
+		<TextBlock Text="Choose a UE4 project to watch." TextWrapping="Wrap" Margin="10,6,0,10" Grid.ColumnSpan="3"/>
+
+		<TextBox IsEnabled="False" Grid.Row="1" Grid.ColumnSpan="2" Margin="10,0,2,0" Height="20" Text="{Binding PathToProject, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+		<Button x:Name="btnBrowse"
+                Click="BtnBrowse_Click"
+                Grid.Row="1" Grid.Column="2"
+                Content="..." Margin="0,0,2,1"/>
+
+		<StackPanel Grid.Row="2" Grid.Column="0" Margin="10,5,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Orientation="Horizontal">
+
+			<Border Background="DarkSlateGray" Width="12" Height="12" CornerRadius="6" Margin="0,0,10,0">
+				<Ellipse x:Name="elpsStatus" Width="10" Height="10" Fill="{Binding StatusColor, Mode=OneWay}"/>
+			</Border>
+
+			<TextBlock Text="{Binding StatusText, Mode=OneWay, FallbackValue='Here is some text'}"/>
+
+		</StackPanel>
+
+		<WrapPanel HorizontalAlignment="Right"
+                   Grid.Row="2" Grid.ColumnSpan="3"
+                   Margin="0,0,0,5">
+
+			<Button x:Name="btnWatch"
+                Click="BtnWatch_Click"
+                Content="Watch"
+                HorizontalAlignment="Right" VerticalAlignment="Top"
+                Padding="5,2,5,2"
+                Margin="0,5,5,0"/>
+
+			<Button x:Name="btnUnwatch"
+                Click="BtnUnwatch_Click"
+                Content="Unwatch"
+                HorizontalAlignment="Right" VerticalAlignment="Top"
+                Padding="5,2,5,2"
+                Margin="0,5,2,0"/>
+
+		</WrapPanel>
+
+	</Grid>
+
+</UserControl>

@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:SessionModManagerWPF.UI"
              xmlns:ui="clr-namespace:SessionMapSwitcher.UI"
              mc:Ignorable="d" 
-             d:DesignHeight="725" d:DesignWidth="575">
+             d:DesignHeight="825" d:DesignWidth="575">
     <UserControl.Resources>
         <Style TargetType="Label" BasedOn="{StaticResource MainLabelStyle}">
             <Setter Property="HorizontalAlignment" Value="Left"/>
@@ -35,11 +35,18 @@
                                      Margin="0,0,10,0"/>
                         </WrapPanel>
 
+                        <CheckBox Content="Launch using Steam"
+                                          x:Name="chkSteamLaunch"
+                                          HorizontalAlignment="Left"
+                                          ToolTip="Launches via steam - steam://launch/861650/dialog"
+                                          IsChecked="{Binding SteamLaunchIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='True'}"
+                                          Margin="10,10,10,0"/>
+                        
                         <CheckBox Content="Skip Intro Movie"
                                           x:Name="chkSkipMovie"
                                           HorizontalAlignment="Left"
                                           IsChecked="{Binding SkipMovieIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='True'}"
-                                          Margin="10,10,10,0"/>
+                                          Margin="10,5,10,0"/>
 
                         <CheckBox Content="Enable DBuffer"
                                           ToolTipService.InitialShowDelay="100"
@@ -226,6 +233,13 @@
                                   Margin="10,10,10,0">
                     <ui:ProjectWatcherUserControl x:Name="ctrlProjectWatcher"/>
                 </GroupBox>
+
+                <Button x:Name="btnViewLogs"
+                                Content="View Logs"
+                                Click="btnViewLogs_Click"
+                                HorizontalAlignment="Left"
+                                Margin="10,20,10,5"
+                                Padding="10,0,10,2"/>
             </StackPanel>
         </ScrollViewer>
 

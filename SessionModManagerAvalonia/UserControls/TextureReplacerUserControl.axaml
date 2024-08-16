@@ -1,0 +1,152 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:v="using:SessionModManagerCore.ViewModels"
+			 xmlns:local="using:SessionModManagerAvalonia.Classes"
+			 xmlns:i="https://github.com/projektanker/icons.avalonia"
+			 x:DataType="v:TextureReplacerViewModel"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="SessionModManagerAvalonia.TextureReplacerUserControl">
+	<UserControl.Resources>
+		<local:StreamToBitmapConverter x:Key="streamConverter"/>
+	</UserControl.Resources>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="auto"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="auto"/>
+			<ColumnDefinition Width="*"/>
+		</Grid.ColumnDefinitions>
+
+
+		<TextBox Margin="5,5,10,0"
+				 Watermark="Select a .zip or .rar file and click 'Import' to easily copy new mods and textures/meshes into the game"
+                 Grid.Column="1"
+                 x:Name="txtPath"
+                 FontSize="13"
+                 VerticalAlignment="Stretch"
+                 Text="{Binding PathToFile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+
+		<WrapPanel Grid.Column="0"
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Top" Margin="10,8,0,0">
+
+			<Button x:Name="btnBrowse"
+                    i:Attached.Icon="mdi-folder-open-outline"
+                    Click="BtnBrowse_Click"
+					FontSize="18"
+                    Margin="0,0,4,0"/>
+
+			<Button x:Name="btnReplace"
+                    IsEnabled="{Binding IsReplaceButtonEnabled}"
+                    Click="BtnReplace_Click"
+                    Content="Import"/>
+		</WrapPanel>
+
+		<Grid Grid.Row="1"
+              Grid.ColumnSpan="2">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="1*"/>
+				<ColumnDefinition Width="1.25*"/>
+			</Grid.ColumnDefinitions>
+
+			<Grid Margin="10">
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="auto"/>
+						<RowDefinition Height="*"/>
+					</Grid.RowDefinitions>
+					<Label Content="Installed Mods" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontWeight="Light"/>
+					<Button x:Name="btnRemove"
+                            Grid.Row="0"
+                            HorizontalAlignment="Right"
+                            Click="btnRemove_Click"
+                            i:Attached.Icon="mdi-trash-can-outline"
+							FontSize="18"
+                            Width="42"/>
+					<DataGrid x:Name="lstTextures"
+							  Grid.Row="1"
+							  CanUserResizeColumns="True"
+							  CanUserSortColumns="True"
+							  CanUserReorderColumns="True"
+							  ItemsSource="{Binding InstalledTextures, UpdateSourceTrigger=PropertyChanged}"
+							  VerticalAlignment="Stretch"
+							  SelectedItem="{Binding SelectedTexture, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+							  SelectionMode="Single"
+							  MinHeight="125">
+						<DataGrid.Columns>
+							<DataGridTextColumn IsReadOnly="True" Header="Name" Width="225"  Binding="{Binding TextureName}"/>
+							<DataGridTextColumn IsReadOnly="True" Header="Category"  Binding="{Binding Category}"/>
+							<DataGridCheckBoxColumn Header="Enabled" Binding="{Binding IsEnabled}" />
+						</DataGrid.Columns>
+					</DataGrid>
+				</Grid>
+			</Grid>
+
+			<Grid Grid.Column="1"
+                      IsVisible="{Binding Path=IsShowingModPreview}"
+                      Margin="0,10,10,10">
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="*"/>
+						<RowDefinition Height="auto"/>
+					</Grid.RowDefinitions>
+					<Image Source="{Binding ModPreviewSource, Converter={StaticResource streamConverter}}" Margin="2"
+                           Grid.Column="1"
+						   IsVisible="{Binding !IsLoadingImage}"
+                           HorizontalAlignment="Stretch"
+                           VerticalAlignment="Stretch">
+					</Image>
+
+					<TextBlock Text="Loading Preview Image ..."
+                               Grid.Column="1"
+							   IsVisible="{Binding IsLoadingImage}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center">
+					</TextBlock>
+
+					<TextBlock Text="No Preview."
+                               Grid.Column="1"
+							   IsVisible="{Binding IsPreviewMissing}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center">
+					</TextBlock>
+				</Grid>
+			</Grid>
+
+			<Grid Grid.Column="1" 
+                      IsVisible="{Binding Path=IsShowingConflicts}"
+                      Margin="10,18,10,10">
+				<Grid RowDefinitions="auto,*">
+					<WrapPanel HorizontalAlignment="Right">
+						<i:Icon Value="mdi-alert-box-outline" FontSize="18"  />
+						<Label Content="Conflicts Found" FontWeight="Light"/>
+					</WrapPanel>
+					<DataGrid x:Name="lstConflicts"
+							  Grid.Row="1"
+							  IsReadOnly="True"
+							  VerticalAlignment="Stretch"
+							  ItemsSource="{Binding FileConflicts, UpdateSourceTrigger=PropertyChanged}"
+							  SelectionMode="Single"
+							  MinHeight="125">
+						<DataGrid.Columns>
+							<DataGridTextColumn Header="Conflicting Asset Name"  Binding="{Binding ExistingAssetName}"/>
+							<DataGridTextColumn Header="Conflicting File"  Binding="{Binding FileName}"/>
+						</DataGrid.Columns>
+					</DataGrid>
+				</Grid>
+			</Grid>
+
+		</Grid>
+
+
+
+
+	</Grid>
+
+
+</UserControl>

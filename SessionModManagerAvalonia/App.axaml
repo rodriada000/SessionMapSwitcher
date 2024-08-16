@@ -1,0 +1,39 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="SessionModManagerAvalonia.App"
+             RequestedThemeVariant="Default">
+             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+	<Application.Resources>
+
+	</Application.Resources>
+    <Application.Styles>
+		<FluentTheme>
+			<!--<FluentTheme.Palettes>
+				<ColorPaletteResources x:Key="Light" Accent="#ffcc4d11" AltHigh="White" AltLow="White" AltMedium="White" AltMediumHigh="White" AltMediumLow="White" BaseHigh="Black" BaseLow="#ff7cbee0" BaseMedium="#ff3282a8" BaseMediumHigh="#ff005a83" BaseMediumLow="#ff196e96" ChromeAltLow="#ff005a83" ChromeBlackHigh="Black" ChromeBlackLow="#ff7cbee0" ChromeBlackMedium="#ff005a83" ChromeBlackMediumLow="#ff3282a8" ChromeDisabledHigh="#ff7cbee0" ChromeDisabledLow="#ff3282a8" ChromeGray="#ff196e96" ChromeHigh="#ff7cbee0" ChromeLow="#ffc1e9fe" ChromeMedium="#ffb3e0f8" ChromeMediumLow="#ffc1e9fe" ChromeWhite="White" ListLow="#ffb3e0f8" ListMedium="#ff7cbee0" RegionColor="#ffcfeaff" />
+				<ColorPaletteResources x:Key="Dark" Accent="#ffcc4d11" AltHigh="Black" AltLow="Black" AltMedium="Black" AltMediumHigh="Black" AltMediumLow="Black" BaseHigh="White" BaseLow="#ff2f7bad" BaseMedium="#ff8dbfdf" BaseMediumHigh="#ffa5d0ec" BaseMediumLow="#ff5e9dc6" ChromeAltLow="#ffa5d0ec" ChromeBlackHigh="Black" ChromeBlackLow="#ffa5d0ec" ChromeBlackMedium="Black" ChromeBlackMediumLow="Black" ChromeDisabledHigh="#ff2f7bad" ChromeDisabledLow="#ff8dbfdf" ChromeGray="#ff76aed3" ChromeHigh="#ff76aed3" ChromeLow="#ff093b73" ChromeMedium="#ff134b82" ChromeMediumLow="#ff266b9f" ChromeWhite="White" ListLow="#ff134b82" ListMedium="#ff2f7bad" RegionColor="#ff0d2644" />
+			</FluentTheme.Palettes>-->
+
+		</FluentTheme>
+		
+		<StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+
+		<Style Selector="DataGrid">
+			<Setter Property="Background" Value="{DynamicResource SystemControlTransientBackgroundBrush}"/>
+			<Setter Property="BorderBrush" Value="{DynamicResource SystemControlTransparentBrush}"/>
+			<Setter Property="BorderThickness" Value="1"/>
+		</Style>
+
+		<Style Selector="MenuItem.ContextMenuSeperator">
+			<Setter Property="IsEnabled" Value="False"/>
+			<Setter Property="IsHitTestVisible" Value="False"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="MenuItem">
+						<Rectangle HorizontalAlignment="Stretch" Fill="{DynamicResource SystemControlHighlightBaseMediumLowBrush}" Height="1" Focusable="False" IsEnabled="False" IsHitTestVisible="False"/>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+    </Application.Styles>
+
+</Application>

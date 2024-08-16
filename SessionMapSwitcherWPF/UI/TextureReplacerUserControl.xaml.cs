@@ -30,7 +30,7 @@ namespace SessionMapSwitcher.UI
             
             Task.Factory.StartNew(() =>
             {
-                ViewModel.ReplaceTextures();
+                ViewModel.ImportTextureMod();
                 ViewModel.LoadInstalledTextures();
             }).ContinueWith(result =>
             {
@@ -65,7 +65,7 @@ namespace SessionMapSwitcher.UI
                 return;
             }
 
-            ViewModel.RemoveSelectedMod();
+            ViewModel.DeleteSelectedMod();
         }
 
         /// <summary>

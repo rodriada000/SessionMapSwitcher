@@ -1,0 +1,243 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:v="using:SessionModManagerCore.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="500"
+        x:Class="SessionModManagerAvalonia.CreateCatalogWindow"
+		x:DataType="v:CreateCatalogViewModel"
+        Closing="Window_Closing"
+        Title="Catalog Creation Tool"
+        MinHeight="500"
+        MinWidth="800"
+        Height="500" Width="900">
+
+	<Window.Resources>
+		<!--<Style x:Key="labelStyle" TargetType="TextBlock">
+			<Setter Property="Margin" Value="5,5,0,0"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="HorizontalAlignment" Value="Right"/>
+		</Style>
+
+		<Style TargetType="TextBox" BasedOn="{StaticResource PrimaryTextBoxStyle}">
+			<Setter Property="Height" Value="20"/>
+		</Style>
+
+		<Style TargetType="Button" BasedOn="{StaticResource MainButtonStyle}">
+			<Setter Property="Padding" Value="3"/>
+			<Setter Property="Width" Value="95"/>
+		</Style>-->
+	</Window.Resources>
+
+	<Grid RowDefinitions="auto, *" ColumnDefinitions="*,*">
+
+		<WrapPanel Margin="10,5,0,0"
+                   Grid.ColumnSpan="2">
+			<Button x:Name="btnImport"
+                    Click="btnImport_Click"
+                    Content="Import Catalog"
+                    HorizontalAlignment="Left"/>
+
+			<Button x:Name="btnExport"
+                    Click="btnExport_Click"
+                    Content="Export Catalog"
+                    Margin="10,0,0,0"
+                    HorizontalAlignment="Left"/>
+
+			<TextBox x:Name="txtCatalogName"
+					 Watermark="Enter Catalog Name ..."
+                     Text="{Binding CatalogName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     Margin="10,0,0,0"
+                     MaxLength="100"
+                     VerticalContentAlignment="Center"
+                     VerticalAlignment="Center"
+                     Height="22"
+                     MinWidth="220"
+                     MaxWidth="220"/>
+		</WrapPanel>
+
+
+		<DataGrid x:Name="lstAssets"
+                  Grid.Row="1"
+                  Margin="10,5,0,10"
+				  IsReadOnly="True"
+                  SelectedItem="{Binding SelectedAsset, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                  ItemsSource="{Binding AssetList}">
+			<DataGrid.Columns>
+					<DataGridTextColumn Header="Name" Width="Auto" Binding="{Binding Name}"/>
+					<DataGridTextColumn Header="Author" Width="Auto" Binding="{Binding Author}"/>
+					<DataGridTextColumn Header="Category" Width="Auto" Binding="{Binding Category}"/>
+					<DataGridTextColumn Header="Ver." Width="45" Binding="{Binding Version}"/>
+					<DataGridTextColumn Header="Updated Date" Width="Auto" Binding="{Binding UpdatedDate}"/>
+			</DataGrid.Columns>
+			<DataGrid.ContextMenu>
+				<ContextMenu>
+					<MenuItem Header="Delete Asset" Click="DeleteMenuItem_Click"/>
+				</ContextMenu>
+			</DataGrid.ContextMenu>
+		</DataGrid>
+
+		<Grid
+                  Grid.Row="1"
+                  Grid.RowSpan="2"
+                  Grid.Column="1"
+                  Margin="10,0,10,10">
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="auto"/>
+					<RowDefinition Height="auto"/>
+					<RowDefinition Height="auto"/>
+					<RowDefinition Height="auto"/>
+					<RowDefinition Height="auto"/>
+					<RowDefinition Height="auto"/>
+					<RowDefinition Height="auto"/>
+					<RowDefinition Height="auto"/>
+					<RowDefinition Height="auto"/>
+					<RowDefinition Height="auto"/>
+					<RowDefinition Height="*"/>
+				</Grid.RowDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="auto"/>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
+
+				<TextBlock Text="Asset ID:"
+                           ToolTip.Tip="The unique name for an asset (usually the file name) which must include the file extension .zip or .rar"/>
+				<Grid Grid.Column="1">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="auto"/>
+					</Grid.ColumnDefinitions>
+
+					<TextBox x:Name="txtId"
+                         Grid.Column="0"
+                         Text="{Binding SelectedAssetID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         ToolTip.Tip="The unique name for an asset (usually the file name). The .zip or .rar extension is automatically appended"
+                         Margin="5,5,5,0"/>
+
+					<ComboBox Name="cboIDExtension"
+                              ItemsSource="{Binding IDExtensions}"
+                              SelectedItem="{Binding SelectedIDExtension, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              ToolTip.Tip=".zip or .rar extension to append to Asset ID"
+                              Grid.Column="1"
+                              Margin="0,5,5,0"
+                              MinWidth="75"
+                              MaxWidth="75"/>
+				</Grid>
+
+
+				<TextBlock Text="Author:"
+                           Grid.Row="1"
+                           />
+				<TextBox x:Name="txtAuthor"
+                         Grid.Column="1"
+                         Grid.Row="1"
+                         Text="{Binding SelectedAssetAuthor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="5,5,5,0"/>
+
+				<TextBlock Text="Name:"
+                           Grid.Row="2"
+                           />
+				<TextBox x:Name="txtName"
+                         Grid.Column="1"
+                         Grid.Row="2"
+                         Text="{Binding SelectedAssetName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="5,5,5,0"/>
+
+				<TextBlock Text="Version:"
+                           Grid.Row="3"
+                           />
+				<TextBox x:Name="txtVersion"
+                         Grid.Column="1"
+                         Grid.Row="3"
+                         Text="{Binding SelectedAssetVersion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="5,5,5,0"/>
+
+
+				<TextBlock Text="Category:"
+                           Grid.Row="4"
+                           Margin="5,6,0,0"
+                           />
+				<ComboBox x:Name="cboCategory"
+                          Grid.Column="1"
+                          VerticalAlignment="Center"
+                          Grid.Row="4"
+                          ItemsSource="{Binding CategoryList}"
+                          SelectedItem="{Binding SelectedAssetCategory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          Margin="5,5,5,0"/>
+
+				<TextBlock Text="Image Url:"
+                           Grid.Row="5"
+                           />
+				<TextBox x:Name="txtPreviewImage"
+                         Grid.Column="1"
+                         Grid.Row="5"
+                         Text="{Binding SelectedAssetImageUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="5,5,5,0"/>
+
+				<TextBlock Text="Download: Type"
+                           TextWrapping="Wrap"
+                           MaxWidth="75"
+                           Grid.Row="6"
+                           Margin="5,6,0,0"
+                           />
+				<ComboBox x:Name="cboDownloadType"
+                          Grid.Column="1"
+                          Grid.Row="6"
+                          VerticalAlignment="Center"
+                          ItemsSource="{Binding DownloadTypeList}"
+                          SelectedItem="{Binding SelectedAssetDownloadType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          Margin="5,5,5,5"/>
+
+				<TextBlock Text="{Binding DownloadText, FallbackValue='Url:'}"
+                           Grid.Row="7"
+                           />
+				<TextBox x:Name="txtDownloadUrl"
+                         Grid.Column="1"
+                         Grid.Row="7"
+						 Watermark="{Binding DownloadTooltip}"
+                         ToolTip.Tip="{Binding DownloadTooltip}"
+                         Text="{Binding SelectedAssetDownloadUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="5,5,5,0"/>
+
+
+				<TextBlock Text="Description:"
+                           Grid.Row="8"
+                           />
+				<TextBox x:Name="txtDescription"
+                         Grid.Column="1"
+                         Grid.Row="8"
+                         Height="100"
+                         TextWrapping="Wrap"
+                         AcceptsTab="True"
+                         AcceptsReturn="True"
+                         Text="{Binding SelectedAssetDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="5,5,5,0"/>
+
+				<TextBlock Text="Updated Date:"
+                           Grid.Row="9"
+                           />
+				<TextBox x:Name="txtUpdateDate"
+                         Grid.Column="1"
+                         Grid.Row="9"
+						 Watermark="Leave blank to use current date"
+                         VerticalAlignment="Center"
+                         ToolTip.Tip="Will be set to current date if left blank"
+                         Text="{Binding SelectedAssetUpdatedDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="5,5,5,10"/>
+
+
+				<Button x:Name="btnAdd"
+                        Margin="0,0,5,0"
+                        Click="btnAdd_Click"
+                        Grid.Row="10"
+                        Grid.Column="1"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        Content="Add Asset"/>
+
+			</Grid>
+		</Grid>
+	</Grid>
+	
+</Window>
