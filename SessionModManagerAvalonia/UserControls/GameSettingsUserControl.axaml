@@ -19,23 +19,36 @@
                       VerticalAlignment="Top"
                       Margin="20,0,20,0">
 					<Border BorderThickness="1" Background="{DynamicResource ButtonBackgroundPointerOver}" CornerRadius="3"/>
-					<StackPanel >
+					<StackPanel>
 						<Label FontWeight="Light" FontSize="18">Game Settings</Label>
-						<WrapPanel Margin="5,10,0,0" HorizontalAlignment="Left">
-							<Label Content="Object Placement Max Count" VerticalAlignment="Center"/>
+						<Grid RowDefinitions="auto,auto" ColumnDefinitions="auto,auto" Margin="5,0,0,0">
+							<Label Content="Money Amount" Margin="0,5,0,0" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+							<TextBox x:Name="txtCurrency"
+									 Grid.Column="1"
+                                     MaxWidth="150"
+                                     Width="150"
+                                     Height="27"
+                                     Text="{Binding CurrencyAmountText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='5'}"
+                                     Margin="0,0,10,0"/>
+
+							<Label Content="Object Placement Max Count" Margin="0,10,0,0" VerticalAlignment="Center" Grid.Row="1"/>
 							<TextBox x:Name="txtObjectCount"
+									 Grid.Row="1"
+									 VerticalAlignment="Center"
+									 Grid.Column="1"
                                      MaxWidth="150"
                                      Width="150"
                                      Height="27"
                                      Text="{Binding ObjectCountText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='5'}"
-                                     Margin="0,0,10,0"/>
-						</WrapPanel>
-
+                                     Margin="0,10,10,0"/>
+							
+						</Grid>
+						
 						<CheckBox Content="Launch using Steam"
                                           x:Name="chkSteamLaunch"
                                           HorizontalAlignment="Left"
                                           IsChecked="{Binding SteamLaunchIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='True'}"
-                                          Margin="10,0,10,0"/>
+                                          Margin="10,10,10,0"/>
 
 						<CheckBox Content="Skip Intro Movie"
                                           x:Name="chkSkipMovie"

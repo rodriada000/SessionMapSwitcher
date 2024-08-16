@@ -183,6 +183,16 @@ namespace SessionModManagerCore.ViewModels
             }
         }
 
+        public string CurrencyAmountText
+        {
+            get { return _currencyAmountText; }
+            set
+            {
+                _currencyAmountText = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         public bool SkipMovieIsChecked
         {
             get { return _skipMovieIsChecked; }
@@ -281,6 +291,7 @@ namespace SessionModManagerCore.ViewModels
         }
 
         private List<string> _fullscreenDropdownOptions;
+        private string _currencyAmountText;
 
         public List<string> FullscreenDropdownOptions
         {
@@ -313,6 +324,7 @@ namespace SessionModManagerCore.ViewModels
                 MessageService.Instance.ShowMessage(result.Message);
             }
 
+            CurrencyAmountText = ((decimal)GameSettingsManager.CurrencyAmount).ToString();
             ObjectCountText = GameSettingsManager.ObjectCount.ToString();
             SkipMovieIsChecked = GameSettingsManager.SkipIntroMovie;
             DBufferIsChecked = GameSettingsManager.EnableDBuffer;
@@ -355,6 +367,8 @@ namespace SessionModManagerCore.ViewModels
 
             BoolWithMessage didSetSettings = GameSettingsManager.UpdateGameSettings(SkipMovieIsChecked, DBufferIsChecked);
             BoolWithMessage didSetObjCount = BoolWithMessage.True(); // set to true by default in case the user does not have the file to modify
+            BoolWithMessage didSetCurrency = BoolWithMessage.True(); // set to true by default in case the user does not have the file to modify
+
 
             BoolWithMessage didSetVideoSettings = ValidateAndUpdateVideoSettings();
 
@@ -366,6 +380,13 @@ namespace SessionModManagerCore.ViewModels
                 if (didSetObjCount.Result == false)
                 {
                     returnMessage += didSetObjCount.Message;
+                }
+
+                didSetCurrency = GameSettingsManager.ValidateAndUpdateCurrencyAmount(CurrencyAmountText);
+
+                if (didSetCurrency.Result == false)
+                {
+                    returnMessage += didSetCurrency.Message;
                 }
             }
 
@@ -386,7 +407,7 @@ namespace SessionModManagerCore.ViewModels
             }
 
 
-            returnMessage = "Game settings updated!";
+            returnMessage = "Game settings updated!" + returnMessage;
 
             if (GameSettingsManager.DoesInventorySaveFileExist() == false)
             {

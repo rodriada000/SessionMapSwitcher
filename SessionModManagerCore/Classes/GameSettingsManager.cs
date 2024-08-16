@@ -36,13 +36,16 @@ namespace SessionMapSwitcherCore.Classes
         public const string isOwnedHex = "49-73-4f-77-6e-65-64-00-0d-00-00-00-42-6f-6f-6c-50-72-6f-70-65-72-74-79-00-00-00-00-00-00-00-00-00";
         public const string isUnlockedHex = "49-73-55-6e-6c-6f-63-6b-65-64-00-0d-00-00-00-42-6f-6f-6c-50-72-6f-70-65-72-74-79-00-00-00-00-00-00-00-00-00";
         public const string isVisibleHex = "49-73-56-69-73-69-62-6c-65-00-0d-00-00-00-42-6f-6f-6c-50-72-6f-70-65-72-74-79-00-00-00-00-00-00-00-00-00";
-
+        public const string currencyHex = "43-75-72-72-65-6e-63-79-41-6d-6f-75-6e-74-00-0e-00-00-00-46-6c-6f-61-74-50-72-6f-70-65-72-74-79-00-04-00-00-00-00-00-00-00-00";
 
         public static bool SkipIntroMovie { get; set; }
 
         public static bool EnableDBuffer { get; set; }
 
         public static int ObjectCount { get; set; }
+
+        public static float CurrencyAmount { get; set; }
+
 
         private static bool _enableVsync;
         private static int _fullscreenMode;
@@ -111,6 +114,7 @@ namespace SessionMapSwitcherCore.Classes
                 SkipIntroMovie = IsSkippingMovies();
 
                 GetObjectCountFromFile();
+                GetCurrencyAmountFromFile();
 
                 GetVideoSettingsFromFile();
 
@@ -178,6 +182,38 @@ namespace SessionMapSwitcherCore.Classes
             {
                 Logger.Error(e);
                 return BoolWithMessage.False($"Failed to update object count: {e.Message}");
+            }
+        }
+
+        /// <summary>
+        /// validates the object count and then writes to the correct file to update object count.
+        /// </summary>
+        public static BoolWithMessage ValidateAndUpdateCurrencyAmount(string amountText)
+        {
+            if (SessionPath.IsSessionPathValid() == false)
+            {
+                return BoolWithMessage.False("Session Path invalid.");
+            }
+
+            if (float.TryParse(amountText, out float parsedAmount) == false)
+            {
+                return BoolWithMessage.False("Invalid money amount setting.");
+            }
+
+            if (parsedAmount <= 0 || parsedAmount > 100000000)
+            {
+                return BoolWithMessage.False("money must be between 0 and 100000000.");
+            }
+
+
+            try
+            {
+                return SetCurrencyAmountInFile(amountText);
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e);
+                return BoolWithMessage.False($"Failed to update money amount: {e.Message}");
             }
         }
 
@@ -287,6 +323,100 @@ namespace SessionMapSwitcherCore.Classes
                 return BoolWithMessage.False($"Failed to get object count: {e.Message}");
             }
         }
+
+        /// <summary>
+        /// Get the Currency Amount from the file
+        /// </summary>
+        internal static BoolWithMessage GetCurrencyAmountFromFile()
+        {
+            if (SessionPath.IsSessionPathValid() == false)
+            {
+                return BoolWithMessage.False("Session Path invalid.");
+            }
+
+            if (DoesInventorySaveFileExist() == false)
+            {
+                return BoolWithMessage.False("Inventory save file does not exist.");
+            }
+
+            try
+            {
+                List<int> fileAddresses = GetFileAddressesOfHexString(currencyHex);
+
+                if (fileAddresses.Count == 0)
+                {
+                    return BoolWithMessage.False($"Failed to find address in file - {PathToInventorySaveSlotFile}");
+                }
+
+                using (var stream = new FileStream(PathToInventorySaveSlotFile, FileMode.Open, FileAccess.Read))
+                {
+                    stream.Position = fileAddresses[0];
+                    int byte1 = stream.ReadByte();
+                    int byte2 = stream.ReadByte();
+                    int byte3 = stream.ReadByte();
+                    int byte4 = stream.ReadByte();
+
+                    byte[] byteArray;
+
+                    byteArray = new byte[] { Byte.Parse(byte1.ToString()), Byte.Parse(byte2.ToString()), Byte.Parse(byte3.ToString()), Byte.Parse(byte4.ToString()) };
+
+                    // convert the hex string to base 10 value
+                    CurrencyAmount = BitConverter.ToSingle(byteArray, 0);
+
+                    return BoolWithMessage.True();
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, "Failed to get currency amount");
+                return BoolWithMessage.False($"Failed to get currency amount: {e.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Updates the PBP_ObjectPlacementInventory.uexp file with the new object count value (every placeable object is updated with new count).
+        /// This works by converting <paramref name="amountText"/> to bytes and writing the bytes to specific addresses in the file.
+        /// </summary>
+        internal static BoolWithMessage SetCurrencyAmountInFile(string amountText)
+        {
+            if (SessionPath.IsSessionPathValid() == false)
+            {
+                return BoolWithMessage.False("Session Path invalid.");
+            }
+
+            if (DoesInventorySaveFileExist() == false)
+            {
+                return BoolWithMessage.False("Inventory save file does not exist.");
+            }
+
+            int startAddress = GetFileAddressesOfHexString(currencyHex).FirstOrDefault();
+
+            try
+            {
+                using (var stream = new FileStream(PathToInventorySaveSlotFile, FileMode.Open, FileAccess.ReadWrite))
+                {
+                    float f = float.Parse(amountText);
+                    byte[] bytes = BitConverter.GetBytes(f);
+
+                    stream.Position = startAddress;
+                    foreach (byte b in bytes)
+                    {
+                        stream.WriteByte(b);
+                    }
+
+                    stream.Flush(); // ensure file is written to
+                }
+
+                CurrencyAmount = int.Parse(amountText); // set in-memory setting to new value written to file
+                return BoolWithMessage.True();
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, "Failed to set currency amount");
+                return BoolWithMessage.False($"Failed to set currency amount: {e.Message}");
+            }
+        }
+
 
         /// <summary>
         /// Updates the PBP_ObjectPlacementInventory.uexp file with the new object count value (every placeable object is updated with new count).
