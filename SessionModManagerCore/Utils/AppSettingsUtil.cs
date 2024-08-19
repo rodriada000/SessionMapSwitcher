@@ -30,6 +30,7 @@ namespace SessionMapSwitcherCore.Utils
         LastSelectedMap,
         LaunchViaSteam,
         AppTheme,
+        AllowModConflicts,
     }
 
     public class AppSettingsUtil
