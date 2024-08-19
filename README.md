@@ -5,6 +5,14 @@
 [![GitHub contributors](https://img.shields.io/github/contributors/rodriada000/SessionMapSwitcher)](https://GitHub.com/rodriada000/SessionMapSwitcher/graphs/contributors/)
 [![GitHub issues](https://img.shields.io/github/issues/rodriada000/SessionMapSwitcher)](https://GitHub.com/rodriada000/SessionMapSwitcher/issues/)
 
+**Download Latest Release**
+| OS    | Download |
+| -------- | ------- |
+| Linux x64 | [![GitHub release](https://img.shields.io/github/release/rodriada000/SessionMapSwitcher?label=Linux)](https://github.com/rodriada000/SessionMapSwitcher/releases/latest/download/Session.Mod.Manager_3_0_0_linux.zip)
+| Windows x86/x64 | [![GitHub release](https://img.shields.io/github/release/rodriada000/SessionMapSwitcher?label=Windows)](https://github.com/rodriada000/SessionMapSwitcher/releases/latest/download/Session_Mod_Manager_3_0_0_windows.zip)
+ 
+----
+
 This is a Desktop application to easily mod Session and install custom maps and textures all in one tool. Easily switch between maps in-game without having to restart and download custom textures directly in the app.
 <img src="https://github.com/rodriada000/SessionMapSwitcher/blob/master/docs/images/app_screenshot.png?raw=true" width="75%"> 
 <img src="https://github.com/rodriada000/SessionMapSwitcher/blob/master/docs/images/app_import_online.png?raw=true" width="75%"> 
@@ -133,13 +141,8 @@ _Use the `Manage Catalogs` button on the asset store tab to add and remove catal
 3. Click `Add Catalog` and then paste the catalog url you found into the textbox that appears. Then click `Confirm`
 > NOTE: Here is an example of a catalog url: https://raw.githubusercontent.com/rodriada000/SessionCustomMapReleases/master/DefaultSMMCatalog.json 
 
-
-### Tutorial Video On How to Use All Features And Troubleshoot Session Mod Manager
-_shows older version, but still applies to newer versions_ 
-[![Video Preview](https://img.youtube.com/vi/EjqcErdS0jg/0.jpg)](https://www.youtube.com/watch?v=EjqcErdS0jg)
-
 ## Credits
 * Thanks to [Illusory Modding](https://discord.gg/3JAe2K) for the [Universal Mod Unlocker](https://illusory.dev/)
 * Thanks to @dga711 for the [EzPz Mod](https://github.com/dga711/SessionEzPzMod)
-* Thanks to Redgouf for creating an in-depth tutorial video on the tool
+* Thanks to Redgouf for creating an in-depth [tutorial video](https://www.youtube.com/watch?v=EjqcErdS0jg) on the tool
 * @Gabisonfire for contributing to the [app version updater](https://github.com/Gabisonfire/avantgarde-lib)

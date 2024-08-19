@@ -24,6 +24,8 @@ namespace SessionModManagerCore.ViewModels
         private Stream _modPreviewSource;
         private bool _isLoadingImage;
         private bool _isReplaceButtonEnabled = true;
+        private bool _allowModConflicts = false;
+
         public List<InstalledTextureItemViewModel> InstalledTextures
         {
             get
@@ -64,11 +66,6 @@ namespace SessionModManagerCore.ViewModels
 
         private List<TexturePathInfo> _texturePaths;
         private bool _isShowingConflictWindow;
-
-        public TextureReplacerViewModel()
-        {
-            PathToFile = "";
-        }
 
         public List<TexturePathInfo> TexturePaths
         {
@@ -181,11 +178,38 @@ namespace SessionModManagerCore.ViewModels
             }
         }
 
+        public bool AllowModConflicts
+        {
+            get
+            {
+                return _allowModConflicts;
+            }
+            set
+            {
+                if (_allowModConflicts != value)
+                {
+                    _allowModConflicts = value;
+                    NotifyPropertyChanged();
+                    AppSettingsUtil.AddOrUpdateAppSettings(SettingKey.AllowModConflicts, _allowModConflicts.ToString());
+                }
+            }
+        }
+
         public bool IsShowingModPreview
         {
             get { return !_isShowingConflictWindow; }
         }
 
+
+        public TextureReplacerViewModel()
+        {
+            PathToFile = "";
+            string allowConflicts = AppSettingsUtil.GetAppSetting(SettingKey.AllowModConflicts);
+            if (!string.IsNullOrWhiteSpace(allowConflicts))
+            {
+                AllowModConflicts = allowConflicts.Equals("true", StringComparison.OrdinalIgnoreCase);
+            }
+        }
 
         public void ImportTextureMod()
         {
@@ -243,9 +267,9 @@ namespace SessionModManagerCore.ViewModels
 
             var metaData = CreateNewTextureMetaData(pathToFile, pathToMod, assetFromStore);
 
-            if (!GetConflicts(metaData).Any())
+            if (!GetConflicts(metaData).Any() || AllowModConflicts)
             {
-                // enable mod if no conflicts
+                // enable mod if no conflicts or allow conflicts
                 CopyModToSession(metaData);
                 MessageChanged?.Invoke($"Successfully finished importing mod {new FileInfo(pathToFile).NameWithoutExtension()}!");
             }
@@ -882,12 +906,12 @@ namespace SessionModManagerCore.ViewModels
             if (!metaData.Enabled && isEnabled)
             {
                 var conflicts = GetConflicts(metaData);
-                if (conflicts.Any())
+                if (conflicts.Any() && !AllowModConflicts)
                 {
                     SelectedTexture.IsEnabled = false;
                     FileConflicts = conflicts;
                     IsShowingConflicts = true;
-                    MessageService.Instance.ShowMessage($"Failed to enable mod due to conflicts! Disable conflicting mods first.");
+                    MessageService.Instance.ShowMessage($"Failed to enable mod due to conflicts! Disable conflicting mods first or change setting to allow conflicts.");
                 }
                 else
                 {

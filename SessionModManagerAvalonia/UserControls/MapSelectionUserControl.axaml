@@ -103,18 +103,18 @@
 					</ListBox.ContextMenu>
 					<ListBox.ItemTemplate>
 						<DataTemplate DataType="v:MapListItem">
-							<Border x:Name="border" IsEnabled="{Binding IsEnabled}">
-								<WrapPanel DoubleTapped="MapListItem_DoubleTapped" IsHitTestVisible="True">
+							<Border DoubleTapped="MapListItem_DoubleTapped" Padding="2,8,2,8" Background="Transparent" x:Name="border" IsEnabled="{Binding IsEnabled}" IsHitTestVisible="True">
+								<WrapPanel  IsHitTestVisible="True" >
 									<TextBlock x:Name="mapText" Text="{Binding DisplayName, FallbackValue='Test Map Name'}"
-											   Margin="5,0,0,0"
-											   Padding="0,2,0,2"/>
+												Margin="5,0,0,0"
+												Padding="0,2,0,2"/>
 									<i:Icon Margin="5,0,0,0" FontSize="20" Value="mdi-map-marker-check-outline" IsVisible="{Binding IsLoaded}"/>
 									<TextBlock x:Name="validationText"
-											   Foreground="Red"
-											   Text="{Binding ValidationHint, FallbackValue='(missing game mode)'}"
-											   IsVisible="False"
-											   FontSize="11"
-											   Margin="10,2,0,0"/>
+												Foreground="Red"
+												Text="{Binding ValidationHint, FallbackValue='(missing game mode)'}"
+												IsVisible="False"
+												FontSize="11"
+												Margin="10,2,0,0"/>
 								</WrapPanel>
 							</Border>
 						</DataTemplate>
@@ -123,6 +123,9 @@
 						<Style Selector="ListBoxItem" x:DataType="v:MapListItem">
 							<Setter Property="IsEnabled" Value="{Binding IsEnabled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 							<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+							<Setter Property="VerticalAlignment" Value="Stretch"/>
+							<Setter Property="Padding" Value="0"/>
+							<Setter Property="IsHitTestVisible" Value="True"/>
 						</Style>
 					</ListBox.Styles>
 				</ListBox>
