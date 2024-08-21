@@ -1,8 +1,8 @@
 {
-    "Version": "3.0.1.0",
-    "WindowsRelease": "https://github.com/rodriada000/SessionMapSwitcher/releases/download/v3.0.1/Session_Mod_Manager_3_0_1_windows.zip",
-    "WindowsFileHash": "EF7EF3F6A69AD5086F8098738033EDB6",
-    "LinuxRelease": "https://github.com/rodriada000/SessionMapSwitcher/releases/download/v3.0.1/Session_Mod_Manager_3_0_1_linux.zip",
-    "LinuxFileHash": "CE1870261CAF43A964D7A32488AA9A74",
-    "VersionNotes": "### Features\r\n- added option to 'Allow Mod Conflicts' (setting can be found on the installed mods screen)"
+    "Version": "3.0.2.0",
+    "WindowsRelease": "https://github.com/rodriada000/SessionMapSwitcher/releases/download/v3.0.2/Session_Mod_Manager_3_0_2_windows.zip",
+    "WindowsFileHash": "43EF9AA93BC4CAD2B048E165F66F00A8",
+    "LinuxRelease": "https://github.com/rodriada000/SessionMapSwitcher/releases/download/v3.0.2/Session_Mod_Manager_3_0_2_linux.zip",
+    "LinuxFileHash": "A23E63DD5025E9704BC7BD99C03F3E06",
+    "VersionNotes": "### Fixes\r\n- v3.0 broke the app updater so this version replaces it with a new one that works on windows and linux.\r\n\r\n### Features\r\n- Option to 'Update on Exit'\r\n- 'Check For Updates' button in Settings page"
 }
