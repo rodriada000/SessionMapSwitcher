@@ -31,6 +31,8 @@ namespace SessionMapSwitcherCore.Utils
         LaunchViaSteam,
         AppTheme,
         AllowModConflicts,
+        VersionCheckUrl,
+        UpdateOnExit
     }
 
     public class AppSettingsUtil
@@ -64,7 +66,7 @@ namespace SessionMapSwitcherCore.Utils
                     _config[key] = value;
                 }
 
-                File.WriteAllText(settingsPath, JsonConvert.SerializeObject(_config));
+                File.WriteAllText(settingsPath, JsonConvert.SerializeObject(_config, Formatting.Indented));
             }
             catch (Exception ex)
             {

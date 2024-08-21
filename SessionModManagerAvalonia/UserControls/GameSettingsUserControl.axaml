@@ -246,12 +246,19 @@
 						<ComboBoxItem Content="Dark"/>
 					</ComboBox>					
 				</WrapPanel>
-				
-				<Button x:Name="btnViewLogs"
-                                Content="View Logs ..."
-                                Click="btnViewLogs_Click"
-                                HorizontalAlignment="Left"
-                                Margin="20,10,10,5"/>
+
+				<WrapPanel Margin="20,10,10,5">
+				    <Button x:Name="btnViewLogs"
+                                    Content="View Logs ..."
+                                    Click="btnViewLogs_Click"
+                                    HorizontalAlignment="Left"
+                                    />
+					<Button x:Name="btnCheckUpdates"
+				            Content="Check for Updates"
+				            Click="btnCheckUpdates_Click"
+							Margin="5,0,0,0"
+				            HorizontalAlignment="Left"/>
+				</WrapPanel>
 
 			</StackPanel>
 		</ScrollViewer>

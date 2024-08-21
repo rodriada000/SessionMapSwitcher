@@ -11,8 +11,8 @@
   <PropertyGroup Label="Avalonia">
     <AvaloniaNameGeneratorDefaultFieldModifier>Public</AvaloniaNameGeneratorDefaultFieldModifier>
     <ApplicationIcon>Resources\new_switcher.ico</ApplicationIcon>
-    <AssemblyVersion>3.0.1.0</AssemblyVersion>
-    <FileVersion>3.0.1.0</FileVersion>
+    <AssemblyVersion>3.0.2.0</AssemblyVersion>
+    <FileVersion>3.0.2.0</FileVersion>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="appsettings.json" />
@@ -38,14 +38,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="11.1.0" />
-    <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.1.0" />
-    <PackageReference Include="Avalonia.Desktop" Version="11.1.0" />
-    <PackageReference Include="Avalonia.HtmlRenderer" Version="11.0.0" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.1.0" />
-    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.1.0" />
+    <PackageReference Include="Avalonia" Version="11.1.3" />
+    <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.1.3" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.1.3" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.1.3" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.1.3" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.1.0" />
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.1.3" />
+    <PackageReference Include="Markdown.Avalonia" Version="11.0.2" />
     <PackageReference Include="MessageBox.Avalonia" Version="3.1.6" />
     <PackageReference Include="Projektanker.Icons.Avalonia" Version="9.4.0" />
     <PackageReference Include="Projektanker.Icons.Avalonia.MaterialDesign" Version="9.4.0" />
@@ -72,4 +72,8 @@
   <ItemGroup>
     <UpToDateCheckInput Remove="Windows\UpdateWindow.axaml" />
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="SET SMMPATH=$(ProjectDir)..\SMMUpdater\bin\Debug\net8.0&#xD;&#xA;SET TARGETPATH=$(TargetDir)&#xD;&#xA;&#xD;&#xA;if $(ConfigurationName) == Release SET SMMPATH=$(ProjectDir)..\SMMUpdater\bin\Release\net8.0\publish\windows&#xD;&#xA;if $(ConfigurationName) == Release SET TARGETPATH=$(TargetDir)publish\windows&#xD;&#xA;&#xD;&#xA;echo &quot;%25TARGETPATH%25&quot;&#xD;&#xA;&#xD;&#xA;mkdir &quot;%25TARGETPATH%25&quot;&#xD;&#xA;xcopy /y &quot;%25SMMPATH%25\SMMUpdater.exe&quot;  &quot;%25TARGETPATH%25\releases&quot;&#xD;&#xA;xcopy /y &quot;%25SMMPATH%25\SMMUpdater.dll&quot;  &quot;%25TARGETPATH%25\releases&quot;&#xD;&#xA;xcopy /y &quot;%25SMMPATH%25\SMMUpdater.deps.json&quot;  &quot;%25TARGETPATH%25\releases&quot;&#xD;&#xA;xcopy /y &quot;%25SMMPATH%25\SMMUpdater.runtimeconfig.json&quot;  &quot;%25TARGETPATH%25\releases&quot;&#xD;&#xA;&#xD;&#xA;cd &quot;%25TARGETPATH%25&quot;&#xD;&#xA;del *.pdb /q" />
+  </Target>
 </Project>

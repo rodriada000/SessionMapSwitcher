@@ -69,9 +69,9 @@ namespace SessionMapSwitcher.UI
             ViewModel.HeaderMessage = "Updating app ...";
             BoolWithMessage updateResult = null;
 
-            Task updateTask = Task.Factory.StartNew(() =>
+            Task updateTask = Task.Factory.StartNew(async () =>
             {
-                updateResult = VersionChecker.UpdateApplication();
+                updateResult = await VersionChecker.UpdateApplication();
             });
 
             updateTask.ContinueWith((updateAntecedent) =>
