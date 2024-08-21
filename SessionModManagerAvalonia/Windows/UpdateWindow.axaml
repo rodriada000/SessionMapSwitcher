@@ -3,15 +3,14 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:v="using:SessionModManagerCore.ViewModels"
-		xmlns:h="using:TheArtOfDev.HtmlRenderer.Avalonia"
+		xmlns:md="https://github.com/whistyun/Markdown.Avalonia"
 		x:DataType="v:UpdateViewModel"
-		Loaded="Window_Loaded"
         mc:Ignorable="d" d:DesignWidth="625" d:DesignHeight="450"
         x:Class="SessionModManagerAvalonia.UpdateWindow"
 		Height="450" Width="625"
         Title="Update Available!">
 
-	<Grid RowDefinitions="auto,*,auto">
+	<Grid RowDefinitions="auto,auto,*,auto">
 
 
 		<TextBlock x:Name="txtHeader" TextWrapping="Wrap" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="10,10,10,5"
@@ -20,32 +19,27 @@
                    Text="{Binding HeaderMessage, FallbackValue='A new version of Session Mod Manager is available to download. You can view whats changed below.'}"/>
 
 
-		<TextBlock Text="Getting Latest Version Notes ..." Grid.Row="1"
-				   IsVisible="{Binding !IsBrowserVisible}"
-                   VerticalAlignment="Center" HorizontalAlignment="Center"
-                   FontSize="15"
-                   Margin="0,0,0,0"/>
-
-
-		<ScrollViewer Grid.Row="1">
-			<h:HtmlPanel Background="WhiteSmoke" x:Name="htmlPanel" IsVisible="{Binding IsBrowserVisible}"/>
-		</ScrollViewer>
+		<ProgressBar Grid.Row="1" Margin="10" Height="10" Value="{Binding UpdatePercent}" IsVisible="{Binding IsUpdating}"/>
 		
-		<!--<WebBrowser x:Name="browser" Grid.Row="1" Visibility="{Binding BrowserVisibility, FallbackValue='Hidden'}"/>-->
+		<ScrollViewer Grid.Row="2">
+			<md:MarkdownScrollViewer Margin="10" x:Name="mdViewer"></md:MarkdownScrollViewer>
+		</ScrollViewer>
 
-		<Button x:Name="btnUpdate"
-                Grid.Row="2"
-                HorizontalAlignment="Center" VerticalAlignment="Bottom"
-                Margin="0,5,100,5"
-                Content="Update Now"
-                Click="BtnUpdate_Click"/>
+		<WrapPanel IsEnabled="{Binding !IsUpdating}" Grid.Row="3" Margin="5" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+			<Button x:Name="btnUpdate"
+					Content="Update Now"
+					Click="BtnUpdate_Click"/>
 
-		<Button x:Name="btnClose"
-                Grid.Row="2"
-                HorizontalAlignment="Center" VerticalAlignment="Bottom"
-                Margin="90,5,0,5"
-                Click="BtnClose_Click"
-                Content="Not Now"/>
+			<Button x:Name="btnUpdateLater"
+					Margin="5,0,0,0"
+					Content="Update On Exit"
+					Click="btnUpdateLater_Click"/>
+
+			<Button x:Name="btnClose"
+					Margin="15,0,0,0"
+					Click="BtnClose_Click"
+					Content="Remind Me Later"/>
+		</WrapPanel>
 	</Grid>	
 
 </Window>

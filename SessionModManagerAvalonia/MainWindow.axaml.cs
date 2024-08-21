@@ -160,6 +160,12 @@ namespace SessionModManagerAvalonia
             controlTextureMan.ViewModel.MessageChanged -= MessageService_MessageReceived;
             MessageService.Instance.MessageReceived -= MessageService_MessageReceived;
             ImageCache.WriteToFile();
+
+            if (AppSettingsUtil.GetAppSetting(SettingKey.UpdateOnExit) == true.ToString())
+            {
+                AppSettingsUtil.AddOrUpdateAppSettings(SettingKey.UpdateOnExit, false.ToString());
+                VersionChecker.BeginSMMUpdater(workingDir: null, noLaunch: true);
+            }
         }
 
         private void Window_SizeChanged(object? sender, Avalonia.Controls.SizeChangedEventArgs e)
@@ -204,27 +210,21 @@ namespace SessionModManagerAvalonia
 
         #region Update Related Methods
 
-        private void CheckForNewVersionInBackground()
+        private async Task CheckForNewVersionInBackground()
         {
             ViewModel.UserMessage = "Checking for updates ...";
-            Task task = Task.Factory.StartNew(() =>
+            VersionChecker.CurrentVersion = App.GetAppVersion();
+            IsNewVersionAvailable = await VersionChecker.IsUpdateAvailable();
+
+            if (IsNewVersionAvailable)
             {
-                IsNewVersionAvailable = VersionChecker.IsUpdateAvailable();
-            });
-
-
-            task.ContinueWith((antecedent) =>
+                ViewModel.UserMessage = "New update available to download";
+                StartUpdateTimerToOpenWindow();
+            }
+            else
             {
-
-                if (IsNewVersionAvailable)
-                {
-                    ViewModel.UserMessage = "New update available to download";
-                    StartUpdateTimerToOpenWindow();
-                } else
-                {
-                    ViewModel.UserMessage = "";
-                }
-            }, TaskScheduler.FromCurrentSynchronizationContext());
+                ViewModel.UserMessage = "";
+            }
         }
 
         /// <summary>

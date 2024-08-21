@@ -127,9 +127,9 @@ namespace SessionMapSwitcher
         private void CheckForNewVersionInBackground()
         {
             ViewModel.UserMessage = "Checking for updates ...";
-            Task task = Task.Factory.StartNew(() =>
+            Task task = Task.Factory.StartNew(async () =>
             {
-                IsNewVersionAvailable = VersionChecker.IsUpdateAvailable();
+                IsNewVersionAvailable = await VersionChecker.IsUpdateAvailable();
             });
 
 

@@ -11,6 +11,8 @@ using MsBox.Avalonia;
 using System.IO;
 using Avalonia.Styling;
 using SessionMapSwitcherCore.Utils;
+using SessionModManagerCore.Classes;
+using Avalonia.Controls.ApplicationLifetimes;
 
 namespace SessionModManagerAvalonia;
 
@@ -97,6 +99,17 @@ public partial class GameSettingsUserControl : UserControl
         if (selectedTheme != AppSettingsUtil.GetAppSetting(SettingKey.AppTheme))
         {
             AppSettingsUtil.AddOrUpdateAppSettings(SettingKey.AppTheme, selectedTheme);
+        }
+    }
+
+    private async void btnCheckUpdates_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        VersionChecker.CurrentVersion = App.GetAppVersion();
+
+        if (await VersionChecker.IsUpdateAvailable())
+        {
+            UpdateWindow updateWindow = new UpdateWindow();
+            updateWindow.ShowDialog<bool>((Avalonia.Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow);
         }
     }
 }

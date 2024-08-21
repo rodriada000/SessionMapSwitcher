@@ -1,14 +1,12 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using SessionMapSwitcherCore.Classes;
 using SessionMapSwitcherCore.Utils;
 using SessionModManagerCore.ViewModels;
-using System.Threading.Tasks;
-using System.Threading;
 using SessionModManagerCore.Classes;
 using MsBox.Avalonia;
+using System.Threading.Tasks;
+using System;
 
 namespace SessionModManagerAvalonia;
 
@@ -25,43 +23,11 @@ public partial class UpdateWindow : Window
         ViewModel = new UpdateViewModel();
         this.DataContext = ViewModel;
 
-        ViewModel.ReadNewVersionFromAgFilesJson();
-    }
-
-    private void GetVersionNotesInBackground()
-    {
-        string htmlVersionNotes = "";
-
-        TaskScheduler scheduler = TaskScheduler.FromCurrentSynchronizationContext();
-
-
-        Task scraperTask = Task.Factory.StartNew(() =>
+        if (VersionChecker.LatestRelease != null)
         {
-            htmlVersionNotes = ScrapeLatestVersionNotesFromGitHub();
-
-            if (string.IsNullOrWhiteSpace(htmlVersionNotes))
-            {
-                return;
-            }
-
-            int startIdx = htmlVersionNotes.IndexOf("<div data-pjax=\"true\" data-test-selector=\"body-content\"");
-            int endIdx = htmlVersionNotes.IndexOf("<div data-view-component=\"true\" class=\"Box-footer\"");
-
-            if (startIdx >= 0 && endIdx >= 0)
-            {
-                htmlPanel.Text = htmlVersionNotes.Substring(startIdx, endIdx - startIdx);
-            }
-        }, CancellationToken.None, TaskCreationOptions.LongRunning, scheduler);
-
-        scraperTask.ContinueWith((antecedent) =>
-        {
-            if (antecedent.IsFaulted)
-            {
-                Logger.Error(antecedent.Exception.GetBaseException());
-            }
-
-            ViewModel.IsBrowserVisible = true;
-        }, scheduler);
+            mdViewer.Markdown = VersionChecker.LatestRelease.VersionNotes;
+            ViewModel.HeaderMessage = $"Version {VersionChecker.LatestRelease.Version} of Session Mod Manager is available to download. Release notes:";
+        }
     }
 
     private void BtnClose_Click(object sender, RoutedEventArgs e)
@@ -71,40 +37,49 @@ public partial class UpdateWindow : Window
 
     private async void BtnUpdate_Click(object sender, RoutedEventArgs e)
     {
-        ViewModel.HeaderMessage = "Updating app ...";
-        BoolWithMessage updateResult = null;
+        ViewModel.IsUpdating = true;
+        ViewModel.HeaderMessage = $"Updating Session Mod Manager to v{VersionChecker.LatestRelease?.Version} ...";
 
-        Task updateTask = Task.Factory.StartNew(() =>
-        {
-            updateResult = VersionChecker.UpdateApplication();
-        });
+        DownloadUtils.ProgressChanged += DownloadUtils_ProgressChanged;
+        VersionChecker.ExtractProgress = new Progress<double>(percent => ViewModel.UpdatePercent = percent);
 
-        await updateTask.ContinueWith(async (updateAntecedent) =>
+        if (OperatingSystem.IsLinux())
         {
-            if (updateResult?.Result == false)
+            var box = MessageBoxManager.GetMessageBoxStandard("Information", "The app will now close to update. You may need to manually re-open Session Mod Manager after the update finishes.", MsBox.Avalonia.Enums.ButtonEnum.Ok, MsBox.Avalonia.Enums.Icon.Info);
+            var result = await box.ShowAsync();
+        }
+
+        BoolWithMessage updateResult = await VersionChecker.UpdateApplication();
+
+        if (updateResult?.Result == false)
+        {
+            DownloadUtils.ProgressChanged -= DownloadUtils_ProgressChanged;
+            ViewModel.IsUpdating = false;
+            var box = MessageBoxManager.GetMessageBoxStandard("Error Updating!", updateResult.Message, MsBox.Avalonia.Enums.ButtonEnum.Ok, MsBox.Avalonia.Enums.Icon.Error);
+            var result = await box.ShowAsync();
+            this.Close(false);
+        }
+    }
+
+    private void DownloadUtils_ProgressChanged(long? totalFileSize, long totalBytesDownloaded, double? progressPercentage)
+    {
+        ViewModel.UpdatePercent = progressPercentage ?? 0;
+    }
+
+    private void btnUpdateLater_Click(object? sender, RoutedEventArgs e)
+    {
+        ViewModel.IsUpdating = true;
+
+        AppSettingsUtil.AddOrUpdateAppSettings(SettingKey.UpdateOnExit, true.ToString());
+        Task.Factory.StartNew(async () =>
+        {
+            MessageService.Instance.ShowMessage("New version downloading in background and will be installed on exit.");
+            var result = await VersionChecker.PrepareUpdate();
+            if (!result.Result)
             {
-                var box = MessageBoxManager.GetMessageBoxStandard("Error Updating!", updateResult.Message, MsBox.Avalonia.Enums.ButtonEnum.Ok, MsBox.Avalonia.Enums.Icon.Error);
-                var result = await box.ShowAsync();
+                MessageService.Instance.ShowMessage(result.Message);
             }
-        });
+        }); 
+        this.Close(false);
     }
-
-    #region Methods related to getting version notes
-
-    /// <summary>
-    /// Scrapes the latest release git hub page for version notes by looking for the div tag
-    /// with the class "markdown-body"
-    /// </summary>
-    /// <returns> Scraped html from Github if found </returns>
-    public static string ScrapeLatestVersionNotesFromGitHub()
-    {
-        return DownloadUtils.GetTextResponseFromUrl(UpdateViewModel.LatestReleaseUrl);
-    }
-
-    private void Window_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        GetVersionNotesInBackground();
-    }
-
-    #endregion
 }
