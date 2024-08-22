@@ -17,6 +17,7 @@ using SessionMapSwitcherCore.Utils;
 using SessionModManagerAvalonia.Windows;
 using Avalonia.Controls.ApplicationLifetimes;
 using SessionModManagerAvalonia.Classes;
+using System.Collections.Generic;
 
 namespace SessionModManagerAvalonia;
 
@@ -34,6 +35,8 @@ public partial class MapSelectionUserControl : UserControl
         ViewModel.ReloadAvailableMapsInBackground();
 
         this.DataContext = ViewModel;
+
+        AddHandler(DragDrop.DropEvent, TxtSessionPath_PreviewDrop);
     }
 
     private async void BtnBrowseSessionPath_Click(object sender, RoutedEventArgs e)
@@ -336,24 +339,16 @@ public partial class MapSelectionUserControl : UserControl
         ViewModel.ToggleVisiblityOfMap(selectedItem);
     }
 
-    //private void TxtSessionPath_PreviewDragOver(object sender, System.Windows.DragEventArgs e)
-    //{
-    //    //e.Handled = true;
 
-    //    //if (e.Data.GetDataPresent(System.Windows.DataFormats.FileDrop, false) == true)
-    //    //{
-    //    //    e.Effects = System.Windows.DragDropEffects.All;
-    //    //}
-    //}
-
-    //private void TxtSessionPath_PreviewDrop(object sender, System.Windows.DragEventArgs e)
-    //{
-    //    //string[] files = (string[])e.Data.GetData(System.Windows.DataFormats.FileDrop);
-    //    //if (files != null && files.Length != 0)
-    //    //{
-    //    //    ViewModel.SessionPathTextInput = files[0];
-    //    //}
-    //}
+    private async void TxtSessionPath_PreviewDrop(object sender, DragEventArgs e)
+    {
+        var files = (IEnumerable<IStorageItem>)e.Data.Get(DataFormats.Files);
+        if (files != null && files.Count() != 0)
+        {
+            ViewModel.SessionPathTextInput = files.FirstOrDefault().TryGetLocalPath();
+            await SetAndValidateSessionPath(ViewModel.SessionPathTextInput);
+        }
+    }
 
     /// <summary>
     /// Opens a window to enter a new name for a map.

@@ -19,6 +19,7 @@
                  x:Name="txtPath"
                  FontSize="13"
                  VerticalAlignment="Stretch"
+				 DragDrop.AllowDrop="True"
                  Text="{Binding PathToFile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
 

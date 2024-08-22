@@ -19,6 +19,8 @@ public partial class ComputerImportWindow : Window
     public ComputerImportWindow()
     {
         InitializeComponent();
+
+        AddHandler(DragDrop.DropEvent, TextBox_PreviewDrop);
     }
 
     public ComputerImportWindow(MapImportViewModel importViewModel)
@@ -39,24 +41,14 @@ public partial class ComputerImportWindow : Window
         ViewModel.BeginImportMapAsync();
     }
 
-    //private void TextBox_PreviewDragOver(object sender, DragEventArgs e)
-    //{
-    //    e.Handled = true;
-
-    //    if (e.Data.GetDataPresent(DataFormats.FileDrop, false) == true)
-    //    {
-    //        e.Effects = DragDropEffects.All;
-    //    }
-    //}
-
-    //private void TextBox_PreviewDrop(object sender, DragEventArgs e)
-    //{
-    //    string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-    //    if (files != null && files.Length != 0)
-    //    {
-    //        ViewModel.PathInput = files[0];
-    //    }
-    //}
+    private void TextBox_PreviewDrop(object sender, DragEventArgs e)
+    {
+        var files = (IEnumerable<IStorageItem>)e.Data.Get(DataFormats.Files);
+        if (files != null && files.Count() != 0)
+        {
+            ViewModel.PathInput = files.FirstOrDefault().TryGetLocalPath();
+        }
+    }
 
     internal async Task BrowseForFolderOrFile()
     {

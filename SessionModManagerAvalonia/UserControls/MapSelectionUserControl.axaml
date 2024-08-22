@@ -40,6 +40,7 @@
                  IsEnabled="{Binding InputControlsEnabled}"
                  KeyUp="TxtSessionPath_KeyUp"
                  Margin="45,10,10,0"
+				 DragDrop.AllowDrop="True"
                  ContextMenu="{Binding ElementName=mainContextMenu}"/>
 
 

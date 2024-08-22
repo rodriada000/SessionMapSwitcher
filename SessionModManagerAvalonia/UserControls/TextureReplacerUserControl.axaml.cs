@@ -25,6 +25,8 @@ public partial class TextureReplacerUserControl : UserControl
         ViewModel.LoadInstalledTextures();
 
         this.DataContext = ViewModel;
+
+        AddHandler(DragDrop.DropEvent, TextBox_PreviewDrop);
     }
 
     private void BtnReplace_Click(object sender, RoutedEventArgs e)
@@ -75,33 +77,15 @@ public partial class TextureReplacerUserControl : UserControl
         ViewModel.DeleteSelectedMod();
     }
 
-    ///// <summary>
-    ///// Method for showing drag n drop effect when dragging text into textbox
-    ///// </summary>
-    //private void TextBox_PreviewDragOver(object sender, DragEventArgs e)
-    //{
-    //    e.Handled = true;
-
-    //    if (e.Data.GetDataPresent(DataFormats.FileDrop, false) == true)
-    //    {
-    //        e.Effects = DragDropEffects.All;
-    //    }
-    //}
-
-    ///// <summary>
-    ///// logic when dropping file into textbox to extract path
-    ///// </summary>
-    //private void TextBox_PreviewDrop(object sender, DragEventArgs e)
-    //{
-    //    string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-    //    if (files != null && files.Length != 0)
-    //    {
-    //        ViewModel.PathToFile = files[0];
-    //        if (ViewModel.PathToFile.EndsWith(".uexp") || ViewModel.PathToFile.EndsWith(".ubulk"))
-    //        {
-    //            // fix file extension since user dropped different file type in but assume the .uasset file also exists
-    //            ViewModel.PathToFile = ViewModel.PathToFile.Replace(".uexp", ".uasset").Replace(".ubulk", ".uasset");
-    //        }
-    //    }
-    //}
+    /// <summary>
+    /// logic when dropping file into textbox to extract path
+    /// </summary>
+    private void TextBox_PreviewDrop(object sender, DragEventArgs e)
+    {
+        var files = (IEnumerable<IStorageItem>)e.Data.Get(DataFormats.Files);
+        if (files != null && files.Count() != 0)
+        {
+            ViewModel.PathToFile = files.FirstOrDefault().TryGetLocalPath();
+        }
+    }
 }
