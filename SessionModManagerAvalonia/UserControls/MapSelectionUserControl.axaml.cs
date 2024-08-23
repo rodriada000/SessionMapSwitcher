@@ -421,8 +421,11 @@ public partial class MapSelectionUserControl : UserControl
 
     private void lstMaps_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        MapListItem selectedItem = lstMaps.SelectedItem as MapListItem;
-        ViewModel.GetSelectedPreviewImageAsync(selectedItem);
+        if (lstMaps.SelectedItem != null)
+        {
+            MapListItem selectedItem = lstMaps.SelectedItem as MapListItem;
+            ViewModel.GetSelectedPreviewImageAsync(selectedItem);
+        }
     }
 
     private async void btnLoadMap_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)

@@ -489,6 +489,7 @@ namespace SessionModManagerCore.ViewModels
                     map.IsSelected = false;
                 }
                 currentlyLoaded.IsSelected = true;
+                GetSelectedPreviewImageAsync(currentlyLoaded);
             }
         }
 

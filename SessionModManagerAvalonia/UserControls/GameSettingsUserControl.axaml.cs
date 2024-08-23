@@ -36,6 +36,15 @@ public partial class GameSettingsUserControl : UserControl
         {
             cboTheme.SelectedItem = cboTheme?.Items[themeOptions.IndexOf(savedTheme)];
         }
+
+        if (double.TryParse(AppSettingsUtil.GetAppSetting(SettingKey.FontSize), out double size))
+        {
+            var sizeOptions = cboFont?.Items?.Select(i => (i as ComboBoxItem)?.Content).ToList();
+            if (sizeOptions.IndexOf(size.ToString()) >= 0)
+            {
+                cboFont.SelectedItem = cboFont?.Items[sizeOptions.IndexOf(size.ToString())];
+            }
+        }
     }
 
     private async void BtnApplySettings_Click(object sender, RoutedEventArgs e)
@@ -102,6 +111,24 @@ public partial class GameSettingsUserControl : UserControl
         }
     }
 
+    private void ComboBoxFont_SelectionChanged(object? sender, Avalonia.Controls.SelectionChangedEventArgs e)
+    {
+        string selectedSize = (cboFont?.SelectedValue as ComboBoxItem)?.Content?.ToString();
+
+        if (string.IsNullOrWhiteSpace(selectedSize))
+        {
+            return;
+        }
+
+        App.Current.Resources["ControlContentThemeFontSize"] = double.Parse(selectedSize);
+
+        if (selectedSize != AppSettingsUtil.GetAppSetting(SettingKey.FontSize))
+        {
+            AppSettingsUtil.AddOrUpdateAppSettings(SettingKey.FontSize, selectedSize);
+        }
+    }
+
+
     private async void btnCheckUpdates_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         VersionChecker.CurrentVersion = App.GetAppVersion();
@@ -110,6 +137,10 @@ public partial class GameSettingsUserControl : UserControl
         {
             UpdateWindow updateWindow = new UpdateWindow();
             updateWindow.ShowDialog<bool>((Avalonia.Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow);
+        }
+        else
+        {
+            MessageService.Instance.ShowMessage("No update available. Latest version already installed.");
         }
     }
 }

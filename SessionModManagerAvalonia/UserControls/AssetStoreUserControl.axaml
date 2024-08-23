@@ -45,7 +45,7 @@
 			</StackPanel>
 		</Border>
 
-		<Grid Grid.ColumnSpan="2" RowDefinitions="auto,*" ColumnDefinitions="*,*,*,*" Margin="5,0,0,20">
+		<Grid Grid.ColumnSpan="2" RowDefinitions="auto,*" ColumnDefinitions="*,*,*,*" Margin="5,5,0,10">
 			<Label Content="Categories:" Margin="0,0,0,0" VerticalAlignment="Bottom"/>
 			<Button Margin="0,0,5,0"  Click="btnCategory_Click" Content="{Binding SelectedCategories}"  HorizontalAlignment="Stretch" Grid.Row="1">
 				<Button.Styles>
@@ -54,7 +54,7 @@
 							<Setter.Value>
 								<ControlTemplate>
 									<Grid ColumnDefinitions="*,auto" Background="{DynamicResource SystemControlTransparentBrush}" IsHitTestVisible="True">
-										<Border CornerRadius="3" BorderThickness="1" Grid.ColumnSpan="2" Height="30" BorderBrush="{DynamicResource SystemControlHighlightBaseMediumLowBrush}"/>
+										<Border CornerRadius="3" BorderThickness="1" Grid.ColumnSpan="2" Height="26" BorderBrush="{DynamicResource SystemControlHighlightBaseMediumLowBrush}"/>
 										<TextBlock TextTrimming="CharacterEllipsis" VerticalAlignment="Center" Margin="5,0,0,0" Text="{Binding $parent[Button].Content}" HorizontalAlignment="Stretch"/>
 										<i:Icon Grid.Column="1" FontSize="18" Value="mdi-chevron-down" Margin="0,0,5,0" Foreground="{DynamicResource SystemControlHighlightBaseMediumLowBrush}"/>
 									</Grid>
@@ -69,7 +69,6 @@
 			<ComboBox HorizontalAlignment="Stretch"
 					  Grid.Column="1"
 					  Grid.Row="1"
-					  FontSize="11"
 					  ToolTip.Tip="Choose an Author to filter by"
 					  ItemsSource="{Binding AuthorList}"
 					  SelectedIndex="{Binding AuthorToFilterByIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
@@ -93,7 +92,6 @@
 
 			<Label Content="Install Status:"  Grid.Column="2" VerticalAlignment="Bottom"/>
 			<ComboBox HorizontalAlignment="Stretch"
-					  FontSize="11"
 					  Grid.Row="1"
 					  Grid.Column="2"
 					  Margin="5,0,0,0"
@@ -102,9 +100,9 @@
 					  SelectedItem="{Binding SelectedInstallStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
 
-			<WrapPanel Grid.Column="3" Margin="0,10,10,0"
+			<WrapPanel Grid.Column="3" Margin="0,0,10,0" Grid.RowSpan="2"
 				  HorizontalAlignment="Right"
-				  VerticalAlignment="Top">
+				  VerticalAlignment="Bottom">
 
 				<Button x:Name="btnRefresh"
 						Width="56"
@@ -130,12 +128,12 @@
 
 		<TextBox x:Name="txtSearch"
                  Grid.Row="1"
-                 Height="25"
+				 MinHeight="30"
+				 Watermark="Type to search by Name or Description (searches checked categories)..."
                  VerticalContentAlignment="Center"
-				 Watermark="Type to search by Name or Description (only searches checked Categories)..."
                  Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  TextWrapping="NoWrap"
-                 Margin="5,0,0,0"/>
+                 Margin="5,5,0,0"/>
 
 		<DataGrid x:Name="lstAssets"
                   Grid.Row="2" Grid.Column="0"
@@ -228,6 +226,7 @@
 									   IsReadOnly="True"
 									 Width="{Binding $parent[TextBlock].Width }"
 									 BorderThickness="0"
+									 MaxHeight="200"
 									 Background="Transparent"
 									   Margin="5,5,0,0"
 									   Padding="0,0,10,0"/>
@@ -281,7 +280,7 @@
                           FontSize="10"
                           HorizontalAlignment="Right"
                           VerticalAlignment="Bottom"
-                          Margin="0,0,5,-5"
+                          Margin="0,0,5,0"
                           Content="Delete Download After Install"
                           ToolTip.Tip="Downloaded assets are saved to 'store_data/temp_downloads' and are deleted to save space... Uncheck to keep downloaded file(s)."
                           IsChecked="{Binding DeleteDownloadAfterInstall, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>

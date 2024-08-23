@@ -4,13 +4,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:v="using:SessionModManagerCore.ViewModels"
 		xmlns:i="https://github.com/projektanker/icons.avalonia"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="175"
         x:Class="SessionModManagerAvalonia.Windows.ComputerImportWindow"
 		x:DataType="v:MapImportViewModel"
 		WindowStartupLocation="CenterScreen"
         CanResize="False"
-		MinWidth="300" MinHeight="230" MaxHeight="230" MaxWidth="800"
-        Title="Import Map From Computer" Height="230" Width="600">
+		MinWidth="300" MinHeight="175" MaxHeight="175" MaxWidth="800"
+        Title="Import Map From Computer" Height="175" Width="600">
 
 	<Grid>
 		<Grid.RowDefinitions>
@@ -42,8 +42,8 @@
 
 		<Button x:Name="btnBrowse"
                 i:Attached.Icon="mdi-folder-open-outline"
-                Width="32"
-                Height="32"
+                Height="26"
+				FontSize="16"
                 Click="BtnBrowse_Click"
                 IsEnabled="{Binding IsNotImporting}"
                 Grid.Row="1" Grid.Column="1" VerticalAlignment="Center"
@@ -54,7 +54,6 @@
                 Margin="0,10,0,0"
                 Grid.Row="3" Grid.ColumnSpan="2"
                 Click="BtnImportMap_Click"
-                FontSize="13"
                 Content="Import Map"
                 IsEnabled="{Binding IsNotImporting}"/>
 

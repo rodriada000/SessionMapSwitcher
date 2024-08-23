@@ -13,7 +13,7 @@ namespace SessionModManagerAvalonia.Classes
 
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            if (value is Stream)
+            if (value is Stream && (value as Stream).CanRead)
             {
                 if (_image != null)
                 {
@@ -21,28 +21,32 @@ namespace SessionModManagerAvalonia.Classes
                     _image.Dispose();
                 }
 
-                if ((value as Stream).CanRead)
+                using (var stream = (Stream)value)
                 {
-                    using (var stream = (Stream)value)
+                    try
                     {
-                        try
-                        {
-                            _image = new Bitmap(stream);
+                        _image = new Bitmap(stream);
 
-                        }
-                        catch (Exception ex)
-                        {
-                            return new BindingNotification(ex, BindingErrorType.Error);
-                        }
-
-                        return _image;
                     }
+                    catch (Exception ex)
+                    {
+                        return new BindingNotification(ex, BindingErrorType.Error);
+                    }
+
+                    return _image;
                 }
 
             }
 
+            if (value == null && _image != null)
+            {
+                _image.Dispose();
+                _image = null;
+            }
+
+            return _image;
             // converter used for the wrong type
-            return new BindingNotification(new InvalidCastException(), BindingErrorType.Error);
+            //return new BindingNotification(new InvalidCastException(), BindingErrorType.Error);
         }
 
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

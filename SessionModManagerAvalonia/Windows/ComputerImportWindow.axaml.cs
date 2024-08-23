@@ -29,6 +29,8 @@ public partial class ComputerImportWindow : Window
 
         ViewModel = importViewModel;
         DataContext = ViewModel;
+
+        AddHandler(DragDrop.DropEvent, TextBox_PreviewDrop);
     }
 
     private async void BtnBrowse_Click(object sender, RoutedEventArgs e)
