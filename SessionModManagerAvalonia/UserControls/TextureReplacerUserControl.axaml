@@ -19,6 +19,7 @@
                  x:Name="txtPath"
                  FontSize="13"
                  VerticalAlignment="Stretch"
+				 DragDrop.AllowDrop="True"
                  Text="{Binding PathToFile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
 
@@ -29,12 +30,14 @@
 			<Button x:Name="btnBrowse"
                     i:Attached.Icon="mdi-folder-open-outline"
                     Click="BtnBrowse_Click"
-					FontSize="18"
+					FontSize="16"
                     Margin="0,0,4,0"/>
 
 			<Button x:Name="btnReplace"
                     IsEnabled="{Binding IsReplaceButtonEnabled}"
                     Click="BtnReplace_Click"
+					VerticalAlignment="Stretch"
+					
                     Content="Import"/>
 		</WrapPanel>
 
@@ -50,7 +53,7 @@
 						Click="btnRemove_Click"
 						i:Attached.Icon="mdi-trash-can-outline"
 						Margin="0,0,0,2"
-						FontSize="18"
+						FontSize="16"
 						Width="42"/>
 				<DataGrid x:Name="lstTextures"
 						  Grid.Row="1"
@@ -65,8 +68,13 @@
 					<DataGrid.Columns>
 						<DataGridTextColumn IsReadOnly="True" Header="Name" Width="225"  Binding="{Binding TextureName}"/>
 						<DataGridTextColumn IsReadOnly="True" Header="Category"  Binding="{Binding Category}"/>
-						<DataGridCheckBoxColumn Header="Enabled" Binding="{Binding IsEnabled}" />
+						<DataGridCheckBoxColumn Header="Enabled" Binding="{Binding IsEnabled}"/>
 					</DataGrid.Columns>
+					<DataGrid.ContextMenu>
+						<ContextMenu>
+							<MenuItem x:Name="menuOpenModFolder" Header="Open Selected Mod Folder ..."  Click="MenuItem_Click" />
+						</ContextMenu>
+					</DataGrid.ContextMenu>
 				</DataGrid>
 			</Grid>
 

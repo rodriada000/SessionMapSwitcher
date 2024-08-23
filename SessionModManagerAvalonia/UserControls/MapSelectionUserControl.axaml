@@ -28,7 +28,8 @@
                 IsEnabled="{Binding InputControlsEnabled}"
                 VerticalAlignment="Top" HorizontalAlignment="Left"
                 Margin="10,10,18,0"
-                Height="32" Width="32"
+				FontSize="16"
+                Height="26" 
                 Click="BtnBrowseSessionPath_Click"/>
 
 		<TextBox x:Name="txtSessionPath"
@@ -39,7 +40,8 @@
                  Text="{Binding SessionPathTextInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  IsEnabled="{Binding InputControlsEnabled}"
                  KeyUp="TxtSessionPath_KeyUp"
-                 Margin="45,10,10,0"
+                 Margin="48,10,10,0"
+				 DragDrop.AllowDrop="True"
                  ContextMenu="{Binding ElementName=mainContextMenu}"/>
 
 
@@ -55,16 +57,14 @@
 					<Button x:Name="btnReloadMaps"
                             Click="BtnReloadMaps_Click"
                             IsEnabled="{Binding InputControlsEnabled}"
-                            Content="Reload Maps"
-                            FontSize="11"/>
+                            Content="Reload Maps"/>
 
 
 					<Button x:Name="btnImportMap"
                             IsEnabled="{Binding InputControlsEnabled}"
                             Content="Import Map"
                             Click="BtnImportMap_Click"
-                            Margin="5,0,0,0"
-                            FontSize="11">
+                            Margin="5,0,0,0">
 					</Button>
 
 					<CheckBox x:Name="chkShowInvalidMaps"
@@ -72,7 +72,7 @@
                               IsChecked="{Binding ShowInvalidMapsIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='True'}"
                               Click="ChkShowInvalidMaps_Click"
                               FontSize="10"
-                              Margin="5,5,0,4"
+                              Margin="5,0,0,5"
                               VerticalAlignment="Center"/>
 				</WrapPanel>
 
@@ -103,7 +103,7 @@
 					</ListBox.ContextMenu>
 					<ListBox.ItemTemplate>
 						<DataTemplate DataType="v:MapListItem">
-							<Border DoubleTapped="MapListItem_DoubleTapped" Padding="2,8,2,8" Background="Transparent" x:Name="border" IsEnabled="{Binding IsEnabled}" IsHitTestVisible="True">
+							<Border DoubleTapped="MapListItem_DoubleTapped" Padding="2,5,2,5" Background="Transparent" x:Name="border" IsEnabled="{Binding IsEnabled}" IsHitTestVisible="True">
 								<WrapPanel  IsHitTestVisible="True" >
 									<TextBlock x:Name="mapText" Text="{Binding DisplayName, FallbackValue='Test Map Name'}"
 												Margin="5,0,0,0"
@@ -136,7 +136,7 @@
 
 		<Grid Grid.Row="1"
                   Grid.Column="1"
-                  Margin="0,58,0,3">
+                  Margin="0,40,0,3">
 			<Grid RowDefinitions="*,auto">
 				<Image Source="{Binding MapPreviewSource, Converter={StaticResource streamConverter}}" Margin="6"
                        HorizontalAlignment="Stretch"
@@ -161,15 +161,15 @@
                           Margin="5,0,0,5">
 					<StackPanel>
 						<CheckBox x:Name="chkLoadSecondMap"
-                                  FontSize="11"
+                                  FontSize="10"
                                   VerticalContentAlignment="Center"
-                                  Margin="1,2,0,-5"
+                                  Margin="1,2,0,-3"
                                   IsChecked="{Binding LoadSecondMapIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                   Content="{Binding SecondMapCheckboxText, FallbackValue='Load Second Map After Start (Map Name)'}"/>
 
 						<CheckBox x:Name="chkEnableRMSTools"
                                   Margin="1,0,0,0"
-								  FontSize="11"
+								  FontSize="10"
                                   Content="Enable RMS Toolsuite"
 								  IsVisible="{Binding Path=RMSToolsuiteCheckboxIsVisible}"
                                   IsChecked="{Binding RMSToolsuiteIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
@@ -199,25 +199,30 @@
                            MaxWidth="600"
                            FontSize="10"/>
 
-		<Button x:Name="btnLoadMap"
-                        Grid.Row="2" Grid.ColumnSpan="2"
-                        Content="{Binding LoadMapButtonText, FallbackValue='Load Map'}"
-                        IsEnabled="{Binding InputControlsEnabled}"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Bottom"
-                        FontSize="16"
-                        Margin="0,5,125,5"
-                        Click="btnLoadMap_Click" Height="33"/>
+		<WrapPanel Grid.Row="2"
+				   Grid.ColumnSpan="2"
+				   Margin="0,0,0,5"
+				   IsEnabled="{Binding InputControlsEnabled}"
+				   HorizontalAlignment="Right"
+				   VerticalAlignment="Bottom">
+			<Button x:Name="btnLoadMap"
+							Grid.Row="2" Grid.ColumnSpan="2"
+							Content="{Binding LoadMapButtonText, FallbackValue='Load Map'}"
+							IsEnabled="{Binding InputControlsEnabled}"
+							HorizontalAlignment="Right"
+							VerticalAlignment="Bottom"
+							Click="btnLoadMap_Click"/>
 
-		<Button x:Name="btnStartGame"
-                        Grid.Row="2" Grid.ColumnSpan="2"
-                        Content="Start Session"
-                        IsEnabled="{Binding InputControlsEnabled}"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Bottom"
-                        FontSize="16"
-                        Margin="0,5,0,5"
-                        Click="BtnStartGame_Click" Height="33"/>
+			<Button x:Name="btnStartGame"
+					Margin="5,0,0,0"
+					Grid.Row="2" Grid.ColumnSpan="2"
+					Content="Start Session"
+					IsEnabled="{Binding InputControlsEnabled}"
+					HorizontalAlignment="Right"
+					VerticalAlignment="Bottom"
+					Click="BtnStartGame_Click" />
+			
+		</WrapPanel>
 	</Grid>
 
 

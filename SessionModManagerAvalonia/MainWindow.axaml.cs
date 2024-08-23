@@ -145,6 +145,11 @@ namespace SessionModManagerAvalonia
 
         private void Window_Loaded_1(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
+            if (double.TryParse(AppSettingsUtil.GetAppSetting(SettingKey.FontSize), out double size))
+            {
+                App.Current.Resources["ControlContentThemeFontSize"] = size;
+            }
+
             CheckForNewVersionInBackground();
             controlTextureMan.ViewModel.MessageChanged += MessageService_MessageReceived;
             controlSettings.ctrlProjectWatcher.ViewModel.MapImported += ProjectWatcher_MapImported;

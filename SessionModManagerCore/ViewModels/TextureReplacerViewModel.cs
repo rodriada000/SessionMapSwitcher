@@ -363,14 +363,20 @@ namespace SessionModManagerCore.ViewModels
                     {
                         if (Path.GetFileNameWithoutExtension(file) == textureFileName && !conflicts.Any(t => t.FileName == textureFileName))
                         {
-                            Logger.Warn($"Conflict found for {textureFileName}: {file} already exists");
-                            conflicts.Add(new FileConflict()
+                            // look for the asset that is conflicting (if none then safe to overwrite)
+                            var conflictingAsset = InstalledTextures.Where(t => t.MetaData.AssetName != metaData.AssetName && t.MetaData.FilePaths.Contains(file)).FirstOrDefault();
+
+                            if (conflictingAsset != null)
                             {
-                                FileName = textureFileName,
-                                FilePath = file,
-                                AssetName = metaData.AssetNameWithoutExtension,
-                                ExistingAssetName = InstalledTextures.Where(t => t.MetaData.FilePaths.Contains(file)).FirstOrDefault()?.MetaData?.AssetNameWithoutExtension
-                            });
+                                Logger.Warn($"Conflict found for {textureFileName}: {file} already exists");
+                                conflicts.Add(new FileConflict()
+                                {
+                                    FileName = textureFileName,
+                                    FilePath = file,
+                                    AssetName = metaData.AssetNameWithoutExtension,
+                                    ExistingAssetName = conflictingAsset.MetaData.AssetNameWithoutExtension
+                                });
+                            }
                         }
                     }
                 }

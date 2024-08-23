@@ -4,7 +4,7 @@
              RequestedThemeVariant="Default">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 	<Application.Resources>
-
+		<x:Double x:Key="ControlContentThemeFontSize">12</x:Double>
 	</Application.Resources>
     <Application.Styles>
 		<FluentTheme>
@@ -21,6 +21,16 @@
 			<Setter Property="Background" Value="{DynamicResource SystemControlTransientBackgroundBrush}"/>
 			<Setter Property="BorderBrush" Value="{DynamicResource SystemControlTransparentBrush}"/>
 			<Setter Property="BorderThickness" Value="1"/>
+			<Setter Property="FontSize" Value="{StaticResource ControlContentThemeFontSize}"/>
+		</Style>
+
+		<Style Selector="DataGridCell">
+			<Setter Property="FontSize" Value="{StaticResource ControlContentThemeFontSize}"/>
+		</Style>
+
+
+		<Style Selector="DataGridTextColumn">
+			<Setter Property="FontSize" Value="{StaticResource ControlContentThemeFontSize}"/>
 		</Style>
 
 		<Style Selector="MenuItem.ContextMenuSeperator">
@@ -33,6 +43,24 @@
 					</ControlTemplate>
 				</Setter.Value>
 			</Setter>
+		</Style>
+
+		<Style Selector="TextBox">
+			<Setter Property="MinHeight" Value="25"/>
+			<Setter Property="MaxHeight" Value="25"/>
+			<Setter Property="Padding" Value="5,4,0,0"/>
+		</Style>
+
+		<Style Selector="ComboBox">
+			<Setter Property="MinHeight" Value="25"/>
+			<Setter Property="MaxHeight" Value="25"/>
+			<Setter Property="Padding" Value="5,2,0,0"/>
+		</Style>
+
+		<Style Selector="CheckBox">
+			<Setter Property="MinHeight" Value="26"/>
+			<Setter Property="MaxHeight" Value="26"/>
+			<Setter Property="Padding" Value="5,3,0,0"/>
 		</Style>
     </Application.Styles>
 

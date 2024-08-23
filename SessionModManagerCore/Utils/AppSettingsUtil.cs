@@ -32,7 +32,8 @@ namespace SessionMapSwitcherCore.Utils
         AppTheme,
         AllowModConflicts,
         VersionCheckUrl,
-        UpdateOnExit
+        UpdateOnExit,
+        FontSize
     }
 
     public class AppSettingsUtil
