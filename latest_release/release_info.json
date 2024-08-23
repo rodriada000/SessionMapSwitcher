@@ -1,8 +1,8 @@
 {
-    "Version": "3.0.2.0",
-    "WindowsRelease": "https://github.com/rodriada000/SessionMapSwitcher/releases/download/v3.0.2/Session_Mod_Manager_3_0_2_windows.zip",
-    "WindowsFileHash": "43EF9AA93BC4CAD2B048E165F66F00A8",
-    "LinuxRelease": "https://github.com/rodriada000/SessionMapSwitcher/releases/download/v3.0.2/Session_Mod_Manager_3_0_2_linux.zip",
-    "LinuxFileHash": "A23E63DD5025E9704BC7BD99C03F3E06",
-    "VersionNotes": "### Fixes\r\n- v3.0 broke the app updater so this version replaces it with a new one that works on windows and linux.\r\n\r\n### Features\r\n- Option to 'Update on Exit'\r\n- 'Check For Updates' button in Settings page"
+    "Version": "3.0.3.0",
+    "WindowsRelease": "https://github.com/rodriada000/SessionMapSwitcher/releases/download/v3.0.3/Session_Mod_Manager_3_0_3_windows.zip",
+    "WindowsFileHash": "E85CC1B6693812A8185292F327A4CD18",
+    "LinuxRelease": "https://github.com/rodriada000/SessionMapSwitcher/releases/download/v3.0.3/Session_Mod_Manager_3_0_3_linux.zip",
+    "LinuxFileHash": "DBD59524FB4DD0C4DEEBAF42EE07DFDB",
+    "VersionNotes": "### Features\r\n- Added back drag n' drop ability for importing mods and maps\r\n- UI resized/cleaned up\r\n  - ability to set app font size in settings\r\n- ability to right-click installed mod and open the folder of the mod\r\n\r\n### Fixes\r\n- **fix for mod conflict logic so you should be able to enable/disable correctly now**\r\n- fix preview images not loading\r\n"
 }
