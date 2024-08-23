@@ -507,18 +507,17 @@ namespace SessionMapSwitcherCore.Classes
                 return BoolWithMessage.False($"meta data is null");
             }
 
-            if (metaData.FilePaths?.Count == 0)
-            {
-                return BoolWithMessage.False($"List of files to delete is unknown for {metaData.Name}.");
-            }
 
             try
             {
-                BoolWithMessage result = FileUtils.DeleteFiles(metaData.FilePaths);
-
-                if (result.Result == false)
+                if (metaData.FilePaths?.Count > 0)
                 {
-                    return result;
+                    BoolWithMessage result = FileUtils.DeleteFiles(metaData.FilePaths);
+
+                    if (result.Result == false)
+                    {
+                        return result;
+                    }
                 }
 
                 // lastly delete entry from list of installed textures

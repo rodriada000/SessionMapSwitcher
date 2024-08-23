@@ -5,9 +5,12 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
 using NLog;
+using SessionMapSwitcherCore.Classes;
 using SessionModManagerCore.Classes;
 using SessionModManagerCore.ViewModels;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -86,6 +89,23 @@ public partial class TextureReplacerUserControl : UserControl
         if (files != null && files.Count() != 0)
         {
             ViewModel.PathToFile = files.FirstOrDefault().TryGetLocalPath();
+        }
+    }
+
+    private void MenuItem_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (ViewModel.SelectedTexture == null)
+        {
+            return;
+        }
+
+        try
+        {
+            Process.Start(new ProcessStartInfo(ViewModel.SelectedTexture.MetaData.FolderInstallPath) { UseShellExecute = true });
+        }
+        catch (Exception ex)
+        {
+            MessageService.Instance.ShowMessage($"Cannot open folder: {ex.Message}");
         }
     }
 }

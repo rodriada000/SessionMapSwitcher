@@ -70,6 +70,11 @@
 						<DataGridTextColumn IsReadOnly="True" Header="Category"  Binding="{Binding Category}"/>
 						<DataGridCheckBoxColumn Header="Enabled" Binding="{Binding IsEnabled}"/>
 					</DataGrid.Columns>
+					<DataGrid.ContextMenu>
+						<ContextMenu>
+							<MenuItem x:Name="menuOpenModFolder" Header="Open Selected Mod Folder ..."  Click="MenuItem_Click" />
+						</ContextMenu>
+					</DataGrid.ContextMenu>
 				</DataGrid>
 			</Grid>
 
