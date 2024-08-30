@@ -1,8 +1,8 @@
 {
-    "Version": "3.0.4.0",
-    "WindowsRelease": "https://github.com/rodriada000/SessionMapSwitcher/releases/download/v3.0.4/Session_Mod_Manager_3_0_4_windows.zip",
-    "WindowsFileHash": "8CE9070019CC6AC613E963B2D8058FAA",
-    "LinuxRelease": "https://github.com/rodriada000/SessionMapSwitcher/releases/download/v3.0.4/Session_Mod_Manager_3_0_4_linux.zip",
-    "LinuxFileHash": "06F115CE71C95D0050235CBCEA5C1612",
-    "VersionNotes": "### Fixes\r\n- **hopefully fixed the issue with mods not being able to be enabled, disabled, or removed after updating to v3X**\r\n- SMMUpdater updated to v1.0.1 to fix issue on file copy\r\n- fixes for preview thumbnails\r\n\r\n_Note: updater might says it failed to update but it actually succeeds. This is what SMMUpdater v1.0.1 will fix..._"
+  "Version": "3.0.4.0",
+  "WindowsRelease": "https://github.com/rodriada000/SessionMapSwitcher/releases/download/v3.0.4/Session_Mod_Manager_3_0_4_windows.zip",
+  "WindowsFileHash": "8CE9070019CC6AC613E963B2D8058FAA",
+  "LinuxRelease": "https://github.com/rodriada000/SessionMapSwitcher/releases/download/v3.0.4/Session_Mod_Manager_3_0_4_linux.zip",
+  "LinuxFileHash": "06F115CE71C95D0050235CBCEA5C1612",
+  "VersionNotes": "### Fixes\r\n- **hopefully fixed the issue with mods not being able to be enabled, disabled, or removed after updating to v3X**\r\n- SMMUpdater updated to v1.0.1 to fix issue on file copy\r\n- fixes for preview thumbnails\r\n\r\n\r\n\r\nNote: updater might says it failed to update but it actually succeeds. This is what SMMUpdater v1.0.1 will fix..."
 }
