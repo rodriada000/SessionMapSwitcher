@@ -1005,7 +1005,12 @@ namespace SessionMapSwitcherCore.ViewModels
                 string pathToThumbnail = Path.Combine(AbsolutePathToThumbnails, SelectedAsset.Asset.IDWithoutExtension);
                 isDownloadingImage = CurrentDownloads.Any(d => d.SaveFilePath.Equals(pathToThumbnail));
 
-                if (!isDownloadingImage)
+                if (ImageCache.HasCustomFilePath(pathToThumbnail))
+                {
+                    pathToThumbnail = ImageCache.Instance.CacheEntries[pathToThumbnail].FilePath;
+                }
+
+                if (!isDownloadingImage && File.Exists(pathToThumbnail))
                 {
                     using (FileStream stream = File.Open(pathToThumbnail, FileMode.Open, FileAccess.Read, FileShare.Read))
                     {
@@ -1073,7 +1078,7 @@ namespace SessionMapSwitcherCore.ViewModels
         {
             string pathToThumbnail = Path.Combine(AbsolutePathToThumbnails, asset.Asset.IDWithoutExtension);
 
-            if (ImageCache.IsOutOfDate(pathToThumbnail) || ImageCache.IsSourceUrlDifferent(pathToThumbnail, asset.Asset.PreviewImage))
+            if (!ImageCache.HasCustomFilePath(pathToThumbnail) && (ImageCache.IsOutOfDate(pathToThumbnail) || ImageCache.IsSourceUrlDifferent(pathToThumbnail, asset.Asset.PreviewImage)))
             {
                 ImageCache.AddOrUpdate(pathToThumbnail, asset.Asset.PreviewImage);
 
@@ -1286,6 +1291,7 @@ namespace SessionMapSwitcherCore.ViewModels
                     PathToFile = pathToDownload,
                     AssetToInstall = assetToInstall.Asset
                 };
+                replacerViewModel.LoadInstalledTextures();
                 replacerViewModel.MessageChanged += TextureReplacerViewModel_MessageChanged;
                 replacerViewModel.ImportTextureMod();
                 replacerViewModel.MessageChanged -= TextureReplacerViewModel_MessageChanged;

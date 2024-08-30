@@ -133,9 +133,19 @@ namespace SessionModManagerCore.Classes
                         return BoolWithMessage.False($"Aborting update. The downloaded file checksum does not match.\nexpected checksum: {expectedHash}\nactual checksum: {hash}");
                     }
 
-
                     // extract files to here
                     FileUtils.ExtractCompressedFile(PathToLatestZip, downloadedFile.Directory.FullName, ExtractProgress);
+
+                    // copy SMMUpdater at this point because it can't copy itself when it's running
+                    string smmUpdaterDir = Path.Combine(downloadedFile.Directory.FullName, "Session Mod Manager", "releases");
+                    if (Directory.Exists(smmUpdaterDir))
+                    {
+                        foreach (var file in Directory.GetFiles(smmUpdaterDir))
+                        {
+                            var fileInfo = new FileInfo(file);
+                            File.Copy(file, Path.Combine(SessionPath.ToApplicationRoot, "releases", fileInfo.Name), overwrite: true);
+                        }
+                    }
                 }
             }
             catch (Exception e)

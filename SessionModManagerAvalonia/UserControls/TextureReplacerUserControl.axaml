@@ -72,7 +72,8 @@
 					</DataGrid.Columns>
 					<DataGrid.ContextMenu>
 						<ContextMenu>
-							<MenuItem x:Name="menuOpenModFolder" Header="Open Selected Mod Folder ..."  Click="MenuItem_Click" />
+							<MenuItem x:Name="menuOpenModFolder" Header="{Binding MenuItemOpenSelectedText}"  Click="MenuItem_Click" />
+							<MenuItem x:Name="menuOpenInstalledModFolder" Header="Open Installed Mods Folder ..."  Click="MenuItemInstalledFolder_Click" />
 						</ContextMenu>
 					</DataGrid.ContextMenu>
 				</DataGrid>

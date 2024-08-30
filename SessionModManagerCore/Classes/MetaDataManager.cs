@@ -401,7 +401,7 @@ namespace SessionMapSwitcherCore.Classes
             {
                 CreateMetaDataFolder();
 
-                metaData.SchemaVersion = "v1";
+                metaData.SchemaVersion = "v2";
                 string jsonToSave = JsonConvert.SerializeObject(metaData, Formatting.Indented);
 
                 File.WriteAllText(PathToInstalledTextureFile, jsonToSave);

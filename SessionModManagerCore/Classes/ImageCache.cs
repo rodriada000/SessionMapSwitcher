@@ -62,7 +62,7 @@ namespace SessionModManagerCore.Classes
                 return true;
             }
 
-            if (!File.Exists(fileName))
+            if (!File.Exists(fileName) && !HasCustomFilePath(fileName))
             {
                 return true;
             }
@@ -153,6 +153,20 @@ namespace SessionModManagerCore.Classes
             }
         }
 
+        /// <summary>
+        /// returns true if image cache is pointing to installed mod preview_thumbnail file
+        /// </summary>
+        /// <param name="pathToThumbnail"></param>
+        /// <returns></returns>
+        internal static bool HasCustomFilePath(string pathToThumbnail)
+        {
+            if (!Instance.CacheEntries.ContainsKey(pathToThumbnail))
+            {
+                return false;
+            }
+
+            return !Instance.CacheEntries[pathToThumbnail].FilePath.Equals(pathToThumbnail, StringComparison.InvariantCultureIgnoreCase) && File.Exists(Instance.CacheEntries[pathToThumbnail].FilePath);
+        }
     }
 
 

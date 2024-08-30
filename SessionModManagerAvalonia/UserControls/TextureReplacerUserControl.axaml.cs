@@ -11,6 +11,7 @@ using SessionModManagerCore.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -101,6 +102,12 @@ public partial class TextureReplacerUserControl : UserControl
 
         try
         {
+            if (!Directory.Exists(ViewModel.SelectedTexture.MetaData.FolderInstallPath))
+            {
+                MessageService.Instance.ShowMessage($"Cannot open folder because it is missing. You may need to redownload the mod.");
+                return;
+            }
+
             Process.Start(new ProcessStartInfo(ViewModel.SelectedTexture.MetaData.FolderInstallPath) { UseShellExecute = true });
         }
         catch (Exception ex)
@@ -108,4 +115,25 @@ public partial class TextureReplacerUserControl : UserControl
             MessageService.Instance.ShowMessage($"Cannot open folder: {ex.Message}");
         }
     }
+
+    private void MenuItemInstalledFolder_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        try
+        {
+            if (!Directory.Exists(SessionPath.PathToInstalledModsFolder))
+            {
+                MessageService.Instance.ShowMessage($"Cannot open folder because it is missing. there may be no mods installed.");
+                return;
+            }
+
+            Process.Start(new ProcessStartInfo(SessionPath.PathToInstalledModsFolder) { UseShellExecute = true });
+        }
+        catch (Exception ex)
+        {
+            MessageService.Instance.ShowMessage($"Cannot open folder: {ex.Message}");
+        }
+    }
+
+
+    
 }

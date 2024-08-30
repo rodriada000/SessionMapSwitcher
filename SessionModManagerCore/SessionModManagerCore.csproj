@@ -6,9 +6,9 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <DocumentationFile>
     </DocumentationFile>
-    <Version>1.11.3</Version>
-    <AssemblyVersion>1.11.3.0</AssemblyVersion>
-    <FileVersion>1.11.3.0</FileVersion>
+    <Version>1.11.4</Version>
+    <AssemblyVersion>1.11.4.0</AssemblyVersion>
+    <FileVersion>1.11.4.0</FileVersion>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="ViewModels\DownloadableMap.cs" />

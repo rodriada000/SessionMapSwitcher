@@ -22,7 +22,7 @@ bool GetNoLaunchArg()
 /// KEEP THIS REAL SIMPLE
 /// assuming zip file is already downloaded named "latest_smm.zip" and extracted 
 
-List<string> excludedFiles = new List<string>() { "appsettings.json" };
+List<string> excludedFiles = new List<string>() { "appsettings.json", "SMMUpdater.exe", "SMMUpdater.dll", "SMMUpdater" };
 string pathToReleaseZip = Path.Combine(GetApplicationRoot(), "latest_smm.zip");
 
 DirectoryInfo? appDir = new DirectoryInfo(GetApplicationRoot());
@@ -30,7 +30,7 @@ DirectoryInfo? parentDir = appDir.Parent;
 
 IProgress<double> progress = new Progress<double>(percent => Console.Write($"."));
 
-Console.WriteLine("------------- SMM Updater -------------");
+Console.WriteLine($"------------- SMM Updater v{Assembly.GetEntryAssembly().GetName().Version} -------------");
 Console.WriteLine($"Updater Folder: {GetApplicationRoot()}");
 Console.WriteLine($"SMM Folder: {parentDir?.FullName}");
 Console.WriteLine("---------------------------------------");

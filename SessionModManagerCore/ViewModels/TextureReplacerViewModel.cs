@@ -53,6 +53,7 @@ namespace SessionModManagerCore.ViewModels
                 _selectedTexture = value;
                 GetSelectedPreviewImageAsync();
                 NotifyPropertyChanged();
+                NotifyPropertyChanged(nameof(MenuItemOpenSelectedText));
                 IsShowingConflicts = false;
                 FileConflicts = null;
             }
@@ -97,6 +98,17 @@ namespace SessionModManagerCore.ViewModels
                 NotifyPropertyChanged();
             }
         }
+
+        public string MenuItemOpenSelectedText
+        {
+            get
+            {
+                string shortName = SelectedTexture?.TextureName?.Length > 20 ? SelectedTexture?.TextureName.Substring(0, 20) : SelectedTexture?.TextureName;
+                return SelectedTexture == null ? "Open Selected Mod Folder ..." : $"Open Mod Folder: {shortName} ...";
+            }
+        }
+
+
 
         public string PathToTempFolder
         {
@@ -267,16 +279,17 @@ namespace SessionModManagerCore.ViewModels
 
             var metaData = CreateNewTextureMetaData(pathToFile, pathToMod, assetFromStore);
 
-            if (!GetConflicts(metaData).Any() || AllowModConflicts)
+            var conflicts = GetConflicts(metaData);
+            if (conflicts.Count != 0 && !AllowModConflicts)
+            {
+                MessageChanged?.Invoke($"finished importing mod {new FileInfo(pathToFile).NameWithoutExtension()}, but not enabled due to conflicts!");
+                MetaDataManager.SaveTextureMetaData(metaData);
+            }
+            else
             {
                 // enable mod if no conflicts or allow conflicts
                 CopyModToSession(metaData);
                 MessageChanged?.Invoke($"Successfully finished importing mod {new FileInfo(pathToFile).NameWithoutExtension()}!");
-            }
-            else
-            {
-                MessageChanged?.Invoke($"finished importing mod {new FileInfo(pathToFile).NameWithoutExtension()}, but not enabled due to conflicts!");
-                MetaDataManager.SaveTextureMetaData(metaData);
             }
 
             AssetToInstall = null; // texture asset replaced so nullify it since done with object
@@ -290,6 +303,11 @@ namespace SessionModManagerCore.ViewModels
             List<string> foundTextures = new List<string>();
 
             string rootFolder = metaData.FolderInstallPath;
+
+            if (!Directory.Exists(rootFolder))
+            {
+                return conflicts; // directory doesn't exist any more so no files to compare to
+            }
 
             // change root folder to be where 'Customization' folder starts in unzipped files
             foreach (string dir in Directory.GetDirectories(rootFolder, "*", SearchOption.AllDirectories))
@@ -419,7 +437,15 @@ namespace SessionModManagerCore.ViewModels
             {
                 if (File.Exists(asset.PathToDownloadedImage))
                 {
-                    newTextureMetaData.PathToImage = asset.PathToDownloadedImage;
+                    // copy over asset store image as preview image and use that instead
+                    var fileInfo = new FileInfo(asset.PathToDownloadedImage);
+                    newTextureMetaData.PathToImage = Path.Combine(rootFolder, "preview_thumbnail");
+                    File.Copy(asset.PathToDownloadedImage, newTextureMetaData.PathToImage, overwrite: true);
+                    File.Delete(asset.PathToDownloadedImage);
+                    if (ImageCache.Instance.CacheEntries.ContainsKey(asset.PathToDownloadedImage))
+                    {
+                        ImageCache.Instance.CacheEntries[asset.PathToDownloadedImage].FilePath = newTextureMetaData.PathToImage;
+                    }
                 }
             }
 
@@ -439,13 +465,20 @@ namespace SessionModManagerCore.ViewModels
             return newTextureMetaData;
         }
 
-        private void CopyModToSession(TextureMetaData metaData)
+        private bool CopyModToSession(TextureMetaData metaData)
         {
             FileInfo textureFileInfo = null;
             metaData.FilePaths = new List<string>();
             List<string> foundTextures = new List<string>();
 
             string rootFolder = metaData.FolderInstallPath;
+
+            if (!Directory.Exists(rootFolder))
+            {
+                Logger.Warn($"... {metaData.AssetName} - FolderInstallPath does not exist {rootFolder}");
+                MessageChanged?.Invoke($"Failed to enable because mod folder is missing. You may need to re-install the mod.");
+                return false;
+            }
 
             // change root folder to be where 'Customization' folder starts in unzipped files
             foreach (string dir in Directory.GetDirectories(rootFolder, "*", SearchOption.AllDirectories))
@@ -465,8 +498,8 @@ namespace SessionModManagerCore.ViewModels
             if (foundTextureName == "" && !hasPakFile)
             {
                 Logger.Warn("... failed to find a .uasset or .pak file");
-                MessageChanged?.Invoke($"Failed to find a .uasset or .pak file inside the extracted folders.");
-                return;
+                MessageChanged?.Invoke($"Failed to find a .uasset or .pak file inside the extracted folders. You may need to re-install the mod.");
+                return false;
             }
 
             while (foundTextureName != "")
@@ -527,7 +560,7 @@ namespace SessionModManagerCore.ViewModels
                 {
                     Logger.Error(e);
                     MessageChanged?.Invoke($"Failed to copy mod files: {e.Message}");
-                    return;
+                    return false;
                 }
 
 
@@ -544,42 +577,19 @@ namespace SessionModManagerCore.ViewModels
                     List<string> otherFilesCopied = CopyOtherSubfoldersInDir(rootFolder, filesToExclude: foundTextures);
                     metaData.FilePaths.AddRange(otherFilesCopied);
                 }
-
-                if (string.IsNullOrWhiteSpace(metaData.PathToImage))
-                {
-                    // check unzipped files for a preview img and copy over
-                    foreach (string filePath in Directory.GetFiles(rootFolder, "*", SearchOption.AllDirectories))
-                    {
-                        if (filePath.Contains("preview."))
-                        {
-                            string targetPath = Path.Combine(SessionPath.FullPathToMetaImagesFolder, metaData.AssetNameWithoutExtension);
-
-                            if (!Directory.Exists(SessionPath.FullPathToMetaImagesFolder))
-                            {
-                                Directory.CreateDirectory(SessionPath.FullPathToMetaImagesFolder);
-                            }
-
-                            File.Copy(filePath, targetPath, true);
-
-                            metaData.PathToImage = targetPath;
-                            metaData.FilePaths.Add(targetPath);
-                            break;
-                        }
-                    }
-                }
             }
             catch (Exception e)
             {
                 Logger.Error(e);
                 MessageChanged?.Invoke($"Failed to copy mod files: {e.Message}");
-                return;
+                return false;
             }
 
             metaData.Enabled = true;
             MetaDataManager.SaveTextureMetaData(metaData);
 
             MessageChanged?.Invoke($"Successfully enabled mod {metaData.AssetNameWithoutExtension}!");
-
+            return true;
         }
 
 
@@ -832,7 +842,11 @@ namespace SessionModManagerCore.ViewModels
             InstalledTexturesMetaData installedMetaData = MetaDataManager.LoadTextureMetaData();
 
             // convert old meta data file to new version to allow for enabling/disabling mods
-            if (string.IsNullOrWhiteSpace(installedMetaData.SchemaVersion) || installedMetaData.SchemaVersion != "v1")
+            if (installedMetaData.SchemaVersion == "v1")
+            {
+                ConvertToV2Schema(ref installedMetaData);
+            }
+            else if (string.IsNullOrWhiteSpace(installedMetaData.SchemaVersion))
             {
                 ConvertToV1Schema(ref installedMetaData);
             }
@@ -854,7 +868,7 @@ namespace SessionModManagerCore.ViewModels
             }
 
 
-            InstalledTextures.ForEach(t => t.IsEnabledChanged -=  EnableOrDisableMod);
+            InstalledTextures.ForEach(t => t.IsEnabledChanged -= EnableOrDisableMod);
             InstalledTextures = textures.OrderBy(t => t.TextureName).ToList();
             SetMissingImageFilePaths();
 
@@ -876,27 +890,7 @@ namespace SessionModManagerCore.ViewModels
                 foreach (TextureMetaData item in installedMetaData.InstalledTextures)
                 {
                     item.Enabled = true;
-                    item.FolderInstallPath = Path.Combine(SessionPath.PathToInstalledModsFolder, item.AssetNameWithoutExtension);
-
-                    if (!Directory.Exists(item.FolderInstallPath))
-                    {
-                        Directory.CreateDirectory(item.FolderInstallPath);
-                    }
-
-                    foreach (var file in item.FilePaths)
-                    {
-                        int idx = file.IndexOf("Customization");
-                        string destPath = file.Substring(idx, file.Length - idx);
-                        destPath = Path.Combine(item.FolderInstallPath, destPath);
-
-                        FileInfo fileInfo = new FileInfo(destPath);
-                        if (!fileInfo.Directory.Exists)
-                        {
-                            fileInfo.Directory.Create();
-                        }
-
-                        File.Copy(file, destPath, overwrite: true);
-                    }
+                    CopyFilesToInstalledModsFolder(item);
                 }
 
                 MetaDataManager.SaveTextureMetaData(installedMetaData);
@@ -904,6 +898,58 @@ namespace SessionModManagerCore.ViewModels
             catch (Exception ex)
             {
                 Logger.Error(ex, "Failed to convert installed_textures.json to v1 Schema");
+            }
+        }
+
+        private static void CopyFilesToInstalledModsFolder(TextureMetaData item)
+        {
+            item.FolderInstallPath = Path.Combine(SessionPath.PathToInstalledModsFolder, item.AssetNameWithoutExtension);
+
+            if (!Directory.Exists(item.FolderInstallPath))
+            {
+                Directory.CreateDirectory(item.FolderInstallPath);
+            }
+
+            foreach (var file in item.FilePaths)
+            {
+                int idx = file.IndexOf("Customization");
+
+                if (idx == -1 || !File.Exists(file))
+                {
+                    continue; //skip file; it may have been deleted manually
+                }
+
+                string destPath = file.Substring(idx, file.Length - idx);
+                destPath = Path.Combine(item.FolderInstallPath, destPath);
+
+                FileInfo fileInfo = new FileInfo(destPath);
+                if (!fileInfo.Directory.Exists)
+                {
+                    fileInfo.Directory.Create();
+                }
+
+                File.Copy(file, destPath, overwrite: true);
+            }
+        }
+
+        /// <summary>
+        /// same as v1 conversion but doesnt enable mod
+        /// </summary>
+        /// <param name="installedMetaData"></param>
+        private void ConvertToV2Schema(ref InstalledTexturesMetaData installedMetaData)
+        {
+            try
+            {
+                foreach (TextureMetaData item in installedMetaData.InstalledTextures)
+                {
+                    CopyFilesToInstalledModsFolder(item);
+                }
+
+                MetaDataManager.SaveTextureMetaData(installedMetaData);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Failed to convert installed_textures.json to v2 Schema");
             }
         }
 
@@ -924,7 +970,10 @@ namespace SessionModManagerCore.ViewModels
                     FileConflicts = null;
                     IsShowingConflicts = false;
                     // copy files to game
-                    CopyModToSession(metaData);                    
+                    if (!CopyModToSession(metaData))
+                    {
+                        SelectedTexture.IsEnabled = false; // failed to copy so leave it as not enabled
+                    }
                 }
             }
             else if (metaData.Enabled && !isEnabled)
@@ -939,6 +988,7 @@ namespace SessionModManagerCore.ViewModels
             {
                 string pathToImage = Path.Combine(AssetStoreViewModel.AbsolutePathToThumbnails, item.MetaData.AssetNameWithoutExtension);
                 bool hasChanged = false;
+
 
                 if (!string.IsNullOrWhiteSpace(item.MetaData.PathToImage) && !File.Exists(item.MetaData.PathToImage))
                 {
@@ -1026,8 +1076,7 @@ namespace SessionModManagerCore.ViewModels
 
                 if (!deleteResult.Result)
                 {
-                    MessageService.Instance.ShowMessage($"Failed to remove mod: {deleteResult.Message}");
-                    return;
+                    Logger.Warn($"Failed to delete mod files: {deleteResult.Message}");
                 }
             }
 
@@ -1041,7 +1090,10 @@ namespace SessionModManagerCore.ViewModels
             // delete downloaded files
             try
             {
-                Directory.Delete(modToRemove.MetaData.FolderInstallPath, true);
+                if (Directory.Exists(modToRemove.MetaData.FolderInstallPath))
+                {
+                    Directory.Delete(modToRemove.MetaData.FolderInstallPath, true);
+                }
 
                 InstalledTexturesMetaData currentlyInstalledTextures = MetaDataManager.LoadTextureMetaData();
                 currentlyInstalledTextures.Remove(modToRemove.MetaData);

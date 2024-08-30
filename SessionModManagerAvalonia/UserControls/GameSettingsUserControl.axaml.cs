@@ -37,13 +37,18 @@ public partial class GameSettingsUserControl : UserControl
             cboTheme.SelectedItem = cboTheme?.Items[themeOptions.IndexOf(savedTheme)];
         }
 
+        var sizeOptions = cboFont?.Items?.Select(i => (i as ComboBoxItem)?.Content).ToList();
+
         if (double.TryParse(AppSettingsUtil.GetAppSetting(SettingKey.FontSize), out double size))
         {
-            var sizeOptions = cboFont?.Items?.Select(i => (i as ComboBoxItem)?.Content).ToList();
             if (sizeOptions.IndexOf(size.ToString()) >= 0)
             {
                 cboFont.SelectedItem = cboFont?.Items[sizeOptions.IndexOf(size.ToString())];
             }
+        } 
+        else
+        {
+            cboFont.SelectedItem = cboFont?.Items[sizeOptions.IndexOf("12")]; // default font is 12
         }
     }
 
