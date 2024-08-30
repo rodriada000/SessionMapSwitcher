@@ -1,8 +1,8 @@
 {
-    "Version": "3.0.3.0",
-    "WindowsRelease": "https://github.com/rodriada000/SessionMapSwitcher/releases/download/v3.0.3/Session_Mod_Manager_3_0_3_windows.zip",
-    "WindowsFileHash": "E85CC1B6693812A8185292F327A4CD18",
-    "LinuxRelease": "https://github.com/rodriada000/SessionMapSwitcher/releases/download/v3.0.3/Session_Mod_Manager_3_0_3_linux.zip",
-    "LinuxFileHash": "DBD59524FB4DD0C4DEEBAF42EE07DFDB",
-    "VersionNotes": "### Features\r\n- Added back drag n' drop ability for importing mods and maps\r\n- UI resized/cleaned up\r\n  - ability to set app font size in settings\r\n- ability to right-click installed mod and open the folder of the mod\r\n\r\n### Fixes\r\n- **fix for mod conflict logic so you should be able to enable/disable correctly now**\r\n- fix preview images not loading\r\n"
+    "Version": "3.0.4.0",
+    "WindowsRelease": "https://github.com/rodriada000/SessionMapSwitcher/releases/download/v3.0.4/Session_Mod_Manager_3_0_4_windows.zip",
+    "WindowsFileHash": "8CE9070019CC6AC613E963B2D8058FAA",
+    "LinuxRelease": "https://github.com/rodriada000/SessionMapSwitcher/releases/download/v3.0.4/Session_Mod_Manager_3_0_4_linux.zip",
+    "LinuxFileHash": "06F115CE71C95D0050235CBCEA5C1612",
+    "VersionNotes": "### Fixes\r\n- **hopefully fixed the issue with mods not being able to be enabled, disabled, or removed after updating to v3X**\r\n- SMMUpdater updated to v1.0.1 to fix issue on file copy\r\n- fixes for preview thumbnails\r\n"
 }
