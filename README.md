@@ -5,12 +5,8 @@
 [![GitHub contributors](https://img.shields.io/github/contributors/rodriada000/SessionMapSwitcher)](https://GitHub.com/rodriada000/SessionMapSwitcher/graphs/contributors/)
 [![GitHub issues](https://img.shields.io/github/issues/rodriada000/SessionMapSwitcher)](https://GitHub.com/rodriada000/SessionMapSwitcher/issues/)
 
-**Download Latest Release**
-| OS    | Download |
-| -------- | ------- |
-| Linux x64 | [![GitHub release](https://img.shields.io/github/release/rodriada000/SessionMapSwitcher?label=Linux)](https://github.com/rodriada000/SessionMapSwitcher/releases/latest/download/Session.Mod.Manager_3_0_0_linux.zip)
-| Windows x86/x64 | [![GitHub release](https://img.shields.io/github/release/rodriada000/SessionMapSwitcher?label=Windows)](https://github.com/rodriada000/SessionMapSwitcher/releases/latest/download/Session_Mod_Manager_3_0_0_windows.zip)
- 
+**[![GitHub release](https://img.shields.io/github/release/rodriada000/SessionMapSwitcher?label=Download Latest Release)](https://github.com/rodriada000/SessionMapSwitcher/releases/latest)**
+
 ----
 
 This is a Desktop application to easily mod Session and install custom maps and textures all in one tool. Easily switch between maps in-game without having to restart and download custom textures directly in the app.
