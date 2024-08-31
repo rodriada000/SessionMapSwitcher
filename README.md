@@ -1,11 +1,13 @@
-# <img src="https://github.com/rodriada000/SessionMapSwitcher/blob/master/docs/images/SessionMapsIcon.png?raw=true" width="10%"> Session Mod Manager [![GitHub release](https://img.shields.io/github/release/rodriada000/SessionMapSwitcher)](https://GitHub.com/rodriada000/SessionMapSwitcher/releases/)
+# <img src="https://github.com/rodriada000/SessionMapSwitcher/blob/master/docs/images/SessionMapsIcon.png?raw=true" width="10%"> Session Mod Manager [![GitHub release](https://img.shields.io/github/release/rodriada000/SessionMapSwitcher?label=)](https://GitHub.com/rodriada000/SessionMapSwitcher/releases/)
 >... Previously known as Session Map Switcher
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GitHub contributors](https://img.shields.io/github/contributors/rodriada000/SessionMapSwitcher)](https://GitHub.com/rodriada000/SessionMapSwitcher/graphs/contributors/)
 [![GitHub issues](https://img.shields.io/github/issues/rodriada000/SessionMapSwitcher)](https://GitHub.com/rodriada000/SessionMapSwitcher/issues/)
 
-**[![GitHub release](https://img.shields.io/github/release/rodriada000/SessionMapSwitcher?label=Download Latest Release)](https://github.com/rodriada000/SessionMapSwitcher/releases/latest)**
+<br>
+<img alt="GitHub Release" height="25px" src="https://img.shields.io/github/v/release/rodriada000/SessionMapSwitcher?display_name=release&style=flat-square&logoSize=50&label=Click%20to%20Download%20Latest%20Release">
+
 
 ----
 
