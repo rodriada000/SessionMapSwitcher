@@ -42,11 +42,6 @@
 							
 						</Grid>
 						
-						<CheckBox Content="Launch using Steam"
-                                          x:Name="chkSteamLaunch"
-                                          HorizontalAlignment="Left"
-                                          IsChecked="{Binding SteamLaunchIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='True'}"
-                                          Margin="10,5,10,0"/>
 
 						<CheckBox Content="Skip Intro Movie"
                                           x:Name="chkSkipMovie"
@@ -58,7 +53,24 @@
                                           HorizontalAlignment="Left"
                                           IsChecked="{Binding DBufferIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='True'}"
                                           Margin="10,0,10,0"/>
-
+						
+						<Label Margin="0,15,0,0" FontWeight="Light" FontSize="18">Launch Settings</Label>
+						<Grid ColumnDefinitions="auto,0.5*" RowDefinitions="auto,auto,auto">
+							<RadioButton Content="Launch via Steam" Margin="10,0,0,0" IsChecked="{Binding SteamLaunchIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+							<RadioButton Grid.Row="1"  Content="Launch via Epic Games Launcher" Margin="10,0,0,0" IsChecked="{Binding EpicLaunchIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+							<RadioButton Grid.Row="2" 
+										 Content="Launch via SessionGame-Win64-Shipping.exe"
+										 ToolTip.Tip="Use this to bypass using Steam or Epic Games Launcher"
+										 Margin="10,0,0,0" IsChecked="{Binding ExeLaunchIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+							<TextBox Text="{Binding ExeLaunchOptions, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+									 IsVisible="{Binding ExeLaunchIsChecked}"
+									 Grid.Column="1"
+									 Grid.Row="2"
+									 Margin="5,0,10,0"
+									 MaxWidth="400"
+									 MinWidth="210"
+									 HorizontalAlignment="Left" Watermark="Custom Launch Options e.g. -d3d12"/>
+						</Grid>
 
 						<Label Margin="0,15,0,0" FontWeight="Light" FontSize="18">Video Settings</Label>
 						<Grid Margin="10,0,10,0">

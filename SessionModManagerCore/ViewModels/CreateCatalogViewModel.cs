@@ -454,7 +454,7 @@ namespace SessionModManagerCore.ViewModels
             assetToUpdate.Author = assetToUpdate.Asset.Author;
             assetToUpdate.AssetCategory = assetToUpdate.Asset.Category;
             assetToUpdate.Version = assetToUpdate.Asset.Version.ToString();
-            assetToUpdate.UpdatedDate = assetToUpdate.Asset.UpdatedDate.ToLocalTime().ToString(AssetViewModel.dateTimeFormat);
+            assetToUpdate.UpdatedDate_dt = assetToUpdate.Asset.UpdatedDate;
             assetToUpdate.Description = assetToUpdate.Asset.Description;
 
             return BoolWithMessage.True();

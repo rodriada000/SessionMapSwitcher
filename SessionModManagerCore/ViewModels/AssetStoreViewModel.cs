@@ -154,7 +154,7 @@ namespace SessionMapSwitcherCore.ViewModels
                     return "Select Categories ...";
                 }
 
-                return sb.Remove(0,1).ToString();
+                return sb.Remove(0, 1).ToString();
             }
         }
 
@@ -530,7 +530,7 @@ namespace SessionMapSwitcherCore.ViewModels
                     }
                     else
                     {
-                        _authorToFilterByIndex = value;
+                    _authorToFilterByIndex = value;
                     }
 
                     RefreshFilteredAssetList();
@@ -725,8 +725,22 @@ namespace SessionMapSwitcherCore.ViewModels
         {
             IsInstallingAsset = false;
             IsDownloadingAllImages = false;
-            DisplayMaps = true;
             SetSelectedCategoriesFromAppSettings();
+
+            if (!_displayMaps
+            && !_displayDecks
+            && !_displayGriptapes
+            && !_displayTrucks
+            && !_displayWheels
+            && !_displayHats
+            && !_displayShirts
+            && !_displayPants
+            && !_displayShoes
+            && !_displayMeshes
+            && !_displayCharacters)
+            {
+                DisplayMaps = true; // atleast have maps checked if nothing else is
+            }
 
             if (AppSettingsUtil.GetAppSetting(SettingKey.DeleteDownloadAfterAssetInstall) == "")
             {
@@ -742,7 +756,7 @@ namespace SessionMapSwitcherCore.ViewModels
 
             _catalogCache = GetCurrentCatalog();
             ReloadAllAssets();
-            CheckForCatalogUpdatesAsync(clearCache: false);
+            CheckForCatalogUpdatesAsync();
         }
 
         public void RefreshFilteredAssetList()
@@ -820,7 +834,6 @@ namespace SessionMapSwitcherCore.ViewModels
         /// </summary>
         private void RefreshAuthorList()
         {
-            int prevIndex = _authorToFilterByIndex;
             List<AuthorDropdownViewModel> newAuthorList = new List<AuthorDropdownViewModel>();
 
             // use GroupBy to get count of assets per author
@@ -835,15 +848,7 @@ namespace SessionMapSwitcherCore.ViewModels
 
 
             AuthorList = new ObservableCollection<AuthorDropdownViewModel>(newAuthorList);
-
-            if (prevIndex > 0)
-            {
-                AuthorToFilterByIndex = prevIndex;
-            }
-            else
-            {
-                AuthorToFilterByIndex = 0;
-            }
+            AuthorToFilterByIndex = 0;
         }
 
         public void RefreshPreviewForSelected()

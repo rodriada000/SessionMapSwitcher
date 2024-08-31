@@ -62,6 +62,12 @@
 			<Setter Property="MaxHeight" Value="26"/>
 			<Setter Property="Padding" Value="5,3,0,0"/>
 		</Style>
+
+		<Style Selector="RadioButton">
+			<Setter Property="MinHeight" Value="26"/>
+			<Setter Property="MaxHeight" Value="26"/>
+			<Setter Property="Padding" Value="5,3,0,0"/>
+		</Style>
     </Application.Styles>
 
 </Application>

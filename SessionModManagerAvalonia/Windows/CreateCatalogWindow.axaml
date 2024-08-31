@@ -68,7 +68,7 @@
 					<DataGridTextColumn Header="Author" Width="Auto" Binding="{Binding Author}"/>
 					<DataGridTextColumn Header="Category" Width="Auto" Binding="{Binding Category}"/>
 					<DataGridTextColumn Header="Ver." Width="45" Binding="{Binding Version}"/>
-					<DataGridTextColumn Header="Updated Date" Width="Auto" Binding="{Binding UpdatedDate}"/>
+					<DataGridTextColumn Header="Updated Date" Width="Auto" Binding="{Binding UpdatedDate}" SortMemberPath="UpdatedDate_dt"/>
 			</DataGrid.Columns>
 			<DataGrid.ContextMenu>
 				<ContextMenu>

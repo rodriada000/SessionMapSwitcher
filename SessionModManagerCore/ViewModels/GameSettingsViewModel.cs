@@ -28,6 +28,9 @@ namespace SessionModManagerCore.ViewModels
         private string _fullScreenMode;
         private bool _isVsyncEnabled;
         private bool _steamLaunchIsChecked;
+        private bool _epicLaunchIsChecked;
+        private bool _exeLaunchIsChecked;
+        private string _currencyAmountText;
 
         public string ShadowQualityText
         {
@@ -224,8 +227,71 @@ namespace SessionModManagerCore.ViewModels
                 if (value != _steamLaunchIsChecked)
                 {
                     _steamLaunchIsChecked = value;
+
+                    if (_steamLaunchIsChecked)
+                    {
+                        AppSettingsUtil.AddOrUpdateAppSettings(SettingKey.LaunchVia, "steam");
+                    }
                     NotifyPropertyChanged();
-                    AppSettingsUtil.AddOrUpdateAppSettings(SettingKey.LaunchViaSteam, _steamLaunchIsChecked.ToString());
+                }
+            }
+        }
+
+        public bool EpicLaunchIsChecked
+        {
+            get
+            {
+                return _epicLaunchIsChecked;
+            }
+            set
+            {
+                if (value != _epicLaunchIsChecked)
+                {
+                    _epicLaunchIsChecked = value;
+
+                    if (_epicLaunchIsChecked)
+                    {
+                        AppSettingsUtil.AddOrUpdateAppSettings(SettingKey.LaunchVia, "epic");
+                    }
+                    NotifyPropertyChanged();
+                }
+
+            }
+        }
+
+        public bool ExeLaunchIsChecked
+        {
+            get
+            {
+                return _exeLaunchIsChecked;
+            }
+            set
+            {
+                if (value != _exeLaunchIsChecked)
+                {
+                    _exeLaunchIsChecked = value;
+
+                    if (_exeLaunchIsChecked)
+                    {
+                        AppSettingsUtil.AddOrUpdateAppSettings(SettingKey.LaunchVia, "exe");
+                    }
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public string ExeLaunchOptions
+        {
+            get
+            {
+                return _exeLaunchOptions;
+            }
+            set
+            {
+                if (value != _exeLaunchOptions)
+                {
+                    _exeLaunchOptions = value;
+                    NotifyPropertyChanged();
                 }
 
             }
@@ -291,7 +357,7 @@ namespace SessionModManagerCore.ViewModels
         }
 
         private List<string> _fullscreenDropdownOptions;
-        private string _currencyAmountText;
+        private string _exeLaunchOptions;
 
         public List<string> FullscreenDropdownOptions
         {
@@ -328,9 +394,17 @@ namespace SessionModManagerCore.ViewModels
             ObjectCountText = GameSettingsManager.ObjectCount.ToString();
             SkipMovieIsChecked = GameSettingsManager.SkipIntroMovie;
             DBufferIsChecked = GameSettingsManager.EnableDBuffer;
-            SteamLaunchIsChecked = AppSettingsUtil.GetAppSetting(SettingKey.LaunchViaSteam).Equals("true", StringComparison.OrdinalIgnoreCase);
 
-            ShadowQualityText = ((VideoSettingsOptions) GameSettingsManager.ShadowQuality).ToString();
+            string launchOption = AppSettingsUtil.GetAppSetting(SettingKey.LaunchVia)?.ToLower();
+
+            SteamLaunchIsChecked = string.IsNullOrEmpty(launchOption) || launchOption == "steam";
+            EpicLaunchIsChecked = launchOption == "epic";
+            ExeLaunchIsChecked = launchOption == "exe";
+
+            ExeLaunchOptions = AppSettingsUtil.GetAppSetting(SettingKey.ExeLaunchOptions);
+
+
+            ShadowQualityText = ((VideoSettingsOptions)GameSettingsManager.ShadowQuality).ToString();
             AntiAliasingText = ((VideoSettingsOptions)GameSettingsManager.AntiAliasingQuality).ToString();
             TexturesQualityText = ((VideoSettingsOptions)GameSettingsManager.TextureQuality).ToString();
             ViewDistanceQualityText = ((VideoSettingsOptions)GameSettingsManager.ViewDistanceQuality).ToString();
@@ -364,6 +438,8 @@ namespace SessionModManagerCore.ViewModels
         public bool UpdateGameSettings()
         {
             string returnMessage = "";
+
+            AppSettingsUtil.AddOrUpdateAppSettings(SettingKey.ExeLaunchOptions, _exeLaunchOptions);
 
             BoolWithMessage didSetSettings = GameSettingsManager.UpdateGameSettings(SkipMovieIsChecked, DBufferIsChecked);
             BoolWithMessage didSetObjCount = BoolWithMessage.True(); // set to true by default in case the user does not have the file to modify

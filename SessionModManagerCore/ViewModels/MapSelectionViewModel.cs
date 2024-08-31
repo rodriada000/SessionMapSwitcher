@@ -309,7 +309,12 @@ namespace SessionModManagerCore.ViewModels
                 }
             }
 
-            if (AppSettingsUtil.GetAppSetting(SettingKey.LaunchViaSteam)?.Equals("true", StringComparison.OrdinalIgnoreCase) == true)
+            string launchOption = AppSettingsUtil.GetAppSetting(SettingKey.LaunchVia)?.ToLower();
+            string exeOptions = AppSettingsUtil.GetAppSetting(SettingKey.ExeLaunchOptions);
+
+            ProcessStartInfo exeInfo = new ProcessStartInfo(SessionPath.ToSessionExe, exeOptions);
+
+            if (launchOption.Equals("steam", StringComparison.OrdinalIgnoreCase) == true)
             {
                 try
                 {
@@ -319,13 +324,27 @@ namespace SessionModManagerCore.ViewModels
                 {
                     // if fails to launch via steam then just launch the .exe directly
                     Logger.Warn("Failed to launch via steam://launch/861650/dialog command. Defaulting to .exe ...");
-                    Process.Start(SessionPath.ToSessionExe);
+                    Process.Start(exeInfo);
                 }
                 
             }
+            else if (launchOption.Equals("epic", StringComparison.OrdinalIgnoreCase) == true)
+            {
+                string epicCmd = "com.epicgames.launcher://apps/e29e6ef093fd468db40b6fb505de6fa8%3Ae963903069df461d93f0423f8f8b6865%3A6c1001a19926456db77fd1b4dd705a79?action=launch&silent=true";
+                try
+                {
+                    Process.Start(new ProcessStartInfo(epicCmd) { UseShellExecute = true });
+                }
+                catch (Exception)
+                {
+                    // if fails to launch via Epic then just launch the .exe directly
+                    Logger.Warn($"Failed to launch via com.epicgames.launcher:// command. Defaulting to .exe ...");
+                    Process.Start(exeInfo);
+                }
+            }
             else
             {
-                Process.Start(SessionPath.ToSessionExe);
+                Process.Start(exeInfo);
             }
 
 

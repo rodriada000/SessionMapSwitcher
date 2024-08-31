@@ -1,9 +1,6 @@
-﻿using SessionMapSwitcherCore.ViewModels;
-using SessionModManagerCore.Classes;
+﻿using SessionModManagerCore.Classes;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace SessionModManagerCore.ViewModels
 {
@@ -20,6 +17,7 @@ namespace SessionModManagerCore.ViewModels
         private string _updatedDate;
         private bool _isSelected;
         private string _version;
+        private DateTime _updatedDate_dt;
 
         public Asset Asset { get; set; }
 
@@ -92,11 +90,20 @@ namespace SessionModManagerCore.ViewModels
 
         public string UpdatedDate
         {
-            get { return _updatedDate; }
+            get
+            {
+                return _updatedDate_dt == DateTime.MinValue ? "" : _updatedDate_dt.ToLocalTime().ToString(AssetViewModel.dateTimeFormat);
+            }
+        }
+
+        public DateTime UpdatedDate_dt
+        {
+            get { return _updatedDate_dt; }
             set
             {
-                _updatedDate = value;
+                _updatedDate_dt = value;
                 NotifyPropertyChanged();
+                NotifyPropertyChanged(nameof(UpdatedDate));
             }
         }
 
@@ -130,8 +137,7 @@ namespace SessionModManagerCore.ViewModels
             Description = asset.Description;
             Author = asset.Author;
             AssetCategory = asset.Category;
-            UpdatedDate = asset.UpdatedDate == DateTime.MinValue ? "" : asset.UpdatedDate.ToLocalTime().ToString(AssetViewModel.dateTimeFormat);
-
+            UpdatedDate_dt = asset.UpdatedDate;
             Version = asset.Version <= 0 ? "1" : asset.Version.ToString();
             IsSelected = false;
         }
