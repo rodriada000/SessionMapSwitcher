@@ -6,7 +6,10 @@
 [![GitHub issues](https://img.shields.io/github/issues/rodriada000/SessionMapSwitcher)](https://GitHub.com/rodriada000/SessionMapSwitcher/issues/)
 
 <br>
-<img alt="GitHub Release" height="25px" src="https://img.shields.io/github/v/release/rodriada000/SessionMapSwitcher?display_name=release&style=flat-square&logoSize=50&label=Click%20to%20Download%20Latest%20Release">
+<a href="https://github.com/rodriada000/SessionMapSwitcher/releases/latest">
+  <img alt="GitHub Release" height="20px" src="https://img.shields.io/github/v/release/rodriada000/SessionMapSwitcher?display_name=release&style=flat-square&logoSize=50&label=Download%20Latest%20Release" >
+</a>
+
 
 
 ----
