@@ -72,6 +72,12 @@
                      x:Name="tabSettings">
 				<uii:GameSettingsUserControl x:Name="controlSettings"/>
 			</TabItem>
+
+      <TabItem Header="Build a Park"
+               Tag="mdi-skateboard"
+               x:Name="tabParkBuilder">
+        <uii:MapBuilderUserControl x:Name="controlParkBuilder"/>
+      </TabItem>
 		</TabControl>
 
 		<Grid Grid.Row="1" ColumnDefinitions="3*,auto">

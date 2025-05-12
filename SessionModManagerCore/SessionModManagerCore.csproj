@@ -17,6 +17,7 @@
   <ItemGroup>
     <None Remove="modmanager.csv" />
     <None Remove="modmanager.json" />
+    <None Remove="UAssetAPI.dll" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ini-parser-netstandard" Version="2.5.2" />
@@ -24,5 +25,15 @@
     <PackageReference Include="NLog" Version="5.3.2" />
     <PackageReference Include="SharpCompress" Version="0.37.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="UAssetAPI.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="UAssetAPI">
+      <HintPath>..\..\UAssetAPI\UAssetAPI\bin\Debug\net8.0\UAssetAPI.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>
