@@ -15,7 +15,7 @@ namespace SessionModManagerCore.Classes
     public class UAssetEditor
     {
         private const string Path = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Session\\SessionGame\\Content\\CustomMaps\\Ablazerod\\ModularPark\\Map\\ModularPark.umap";
-        private const double _scale = 10;
+        private const double _scale = 1;
         private const double _zScale = 1;
 
 
