@@ -112,8 +112,6 @@ namespace SessionModManagerCore.ViewModels
                 AnchorPointY = AnchorPointY,
                 Rotation = new ObjVector(Rotation),
                 Name = Name,
-                CenterPoint = new ObjVector(CenterPoint),
-                OriginalPosition = new ObjVector(OriginalPosition),
                 Position = new ObjVector(Position),
                 Scale = new ObjVector(Scale),
                 UnrealScale = new ObjVector(UnrealScale),
@@ -124,8 +122,6 @@ namespace SessionModManagerCore.ViewModels
         public ObjVector Position { get; set; }
         public ObjVector Scale { get; set; }
         public ObjVector Rotation { get; set; }
-        public ObjVector CenterPoint { get; set; }
-        public ObjVector OriginalPosition { get; set; }
 
 
         public string Name { get; set; }
