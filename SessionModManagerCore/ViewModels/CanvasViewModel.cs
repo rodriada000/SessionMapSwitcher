@@ -1,6 +1,9 @@
-﻿using SessionModManagerCore.Classes;
+﻿using Newtonsoft.Json;
+using SessionMapSwitcherCore.Classes;
+using SessionModManagerCore.Classes;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -271,6 +274,34 @@ namespace SessionModManagerCore.ViewModels
                 Logger.Error(e);
                 MessageService.Instance.ShowMessage("Failed to build custom skatepark.");
             }
+        }
+
+        public BoolWithMessage SavePark(string filePath, List<ParkItemData> parkItems)
+        {
+            var json = JsonConvert.SerializeObject(new ParkSaveData()
+            {
+                CanvasHeight = CanvasHeight,
+                CanvasWidth = CanvasWidth, 
+                FloorHeight = FloorHeight,
+                FloorWidth = FloorWidth,
+                ParkObjs = parkItems,
+            }, Formatting.Indented);
+            File.WriteAllText(filePath, json);
+            return BoolWithMessage.True();
+        }
+
+        public List<ParkItemData> LoadPark(string filePath)
+        {
+            if (!File.Exists(filePath))
+            {
+                return [];
+            }
+
+            var json = File.ReadAllText(filePath);
+            var parkSave = JsonConvert.DeserializeObject<ParkSaveData>(json);
+            ParkObjs = parkSave.ParkObjs.Select(p => (ParkObjBase)p).ToList();
+
+            return parkSave.ParkObjs;
         }
     }
 }

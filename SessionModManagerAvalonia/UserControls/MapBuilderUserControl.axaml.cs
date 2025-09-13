@@ -1,14 +1,17 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.PanAndZoom;
+using Avalonia.Controls.Shapes;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using Avalonia.Platform.Storage;
 using SessionMapSwitcherCore.Classes;
 using SessionModManagerCore.Classes;
 using SessionModManagerCore.ViewModels;
 using System;
-using System.Diagnostics;
-
+using System.Collections.Generic;
+using System.Linq;
 namespace SessionModManagerAvalonia;
 
 public partial class MapBuilderUserControl : UserControl
@@ -16,6 +19,15 @@ public partial class MapBuilderUserControl : UserControl
     bool _dragging = false;
     CanvasViewModel _canvas = new CanvasViewModel();
     Image? _lastSelected;
+    Rectangle rectCoords = new Rectangle()
+    {
+        Fill = new SolidColorBrush(Colors.Red),
+        Width = 2,
+        Height = 2,
+        ZIndex = 100,
+    };
+
+    private readonly ZoomBorder? _zoomBorder;
 
     public MapBuilderUserControl()
     {
@@ -24,31 +36,19 @@ public partial class MapBuilderUserControl : UserControl
 
         foreach (var c in _canvas.ObjectCatalog)
         {
-            Bitmap bitmap = new(c.ImagePath);
-
-            Image img = new()
-            {
-                Source = bitmap,//.CreateScaledBitmap(scaledSize),
-                DataContext = c,
-                Width = 100,
-                Height = 100,
-                Stretch = Stretch.Uniform,
-                StretchDirection = StretchDirection.Both
-            };
-
-            img.PointerPressed += OnPointerPressed;
-
+            var img = new ParkObjectUserControl(c);
+            img.PointerPressed += OnPointerPressed_SelectCatalogObject;
             panelCat.Children.Add(img);
         }
 
         DataContext = _canvas;
+        canvasMap.Children.Add(rectCoords);
     }
 
-    private void OnPointerPressed(object? sender, PointerPressedEventArgs e)
+    private void OnPointerPressed_SelectCatalogObject(object? sender, PointerPressedEventArgs e)
     {
-        Image? img = ((Image)sender);
-        ParkObjBase obj = (ParkObjBase)img.DataContext;
-        _canvas.ActiveCatalogIndex = _canvas.ObjectCatalog.IndexOf(obj);
+        ParkObjectUserControl? img = ((ParkObjectUserControl)sender);
+        _canvas.ActiveCatalogIndex = _canvas.ObjectCatalog.IndexOf(img.ViewModel);
     }
 
     private void Rectangle_PointerPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e)
@@ -77,8 +77,8 @@ public partial class MapBuilderUserControl : UserControl
             double x = value.X;
             double y = value.Y;
 
-            var scaledX = Math.Round(x.MapRange(0, canvasMap.Width, 0, _canvas.FloorWidth) + (dataContext.AnchorPointX * dataContext.UnrealScale.X), 0);
-            var scaledY = Math.Round(y.MapRange(0, canvasMap.Height, 0, _canvas.FloorHeight) + (dataContext.AnchorPointY * dataContext.UnrealScale.Y), 0);
+            var scaledX = Math.Round(x.MapRange(canvasMap.Width, _canvas.FloorWidth) + (dataContext.AnchorPointX * dataContext.UnrealScale.X), 0);
+            var scaledY = Math.Round(y.MapRange(canvasMap.Height, _canvas.FloorHeight) + (dataContext.AnchorPointY * dataContext.UnrealScale.Y), 0);
 
             if (dataContext.AnchorPointX * dataContext.UnrealScale.X % 5 != 0)
             {
@@ -104,8 +104,8 @@ public partial class MapBuilderUserControl : UserControl
                 dataContext.Position.Y = scaledY;
             }
 
-            Canvas.SetLeft(rectCoords, dataContext.Position.X.MapRange(0, _canvas.FloorWidth, 0, this.canvasMap.Width));
-            Canvas.SetTop(rectCoords, dataContext.Position.Y.MapRange(0, _canvas.FloorHeight, 0, this.canvasMap.Height));
+            Canvas.SetLeft(rectCoords, dataContext.Position.X.MapRange(_canvas.FloorWidth, this.canvasMap.Width));
+            Canvas.SetTop(rectCoords, dataContext.Position.Y.MapRange(_canvas.FloorHeight, this.canvasMap.Height));
         }
     }
 
@@ -132,10 +132,27 @@ public partial class MapBuilderUserControl : UserControl
             parkObj = _canvas.ObjectCatalog[_canvas.ActiveCatalogIndex].Clone();
         }
 
+        double x = e.GetCurrentPoint(this.canvasMap).Position.X;
+        double y = e.GetCurrentPoint(this.canvasMap).Position.Y;
+
+        Image img = AddObjToCanvas(parkObj, x, y);
+
+        if (isCloning)
+        {
+            ((ParkObjBase)img.DataContext).Rotation.Z = ((ParkObjBase)_lastSelected.DataContext).Rotation.Z;
+            RotateObject(img, _lastSelected.Bounds.Width, _lastSelected.Bounds.Height);
+        }
+
+        _canvas.ParkObjs.Add(parkObj);
+        _lastSelected = img;
+    }
+
+    private Image AddObjToCanvas(ParkObjBase parkObj, double x, double y)
+    {
         Bitmap bitmap = new(parkObj.ImagePath);
 
-        int scaledW = (int)parkObj.UnrealScale.X.MapRange(0, _canvas.FloorWidth, 0, this.canvasMap.Width);
-        int scaledH = (int)parkObj.UnrealScale.Y.MapRange(0, _canvas.FloorHeight, 0, this.canvasMap.Height);
+        int scaledW = (int)parkObj.UnrealScale.X.MapRange(_canvas.FloorWidth, this.canvasMap.Width);
+        int scaledH = (int)parkObj.UnrealScale.Y.MapRange(_canvas.FloorHeight, this.canvasMap.Height);
 
         var scaledSize = new PixelSize(Math.Max(5, scaledW), Math.Max(5, scaledH));
 
@@ -154,18 +171,10 @@ public partial class MapBuilderUserControl : UserControl
 
 
         canvasMap.Children.Add(img);
-        double x = e.GetCurrentPoint(this.canvasMap).Position.X;
-        double y = e.GetCurrentPoint(this.canvasMap).Position.Y;
+
         Canvas.SetLeft(img, x);
         Canvas.SetTop(img, y);
-
-        if (isCloning)
-        {
-            RotateObject(img, _lastSelected.Bounds.Width, _lastSelected.Bounds.Height);
-        }
-
-        _canvas.ParkObjs.Add(parkObj);
-        _lastSelected = img;
+        return img;
     }
 
     private int _angle = 0;
@@ -180,6 +189,7 @@ public partial class MapBuilderUserControl : UserControl
         _angle += 45;
         _angle %= 360;
 
+        ((ParkObjBase)_lastSelected.DataContext).Rotation.Z = _angle;
         RotateObject(_lastSelected, _lastSelected.Bounds.Width, _lastSelected.Bounds.Height);
     }
 
@@ -213,8 +223,7 @@ public partial class MapBuilderUserControl : UserControl
         }
 
 
-        img.RenderTransform = new RotateTransform(_angle, centerX, centerY);
-        dataContext.Rotation.Z = _angle;
+        img.RenderTransform = new RotateTransform(dataContext.Rotation.Z, centerX, centerY);
     }
 
     private void ButtonRotateLeft_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -225,12 +234,112 @@ public partial class MapBuilderUserControl : UserControl
         }
 
         _angle -= 45;
-        
+
         if (_angle < 0)
         {
             _angle = 360 - 45;
         }
 
-        RotateObject(_lastSelected, _lastSelected.Bounds.Width, _lastSelected.Bounds.Height); 
+        ((ParkObjBase)_lastSelected.DataContext).Rotation.Z = _angle;
+        RotateObject(_lastSelected, _lastSelected.Bounds.Width, _lastSelected.Bounds.Height);
+    }
+
+
+    private async void ButtonLoad_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        var topLevel = TopLevel.GetTopLevel(this);
+
+        IReadOnlyList<FilePickerFileType> filters = new List<FilePickerFileType>() { new FilePickerFileType("SMM Park File (*.json)") { Patterns = new List<string>() { "*.json" } } };
+        var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        {
+            Title = "Select Park File",
+            AllowMultiple = false,
+            FileTypeFilter = filters
+        });
+
+        if (files.Any())
+        {
+            var loaded = _canvas.LoadPark(files[0].Path.AbsolutePath);
+
+            if (loaded.Count > 0)
+            {
+                canvasMap.Children.Clear();
+                canvasMap.Children.Add(rectCoords);
+
+                foreach (var obj in loaded)
+                {
+                    Image img = AddObjToCanvas(obj, 0, 0);
+                    img.RenderTransform = new RotateTransform(obj.Rotation.Z, obj.CenterX, obj.CenterY);
+                    Canvas.SetLeft(img, obj.Left);
+                    Canvas.SetTop(img, obj.Top);
+                }
+            }
+        }
+    }
+    private async void ButtonSave_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        var topLevel = TopLevel.GetTopLevel(this);
+
+        IReadOnlyList<FilePickerFileType> filters = new List<FilePickerFileType>() { new FilePickerFileType("SMM Park File (*.json)") { Patterns = new List<string>() { "*.json" } } };
+        var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        {
+            Title = "Save Park File (.json)",
+            FileTypeChoices = filters,
+        });
+
+        if (file is not null)
+        {
+            List<ParkItemData> data = new List<ParkItemData>();
+            foreach (var child in canvasMap.Children)
+            {
+                if (child is Image)
+                {
+                    var img = (Image)child;
+                    data.Add(new ParkItemData((ParkObjBase)child.DataContext)
+                    {
+                        CenterX = (img.RenderTransform as RotateTransform)?.CenterX ?? 0,
+                        CenterY = (img.RenderTransform as RotateTransform)?.CenterY ?? 0,
+                        Top = img.Bounds.Top,
+                        Left = img.Bounds.Left,
+                    });
+                }
+            }
+
+            _canvas.SavePark(file.Path.AbsolutePath, data);
+        }
+    }
+
+    private void UserControl_KeyUp(object? sender, Avalonia.Input.KeyEventArgs e)
+    {
+        if (_lastSelected == null)
+        {
+            return;
+        }
+
+        if (e.Key == Key.Delete || e.Key == Key.Back)
+        {
+            var i = canvasMap.Children.IndexOf(_lastSelected);
+            if (i >= 0)
+            {
+                canvasMap.Children.RemoveAt(i);
+                _canvas.ParkObjs.Remove((ParkObjBase)_lastSelected.DataContext);
+                _lastSelected.PointerPressed -= Rectangle_PointerPressed;
+                _lastSelected.PointerReleased -= Rectangle_PointerReleased;
+                _lastSelected.PointerMoved -= Rectangle_PointerMoved;
+                _lastSelected = null;
+            }
+        }
+    }
+
+    private void Grid_KeyUp_1(object? sender, Avalonia.Input.KeyEventArgs e)
+    {
+        if (e.Key == Key.Right)
+        {
+            ButtonRotateRight_Click(sender, e);
+        }
+        else if (e.Key == Key.Left)
+        {
+            ButtonRotateLeft_Click(sender, e);
+        }
     }
 }

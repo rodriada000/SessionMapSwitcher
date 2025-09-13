@@ -2,20 +2,24 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:paz="using:Avalonia.Controls.PanAndZoom"
              mc:Ignorable="d" d:DesignWidth="1400" d:DesignHeight="1100"
              xmlns:v="using:SessionModManagerCore.ViewModels"
              x:Class="SessionModManagerAvalonia.MapBuilderUserControl"
              x:DataType="v:CanvasViewModel"
-             xmlns:i="https://github.com/projektanker/icons.avalonia">
-  <Grid RowDefinitions="auto,*,auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             KeyUp="UserControl_KeyUp">
+  <Grid RowDefinitions="auto,*,auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" KeyUp="Grid_KeyUp_1">
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="0.2*"></ColumnDefinition>
       <ColumnDefinition Width="*"></ColumnDefinition>
     </Grid.ColumnDefinitions>
-    
-    
-    <WrapPanel HorizontalAlignment="Right" 
+
+
+    <WrapPanel HorizontalAlignment="Right"
                Margin="5,5,0,5">
+      <Button x:Name="btnLoad" Content="Load" Click="ButtonLoad_Click"></Button>
+      <Button x:Name="btnSave" Content="Save" Click="ButtonSave_Click"></Button>
       <Button x:Name="btnRotateLeft" i:Attached.Icon="mdi-rotate-left" Click="ButtonRotateLeft_Click"></Button>
       <Button x:Name="btnRotateRight" i:Attached.Icon="mdi-rotate-right" Click="ButtonRotateRight_Click"></Button>
     </WrapPanel>
@@ -28,13 +32,28 @@
 
 
     <Button Content="Build" Grid.Row="2" Margin="5" HorizontalAlignment="Stretch" TextBlock.TextAlignment="Center" Click="Button_Click"></Button>
-    
-    <Canvas Grid.Column="1" Grid.RowSpan="3" x:Name="canvasMap" Background="LightGray" Width="{Binding CanvasWidth}" Height="{Binding CanvasHeight}" PointerPressed="Canvas_PointerPressed_1">
-      <Rectangle Width="2" Height="2" Fill="Red" x:Name="rectCoords" ZIndex="100"></Rectangle>
-      <Rectangle Width="2" Height="2" Fill="Blue" x:Name="rectStart" ZIndex="100" PointerPressed=""></Rectangle>
+
+    <ScrollViewer Grid.RowSpan="3" Grid.Column="1"
+                  VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Auto">
+      <paz:ZoomBorder Name="ZoomBorder" Stretch="None" ZoomSpeed="1.1"
+                      MinZoomX="1" MinZoomY="1"
+                      MaxZoomX="5" MaxZoomY="5"
+                      Background="Transparent" ClipToBounds="True" Focusable="True"
+                      VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+        <Canvas x:Name="canvasMap"
+                Background="LightGray"
+                Width="{Binding CanvasWidth}"
+                Height="{Binding CanvasHeight}"
+                PointerPressed="Canvas_PointerPressed_1">
+        </Canvas>
+      </paz:ZoomBorder>
+    </ScrollViewer>
 
 
 
-    </Canvas>
+
+
+
   </Grid>
 </UserControl>

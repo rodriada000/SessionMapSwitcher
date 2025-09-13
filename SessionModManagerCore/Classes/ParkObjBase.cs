@@ -1,4 +1,5 @@
-﻿using SessionMapSwitcherCore.Classes;
+﻿using Newtonsoft.Json;
+using SessionMapSwitcherCore.Classes;
 using System.IO;
 
 namespace SessionModManagerCore.Classes
@@ -44,6 +45,7 @@ namespace SessionModManagerCore.Classes
 
 
         public string Name { get; set; }
+        [JsonIgnore]
         public string ImagePath { get => Path.Combine(SessionPath.ToApplicationResourcesFolder, "ParkPieces" , $"{Name}.png"); }
 
         public double AnchorPointX { get; set; }
