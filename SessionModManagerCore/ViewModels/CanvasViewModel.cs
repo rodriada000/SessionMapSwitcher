@@ -25,201 +25,168 @@ namespace SessionModManagerCore.ViewModels
         public List<ParkObjBase> ObjectCatalog { get; set; } = new List<ParkObjBase>() {
             new("SM_Bank_01")
             {
-                AnchorPointX = 0,
-                AnchorPointY = 0,
-                UnrealScale = new ObjVector(300, 500, 150)
+                UnrealScale = new ObjVector(300, 500, 150),
+                AnchorPoint = new ObjVector(0, 0, 0)
             },
             new("SM_Bank_02")
             {
-                AnchorPointX = 0,
-                AnchorPointY = 0,
-                UnrealScale = new ObjVector(300, 230, 100)
+                UnrealScale = new ObjVector(300, 230, 100),
+                AnchorPoint = new ObjVector(0, 0, 0)
             },
             new("SM_Bank_03")
             {
-                AnchorPointX = 0,
-                AnchorPointY = 0,
-                UnrealScale = new ObjVector(300, 230, 50)
+                UnrealScale = new ObjVector(300, 230, 50),
+                AnchorPoint = new ObjVector(0, 0, 0)
             },
             new("SM_Bench_01")
             {
-                AnchorPointX = 0.5,
-                AnchorPointY = 0.5,
-                UnrealScale = new ObjVector(215, 40, 50)
+                UnrealScale = new ObjVector(215, 40, 50),
+                AnchorPoint = new ObjVector(0.5, 0.5, 0)
             },
             new("SM_Table_Benches_01")
             {
-                AnchorPointX = 0.5,
-                AnchorPointY = 0.5,
-                UnrealScale = new ObjVector(225, 200, 85)
+                UnrealScale = new ObjVector(225, 200, 85),
+                AnchorPoint = new ObjVector(0.5, 0.5, 0)
             },
             new("SM_Concrete_Spine_02")
             {
-                AnchorPointX = 0,
-                AnchorPointY = 0,
-                UnrealScale = new ObjVector(800, 340, 150)
+                UnrealScale = new ObjVector(800, 340, 150),
+                AnchorPoint = new ObjVector(0, 0, 0)
             },
             new("SM_Funbox_Floor_01_3m")
             {
-                AnchorPointX = 1,
-                AnchorPointY = 1,
-                UnrealScale = new ObjVector(300, 300, 100)
+                UnrealScale = new ObjVector(300, 300, 100),
+                AnchorPoint = new ObjVector(1, 1, 0)
             },
             new("SM_Funbox_Wall_01")
             {
-                AnchorPointX = 0,
-                AnchorPointY = 0,
-                UnrealScale = new ObjVector(50, 300, 150)
+                UnrealScale = new ObjVector(50, 300, 150),
+                AnchorPoint = new ObjVector(0, 0, 0)
             },
             new("SM_Funbox_Wall_02")
             {
-                AnchorPointX = 0,
-                AnchorPointY = 0,
-                UnrealScale = new ObjVector(50, 300, 150)
+                UnrealScale = new ObjVector(50, 300, 150),
+                AnchorPoint = new ObjVector(0, 0, 0)
             },
             new("SM_Halfpipe_01_Middle")
             {
-                AnchorPointX = 0,
-                AnchorPointY = 0,
-                UnrealScale = new ObjVector(400, 300, 20)
+                UnrealScale = new ObjVector(400, 300, 20),
+                AnchorPoint = new ObjVector(0, 0, 0)
             },
             new("SM_Halfpipe_01_Ramp")
             {
-                AnchorPointX = 0,
-                AnchorPointY = 0,
-                UnrealScale = new ObjVector(400, 300, 170)
+                UnrealScale = new ObjVector(400, 300, 170),
+                AnchorPoint = new ObjVector(0, 0, 0)
             },
             new("SM_Pyramid_01")
             {
-                AnchorPointX = 0.5,
-                AnchorPointY = 0,
-                UnrealScale = new ObjVector(900, 600, 100)
+                UnrealScale = new ObjVector(900, 600, 100),
+                AnchorPoint = new ObjVector(0.5, 0, 0)
             },
             new("SM_Pyramid_02")
             {
-                AnchorPointX = 1,
-                AnchorPointY = 0,
-                UnrealScale = new ObjVector(450, 600, 100)
+                UnrealScale = new ObjVector(450, 600, 100),
+                AnchorPoint = new ObjVector(1, 0, 0)
             },
             new("SM_Rail_01_2m")
             {
-                AnchorPointX = 0,
-                AnchorPointY = 0.5,
-                UnrealScale = new ObjVector(200, 20, 55)
+                UnrealScale = new ObjVector(200, 20, 55),
+                AnchorPoint = new ObjVector(0, 0.5, 0)
             },
             new("SM_Rail_01_3m_Angled")
             {
-                AnchorPointX = 0,
-                AnchorPointY = 0.5,
-                UnrealScale = new ObjVector(320, 20, 55)
+                UnrealScale = new ObjVector(320, 20, 55),
+                AnchorPoint = new ObjVector(0, 0.5, 0)
             },
             new("SM_Rail_01_4m")
             {
-                AnchorPointX = 0,
-                AnchorPointY = 0.5,
-                UnrealScale = new ObjVector(400, 20, 55)
+                UnrealScale = new ObjVector(400, 20, 55),
+                AnchorPoint = new ObjVector(0, 0.5, 0)
             },
             new("SM_Rail_01_End")
             {
-                AnchorPointX = 1,
-                AnchorPointY = 0.5,
-                UnrealScale = new ObjVector(60, 20, 55)
+                UnrealScale = new ObjVector(60, 20, 55),
+                AnchorPoint = new ObjVector(1, 0.5, 0)
             },
             new("SM_Rail_01_Funbox_Wall_02")
             {
-                AnchorPointX = 0,
-                AnchorPointY = 0.5,
-                UnrealScale = new ObjVector(410, 20, 205)
+                UnrealScale = new ObjVector(410, 20, 205),
+                AnchorPoint = new ObjVector(0, 0.5, 0.5)
             },
             new("SM_Rail_01_Pyramid_01")
             {
-                AnchorPointX = 0,
-                AnchorPointY = 0.5,
-                UnrealScale = new ObjVector(425, 20, 155)
+                UnrealScale = new ObjVector(425, 20, 155),
+                AnchorPoint = new ObjVector(0, 0.5, 0.5)
             },
             new("SM_Rail_01_Stairs_01")
             {
-                AnchorPointX = 0,
-                AnchorPointY = 0.5,
-                UnrealScale = new ObjVector(250, 20, 155)
+                UnrealScale = new ObjVector(250, 20, 155),
+                AnchorPoint = new ObjVector(0, 0.5, 0.5)
             },
             new("SM_Rail_01_Corner_45_1m")
             {
-                AnchorPointX = 0,
-                AnchorPointY = 1,
-                UnrealScale = new ObjVector(100, 60, 55)
+                UnrealScale = new ObjVector(100, 60, 55),
+                AnchorPoint = new ObjVector(0, 1, 0)
             },
             new("SM_Rail_01_Corner_90_1m")
             {
-                AnchorPointX = 0,
-                AnchorPointY = 1,
-                UnrealScale = new ObjVector(105, 105, 55)
+                UnrealScale = new ObjVector(105, 105, 55),
+                AnchorPoint = new ObjVector(0, 1, 0)
             },
             new("SM_Rail_01_Corner_90_2m")
             {
-                AnchorPointX = 0,
-                AnchorPointY = 1,
-                UnrealScale = new ObjVector(205, 205, 55)
+                UnrealScale = new ObjVector(205, 205, 55),
+                AnchorPoint = new ObjVector(0, 1, 0)
             },
             new("SM_Rail_02_2m")
             {
-                AnchorPointX = 0,
-                AnchorPointY = 0.5,
-                UnrealScale = new ObjVector(200, 20, 55)
+                UnrealScale = new ObjVector(200, 20, 55),
+                AnchorPoint = new ObjVector(0, 0.5, 0)
             },
             new("SM_Rail_02_4m")
             {
-                AnchorPointX = 0,
-                AnchorPointY = 0.5,
-                UnrealScale = new ObjVector(400, 20, 55)
+                UnrealScale = new ObjVector(400, 20, 55),
+                AnchorPoint = new ObjVector(0, 0.5, 0)
             },
             new("SM_Rail_02_Corner_45_1m")
             {
-                AnchorPointX = 0,
-                AnchorPointY = 1,
-                UnrealScale = new ObjVector(100, 60, 55)
+                UnrealScale = new ObjVector(100, 60, 55),
+                AnchorPoint = new ObjVector(0, 1, 0)
             },
             new("SM_Rail_02_Corner_90_1m")
             {
-                AnchorPointX = 0,
-                AnchorPointY = 1,
-                UnrealScale = new ObjVector(105, 105, 55)
+                UnrealScale = new ObjVector(105, 105, 55),
+                AnchorPoint = new ObjVector(0, 1, 0)
             },
             new("SM_Rail_02_Corner_90_2m")
             {
-                AnchorPointX = 0,
-                AnchorPointY = 1,
-                UnrealScale = new ObjVector(205, 205, 55)
+                UnrealScale = new ObjVector(205, 205, 55),
+                AnchorPoint = new ObjVector(0, 1, 0)
             },
             new("SM_Roll_Ramp_01")
             {
-                AnchorPointX = 0,
-                AnchorPointY = 0,
-                UnrealScale = new ObjVector(300, 300, 100)
+                UnrealScale = new ObjVector(300, 300, 100),
+                AnchorPoint = new ObjVector(0, 0, 0)
             },
             new("SM_Spine_01")
             {
-                AnchorPointX = 0,
-                AnchorPointY = 0,
-                UnrealScale = new ObjVector(300, 300, 100)
+                UnrealScale = new ObjVector(300, 300, 100),
+                AnchorPoint = new ObjVector(0, 0, 0)
             },
             new("SM_Stairs_Small_01")
             {
-                AnchorPointX = 0,
-                AnchorPointY = 0,
-                UnrealScale = new ObjVector(100, 150, 100)
+                UnrealScale = new ObjVector(100, 150, 100),
+                AnchorPoint = new ObjVector(0, 0, 0)
             },
             new("SM_Stairs_Small_02")
             {
-                AnchorPointX = 0,
-                AnchorPointY = 0,
-                UnrealScale = new ObjVector(300, 150, 100)
+                UnrealScale = new ObjVector(300, 150, 100),
+                AnchorPoint = new ObjVector(0, 0, 0)
             },
             new("SM_Wave_Ramp_01")
             {
-                AnchorPointX = 0,
-                AnchorPointY = 0,
-                UnrealScale = new ObjVector(200, 400, 40)
+                UnrealScale = new ObjVector(200, 400, 40),
+                AnchorPoint = new ObjVector(0, 0, 0)
             },
         };
 

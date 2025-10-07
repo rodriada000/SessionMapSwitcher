@@ -77,16 +77,23 @@ public partial class MapBuilderUserControl : UserControl
             double x = value.X;
             double y = value.Y;
 
-            var scaledX = Math.Round(x.MapRange(canvasMap.Width, _canvas.FloorWidth) + (dataContext.AnchorPointX * dataContext.UnrealScale.X), 0);
-            var scaledY = Math.Round(y.MapRange(canvasMap.Height, _canvas.FloorHeight) + (dataContext.AnchorPointY * dataContext.UnrealScale.Y), 0);
+            int floorLevel = 0; // will be changeable in UI to go up/down in Z direction.
 
-            if (dataContext.AnchorPointX * dataContext.UnrealScale.X % 5 != 0)
+            var scaledX = Math.Round(x.MapRange(canvasMap.Width, _canvas.FloorWidth) + (dataContext.AnchorPoint.X * dataContext.UnrealScale.X), 0);
+            var scaledY = Math.Round(y.MapRange(canvasMap.Height, _canvas.FloorHeight) + (dataContext.AnchorPoint.Y * dataContext.UnrealScale.Y), 0);
+            var zPos = (100 * floorLevel) + (dataContext.AnchorPoint.Z * dataContext.UnrealScale.Z);
+
+            if (dataContext.AnchorPoint.X * dataContext.UnrealScale.X % 5 != 0)
             {
                 scaledX = 5 * (int)Math.Round(scaledX / 5.0);
             }
-            if (dataContext.AnchorPointY * dataContext.UnrealScale.Y % 5 != 0)
+            if (dataContext.AnchorPoint.Y * dataContext.UnrealScale.Y % 5 != 0)
             {
                 scaledY = 5 * (int)Math.Round(scaledY / 5.0);
+            }
+            if (dataContext.AnchorPoint.Z * dataContext.UnrealScale.Z % 5 != 0)
+            {
+                zPos = 5 * (int)Math.Round(zPos / 5.0);
             }
 
 
@@ -103,6 +110,8 @@ public partial class MapBuilderUserControl : UserControl
 
                 dataContext.Position.Y = scaledY;
             }
+
+            dataContext.Position.Z = zPos;
 
             Canvas.SetLeft(rectCoords, dataContext.Position.X.MapRange(_canvas.FloorWidth, this.canvasMap.Width));
             Canvas.SetTop(rectCoords, dataContext.Position.Y.MapRange(_canvas.FloorHeight, this.canvasMap.Height));
@@ -204,20 +213,20 @@ public partial class MapBuilderUserControl : UserControl
         double centerX = width / 2;
         double centerY = height / 2;
 
-        if (dataContext.AnchorPointX == 0.5)
+        if (dataContext.AnchorPoint.X == 0.5)
         {
             centerX *= 0;
         }
-        else if (dataContext.AnchorPointX < 0.5)
+        else if (dataContext.AnchorPoint.X < 0.5)
         {
             centerX *= -1;
         }
 
-        if (dataContext.AnchorPointY == 0.5)
+        if (dataContext.AnchorPoint.Y == 0.5)
         {
             centerY *= 0;
         }
-        else if (dataContext.AnchorPointY < 0.5)
+        else if (dataContext.AnchorPoint.Y < 0.5)
         {
             centerY *= -1;
         }
@@ -341,5 +350,14 @@ public partial class MapBuilderUserControl : UserControl
         {
             ButtonRotateLeft_Click(sender, e);
         }
+    }
+
+    private void Button_Click_StartSession(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        var mapSelection = new MapSelectionViewModel();
+        mapSelection.LoadAvailableMaps();
+        mapSelection.LoadMap("ModularPark");
+
+        MapSelectionViewModel.StartSessionExe();
     }
 }

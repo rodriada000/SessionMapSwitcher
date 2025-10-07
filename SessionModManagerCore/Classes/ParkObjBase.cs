@@ -15,6 +15,7 @@ namespace SessionModManagerCore.Classes
             Position = new ObjVector();
             Scale = new ObjVector(1, 1, 1);
             Rotation = new ObjVector(0, 0, 0);
+            AnchorPoint = new ObjVector(0, 0, 0);
         }
         public ParkObjBase(string name)
         {
@@ -22,19 +23,19 @@ namespace SessionModManagerCore.Classes
             Scale = new ObjVector(1, 1, 1);
             Rotation = new ObjVector(0, 0, 0);
             Name = name;
+            AnchorPoint = new ObjVector(0, 0, 0);
         }
 
         public ParkObjBase Clone()
         {
             return new ParkObjBase()
             {
-                AnchorPointX = AnchorPointX,
-                AnchorPointY = AnchorPointY,
                 Rotation = new ObjVector(Rotation),
                 Name = Name,
                 Position = new ObjVector(Position),
                 Scale = new ObjVector(Scale),
                 UnrealScale = new ObjVector(UnrealScale),
+                AnchorPoint = new ObjVector(AnchorPoint)
             };
         }
 
@@ -46,12 +47,10 @@ namespace SessionModManagerCore.Classes
 
         public string Name { get; set; }
         [JsonIgnore]
-        public string ImagePath { get => Path.Combine(SessionPath.ToApplicationResourcesFolder, "ParkPieces" , $"{Name}.png"); }
+        public string ImagePath { get => Path.Combine(SessionPath.ToApplicationResourcesFolder, "ParkPieces", $"{Name}.png"); }
 
-        public double AnchorPointX { get; set; }
-        public double AnchorPointY { get; set; }
         public ObjVector UnrealScale { get; set; }
-
+        public ObjVector AnchorPoint { get; set; }
 
         public override string ToString()
         {

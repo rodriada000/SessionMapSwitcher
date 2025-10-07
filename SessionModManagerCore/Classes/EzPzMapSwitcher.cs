@@ -207,7 +207,19 @@ namespace SessionMapSwitcherCore.Classes
                 RMSToolsuiteLoader.IsLoaded();
             }
 
-            foreach (string fileName in Directory.GetFiles(SessionPath.ToNYCFolder))
+            List<string> files = [];
+
+            if (Directory.Exists(SessionPath.ToNYCFolder))
+            {
+                files.AddRange(Directory.GetFiles(SessionPath.ToNYCFolder, "*", SearchOption.AllDirectories));
+            }
+
+            if (Directory.Exists(SessionPath.ToPHLFolder))
+            {
+                files.AddRange(Directory.GetFiles(SessionPath.ToPHLFolder, "*", SearchOption.AllDirectories));
+            }
+
+            foreach (string fileName in files)
             {
                 if (RMSToolsuiteLoader.LoadedToolsuiteFiles.Contains(fileName))
                 {

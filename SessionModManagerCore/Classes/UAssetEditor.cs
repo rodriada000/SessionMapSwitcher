@@ -13,7 +13,7 @@ namespace SessionModManagerCore.Classes
 {
     public class UAssetEditor
     {
-        private string MapPath
+        public static string MapPath
         {
             get
             {
@@ -50,6 +50,11 @@ namespace SessionModManagerCore.Classes
             floorStruct.Value = [new VectorPropertyData() { Name = new FName(myAsset, "FloorSize") }];
             floorStruct.Value[0].RawValue = new FVector { X = floorW / _defaultFloorSize, Y = floorH / _defaultFloorSize, Z = 1 };
             myExport["FloorSize"] = floorStruct;
+
+            StructPropertyData startPosStruct = new() { Name = new FName(myAsset, "StartPos"), StructType = new FName(myAsset, "Vector") };
+            startPosStruct.Value = [new VectorPropertyData() { Name = new FName(myAsset, "StartPos") }];
+            startPosStruct.Value[0].RawValue = new FVector { X = 200, Y = 200, Z = 200 };
+            myExport["StartPos"] = startPosStruct;
 
             array.Clear();
             positions.Clear();

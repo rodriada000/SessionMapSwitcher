@@ -35,8 +35,7 @@ namespace SessionModManagerCore.Classes
         public ParkItemData(ParkObjBase dataContext)
         {
             Name = dataContext.Name;
-            AnchorPointX = dataContext.AnchorPointX;
-            AnchorPointY = dataContext.AnchorPointY;
+            AnchorPoint = dataContext.AnchorPoint;
             Position = dataContext.Position;
             Rotation = dataContext.Rotation;
             Scale = dataContext.Scale;

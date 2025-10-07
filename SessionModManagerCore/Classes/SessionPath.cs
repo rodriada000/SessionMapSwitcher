@@ -164,6 +164,17 @@ namespace SessionMapSwitcherCore.Classes
             }
         }
 
+        /// <summary>
+        /// Returns absolute path to the PHL folder in Session game directory. Requires <see cref="SessionPath"/>.
+        /// </summary>
+        public static string ToPHLFolder
+        {
+            get
+            {
+                return Path.Combine(new string[] { ToContent, "Art", "Env", "PHL" });
+            }
+        }
+
         public static string ToOriginalSessionMapFiles
         {
             get
