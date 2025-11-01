@@ -40,6 +40,7 @@ namespace SessionModManagerCore.Classes
             Rotation = dataContext.Rotation;
             Scale = dataContext.Scale;
             UnrealScale = dataContext.UnrealScale;
+            Layer = dataContext.Layer;
         }
 
         [JsonIgnore]

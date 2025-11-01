@@ -43,7 +43,7 @@ namespace SessionModManagerCore.Classes
         public ObjVector Position { get; set; }
         public ObjVector Scale { get; set; }
         public ObjVector Rotation { get; set; }
-
+        public int Layer { get; set; }
 
         public string Name { get; set; }
         [JsonIgnore]
@@ -54,7 +54,7 @@ namespace SessionModManagerCore.Classes
 
         public override string ToString()
         {
-            return $"{Name}, P: {Position}, S: {Scale}, R: {Rotation}";
+            return $"{Name}, P: {Position}, S: {Scale}, R: {Rotation}, L: {Layer}";
         }
     }
 }

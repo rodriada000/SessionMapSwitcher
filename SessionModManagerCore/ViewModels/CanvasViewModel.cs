@@ -18,6 +18,9 @@ namespace SessionModManagerCore.ViewModels
         private int _floorHeight = 5000;
         private int _canvasWidth = 1000;
         private int _canvasHeight = 1000;
+        private int _currentFloorLayer = 0;
+
+        public const int LayerHeight = 500;
 
         public List<ParkObjBase> ParkObjs { get; set; } = new List<ParkObjBase>() { };
 
@@ -230,6 +233,16 @@ namespace SessionModManagerCore.ViewModels
             }
         }
 
+        public int CurrentFloorLayer
+        {
+            get { return _currentFloorLayer; }
+            set
+            {
+                _currentFloorLayer = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         public void Build()
         {
             try
@@ -248,7 +261,7 @@ namespace SessionModManagerCore.ViewModels
             var json = JsonConvert.SerializeObject(new ParkSaveData()
             {
                 CanvasHeight = CanvasHeight,
-                CanvasWidth = CanvasWidth, 
+                CanvasWidth = CanvasWidth,
                 FloorHeight = FloorHeight,
                 FloorWidth = FloorWidth,
                 ParkObjs = parkItems,
