@@ -6,7 +6,7 @@
 
 cd "C:\Program Files (x86)\Steam\steamapps\common\Session\SessionGame\Content\Paks"
 
-# .\UnrealPak.exe -cryptokeys="crypto.json" -List .\pakchunk0-WindowsNoEditor.pak > FileList.txt
+.\UnrealPak.exe -cryptokeys="crypto.json" -List .\pakchunk0-WindowsNoEditor.pak > FileList.txt
 
 
 $allFiles = Get-Content .\FileList.txt
