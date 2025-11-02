@@ -12,13 +12,14 @@ using SessionModManagerCore.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace SessionModManagerAvalonia;
 
 public partial class MapBuilderUserControl : UserControl
 {
     bool _dragging = false;
     CanvasViewModel _canvas = new CanvasViewModel();
-    Image? _lastSelected;
+    ParkObjImageUserControl? _lastSelected;
     Rectangle rectCoords = new Rectangle()
     {
         Fill = new SolidColorBrush(Colors.Red),
@@ -47,8 +48,8 @@ public partial class MapBuilderUserControl : UserControl
 
     private void OnPointerPressed_SelectCatalogObject(object? sender, PointerPressedEventArgs e)
     {
-        ParkObjectUserControl? img = ((ParkObjectUserControl)sender);
-        _canvas.ActiveCatalogIndex = _canvas.ObjectCatalog.IndexOf(img.ViewModel);
+        ParkObjectUserControl? img = ((ParkObjectUserControl?)sender);
+        _canvas.ActiveCatalogIndex = _canvas.ObjectCatalog.IndexOf(img?.ViewModel);
     }
 
     /// <summary>
@@ -58,18 +59,22 @@ public partial class MapBuilderUserControl : UserControl
     /// <param name="e"></param>
     private void Rectangle_PointerPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e)
     {
-        if (_lastSelected == null)
+        if (_lastSelected != null)
         {
-            return;
+            _lastSelected.ViewModel.IsSelected = false;
         }
 
-        ParkObjBase? parkObj = (ParkObjBase)_lastSelected.DataContext;
+        _lastSelected = (ParkObjImageUserControl?)sender;
 
-        if (parkObj?.Layer == _canvas.CurrentFloorLayer)
+        if (_lastSelected?.ObjectData.Layer == _canvas.CurrentFloorLayer)
         {
+            _lastSelected.ViewModel.IsSelected = true;
             _dragging = true;
-            _lastSelected = (Image)sender;
-            _angle = (int)parkObj.Rotation.Z;
+            _angle = (int)_lastSelected.ObjectData.Rotation.Z;
+        } else
+        {
+            _lastSelected = null;
+            _dragging = false;
         }
     }
 
@@ -90,7 +95,7 @@ public partial class MapBuilderUserControl : UserControl
     /// <param name="e"></param>
     private void Rectangle_PointerMoved(object? sender, Avalonia.Input.PointerEventArgs e)
     {
-        if (!_dragging || sender == null)
+        if (!_dragging || sender == null || _lastSelected == null)
         {
             return;
         }
@@ -98,48 +103,48 @@ public partial class MapBuilderUserControl : UserControl
         Point value = e.GetPosition(this.canvasMap);
 
 
-        Image? img = (Image)sender;
-        ParkObjBase? dataContext = ((ParkObjBase)_lastSelected.DataContext);
+        ParkObjImageUserControl img = (ParkObjImageUserControl)sender;
+        ParkObjBase objData = _lastSelected.ObjectData;
 
         double x = value.X;
         double y = value.Y;
 
-        var scaledX = Math.Round(x.MapRange(canvasMap.Width, _canvas.FloorWidth) + (dataContext.AnchorPoint.X * dataContext.UnrealScale.X), 0);
-        var scaledY = Math.Round(y.MapRange(canvasMap.Height, _canvas.FloorHeight) + (dataContext.AnchorPoint.Y * dataContext.UnrealScale.Y), 0);
-        var zPos = (dataContext.UnrealScale.Z * dataContext.Layer) + (dataContext.AnchorPoint.Z * dataContext.UnrealScale.Z);
+        var scaledX = Math.Round(x.MapRange(canvasMap.Width, _canvas.FloorWidth) + (objData.AnchorPoint.X * objData.UnrealScale.X), 0);
+        var scaledY = Math.Round(y.MapRange(canvasMap.Height, _canvas.FloorHeight) + (objData.AnchorPoint.Y * objData.UnrealScale.Y), 0);
+        var zPos = (objData.UnrealScale.Z * objData.Layer) + (objData.AnchorPoint.Z * objData.UnrealScale.Z);
 
-        if (dataContext.AnchorPoint.X * dataContext.UnrealScale.X % 5 != 0)
+        if (objData.AnchorPoint.X * objData.UnrealScale.X % 5 != 0)
         {
             scaledX = 5 * (int)Math.Round(scaledX / 5.0);
         }
-        if (dataContext.AnchorPoint.Y * dataContext.UnrealScale.Y % 5 != 0)
+        if (objData.AnchorPoint.Y * objData.UnrealScale.Y % 5 != 0)
         {
             scaledY = 5 * (int)Math.Round(scaledY / 5.0);
         }
-        if (dataContext.AnchorPoint.Z * dataContext.UnrealScale.Z % 5 != 0)
+        if (objData.AnchorPoint.Z * objData.UnrealScale.Z % 5 != 0)
         {
             zPos = 5 * (int)Math.Round(zPos / 5.0);
         }
 
 
-        if (value.X >= 0 && value.X <= this.canvasMap.Width && scaledX % 10 == 0)
+        if (value.X >= 0 && value.X <= this.canvasMap.Width)
         {
             Canvas.SetLeft(img, x);
 
-            dataContext.Position.X = scaledX;
+            objData.Position.X = scaledX;
         }
 
-        if (value.Y >= 0 && value.Y <= this.canvasMap.Height && scaledY % 10 == 0)
+        if (value.Y >= 0 && value.Y <= this.canvasMap.Height)
         {
             Canvas.SetTop(img, y);
 
-            dataContext.Position.Y = scaledY;
+            objData.Position.Y = scaledY;
         }
 
-        dataContext.Position.Z = zPos;
+        objData.Position.Z = zPos;
 
-        Canvas.SetLeft(rectCoords, dataContext.Position.X.MapRange(_canvas.FloorWidth, this.canvasMap.Width));
-        Canvas.SetTop(rectCoords, dataContext.Position.Y.MapRange(_canvas.FloorHeight, this.canvasMap.Height));
+        Canvas.SetLeft(rectCoords, objData.Position.X.MapRange(_canvas.FloorWidth, this.canvasMap.Width));
+        Canvas.SetTop(rectCoords, objData.Position.Y.MapRange(_canvas.FloorHeight, this.canvasMap.Height));
     }
 
     /// <summary>
@@ -157,18 +162,18 @@ public partial class MapBuilderUserControl : UserControl
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void Canvas_PointerPressed_1(object? sender, Avalonia.Input.PointerPressedEventArgs e)
+    private void Canvas_PointerPressed_SpawnObject(object? sender, Avalonia.Input.PointerPressedEventArgs e)
     {
         if (e.Source != this.canvasMap)
         {
             return;
         }
 
-        ParkObjBase parkObj = null;
+        ParkObjBase parkObj;
         bool isCloning = e.KeyModifiers == KeyModifiers.Control;
-        if (isCloning)
+        if (isCloning && _lastSelected != null)
         {
-            parkObj = (_lastSelected.DataContext as ParkObjBase).Clone();
+            parkObj = _lastSelected.ObjectData.Clone();
         }
         else
         {
@@ -184,46 +189,44 @@ public partial class MapBuilderUserControl : UserControl
         parkObj.Position.Y = Math.Round(y.MapRange(canvasMap.Height, _canvas.FloorHeight) + (parkObj.AnchorPoint.Y * parkObj.UnrealScale.Y), 0);
         parkObj.Position.Z = (parkObj.UnrealScale.Z * parkObj.Layer) + (parkObj.AnchorPoint.Z * parkObj.UnrealScale.Z * parkObj.Layer);
 
-        Image img = AddObjToCanvas(parkObj, x, y);
+        var img = AddObjToCanvas(parkObj, x, y);
+        img.ViewModel.CurrentFloorLevel = _canvas.CurrentFloorLayer;
 
-        if (isCloning)
+        if (isCloning && _lastSelected != null)
         {
-            ((ParkObjBase)img.DataContext).Rotation.Z = ((ParkObjBase)_lastSelected.DataContext).Rotation.Z;
+            img.ObjectData.Rotation.Z = _lastSelected.ObjectData.Rotation.Z;
             RotateObject(img, _lastSelected.Bounds.Width, _lastSelected.Bounds.Height);
         }
 
         _canvas.ParkObjs.Add(parkObj);
+
+        if (_lastSelected != null)
+        {
+            _lastSelected.ViewModel.IsSelected = false;
+        }
+
         _lastSelected = img;
+        _lastSelected.ViewModel.IsSelected = true;
     }
 
-    private Image AddObjToCanvas(ParkObjBase parkObj, double x, double y)
+    private ParkObjImageUserControl AddObjToCanvas(ParkObjBase parkObj, double x, double y)
     {
-        Bitmap bitmap = new(parkObj.ImagePath);
-
         int scaledW = (int)parkObj.UnrealScale.X.MapRange(_canvas.FloorWidth, this.canvasMap.Width);
         int scaledH = (int)parkObj.UnrealScale.Y.MapRange(_canvas.FloorHeight, this.canvasMap.Height);
 
         var scaledSize = new PixelSize(Math.Max(5, scaledW), Math.Max(5, scaledH));
 
-        Image img = new()
-        {
-            Source = bitmap.CreateScaledBitmap(scaledSize),
-            Stretch = Stretch.Uniform,
-            StretchDirection = StretchDirection.Both
-        };
+        ParkObjImageUserControl imgControl = new ParkObjImageUserControl(parkObj, scaledSize);
 
+        imgControl.PointerPressed += Rectangle_PointerPressed;
+        imgControl.PointerReleased += Rectangle_PointerReleased;
+        imgControl.PointerMoved += Rectangle_PointerMoved;
 
-        img.PointerPressed += Rectangle_PointerPressed;
-        img.PointerReleased += Rectangle_PointerReleased;
-        img.PointerMoved += Rectangle_PointerMoved;
-        img.DataContext = parkObj;
+        canvasMap.Children.Add(imgControl);
 
-
-        canvasMap.Children.Add(img);
-
-        Canvas.SetLeft(img, x);
-        Canvas.SetTop(img, y);
-        return img;
+        Canvas.SetLeft(imgControl, x);
+        Canvas.SetTop(imgControl, y);
+        return imgControl;
     }
 
     private int _angle = 0;
@@ -238,14 +241,14 @@ public partial class MapBuilderUserControl : UserControl
         _angle += 45;
         _angle %= 360;
 
-        ((ParkObjBase)_lastSelected.DataContext).Rotation.Z = _angle;
+        _lastSelected.ObjectData.Rotation.Z = _angle;
         RotateObject(_lastSelected, _lastSelected.Bounds.Width, _lastSelected.Bounds.Height);
     }
 
-    private void RotateObject(Image img, double width, double height)
+    private void RotateObject(ParkObjImageUserControl img, double width, double height)
     {
-        ParkObjBase? dataContext = (ParkObjBase)img.DataContext;
-        if (dataContext == null)
+        ParkObjBase? objData = img.ObjectData;
+        if (objData == null)
         {
             return;
         }
@@ -253,26 +256,26 @@ public partial class MapBuilderUserControl : UserControl
         double centerX = width / 2;
         double centerY = height / 2;
 
-        if (dataContext.AnchorPoint.X == 0.5)
+        if (objData.AnchorPoint.X == 0.5)
         {
             centerX *= 0;
         }
-        else if (dataContext.AnchorPoint.X < 0.5)
+        else if (objData.AnchorPoint.X < 0.5)
         {
             centerX *= -1;
         }
 
-        if (dataContext.AnchorPoint.Y == 0.5)
+        if (objData.AnchorPoint.Y == 0.5)
         {
             centerY *= 0;
         }
-        else if (dataContext.AnchorPoint.Y < 0.5)
+        else if (objData.AnchorPoint.Y < 0.5)
         {
             centerY *= -1;
         }
 
 
-        img.RenderTransform = new RotateTransform(dataContext.Rotation.Z, centerX, centerY);
+        img.RenderTransform = new RotateTransform(objData.Rotation.Z, centerX, centerY);
     }
 
     private void ButtonRotateLeft_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -289,7 +292,7 @@ public partial class MapBuilderUserControl : UserControl
             _angle = 360 - 45;
         }
 
-        ((ParkObjBase)_lastSelected.DataContext).Rotation.Z = _angle;
+        _lastSelected.ObjectData.Rotation.Z = _angle;
         RotateObject(_lastSelected, _lastSelected.Bounds.Width, _lastSelected.Bounds.Height);
     }
 
@@ -322,7 +325,7 @@ public partial class MapBuilderUserControl : UserControl
 
                 foreach (var obj in loaded)
                 {
-                    Image img = AddObjToCanvas(obj, 0, 0);
+                    ParkObjImageUserControl img = AddObjToCanvas(obj, 0, 0);
                     img.RenderTransform = new RotateTransform(obj.Rotation.Z, obj.CenterX, obj.CenterY);
                     Canvas.SetLeft(img, obj.Left);
                     Canvas.SetTop(img, obj.Top);
@@ -352,10 +355,10 @@ public partial class MapBuilderUserControl : UserControl
             List<ParkItemData> data = new List<ParkItemData>();
             foreach (var child in canvasMap.Children)
             {
-                if (child is Image)
+                if (child is ParkObjImageUserControl)
                 {
-                    var img = (Image)child;
-                    data.Add(new ParkItemData((ParkObjBase)child.DataContext)
+                    var img = (ParkObjImageUserControl)child;
+                    data.Add(new ParkItemData(img.ObjectData)
                     {
                         CenterX = (img.RenderTransform as RotateTransform)?.CenterX ?? 0,
                         CenterY = (img.RenderTransform as RotateTransform)?.CenterY ?? 0,
@@ -393,7 +396,7 @@ public partial class MapBuilderUserControl : UserControl
         if (i >= 0)
         {
             canvasMap.Children.RemoveAt(i);
-            _canvas.ParkObjs.Remove((ParkObjBase)_lastSelected.DataContext);
+            _canvas.ParkObjs.Remove(_lastSelected.ObjectData);
             _lastSelected.PointerPressed -= Rectangle_PointerPressed;
             _lastSelected.PointerReleased -= Rectangle_PointerReleased;
             _lastSelected.PointerMoved -= Rectangle_PointerMoved;
@@ -430,6 +433,19 @@ public partial class MapBuilderUserControl : UserControl
     private void Button_Click_GoUpLayer(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         this._canvas.CurrentFloorLayer++;
+        UpdateFloorLayerOnChildren();
+    }
+
+    private void UpdateFloorLayerOnChildren()
+    {
+        foreach (var child in canvasMap.Children)
+        {
+            if (child is ParkObjImageUserControl)
+            {
+                var img = (ParkObjImageUserControl)child;
+                img.ViewModel.CurrentFloorLevel = this._canvas.CurrentFloorLayer;
+            }
+        }
     }
 
     private void Button_Click_GoDownLayer(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -437,6 +453,7 @@ public partial class MapBuilderUserControl : UserControl
         if (_canvas.CurrentFloorLayer > 0)
         {
             this._canvas.CurrentFloorLayer--;
+            UpdateFloorLayerOnChildren();
         }
     }
 

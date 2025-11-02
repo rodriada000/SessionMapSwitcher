@@ -29,9 +29,9 @@
 		</Style>
 
 
-		<Style Selector="DataGridTextColumn">
+<!--		<Style Selector="DataGridTextColumn">
 			<Setter Property="FontSize" Value="{StaticResource ControlContentThemeFontSize}"/>
-		</Style>
+		</Style>-->
 
 		<Style Selector="MenuItem.ContextMenuSeperator">
 			<Setter Property="IsEnabled" Value="False"/>

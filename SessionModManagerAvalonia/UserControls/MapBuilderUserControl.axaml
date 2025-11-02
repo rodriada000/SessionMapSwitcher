@@ -55,7 +55,7 @@
                 Background="LightGray"
                 Width="{Binding CanvasWidth}"
                 Height="{Binding CanvasHeight}"
-                PointerPressed="Canvas_PointerPressed_1">
+                PointerPressed="Canvas_PointerPressed_SpawnObject">
         </Canvas>
       </paz:ZoomBorder>
     </ScrollViewer>

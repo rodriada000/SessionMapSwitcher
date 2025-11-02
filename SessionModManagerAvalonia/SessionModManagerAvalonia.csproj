@@ -174,6 +174,12 @@
     <UpToDateCheckInput Remove="Windows\UpdateWindow.axaml" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="UserControls\ParkObjImageUserControl.axaml.cs">
+      <DependentUpon>ParkObjImageUserControl.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="SET SMMPATH=$(ProjectDir)..\SMMUpdater\bin\Debug\net8.0&#xD;&#xA;SET TARGETPATH=$(OutDir)&#xD;&#xA;&#xD;&#xA;if $(ConfigurationName) == Release SET SMMPATH=$(ProjectDir)..\SMMUpdater\bin\Release\net8.0\publish\windows&#xD;&#xA;if $(ConfigurationName) == Release SET TARGETPATH=$(TargetDir)publish\windows\&#xD;&#xA;&#xD;&#xA;echo %25SMMPATH%25&#xD;&#xA;echo &quot;%25TARGETPATH%25releases&quot;&#xD;&#xA;&#xD;&#xA;mkdir &quot;%25TARGETPATH%25releases&quot;&#xD;&#xA;xcopy /y &quot;%25SMMPATH%25\SMMUpdater.exe&quot;  &quot;%25TARGETPATH%25releases&quot;&#xD;&#xA;xcopy /y &quot;%25SMMPATH%25\SMMUpdater.dll&quot;  &quot;%25TARGETPATH%25releases&quot;&#xD;&#xA;xcopy /y &quot;%25SMMPATH%25\SMMUpdater.deps.json&quot;  &quot;%25TARGETPATH%25releases&quot;&#xD;&#xA;xcopy /y &quot;%25SMMPATH%25\SMMUpdater.runtimeconfig.json&quot;  &quot;%25TARGETPATH%25releases&quot;&#xD;&#xA;&#xD;&#xA;cd &quot;%25TARGETPATH%25&quot;&#xD;&#xA;del *.pdb /q" />
   </Target>
