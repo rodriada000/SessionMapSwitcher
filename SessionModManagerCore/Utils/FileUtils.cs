@@ -277,12 +277,12 @@ namespace SessionMapSwitcherCore.Utils
             int entryCount = 1;
             int currentCount = 0;
 
-            using (RarArchive archive = RarArchive.Open(pathToRar))
+            using (IRarArchive archive = RarArchive.OpenArchive(pathToRar))
             {
                 Logger.Info("... Opened .rar for read");
-                entryCount = archive.Entries.Count;
+                entryCount = archive.Entries.Count();
 
-                foreach (RarArchiveEntry entry in archive.Entries.Where(entry => !entry.IsDirectory))
+                foreach (IArchiveEntry entry in archive.Entries.Where(entry => !entry.IsDirectory))
                 {
                     Logger.Info($"...... extracting {entry.Key}");
 
@@ -354,9 +354,9 @@ namespace SessionMapSwitcherCore.Utils
             }
             else if (pathToFile.EndsWith(".rar"))
             {
-                using (RarArchive archive = RarArchive.Open(pathToFile))
+                using (IRarArchive archive = RarArchive.OpenArchive(pathToFile))
                 {
-                    foreach (RarArchiveEntry entry in archive.Entries.Where(entry => !entry.IsDirectory))
+                    foreach (IArchiveEntry entry in archive.Entries.Where(entry => !entry.IsDirectory))
                     {
                         if (searchType == SearchType.StartsWith && entry.Key.StartsWith(searchPattern))
                         {
