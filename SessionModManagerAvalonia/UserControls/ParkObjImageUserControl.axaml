@@ -16,7 +16,7 @@
 		</Style>
 	</UserControl.Styles>
 	<Grid>
-		<Border ZIndex="3" Classes.selected="{Binding IsSelected}" IsVisible="{Binding IsSelected}" BorderThickness="2" BorderBrush="{DynamicResource SystemControlHighlightAccentBrush}" Padding="0" Opacity="0.75"></Border>
+		<Border ZIndex="3" IsVisible="{Binding IsSelected}" BorderThickness="2" BorderBrush="{DynamicResource SystemControlHighlightAccentBrush}" Padding="0" Opacity="0.75"></Border>
 		<Image IsVisible="{Binding !IsPlayerStart}" Classes.diffFloor="{Binding !OnSameFloor}" x:Name="objImage" d:DesignWidth="100" d:DesignHeight="100" Stretch="Uniform" StretchDirection="Both">
 		</Image>
 		<Polygon x:Name="objPlayerStart" IsVisible="{Binding IsPlayerStart, FallbackValue='x:False'}"

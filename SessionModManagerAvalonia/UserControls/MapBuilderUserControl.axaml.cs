@@ -43,8 +43,13 @@ public partial class MapBuilderUserControl : UserControl
         InitializeComponent();
         var window = TopLevel.GetTopLevel(this) as Window;
 
-        foreach (var c in _canvas.ObjectCatalog)
+        for (int i = 0; i < _canvas.ObjectCatalog.Count; i++)
         {
+            ParkObjBase? c = _canvas.ObjectCatalog[i];
+            if (i == 0)
+            {
+                c.IsSelected = true;
+            }
             var img = new ParkObjectUserControl(c);
             img.PointerPressed += OnPointerPressed_SelectCatalogObject;
             panelCat.Children.Add(img);
@@ -58,8 +63,21 @@ public partial class MapBuilderUserControl : UserControl
 
     private void OnPointerPressed_SelectCatalogObject(object? sender, PointerPressedEventArgs e)
     {
+        foreach (var item in panelCat.Children)
+        {
+            if (item is ParkObjectUserControl poc)
+            {
+                poc.ViewModel.IsSelected = false;
+            }
+        }
+
         ParkObjectUserControl? img = ((ParkObjectUserControl?)sender);
-        _canvas.ActiveCatalogIndex = _canvas.ObjectCatalog.IndexOf(img?.ViewModel);
+        if (img != null)
+        {
+            img.ViewModel.IsSelected = true;
+        }
+
+        _canvas.ActiveCatalogIndex = _canvas.ObjectCatalog.IndexOf(img?.ViewModel?.ObjectData);
     }
 
     /// <summary>
@@ -175,6 +193,11 @@ public partial class MapBuilderUserControl : UserControl
     /// <param name="e"></param>
     private void Canvas_PointerPressed_SpawnObject(object? sender, Avalonia.Input.PointerPressedEventArgs e)
     {
+        if (e.Pointer.Type != PointerType.Mouse || !e.GetCurrentPoint(this.canvasMap).Properties.IsLeftButtonPressed)
+        {
+            return;
+        }
+
         if (e.Source != this.canvasMap)
         {
             return;

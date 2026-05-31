@@ -45,6 +45,7 @@ namespace SessionModManagerCore.Classes
         public ObjVector Rotation { get; set; }
         public int Layer { get; set; }
         public bool IsPlayerStart { get; set; }
+        public bool IsSelected { get; set; }
 
         public string Name { get; set; }
         [JsonIgnore]

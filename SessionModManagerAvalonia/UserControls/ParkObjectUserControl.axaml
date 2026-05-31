@@ -2,12 +2,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:v="using:SessionModManagerCore.Classes"
+             xmlns:v="using:SessionModManagerCore.ViewModels"
              mc:Ignorable="d" d:DesignWidth="100" d:DesignHeight="150"
              x:Class="SessionModManagerAvalonia.ParkObjectUserControl"
              Padding="5"
-             x:DataType="v:ParkObjBase">
-  <Border Margin="0" BorderBrush="{DynamicResource SystemControlHighlightBaseMediumLowBrush}" BorderThickness="1" Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
+             x:DataType="v:ParkCatalogObjViewModel">
+	<UserControl.Styles>
+		<Style Selector="Border.selected">
+			<Setter Property="BorderThickness" Value="2"></Setter>
+			<Setter Property="BorderBrush" Value="{DynamicResource SystemControlHighlightAccentBrush}"></Setter>
+		</Style>
+	</UserControl.Styles>
+  <Border Margin="0" Classes.selected="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" Background="{DynamicResource SystemControlBackgroundAltHighBrush}">
     <StackPanel Margin="4">
 
       <Image x:Name="objImage" Width="100" Height="100" Stretch="Uniform" StretchDirection="Both">

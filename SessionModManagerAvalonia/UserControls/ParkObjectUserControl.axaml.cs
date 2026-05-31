@@ -1,32 +1,35 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
-using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using SessionModManagerCore.Classes;
+using SessionModManagerCore.ViewModels;
+using System.IO;
 
 namespace SessionModManagerAvalonia;
 
 public partial class ParkObjectUserControl : UserControl
 {
-    public ParkObjBase ViewModel { get; set; }
+    public ParkCatalogObjViewModel ViewModel { get; set; }
 
     public Image Image { get => objImage; }
 
     public ParkObjectUserControl()
     {
         InitializeComponent();
+        ViewModel = new ParkCatalogObjViewModel();
+        ViewModel.ObjectData = new ParkObjBase();
         DataContext = ViewModel;
     }
 
-    public ParkObjectUserControl(ParkObjBase viewModel)
+    public ParkObjectUserControl(ParkObjBase parkObj)
     {
         InitializeComponent();
-        ViewModel = viewModel;
+        ViewModel = new ParkCatalogObjViewModel { ObjectData = parkObj, Name = parkObj.Name, IsSelected = parkObj.IsSelected };
         DataContext = ViewModel;
 
-        Bitmap bitmap = new(ViewModel.ImagePath);
-
-        objImage.Source = bitmap;
+        if (File.Exists(ViewModel.ObjectData.ImagePath))
+        {
+            Bitmap bitmap = new(ViewModel.ObjectData.ImagePath);
+            objImage.Source = bitmap;
+        }
     }
 }
