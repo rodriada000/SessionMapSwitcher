@@ -20,18 +20,18 @@
         <WrapPanel HorizontalAlignment="Left"
                    Margin="5,5,0,5"
                    ItemSpacing="2">
-            <Button x:Name="btnDeleteAll" i:Attached.Icon="mdi-hammer" Content="Clear Park" Click="Button_Click_DeleteAllObjects"></Button>
+            <Button x:Name="btnDeleteAll" i:Attached.Icon="mdi-hammer" Content="Clear Park" ToolTip.Tip="Remove all objects from the park and start over" Click="Button_Click_DeleteAllObjects"></Button>
             <Button x:Name="btnLoad" Content="Load Park" Click="ButtonLoad_Click"></Button>
             <Button x:Name="btnSave" Content="Save Park" Click="ButtonSave_Click"></Button>
         </WrapPanel>
         <WrapPanel Grid.Column="1" Margin="5,5,0,5" ItemSpacing="2">
-            <Button x:Name="btnDeleteSelected" i:Attached.Icon="mdi-trash-can-outline" Click="Button_Click_DeleteSelected"></Button>
-            <Button x:Name="btnRotateLeft" i:Attached.Icon="mdi-rotate-left" Click="ButtonRotateLeft_Click"></Button>
-            <Button x:Name="btnRotateRight" i:Attached.Icon="mdi-rotate-right" Click="ButtonRotateRight_Click"></Button>
+            <Button x:Name="btnDeleteSelected" ToolTip.Tip="Delete selected object (Shortcut key: Delete)" i:Attached.Icon="mdi-trash-can-outline" Click="Button_Click_DeleteSelected"></Button>
+            <Button x:Name="btnRotateLeft" ToolTip.Tip="Rotate object left (Shortcut key: Left Arrow)" i:Attached.Icon="mdi-rotate-left" Click="ButtonRotateLeft_Click"></Button>
+            <Button x:Name="btnRotateRight" ToolTip.Tip="Rotate object right (Shortcut key: Right Arrow)" i:Attached.Icon="mdi-rotate-right" Click="ButtonRotateRight_Click"></Button>
             <Line Width="8" StrokeThickness="1" Stroke="{DynamicResource SystemControlHighlightBaseMediumLowBrush}" StartPoint="4,2" EndPoint="4,30"></Line>
-            <Button x:Name="btnUpLayer" i:Attached.Icon="mdi-arrow-up-bold" Click="Button_Click_GoUpLayer"></Button>
+            <Button x:Name="btnUpLayer" ToolTip.Tip="Move object up one layer (Shortcut key: Up Arrow)" i:Attached.Icon="mdi-arrow-up-bold" Click="Button_Click_GoUpLayer"></Button>
             <Label Content="{Binding CurrentFloorLayer, FallbackValue='0'}" Margin="0,4,0,0"></Label>
-            <Button x:Name="btnDownLayer" i:Attached.Icon="mdi-arrow-down-bold" Click="Button_Click_GoDownLayer"></Button>
+            <Button x:Name="btnDownLayer" ToolTip.Tip="Move object down one layer (Shortcut key: Down Arrow)" i:Attached.Icon="mdi-arrow-down-bold" Click="Button_Click_GoDownLayer"></Button>
             <Line Width="8" StrokeThickness="1" Stroke="{DynamicResource SystemControlHighlightBaseMediumLowBrush}" StartPoint="4,2" EndPoint="4,30"></Line>
             <Label Content="Park Size:" Margin="0,0,0,0" VerticalAlignment="Center"/>
             <TextBox x:Name="txtFloorWidth"
@@ -53,7 +53,7 @@
                      Margin="0,0,0,0"/>
             <Line Width="8" StrokeThickness="1" Stroke="{DynamicResource SystemControlHighlightBaseMediumLowBrush}" StartPoint="4,2" EndPoint="4,30"></Line>
             <Label Content="Grid Snap:" Margin="0,0,0,0" VerticalAlignment="Center"/>
-            <NumericUpDown Width="110" Increment="5" Minimum="5" Maximum="50" ClipValueToMinMax="True" Value="{Binding GridSnapValue}" ValueChanged="NumericUpDown_ValueChanged"></NumericUpDown>
+            <NumericUpDown Width="120" Padding="5,5,0,0" Increment="5" Minimum="5" Maximum="50" ClipValueToMinMax="True" Value="{Binding GridSnapValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ButtonSpinnerLocation="Left"  ValueChanged="NumericUpDown_ValueChanged" LostFocus="NumericUpDown_LostFocus"></NumericUpDown>
         </WrapPanel>
 
         <ScrollViewer Grid.Row="1">
@@ -64,15 +64,12 @@
 
 
         <WrapPanel Grid.Row="2">
-            <Button Content="Build Park" Grid.Row="2" Margin="5" HorizontalAlignment="Stretch" TextBlock.TextAlignment="Center" Click="Button_Click"></Button>
-            <Button x:Name="startBtn" Content="Start Session" Grid.Row="2" Margin="5" HorizontalAlignment="Stretch" TextBlock.TextAlignment="Center" Click="Button_Click_StartSession"></Button>
+            <Button Content="Build Park" Grid.Row="2" Margin="5" HorizontalAlignment="Stretch" TextBlock.TextAlignment="Center" Click="Button_BuildPark_Click"></Button>
+            <Button x:Name="startBtn" ToolTip.Tip="Build custom park and start the game." Content="Start Session" Grid.Row="2" Margin="5" HorizontalAlignment="Stretch" TextBlock.TextAlignment="Center" Click="Button_Click_StartSession"></Button>
         </WrapPanel>
 
-        <!--        <ScrollViewer Grid.Row="1" Grid.RowSpan="2" Grid.Column="1"
-        VerticalScrollBarVisibility="Auto"
-        HorizontalScrollBarVisibility="Auto">
-        </ScrollViewer>-->
-        <paz:ZoomBorder Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" Name="ZoomBorder" Stretch="None" ZoomSpeed="1.1"
+        <paz:ZoomBorder Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" Name="ZoomBorder" Stretch="None" ZoomSpeed="1"
+        
                         MinZoomX="1" MinZoomY="1"
                         MaxZoomX="5" MaxZoomY="5"
                         Background="Transparent" ClipToBounds="True" Focusable="True"

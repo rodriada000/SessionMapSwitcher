@@ -17,7 +17,7 @@ namespace SessionModManagerCore.ViewModels
         private int _canvasWidth = 1000;
         private int _canvasHeight = 1000;
         private int _currentFloorLayer = 0;
-        private int _gridSnapValue = 5;
+        private int _gridSnapValue = 10;
 
         private string _floorWidthText = "5000";
         private string _floorHeightText = "5000";   

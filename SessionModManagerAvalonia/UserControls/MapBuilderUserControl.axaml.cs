@@ -5,6 +5,7 @@ using Avalonia.Controls.Shapes;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
+using MsBox.Avalonia;
 using SessionMapSwitcherCore.Classes;
 using SessionModManagerAvalonia.Classes;
 using SessionModManagerCore.Classes;
@@ -218,7 +219,7 @@ public partial class MapBuilderUserControl : UserControl
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void Button_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void Button_BuildPark_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         _canvas.Build();
     }
@@ -508,6 +509,8 @@ public partial class MapBuilderUserControl : UserControl
 
     private void Button_Click_StartSession(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
+        _canvas.Build();
+
         var mapSelection = new MapSelectionViewModel();
         mapSelection.LoadAvailableMaps();
         mapSelection.LoadMap("ModularPark");
@@ -555,8 +558,16 @@ public partial class MapBuilderUserControl : UserControl
         }
     }
 
-    private void Button_Click_DeleteAllObjects(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private async void Button_Click_DeleteAllObjects(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
+        var box = MessageBoxManager.GetMessageBoxStandard("Notice!", "This will delete all objects in the park and reset to the initial state.\n\nDo you want to continue?", MsBox.Avalonia.Enums.ButtonEnum.YesNo, MsBox.Avalonia.Enums.Icon.Warning);
+        var result = await box.ShowAsync();
+
+        if (result != MsBox.Avalonia.Enums.ButtonResult.Yes)
+        {
+            return;
+        }
+
         foreach (Control img in canvasMap.Children)
         {
             img.PointerPressed -= Rectangle_PointerPressed;
@@ -619,6 +630,27 @@ public partial class MapBuilderUserControl : UserControl
 
     private void NumericUpDown_ValueChanged(object? sender, NumericUpDownValueChangedEventArgs e)
     {
+        if (e.NewValue == null)
+        {
+            return;
+        }
+
+        int newValue = (int)e.NewValue;
+        if (newValue % 5 != 0)
+        {
+            newValue = 5 * (int)Math.Round((double)e.NewValue / 5.0);
+        }
+
+        _canvas.GridSnapValue = newValue;
         DrawGridLines();
+    }
+
+    private void NumericUpDown_LostFocus(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (_canvas.GridSnapValue % 5 != 0)
+        {
+            _canvas.GridSnapValue = 5 * (int)Math.Round((double)_canvas.GridSnapValue / 5.0);
+            DrawGridLines();
+        }
     }
 }
