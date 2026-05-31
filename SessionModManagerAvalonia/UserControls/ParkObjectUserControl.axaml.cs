@@ -26,9 +26,9 @@ public partial class ParkObjectUserControl : UserControl
         ViewModel = new ParkCatalogObjViewModel { ObjectData = parkObj, Name = parkObj.Name, IsSelected = parkObj.IsSelected };
         DataContext = ViewModel;
 
-        if (File.Exists(ViewModel.ObjectData.ImagePath))
+        if (File.Exists(ViewModel.ObjectData.ThumbnailPath))
         {
-            Bitmap bitmap = new(ViewModel.ObjectData.ImagePath);
+            Bitmap bitmap = new(ViewModel.ObjectData.ThumbnailPath);
             objImage.Source = bitmap;
         }
     }

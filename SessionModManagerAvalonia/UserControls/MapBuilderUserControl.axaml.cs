@@ -43,6 +43,16 @@ public partial class MapBuilderUserControl : UserControl
         InitializeComponent();
         var window = TopLevel.GetTopLevel(this) as Window;
 
+        AddCatalogItems();
+
+        DataContext = _canvas;
+        canvasMap.Children.Add(rectCoords);
+        AddObjToCanvas(_playerStart, 0, 0);
+        _canvas.ParkObjs.Add(_playerStart);
+    }
+
+    private void AddCatalogItems()
+    {
         for (int i = 0; i < _canvas.ObjectCatalog.Count; i++)
         {
             ParkObjBase? c = _canvas.ObjectCatalog[i];
@@ -54,11 +64,6 @@ public partial class MapBuilderUserControl : UserControl
             img.PointerPressed += OnPointerPressed_SelectCatalogObject;
             panelCat.Children.Add(img);
         }
-
-        DataContext = _canvas;
-        canvasMap.Children.Add(rectCoords);
-        AddObjToCanvas(_playerStart, 0, 0);
-        _canvas.ParkObjs.Add(_playerStart);
     }
 
     private void OnPointerPressed_SelectCatalogObject(object? sender, PointerPressedEventArgs e)
@@ -526,5 +531,42 @@ public partial class MapBuilderUserControl : UserControl
         _canvas.ParkObjs.Add(_playerStart);
 
         _lastSelected = null;
+    }
+
+    private void txtFloorSize_LostFocus(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        var isValidWidth = CanvasViewModel.ValidateFloorSize(_canvas.FloorWidthText);
+        var isValidHeight = CanvasViewModel.ValidateFloorSize(_canvas.FloorHeightText);
+
+        if (isValidWidth.Result)
+        {
+            _canvas.FloorWidth = int.Parse(_canvas.FloorWidthText);
+        }
+        else
+        {
+            _canvas.FloorWidthText = _canvas.FloorWidth.ToString();
+        }
+
+        if (isValidHeight.Result)
+        {
+            _canvas.FloorHeight = int.Parse(_canvas.FloorHeightText);
+        }
+        else
+        {
+            _canvas.FloorHeightText = _canvas.FloorHeight.ToString();
+        }
+
+        if (!isValidWidth.Result)
+        {
+            MessageService.Instance.ShowMessage(isValidWidth.Message);
+        }
+        else if (!isValidHeight.Result)
+        {
+            MessageService.Instance.ShowMessage(isValidHeight.Message);
+        }
+        else
+        {
+            MessageService.Instance.ShowMessage("Park size updated.");
+        }
     }
 }

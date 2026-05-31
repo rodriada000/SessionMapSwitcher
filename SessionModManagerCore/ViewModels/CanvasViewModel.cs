@@ -5,8 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SessionModManagerCore.ViewModels
 {
@@ -19,6 +17,9 @@ namespace SessionModManagerCore.ViewModels
         private int _canvasWidth = 1000;
         private int _canvasHeight = 1000;
         private int _currentFloorLayer = 0;
+
+        private string _floorWidthText = "5000";
+        private string _floorHeightText = "5000";   
 
         public const int LayerHeight = 500;
 
@@ -213,6 +214,26 @@ namespace SessionModManagerCore.ViewModels
             }
         }
 
+        public string FloorWidthText
+        {
+            get { return _floorWidthText; }
+            set
+            {
+                _floorWidthText = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public string FloorHeightText
+        {
+            get { return _floorHeightText; }
+            set
+            {
+                _floorHeightText = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         public int CanvasWidth
         {
             get { return _canvasWidth; }
@@ -282,6 +303,24 @@ namespace SessionModManagerCore.ViewModels
             ParkObjs = parkSave.ParkObjs.Select(p => (ParkObjBase)p).ToList();
 
             return parkSave.ParkObjs;
+        }
+
+        /// <summary>
+        /// validates the floor size text inputs, returns a BoolWithMessage indicating if the input is valid.
+        /// </summary>
+        public static BoolWithMessage ValidateFloorSize(string sizeText)
+        {
+            if (int.TryParse(sizeText, out int parsedAmount) == false)
+            {
+                return BoolWithMessage.False("Invalid floor size.");
+            }
+
+            if (parsedAmount <= 2500 || parsedAmount > 30000)
+            {
+                return BoolWithMessage.False("Floor size must be between 2500 and 30000.");
+            }
+
+            return BoolWithMessage.True();
         }
     }
 }

@@ -20,9 +20,9 @@ namespace SessionModManagerCore.Classes
                 return Path.Combine(SessionPath.ToContent, "CustomMaps", "Ablazerod", "ModularPark", "Map", "ModularPark.umap");
             }
         }
-        private const double _scale = 1;
-        private const double _zScale = 1;
-        private const double _defaultFloorSize = 15000;
+        private readonly double _scale = 1;
+        private readonly double _zScale = 1;
+        private readonly double _defaultFloorSize = 15000;
 
         public UAssetEditor() { }
 
@@ -30,7 +30,7 @@ namespace SessionModManagerCore.Classes
         {
             if (!File.Exists(MapPath))
             {
-                throw new Exception("Cant find ModularPark.umap file");
+                throw new Exception($"Cant find file: {MapPath}");
             }
 
             UAsset myAsset = new UAsset(MapPath, EngineVersion.VER_UE4_27);
@@ -62,12 +62,12 @@ namespace SessionModManagerCore.Classes
 
             if (playerStart != null)
             {
-                startPosStruct.Value[0].RawValue = new FVector { X = playerStart.Position.X * _scale, Y = playerStart.Position.Y * _scale, Z = (playerStart.Position.Z * _zScale) + 300 };
+                startPosStruct.Value[0].RawValue = new FVector { X = playerStart.Position.X * _scale, Y = playerStart.Position.Y * _scale, Z = (playerStart.Position.Z * _zScale) + 150 };
                 startRotStruct.Value[0].RawValue = new FRotator { Roll = playerStart.Rotation.X, Pitch = playerStart.Rotation.Y, Yaw = playerStart.Rotation.Z };
             }
             else
             {
-                startPosStruct.Value[0].RawValue = new FVector { X = 200, Y = 200, Z = 300 };
+                startPosStruct.Value[0].RawValue = new FVector { X = 200, Y = 200, Z = 200 };
                 startRotStruct.Value[0].RawValue = new FRotator { Roll = 0, Pitch = 0, Yaw = 0 };
             }
             myExport["StartPos"] = startPosStruct;

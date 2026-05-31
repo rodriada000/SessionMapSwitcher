@@ -9,61 +9,82 @@
              x:DataType="v:CanvasViewModel"
              xmlns:i="https://github.com/projektanker/icons.avalonia"
              KeyUp="UserControl_KeyUp">
-  <Grid RowDefinitions="auto,*,auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" KeyUp="Grid_KeyUp_1">
-    <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="0.2*"></ColumnDefinition>
-      <ColumnDefinition Width="*"></ColumnDefinition>
-    </Grid.ColumnDefinitions>
+    <Grid RowDefinitions="auto,*,auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" KeyUp="Grid_KeyUp_1">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.2*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
 
 
-    <WrapPanel HorizontalAlignment="Left"
-               Margin="5,5,0,5">
-      <Button x:Name="btnDeleteAll" i:Attached.Icon="mdi-hammer" Content="Clear Park" Click="Button_Click_DeleteAllObjects"></Button>
-      <Button x:Name="btnLoad" Content="Load Park" Click="ButtonLoad_Click"></Button>
-      <Button x:Name="btnSave" Content="Save Park" Click="ButtonSave_Click"></Button>
-    </WrapPanel>
-    <WrapPanel Grid.Column="1" Margin="5,5,0,5">
-      <Button x:Name="btnDeleteSelected" i:Attached.Icon="mdi-trash-can-outline" Click="Button_Click_DeleteSelected"></Button>
-      <Button x:Name="btnRotateLeft" i:Attached.Icon="mdi-rotate-left" Click="ButtonRotateLeft_Click"></Button>
-      <Button x:Name="btnRotateRight" i:Attached.Icon="mdi-rotate-right" Click="ButtonRotateRight_Click"></Button>
-      <Button x:Name="btnUpLayer" i:Attached.Icon="mdi-arrow-up-bold" Click="Button_Click_GoUpLayer"></Button>
-      <Label Content="{Binding CurrentFloorLayer, FallbackValue='0'}"></Label>
-      <Button x:Name="btnDownLayer" i:Attached.Icon="mdi-arrow-down-bold" Click="Button_Click_GoDownLayer"></Button>
-    </WrapPanel>
+        <WrapPanel HorizontalAlignment="Left"
+                   Margin="5,5,0,5"
+                   ItemSpacing="2">
+            <Button x:Name="btnDeleteAll" i:Attached.Icon="mdi-hammer" Content="Clear Park" Click="Button_Click_DeleteAllObjects"></Button>
+            <Button x:Name="btnLoad" Content="Load Park" Click="ButtonLoad_Click"></Button>
+            <Button x:Name="btnSave" Content="Save Park" Click="ButtonSave_Click"></Button>
+        </WrapPanel>
+        <WrapPanel Grid.Column="1" Margin="5,5,0,5" ItemSpacing="2">
+            <Button x:Name="btnDeleteSelected" i:Attached.Icon="mdi-trash-can-outline" Click="Button_Click_DeleteSelected"></Button>
+            <Button x:Name="btnRotateLeft" i:Attached.Icon="mdi-rotate-left" Click="ButtonRotateLeft_Click"></Button>
+            <Button x:Name="btnRotateRight" i:Attached.Icon="mdi-rotate-right" Click="ButtonRotateRight_Click"></Button>
+            <Line Width="8" StrokeThickness="1" Stroke="{DynamicResource SystemControlHighlightBaseMediumLowBrush}" StartPoint="4,2" EndPoint="4,30"></Line>
+            <Button x:Name="btnUpLayer" i:Attached.Icon="mdi-arrow-up-bold" Click="Button_Click_GoUpLayer"></Button>
+            <Label Content="{Binding CurrentFloorLayer, FallbackValue='0'}" Margin="0,4,0,0"></Label>
+            <Button x:Name="btnDownLayer" i:Attached.Icon="mdi-arrow-down-bold" Click="Button_Click_GoDownLayer"></Button>
+            <Line Width="8" StrokeThickness="1" Stroke="{DynamicResource SystemControlHighlightBaseMediumLowBrush}" StartPoint="4,2" EndPoint="4,30"></Line>
+            <Label Content="Park Size:" Margin="0,0,0,0" VerticalAlignment="Center"/>
+			<TextBox x:Name="txtFloorWidth"
+						VerticalAlignment="Center"
+                        ToolTip.Tip="Width of the park in grid units. Each grid unit is 5 feet in-game."
+                        MaxWidth="30"
+                        Width="30"
+                        Text="{Binding FloorWidthText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='5000'}"
+                        Margin="0,0,0,0"
+                        LostFocus="txtFloorSize_LostFocus"/>
+            <Label Content="x" Margin="0,0,0,0" VerticalAlignment="Center"/>
+			<TextBox x:Name="txtFloorHeight"
+						VerticalAlignment="Center"
+                        ToolTip.Tip="Height of the park in grid units. Each grid unit is 5 feet in-game."
+                        MaxWidth="30"
+                        Width="30"
+                        Text="{Binding FloorHeightText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='5000'}"
+                        LostFocus="txtFloorSize_LostFocus"
+                        Margin="0,0,0,0"/>
+        </WrapPanel>
 
-    <ScrollViewer Grid.Row="1">
-      <WrapPanel x:Name="panelCat">
-        <!--populated at runtime--> 
-      </WrapPanel>
-    </ScrollViewer>
-
-
-    <WrapPanel Grid.Row="2">
-      <Button Content="Build Park" Grid.Row="2" Margin="5" HorizontalAlignment="Stretch" TextBlock.TextAlignment="Center" Click="Button_Click"></Button>
-      <Button x:Name="startBtn" Content="Start Session" Grid.Row="2" Margin="5" HorizontalAlignment="Stretch" TextBlock.TextAlignment="Center" Click="Button_Click_StartSession"></Button>
-    </WrapPanel>
-
-    <ScrollViewer Grid.Row="1" Grid.RowSpan="2" Grid.Column="1"
-                  VerticalScrollBarVisibility="Auto"
-                  HorizontalScrollBarVisibility="Auto">
-      <paz:ZoomBorder Name="ZoomBorder" Stretch="None" ZoomSpeed="1.1"
-                      MinZoomX="1" MinZoomY="1"
-                      MaxZoomX="5" MaxZoomY="5"
-                      Background="Transparent" ClipToBounds="True" Focusable="True"
-                      VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-        <Canvas x:Name="canvasMap"
-                Background="LightGray"
-                Width="{Binding CanvasWidth}"
-                Height="{Binding CanvasHeight}"
-                PointerPressed="Canvas_PointerPressed_SpawnObject">
-        </Canvas>
-      </paz:ZoomBorder>
-    </ScrollViewer>
+        <ScrollViewer Grid.Row="1">
+            <WrapPanel x:Name="panelCat">
+                <!--populated at runtime-->
+            </WrapPanel>
+        </ScrollViewer>
 
 
+        <WrapPanel Grid.Row="2">
+            <Button Content="Build Park" Grid.Row="2" Margin="5" HorizontalAlignment="Stretch" TextBlock.TextAlignment="Center" Click="Button_Click"></Button>
+            <Button x:Name="startBtn" Content="Start Session" Grid.Row="2" Margin="5" HorizontalAlignment="Stretch" TextBlock.TextAlignment="Center" Click="Button_Click_StartSession"></Button>
+        </WrapPanel>
+
+        <!--        <ScrollViewer Grid.Row="1" Grid.RowSpan="2" Grid.Column="1"
+        VerticalScrollBarVisibility="Auto"
+        HorizontalScrollBarVisibility="Auto">
+        </ScrollViewer>-->
+        <paz:ZoomBorder Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" Name="ZoomBorder" Stretch="None" ZoomSpeed="1.1"
+                        MinZoomX="1" MinZoomY="1"
+                        MaxZoomX="5" MaxZoomY="5"
+                        Background="Transparent" ClipToBounds="True" Focusable="True"
+                        VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <Canvas x:Name="canvasMap"
+                    Background="LightGray"
+                    Width="{Binding CanvasWidth}"
+                    Height="{Binding CanvasHeight}"
+                    PointerPressed="Canvas_PointerPressed_SpawnObject">
+            </Canvas>
+        </paz:ZoomBorder>
 
 
 
 
-  </Grid>
+
+
+    </Grid>
 </UserControl>

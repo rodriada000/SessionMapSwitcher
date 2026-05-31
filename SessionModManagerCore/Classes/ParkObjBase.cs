@@ -50,6 +50,8 @@ namespace SessionModManagerCore.Classes
         public string Name { get; set; }
         [JsonIgnore]
         public string ImagePath { get => Path.Combine(SessionPath.ToApplicationResourcesFolder, "ParkPieces", $"{Name}.png"); }
+        [JsonIgnore]
+        public string ThumbnailPath { get => Path.Combine(SessionPath.ToApplicationResourcesFolder, "ParkPieces" , $"{Name}_3d.png"); }
 
         public ObjVector UnrealScale { get; set; }
         public ObjVector AnchorPoint { get; set; }
