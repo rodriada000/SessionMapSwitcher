@@ -6,6 +6,7 @@ using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using SessionMapSwitcherCore.Classes;
+using SessionModManagerAvalonia.Classes;
 using SessionModManagerCore.Classes;
 using SessionModManagerCore.ViewModels;
 using System;
@@ -36,6 +37,14 @@ public partial class MapBuilderUserControl : UserControl
         Height = 2,
         ZIndex = 100,
     };
+    private readonly GridBackground _gridLines = new GridBackground()
+    {
+        GridSpacing = 40,
+        GridThickness = 1,
+        GridBrush = new SolidColorBrush(Color.Parse("#E0E0E0")),
+        IsHitTestVisible = false,
+    };
+
     private readonly ZoomBorder? _zoomBorder;
 
     public MapBuilderUserControl()
@@ -45,10 +54,24 @@ public partial class MapBuilderUserControl : UserControl
 
         AddCatalogItems();
 
+        DrawGridLines();
+
         DataContext = _canvas;
-        canvasMap.Children.Add(rectCoords);
+        //canvasMap.Children.Add(rectCoords);
         AddObjToCanvas(_playerStart, 0, 0);
         _canvas.ParkObjs.Add(_playerStart);
+    }
+
+    private void DrawGridLines()
+    {
+        canvasMap.Children.Remove(_gridLines);
+
+        _gridLines.Width = canvasMap.Bounds.Width;
+        _gridLines.Height = canvasMap.Bounds.Height;
+        _gridLines.GridSpacing = _canvas.GridSnapValue;
+        _gridLines.ZIndex = 0;
+
+        canvasMap.Children.Add(_gridLines);
     }
 
     private void AddCatalogItems()
@@ -137,11 +160,20 @@ public partial class MapBuilderUserControl : UserControl
         Point value = e.GetPosition(this.canvasMap);
 
 
-        ParkObjImageUserControl img = (ParkObjImageUserControl)sender;
-        ParkObjBase objData = _lastSelected.ObjectData;
-
         double x = value.X;
         double y = value.Y;
+
+        if (x % _canvas.GridSnapValue != 0)
+        {
+            x = _canvas.GridSnapValue * (int)Math.Round(x / _canvas.GridSnapValue);
+        }
+        if (y % _canvas.GridSnapValue != 0)
+        {
+            y = _canvas.GridSnapValue * (int)Math.Round(y / _canvas.GridSnapValue);
+        }
+
+        ParkObjImageUserControl img = (ParkObjImageUserControl)sender;
+        ParkObjBase objData = _lastSelected.ObjectData;
 
         var scaledX = Math.Round(x.MapRange(canvasMap.Width, _canvas.FloorWidth) + (objData.AnchorPoint.X * objData.UnrealScale.X), 0);
         var scaledY = Math.Round(y.MapRange(canvasMap.Height, _canvas.FloorHeight) + (objData.AnchorPoint.Y * objData.UnrealScale.Y), 0);
@@ -177,8 +209,8 @@ public partial class MapBuilderUserControl : UserControl
 
         objData.Position.Z = zPos;
 
-        Canvas.SetLeft(rectCoords, objData.Position.X.MapRange(_canvas.FloorWidth, this.canvasMap.Width));
-        Canvas.SetTop(rectCoords, objData.Position.Y.MapRange(_canvas.FloorHeight, this.canvasMap.Height));
+        //Canvas.SetLeft(rectCoords, objData.Position.X.MapRange(_canvas.FloorWidth, this.canvasMap.Width));
+        //Canvas.SetTop(rectCoords, objData.Position.Y.MapRange(_canvas.FloorHeight, this.canvasMap.Height));
     }
 
     /// <summary>
@@ -230,7 +262,7 @@ public partial class MapBuilderUserControl : UserControl
 
         var img = AddObjToCanvas(parkObj, x, y);
         img.ViewModel.CurrentFloorLevel = _canvas.CurrentFloorLayer;
-        img.ZIndex = _canvas.CurrentFloorLayer;
+        img.ZIndex = _canvas.CurrentFloorLayer + 1;
 
         if (isCloning && _lastSelected != null)
         {
@@ -257,6 +289,7 @@ public partial class MapBuilderUserControl : UserControl
         var scaledSize = new PixelSize(Math.Max(5, scaledW), Math.Max(5, scaledH));
 
         ParkObjImageUserControl imgControl = new ParkObjImageUserControl(parkObj, scaledSize);
+        imgControl.ZIndex = parkObj.Layer + 1;
 
         imgControl.PointerPressed += Rectangle_PointerPressed;
         imgControl.PointerReleased += Rectangle_PointerReleased;
@@ -361,13 +394,13 @@ public partial class MapBuilderUserControl : UserControl
             if (loaded.Count > 0)
             {
                 canvasMap.Children.Clear();
-                canvasMap.Children.Add(rectCoords);
+                //canvasMap.Children.Add(rectCoords);
 
                 foreach (var obj in loaded)
                 {
                     ParkObjImageUserControl img = AddObjToCanvas(obj, 0, 0);
                     img.RenderTransform = new RotateTransform(obj.Rotation.Z, obj.CenterX, obj.CenterY);
-                    img.ZIndex = obj.Layer;
+                    img.ZIndex = obj.Layer + 1;
                     Canvas.SetLeft(img, obj.Left);
                     Canvas.SetTop(img, obj.Top);
                 }
@@ -455,6 +488,14 @@ public partial class MapBuilderUserControl : UserControl
         {
             ButtonRotateLeft_Click(sender, e);
         }
+        else if (e.Key == Key.Up)
+        {
+            Button_Click_GoUpLayer(sender, e);
+        }
+        else if (e.Key == Key.Down)
+        {
+            Button_Click_GoDownLayer(sender, e);
+        }
         else if (e.Key == Key.Escape)
         {
             if (_lastSelected != null)
@@ -496,7 +537,7 @@ public partial class MapBuilderUserControl : UserControl
                 if (_lastSelected == img)
                 {
                     img.ViewModel.ObjectData.Layer = this._canvas.CurrentFloorLayer;
-                    img.ZIndex = this._canvas.CurrentFloorLayer;
+                    img.ZIndex = this._canvas.CurrentFloorLayer + 1;
                 }
 
                 img.ViewModel.CurrentFloorLevel = this._canvas.CurrentFloorLayer;
@@ -524,7 +565,8 @@ public partial class MapBuilderUserControl : UserControl
         }
 
         canvasMap.Children.Clear();
-        canvasMap.Children.Add(rectCoords);
+        DrawGridLines();
+        //canvasMap.Children.Add(rectCoords);
 
         _canvas.ParkObjs.Clear();
         AddObjToCanvas(_playerStart, 0, 0);
@@ -568,5 +610,15 @@ public partial class MapBuilderUserControl : UserControl
         {
             MessageService.Instance.ShowMessage("Park size updated.");
         }
+    }
+
+    private void canvasMap_SizeChanged(object? sender, SizeChangedEventArgs e)
+    {
+        DrawGridLines();
+    }
+
+    private void NumericUpDown_ValueChanged(object? sender, NumericUpDownValueChangedEventArgs e)
+    {
+        DrawGridLines();
     }
 }

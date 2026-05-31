@@ -17,6 +17,7 @@ namespace SessionModManagerCore.ViewModels
         private int _canvasWidth = 1000;
         private int _canvasHeight = 1000;
         private int _currentFloorLayer = 0;
+        private int _gridSnapValue = 5;
 
         private string _floorWidthText = "5000";
         private string _floorHeightText = "5000";   
@@ -193,6 +194,16 @@ namespace SessionModManagerCore.ViewModels
                 AnchorPoint = new ObjVector(0, 0, 0)
             },
         };
+
+        public int GridSnapValue
+        {
+            get { return _gridSnapValue; }
+            set
+            {
+                _gridSnapValue = value;
+                NotifyPropertyChanged();
+            }
+        }
 
         public int FloorWidth
         {

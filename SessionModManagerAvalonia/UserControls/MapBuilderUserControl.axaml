@@ -1,4 +1,5 @@
 <UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:classes="using:SessionModManagerAvalonia.Classes"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -33,23 +34,26 @@
             <Button x:Name="btnDownLayer" i:Attached.Icon="mdi-arrow-down-bold" Click="Button_Click_GoDownLayer"></Button>
             <Line Width="8" StrokeThickness="1" Stroke="{DynamicResource SystemControlHighlightBaseMediumLowBrush}" StartPoint="4,2" EndPoint="4,30"></Line>
             <Label Content="Park Size:" Margin="0,0,0,0" VerticalAlignment="Center"/>
-			<TextBox x:Name="txtFloorWidth"
-						VerticalAlignment="Center"
-                        ToolTip.Tip="Width of the park in grid units. Each grid unit is 5 feet in-game."
-                        MaxWidth="30"
-                        Width="30"
-                        Text="{Binding FloorWidthText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='5000'}"
-                        Margin="0,0,0,0"
-                        LostFocus="txtFloorSize_LostFocus"/>
+            <TextBox x:Name="txtFloorWidth"
+                     VerticalAlignment="Center"
+                     ToolTip.Tip="Width of the park in grid units"
+                     MaxWidth="30"
+                     Width="30"
+                     Text="{Binding FloorWidthText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='5000'}"
+                     Margin="0,0,0,0"
+                     LostFocus="txtFloorSize_LostFocus"/>
             <Label Content="x" Margin="0,0,0,0" VerticalAlignment="Center"/>
-			<TextBox x:Name="txtFloorHeight"
-						VerticalAlignment="Center"
-                        ToolTip.Tip="Height of the park in grid units. Each grid unit is 5 feet in-game."
-                        MaxWidth="30"
-                        Width="30"
-                        Text="{Binding FloorHeightText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='5000'}"
-                        LostFocus="txtFloorSize_LostFocus"
-                        Margin="0,0,0,0"/>
+            <TextBox x:Name="txtFloorHeight"
+                     VerticalAlignment="Center"
+                     ToolTip.Tip="Height of the park in grid units"
+                     MaxWidth="30"
+                     Width="30"
+                     Text="{Binding FloorHeightText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue='5000'}"
+                     LostFocus="txtFloorSize_LostFocus"
+                     Margin="0,0,0,0"/>
+            <Line Width="8" StrokeThickness="1" Stroke="{DynamicResource SystemControlHighlightBaseMediumLowBrush}" StartPoint="4,2" EndPoint="4,30"></Line>
+            <Label Content="Grid Snap:" Margin="0,0,0,0" VerticalAlignment="Center"/>
+            <NumericUpDown Width="110" Increment="5" Minimum="5" Maximum="50" ClipValueToMinMax="True" Value="{Binding GridSnapValue}" ValueChanged="NumericUpDown_ValueChanged"></NumericUpDown>
         </WrapPanel>
 
         <ScrollViewer Grid.Row="1">
@@ -77,7 +81,8 @@
                     Background="LightGray"
                     Width="{Binding CanvasWidth}"
                     Height="{Binding CanvasHeight}"
-                    PointerPressed="Canvas_PointerPressed_SpawnObject">
+                    PointerPressed="Canvas_PointerPressed_SpawnObject"
+                    SizeChanged="canvasMap_SizeChanged">
             </Canvas>
         </paz:ZoomBorder>
 

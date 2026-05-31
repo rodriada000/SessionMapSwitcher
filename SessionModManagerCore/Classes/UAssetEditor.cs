@@ -62,7 +62,7 @@ namespace SessionModManagerCore.Classes
 
             if (playerStart != null)
             {
-                startPosStruct.Value[0].RawValue = new FVector { X = playerStart.Position.X * _scale, Y = playerStart.Position.Y * _scale, Z = (playerStart.Position.Z * _zScale) + 150 };
+                startPosStruct.Value[0].RawValue = new FVector { X = playerStart.Position.X * _scale, Y = playerStart.Position.Y * _scale, Z = (playerStart.Position.Z * _zScale) + 200 };
                 startRotStruct.Value[0].RawValue = new FRotator { Roll = playerStart.Rotation.X, Pitch = playerStart.Rotation.Y, Yaw = playerStart.Rotation.Z };
             }
             else
