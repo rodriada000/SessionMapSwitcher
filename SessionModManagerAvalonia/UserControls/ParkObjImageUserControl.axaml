@@ -11,10 +11,23 @@
 		<Style Selector="Image.diffFloor">
 			<Setter Property="Opacity" Value="0.25"></Setter>
 		</Style>
+		<Style Selector="Polygon.diffFloor">
+			<Setter Property="Opacity" Value="0.25"></Setter>
+		</Style>
 	</UserControl.Styles>
 	<Grid>
 		<Border ZIndex="3" Classes.selected="{Binding IsSelected}" IsVisible="{Binding IsSelected}" BorderThickness="2" BorderBrush="{DynamicResource SystemControlHighlightAccentBrush}" Padding="0" Opacity="0.75"></Border>
-		<Image Classes.diffFloor="{Binding !OnSameFloor}" x:Name="objImage" d:DesignWidth="100" d:DesignHeight="100" Stretch="Uniform" StretchDirection="Both">
+		<Image IsVisible="{Binding !IsPlayerStart}" Classes.diffFloor="{Binding !OnSameFloor}" x:Name="objImage" d:DesignWidth="100" d:DesignHeight="100" Stretch="Uniform" StretchDirection="Both">
 		</Image>
+		<Polygon x:Name="objPlayerStart" IsVisible="{Binding IsPlayerStart, FallbackValue='x:False'}"
+				 Classes.diffFloor="{Binding !OnSameFloor}"
+				 Points="50,25 0,50 15,25 0,0"
+				 Fill="#1E88E5"
+				 HorizontalAlignment="Center"
+				 VerticalAlignment="Center">
+			<Polygon.RenderTransform>
+				<ScaleTransform ScaleX="0.5" ScaleY="0.5" />
+			</Polygon.RenderTransform>
+		</Polygon>
 	</Grid>
 </UserControl>

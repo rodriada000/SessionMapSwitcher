@@ -1,15 +1,11 @@
-﻿using Newtonsoft.Json;
-using SessionMapSwitcherCore.Classes;
-using SessionModManagerCore.Classes;
-using System;
-using System.IO;
-using System.Threading.Tasks;
+﻿using SessionModManagerCore.Classes;
 
 namespace SessionModManagerCore.ViewModels
 {
     public class ParkObjViewModel : ViewModelBase
     {
         private bool _isSelected;
+        private bool _isPlayerStart;
         private int _currentFloorLevel;
 
         public int CurrentFloorLevel
@@ -39,6 +35,17 @@ namespace SessionModManagerCore.ViewModels
                 NotifyPropertyChanged();
             }
         }
+
+        public bool IsPlayerStart
+        {
+            get => _isPlayerStart;
+            set
+            {
+                _isPlayerStart = value;
+                NotifyPropertyChanged();
+            }
+        }
+
 
 
         public ParkObjBase ObjectData { get; set; }

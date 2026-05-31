@@ -22,7 +22,6 @@ namespace SessionModManagerCore.Classes
         public int CanvasWidth { get; set; }
 
         public int CanvasHeight { get; set; }
-        public ObjVector StartPosition { get; set; }
 
     }
 
@@ -41,6 +40,7 @@ namespace SessionModManagerCore.Classes
             Scale = dataContext.Scale;
             UnrealScale = dataContext.UnrealScale;
             Layer = dataContext.Layer;
+            IsPlayerStart = dataContext.IsPlayerStart;
         }
 
         [JsonIgnore]

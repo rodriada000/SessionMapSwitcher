@@ -4,7 +4,6 @@ using Avalonia.Controls.PanAndZoom;
 using Avalonia.Controls.Shapes;
 using Avalonia.Input;
 using Avalonia.Media;
-using Avalonia.Media.Imaging;
 using Avalonia.Platform.Storage;
 using SessionMapSwitcherCore.Classes;
 using SessionModManagerCore.Classes;
@@ -12,7 +11,6 @@ using SessionModManagerCore.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace SessionModManagerAvalonia;
 
 public partial class MapBuilderUserControl : UserControl
@@ -20,6 +18,17 @@ public partial class MapBuilderUserControl : UserControl
     bool _dragging = false;
     CanvasViewModel _canvas = new CanvasViewModel();
     ParkObjImageUserControl? _lastSelected;
+    readonly ParkObjBase _playerStart = new ParkObjBase()
+    {
+        Name = "PLAYER_START",
+        Layer = 0,
+        Position = new ObjVector(200, 200, 200),
+        Rotation = new ObjVector(0, 0, 0),
+        Scale = new ObjVector(1, 1, 1),
+        AnchorPoint = new ObjVector(0.5, 0.5, 0),
+        IsPlayerStart = true,
+        UnrealScale = new ObjVector(100, 100, 100),
+    };
     Rectangle rectCoords = new Rectangle()
     {
         Fill = new SolidColorBrush(Colors.Red),
@@ -27,7 +36,6 @@ public partial class MapBuilderUserControl : UserControl
         Height = 2,
         ZIndex = 100,
     };
-
     private readonly ZoomBorder? _zoomBorder;
 
     public MapBuilderUserControl()
@@ -44,6 +52,8 @@ public partial class MapBuilderUserControl : UserControl
 
         DataContext = _canvas;
         canvasMap.Children.Add(rectCoords);
+        AddObjToCanvas(_playerStart, 0, 0);
+        _canvas.ParkObjs.Add(_playerStart);
     }
 
     private void OnPointerPressed_SelectCatalogObject(object? sender, PointerPressedEventArgs e)
@@ -71,7 +81,8 @@ public partial class MapBuilderUserControl : UserControl
             _lastSelected.ViewModel.IsSelected = true;
             _dragging = true;
             _angle = (int)_lastSelected.ObjectData.Rotation.Z;
-        } else
+        }
+        else
         {
             _lastSelected = null;
             _dragging = false;
@@ -171,7 +182,7 @@ public partial class MapBuilderUserControl : UserControl
 
         ParkObjBase parkObj;
         bool isCloning = e.KeyModifiers == KeyModifiers.Control;
-        if (isCloning && _lastSelected != null)
+        if (isCloning && _lastSelected != null && !_lastSelected.ObjectData.IsPlayerStart)
         {
             parkObj = _lastSelected.ObjectData.Clone();
         }
@@ -191,6 +202,7 @@ public partial class MapBuilderUserControl : UserControl
 
         var img = AddObjToCanvas(parkObj, x, y);
         img.ViewModel.CurrentFloorLevel = _canvas.CurrentFloorLayer;
+        img.ZIndex = _canvas.CurrentFloorLayer;
 
         if (isCloning && _lastSelected != null)
         {
@@ -327,6 +339,7 @@ public partial class MapBuilderUserControl : UserControl
                 {
                     ParkObjImageUserControl img = AddObjToCanvas(obj, 0, 0);
                     img.RenderTransform = new RotateTransform(obj.Rotation.Z, obj.CenterX, obj.CenterY);
+                    img.ZIndex = obj.Layer;
                     Canvas.SetLeft(img, obj.Left);
                     Canvas.SetTop(img, obj.Top);
                 }
@@ -387,7 +400,7 @@ public partial class MapBuilderUserControl : UserControl
 
     private void DeleteSelected()
     {
-        if (_lastSelected == null)
+        if (_lastSelected == null || _lastSelected.ObjectData.IsPlayerStart)
         {
             return;
         }
@@ -413,6 +426,14 @@ public partial class MapBuilderUserControl : UserControl
         else if (e.Key == Key.Left)
         {
             ButtonRotateLeft_Click(sender, e);
+        }
+        else if (e.Key == Key.Escape)
+        {
+            if (_lastSelected != null)
+            {
+                _lastSelected.ViewModel.IsSelected = false;
+                _lastSelected = null;
+            }
         }
     }
 
@@ -443,7 +464,15 @@ public partial class MapBuilderUserControl : UserControl
             if (child is ParkObjImageUserControl)
             {
                 var img = (ParkObjImageUserControl)child;
+
+                if (_lastSelected == img)
+                {
+                    img.ViewModel.ObjectData.Layer = this._canvas.CurrentFloorLayer;
+                    img.ZIndex = this._canvas.CurrentFloorLayer;
+                }
+
                 img.ViewModel.CurrentFloorLevel = this._canvas.CurrentFloorLayer;
+
             }
         }
     }
@@ -468,7 +497,10 @@ public partial class MapBuilderUserControl : UserControl
 
         canvasMap.Children.Clear();
         canvasMap.Children.Add(rectCoords);
+
         _canvas.ParkObjs.Clear();
+        AddObjToCanvas(_playerStart, 0, 0);
+        _canvas.ParkObjs.Add(_playerStart);
 
         _lastSelected = null;
     }

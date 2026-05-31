@@ -45,23 +45,40 @@ namespace SessionModManagerCore.Classes
             var positions = ((PropertyData[])myExport["ObjectPos"].RawValue).ToList();
             var scales = ((PropertyData[])myExport["ObjectScale"].RawValue).ToList();
             var rotators = ((PropertyData[])myExport["ObjectRotation"].RawValue).ToList();
-            
+
             StructPropertyData floorStruct = new() { Name = new FName(myAsset, "FloorSize"), StructType = new FName(myAsset, "Vector") };
             floorStruct.Value = [new VectorPropertyData() { Name = new FName(myAsset, "FloorSize") }];
             floorStruct.Value[0].RawValue = new FVector { X = floorW / _defaultFloorSize, Y = floorH / _defaultFloorSize, Z = 1 };
             myExport["FloorSize"] = floorStruct;
 
+            // set player start position and rotation
             StructPropertyData startPosStruct = new() { Name = new FName(myAsset, "StartPos"), StructType = new FName(myAsset, "Vector") };
             startPosStruct.Value = [new VectorPropertyData() { Name = new FName(myAsset, "StartPos") }];
-            startPosStruct.Value[0].RawValue = new FVector { X = 200, Y = 200, Z = 200 };
+
+            StructPropertyData startRotStruct = new() { Name = new FName(myAsset, "StartRotation"), StructType = new FName(myAsset, "Rotator") };
+            startRotStruct.Value = [new RotatorPropertyData() { Name = new FName(myAsset, "StartRotation") }];
+
+            ParkObjBase playerStart = parkObjs.Where(o => o.IsPlayerStart).FirstOrDefault();
+
+            if (playerStart != null)
+            {
+                startPosStruct.Value[0].RawValue = new FVector { X = playerStart.Position.X * _scale, Y = playerStart.Position.Y * _scale, Z = (playerStart.Position.Z * _zScale) + 300 };
+                startRotStruct.Value[0].RawValue = new FRotator { Roll = playerStart.Rotation.X, Pitch = playerStart.Rotation.Y, Yaw = playerStart.Rotation.Z };
+            }
+            else
+            {
+                startPosStruct.Value[0].RawValue = new FVector { X = 200, Y = 200, Z = 300 };
+                startRotStruct.Value[0].RawValue = new FRotator { Roll = 0, Pitch = 0, Yaw = 0 };
+            }
             myExport["StartPos"] = startPosStruct;
+            myExport["StartRotation"] = startRotStruct;
 
             array.Clear();
             positions.Clear();
             scales.Clear();
             rotators.Clear();
 
-            foreach (var obj in parkObjs)
+            foreach (var obj in parkObjs.Where(o => !o.IsPlayerStart))
             {
 
                 array.Add(new StrPropertyData() { Value = new FString(obj.Name) });

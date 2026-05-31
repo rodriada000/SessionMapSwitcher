@@ -1,10 +1,9 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
-using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using SessionModManagerCore.Classes;
 using SessionModManagerCore.ViewModels;
+using System.IO;
 
 namespace SessionModManagerAvalonia;
 
@@ -27,10 +26,15 @@ public partial class ParkObjImageUserControl : UserControl
         ViewModel = new ParkObjViewModel()
         {
             ObjectData = objData,
+            IsPlayerStart = objData.IsPlayerStart
         };
 
         DataContext = ViewModel;
-        Bitmap bitmap = new(ObjectData.ImagePath);
-        objImage.Source = bitmap.CreateScaledBitmap(scaledSize);
+
+        if (File.Exists(ObjectData.ImagePath))
+        {
+            Bitmap bitmap = new(ObjectData.ImagePath);
+            objImage.Source = bitmap.CreateScaledBitmap(scaledSize);
+        }
     }
 }
