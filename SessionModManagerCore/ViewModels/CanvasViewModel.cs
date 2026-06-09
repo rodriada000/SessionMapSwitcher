@@ -193,6 +193,127 @@ namespace SessionModManagerCore.ViewModels
                 UnrealScale = new ObjVector(200, 400, 40),
                 AnchorPoint = new ObjVector(0, 0, 0)
             },
+            new("SM_Concrete_Bank_01")
+            {
+                UnrealScale = new ObjVector(400, 300, 210),
+                AnchorPoint = new ObjVector(0, 0, 0)
+            },
+            new("SM_Concrete_Bank_02")
+            {
+                UnrealScale = new ObjVector(400, 400, 210),
+                AnchorPoint = new ObjVector(0, 0, 0)
+            },
+            new("SM_Concrete_Bank_03", "SM_Concrete_Bank_01")
+            {
+                UnrealScale = new ObjVector(400, 300, 210),
+                AnchorPoint = new ObjVector(0, 0, 0)
+            },
+            new("SM_Concrete_Block_01", "SM_Concrete_Bank_01")
+            {
+                UnrealScale = new ObjVector(400, 300, 210),
+                AnchorPoint = new ObjVector(0, 0, 0)
+            },
+            new("SM_Concrete_Block_02")
+            {
+                UnrealScale = new ObjVector(400, 200, 210),
+                AnchorPoint = new ObjVector(0, 0, 0)
+            },
+            new("SM_Concrete_Block_03")
+            {
+                UnrealScale = new ObjVector(400, 100, 210),
+                AnchorPoint = new ObjVector(0, 0, 0)
+            },
+            new("SM_Concrete_Bowl_01_90_CI")
+            {
+                UnrealScale = new ObjVector(400, 400, 200),
+                AnchorPoint = new ObjVector(0, 0, 0)
+            },
+            new("SM_Concrete_Bowl_01_90_CI_Large")
+            {
+                UnrealScale = new ObjVector(500, 500, 335),
+                AnchorPoint = new ObjVector(0, 0, 0)
+            },
+            new("SM_Concrete_Bowl_01_90_CO")
+            {
+                UnrealScale = new ObjVector(400, 400, 200),
+                AnchorPoint = new ObjVector(0, 0, 0)
+            },
+            new("SM_Concrete_Bowl_02_90_CI")
+            {
+                UnrealScale = new ObjVector(500, 500, 200),
+                AnchorPoint = new ObjVector(0, 0, 0)
+            },
+            new("SM_Concrete_Bowl_02_90_CI_Large")
+            {
+                UnrealScale = new ObjVector(600, 600, 335),
+                AnchorPoint = new ObjVector(0, 0, 0)
+            },
+            new("SM_Concrete_Bowl_02_90_CO")
+            {
+                UnrealScale = new ObjVector(500, 500, 200),
+                AnchorPoint = new ObjVector(0, 0, 0)
+            },
+            new("SM_Concrete_Bowl_02_Straight")
+            {
+                UnrealScale = new ObjVector(200, 300, 200),
+                AnchorPoint = new ObjVector(0, 0, 0)
+            },
+            new("SM_Concrete_Bowl_02_Straight_Large")
+            {
+                UnrealScale = new ObjVector(200, 300, 335),
+                AnchorPoint = new ObjVector(0, 0, 0)
+            },
+            new("SM_Concrete_Bowl_02_Straight_Round")
+            {
+                UnrealScale = new ObjVector(200, 300, 200),
+                AnchorPoint = new ObjVector(0, 0, 0)
+            },
+
+            new("SM_Concrete_Bowl_03_90_CI")
+            {
+                UnrealScale = new ObjVector(600, 600, 200),
+                AnchorPoint = new ObjVector(0, 0, 0)
+            },
+            new("SM_Concrete_Bowl_03_90_CO")
+            {
+                UnrealScale = new ObjVector(600, 600, 200),
+                AnchorPoint = new ObjVector(0, 0, 0)
+            },
+            new("SM_Concrete_Bowl_03_Straight")
+            {
+                UnrealScale = new ObjVector(400, 300, 200),
+                AnchorPoint = new ObjVector(0, 0, 0)
+            },
+            new("SM_Concrete_Bowl_03_Straight_Large")
+            {
+                UnrealScale = new ObjVector(400, 300, 335),
+                AnchorPoint = new ObjVector(0, 0, 0)
+            },
+            new("SM_Concrete_Bowl_03_Straight_Round")
+            {
+                UnrealScale = new ObjVector(400, 300, 200),
+                AnchorPoint = new ObjVector(0, 0, 0)
+            },
+            new("SM_Concrete_Kicker_01", "SM_Concrete_Bank_02")
+            {
+                UnrealScale = new ObjVector(400, 400, 100),
+                AnchorPoint = new ObjVector(0, 0, 0)
+            },
+            new("SM_Concrete_Pyramid_01")
+            {
+                UnrealScale = new ObjVector(700, 700, 100),
+                AnchorPoint = new ObjVector(0, 0, 0)
+            },
+            new("SM_Quarterpipe_01")
+            {
+                UnrealScale = new ObjVector(400, 300, 150),
+                AnchorPoint = new ObjVector(0, 0, 0)
+            },
+            new("SM_Quarterpipe_Small_01")
+            {
+                UnrealScale = new ObjVector(300, 100, 100),
+                AnchorPoint = new ObjVector(0, 0, 0)
+            },
         };
 
         public int GridSnapValue
@@ -275,6 +396,12 @@ namespace SessionModManagerCore.ViewModels
             }
         }
 
+        public string GetAltImageByName(string name)
+        {
+            var obj = ObjectCatalog.FirstOrDefault(o => o.Name == name);
+            return obj?.AltImageName;
+        }   
+
         public void Build()
         {
             try
@@ -292,8 +419,6 @@ namespace SessionModManagerCore.ViewModels
         {
             var json = JsonConvert.SerializeObject(new ParkSaveData()
             {
-                CanvasHeight = CanvasHeight,
-                CanvasWidth = CanvasWidth,
                 FloorHeight = FloorHeight,
                 FloorWidth = FloorWidth,
                 ParkObjs = parkItems,
@@ -312,6 +437,12 @@ namespace SessionModManagerCore.ViewModels
             var json = File.ReadAllText(filePath);
             var parkSave = JsonConvert.DeserializeObject<ParkSaveData>(json);
             ParkObjs = parkSave.ParkObjs.Select(p => (ParkObjBase)p).ToList();
+            FloorHeight = parkSave.FloorHeight;
+            FloorHeightText = parkSave.FloorHeight.ToString();
+            FloorWidth  = parkSave.FloorWidth;
+            FloorWidthText = parkSave.FloorWidth.ToString();
+            CanvasHeight = parkSave.CanvasHeight;
+            CanvasWidth = parkSave.CanvasWidth;
 
             return parkSave.ParkObjs;
         }
@@ -326,7 +457,7 @@ namespace SessionModManagerCore.ViewModels
                 return BoolWithMessage.False("Invalid floor size.");
             }
 
-            if (parsedAmount <= 2500 || parsedAmount > 30000)
+            if (parsedAmount < 2500 || parsedAmount > 30000)
             {
                 return BoolWithMessage.False("Floor size must be between 2500 and 30000.");
             }

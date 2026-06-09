@@ -399,6 +399,7 @@ public partial class MapBuilderUserControl : UserControl
 
                 foreach (var obj in loaded)
                 {
+                    obj.AltImageName = _canvas.GetAltImageByName(obj.Name);
                     ParkObjImageUserControl img = AddObjToCanvas(obj, 0, 0);
                     img.RenderTransform = new RotateTransform(obj.Rotation.Z, obj.CenterX, obj.CenterY);
                     img.ZIndex = obj.Layer + 1;
@@ -594,6 +595,7 @@ public partial class MapBuilderUserControl : UserControl
         if (isValidWidth.Result)
         {
             _canvas.FloorWidth = int.Parse(_canvas.FloorWidthText);
+            _canvas.CanvasWidth = (int)(_canvas.FloorWidth * 0.2);
         }
         else
         {
@@ -603,6 +605,7 @@ public partial class MapBuilderUserControl : UserControl
         if (isValidHeight.Result)
         {
             _canvas.FloorHeight = int.Parse(_canvas.FloorHeightText);
+            _canvas.CanvasHeight = (int)(_canvas.FloorHeight * 0.2);
         }
         else
         {

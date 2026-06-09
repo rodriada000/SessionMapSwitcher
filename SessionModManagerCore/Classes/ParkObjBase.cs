@@ -17,12 +17,14 @@ namespace SessionModManagerCore.Classes
             Rotation = new ObjVector(0, 0, 0);
             AnchorPoint = new ObjVector(0, 0, 0);
         }
-        public ParkObjBase(string name)
+
+        public ParkObjBase(string name, string altImageName = null)
         {
             Position = new ObjVector();
             Scale = new ObjVector(1, 1, 1);
             Rotation = new ObjVector(0, 0, 0);
             Name = name;
+            AltImageName = altImageName;
             AnchorPoint = new ObjVector(0, 0, 0);
         }
 
@@ -32,6 +34,7 @@ namespace SessionModManagerCore.Classes
             {
                 Rotation = new ObjVector(Rotation),
                 Name = Name,
+                AltImageName = AltImageName,
                 Position = new ObjVector(Position),
                 Scale = new ObjVector(Scale),
                 UnrealScale = new ObjVector(UnrealScale),
@@ -48,8 +51,12 @@ namespace SessionModManagerCore.Classes
         public bool IsSelected { get; set; }
 
         public string Name { get; set; }
+
         [JsonIgnore]
-        public string ImagePath { get => Path.Combine(SessionPath.ToApplicationResourcesFolder, "ParkPieces", $"{Name}.png"); }
+        public string AltImageName { get; set; }
+
+        [JsonIgnore]
+        public string ImagePath { get => Path.Combine(SessionPath.ToApplicationResourcesFolder, "ParkPieces", $"{AltImageName ?? Name}.png"); }
         [JsonIgnore]
         public string ThumbnailPath { get => Path.Combine(SessionPath.ToApplicationResourcesFolder, "ParkPieces" , $"{Name}_3d.png"); }
 

@@ -19,9 +19,11 @@ namespace SessionModManagerCore.Classes
 
         public int FloorHeight { get; set; }
 
-        public int CanvasWidth { get; set; }
+        [JsonIgnore]
+        public int CanvasWidth { get => (int)(FloorWidth * 0.2); }
 
-        public int CanvasHeight { get; set; }
+        [JsonIgnore]
+        public int CanvasHeight { get => (int)(FloorHeight * 0.2); }
 
     }
 
